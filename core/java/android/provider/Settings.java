@@ -2301,6 +2301,8 @@ public final class Settings {
 
             // At one time in System, then Global, but now back in Secure
             MOVED_TO_SECURE.add(Secure.INSTALL_NON_MARKET_APPS);
+
+            MOVED_TO_SECURE.add(Secure.VOLUME_LINK_NOTIFICATION);
         }
 
         private static final HashSet<String> MOVED_TO_GLOBAL;
@@ -8753,6 +8755,14 @@ public final class Settings {
         public static final String SYSUI_ROUNDED_FWVALS = "sysui_rounded_fwvals";
 
         /**
+         * Boolean value whether to link ringtone and notification volume
+         * @hide
+         */
+        public static final String VOLUME_LINK_NOTIFICATION = "volume_link_notification";
+
+        private static final Validator VOLUME_LINK_NOTIFICATION_VALIDATOR = BOOLEAN_VALIDATOR;
+
+        /**
          * This are the settings to be backed up.
          *
          * NOTE: Settings are backed up and restored in the order they appear
@@ -8907,7 +8917,8 @@ public final class Settings {
             FLING_PULSE_SMOOTHING_ENABLED,
             PULSE_FADING_BLOCKS_OPACITY,
             PULSE_ACCENT_COLOR_ENABLED,
-            SMARTBAR_DOUBLETAP_SLEEP
+            SMARTBAR_DOUBLETAP_SLEEP,
+            VOLUME_LINK_NOTIFICATION,
         };
 
         /**
@@ -9120,6 +9131,7 @@ public final class Settings {
             VALIDATORS.put(PULSE_FADING_BLOCKS_OPACITY, PULSE_FADING_BLOCKS_OPACITY_VALIDATOR);
             VALIDATORS.put(SMARTBAR_DOUBLETAP_SLEEP, SMARTBAR_DOUBLETAP_SLEEP_VALIDATOR);
             VALIDATORS.put(LOCK_POWER_MENU_DISABLED, LOCK_POWER_MENU_DISABLED_VALIDATOR);
+            VALIDATORS.put(VOLUME_LINK_NOTIFICATION, VOLUME_LINK_NOTIFICATION_VALIDATOR);
         }
 
         /**
