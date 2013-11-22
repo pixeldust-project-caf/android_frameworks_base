@@ -332,4 +332,6 @@
 
     <bool name="def_text_show_password">false</bool>
 
+    <!-- Default for Settings.Global.TETHER_DUN_REQUIRED -->
+    <integer name="def_tether_dun_required">0</integer>
 </resources>
