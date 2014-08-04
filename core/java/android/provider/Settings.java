@@ -11356,6 +11356,13 @@ public final class Settings {
         public static final String PEOPLE_STRIP = "people_strip";
 
         /**
+         * Whether to scramble a pin unlock layout
+         * @hide
+         */
+        public static final String LOCKSCREEN_PIN_SCRAMBLE_LAYOUT =
+            "lockscreen_pin_scramble_layout";
+
+        /**
          * Whether or not to enable media resumption
          * When enabled, media controls in quick settings will populate on boot and persist if
          * resumable via a MediaBrowserService.
