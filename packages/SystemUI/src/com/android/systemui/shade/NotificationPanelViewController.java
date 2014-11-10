@@ -2530,7 +2530,13 @@ public final class NotificationPanelViewController implements Dumpable {
                         MotionEvent.BUTTON_SECONDARY) || event.isButtonPressed(
                         MotionEvent.BUTTON_TERTIARY));
 
-        return twoFingerDrag || stylusButtonClickDrag || mouseButtonClickDrag;
+        final float w = mView.getMeasuredWidth();
+        final float x = event.getX();
+        float region = w * 1.f / 4.f; // TODO overlay region fraction?
+        boolean showQsOverride = mView.isLayoutRtl() ? x < region : w - region < x;
+        showQsOverride &= mBarState == StatusBarState.SHADE;
+
+        return twoFingerDrag || showQsOverride || stylusButtonClickDrag || mouseButtonClickDrag;
     }
 
     private void handleQsDown(MotionEvent event) {
