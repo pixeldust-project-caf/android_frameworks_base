@@ -243,8 +243,6 @@ public class NavigationBar implements View.OnAttachStateChangeListener,
     private boolean mIsOnDefaultDisplay;
     public boolean mHomeBlockedThisTouch;
 
-    private int mLongPressOnHomeBehavior;
-
     @com.android.internal.annotations.VisibleForTesting
     public enum NavBarActionEvent implements UiEventLogger.UiEventEnum {
 
@@ -559,8 +557,6 @@ public class NavigationBar implements View.OnAttachStateChangeListener,
                 HOME_BUTTON_LONG_PRESS_DURATION_MS,
                 /* defaultValue = */ 0
         )).filter(duration -> duration != 0);
-        mLongPressOnHomeBehavior = mContext.getResources().getInteger(
-                com.android.internal.R.integer.config_longPressOnHomeBehavior);
         DeviceConfig.addOnPropertiesChangedListener(
                 DeviceConfig.NAMESPACE_SYSTEMUI, mHandler::post, mOnPropertiesChangedListener);
         updateAssistantEntrypoints();
@@ -1030,6 +1026,7 @@ public class NavigationBar implements View.OnAttachStateChangeListener,
 
         ButtonDispatcher homeButton = mNavigationBarView.getHomeButton();
         homeButton.setOnTouchListener(this::onHomeTouch);
+        homeButton.setLongClickable(true);
 
         reconfigureHomeLongClick();
 
@@ -1097,24 +1094,9 @@ public class NavigationBar implements View.OnAttachStateChangeListener,
                 && ActivityManagerWrapper.getInstance().isScreenPinningActive()) {
             return onLongPressBackHome(v);
         }
-        if (shouldDisableNavbarGestures()) {
-            return false;
-        }
-        if (mLongPressOnHomeBehavior != 0) {
-            KeyButtonView keyButtonView = (KeyButtonView) v;
-            keyButtonView.sendEvent(KeyEvent.ACTION_DOWN, KeyEvent.FLAG_LONG_PRESS);
-            keyButtonView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_LONG_CLICKED);
-        } else {
-            mMetricsLogger.action(MetricsEvent.ACTION_ASSIST_LONG_PRESS);
-            mUiEventLogger.log(NavBarActionEvent.NAVBAR_ASSIST_LONGPRESS);
-            Bundle args = new Bundle();
-            args.putInt(
-                    AssistManager.INVOCATION_TYPE_KEY,
-                    AssistManager.INVOCATION_TYPE_HOME_BUTTON_LONG_PRESS);
-            mAssistManagerLazy.get().startAssist(args);
-            mStatusBarLazy.get().awakenDreams();
-            mNavigationBarView.abortCurrentGesture();
-        }
+        KeyButtonView keyButtonView = (KeyButtonView) v;
+        keyButtonView.sendEvent(KeyEvent.ACTION_DOWN, KeyEvent.FLAG_LONG_PRESS);
+        keyButtonView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_LONG_CLICKED);
         return true;
     }
 
@@ -1357,7 +1339,6 @@ public class NavigationBar implements View.OnAttachStateChangeListener,
         mLongPressHomeEnabled = Settings.Secure.getIntForUser(mContentResolver,
                 Settings.Secure.ASSIST_LONG_PRESS_HOME_ENABLED, longPressDefault ? 1 : 0,
                 mUserTracker.getUserId()) != 0;
-        mLongPressHomeEnabled = mLongPressHomeEnabled || mLongPressOnHomeBehavior != 0;
         boolean gestureDefault = mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_assistTouchGestureEnabledDefault);
         mAssistantTouchGestureEnabled = Settings.Secure.getIntForUser(mContentResolver,
