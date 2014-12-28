@@ -135,4 +135,17 @@
     <string name="theme_info_title">Wussten Sie schon?</string>
     <string name="theme_info_message">Die UI-Design-Kachel ist eine hervorragende Möglichkeit, um die Akzentfarbe oder den UI-Stil einfach zu wechseln.\n\nUm zwischen Akzentfarbe und UI-Stil zu wechseln, drücken Sie einfach lange auf die Kachel und tippen Sie dann erneut, um auf die jeweilige Auswahlseite zu gelangen.</string>
 
+    <!-- Screenrecord Notification Ticker -->
+    <string name="screenrecord_notif_ticker">Bildschirminhalt wird aufgenommen</string>
+    <!-- Screenrecord notification title -->
+    <string name="screenrecord_notif_title">Bildschirmaufnahme läuft</string>
+    <!-- Screenrecord notification action: Stop -->
+    <string name="screenrecord_notif_stop">Stopp</string>
+    <!-- Screenrecord notification action: show/hide pointer -->
+    <string name="screenrecord_notif_pointer_on">Zeiger einblenden</string>
+    <string name="screenrecord_notif_pointer_off">Zeiger ausblenden</string>
+    <!-- Screen record notification error title -->
+    <string name="screenrecord_notif_error">Bildschirmaufnahme nicht möglich</string>
+    <string name="notification_channel_screenrecord">Bildschirmaufnahmen</string>
+
 </resources>
