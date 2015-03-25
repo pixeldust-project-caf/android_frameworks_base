@@ -51,4 +51,7 @@
     <dimen name="net_traffic_single_text_size">14sp</dimen>
     <dimen name="net_traffic_multi_text_size">8sp</dimen>
 
+    <!-- QS detail view scrolling -->
+    <dimen name="qs_detail_item_height_twoline">72dp</dimen>
+
 </resources>
