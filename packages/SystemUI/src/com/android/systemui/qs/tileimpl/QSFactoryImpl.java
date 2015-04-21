@@ -35,6 +35,7 @@ import com.android.systemui.qs.tiles.ColorInversionTile;
 import com.android.systemui.qs.tiles.DataSaverTile;
 import com.android.systemui.qs.tiles.DndTile;
 import com.android.systemui.qs.tiles.FlashlightTile;
+import com.android.systemui.qs.tiles.HeadsUpTile;
 import com.android.systemui.qs.tiles.HotspotTile;
 import com.android.systemui.qs.tiles.IntentTile;
 import com.android.systemui.qs.tiles.LiveDisplayTile;
@@ -128,6 +129,8 @@ public class QSFactoryImpl implements QSFactory {
                 return new SyncTile(mHost);
             case "navbar":
                 return new NavBarTile(mHost);
+            case "heads_up":
+                return new HeadsUpTile(mHost);
         }
 
         // Intent tiles.
