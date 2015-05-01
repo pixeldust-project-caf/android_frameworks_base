@@ -53,6 +53,11 @@ public abstract class DreamManagerInternal {
     public abstract void requestDream();
 
     /**
+     * Called by the power manager to determine whether the dream has gone to doze mode.
+     */
+    public abstract boolean isDozing();
+
+    /**
      * Whether dreaming can start given user settings and the current dock/charge state.
      *
      * @param isScreenOn True if the screen is currently on.
