@@ -2060,6 +2060,11 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     @Override
     public boolean shouldPeek(Entry entry, StatusBarNotification sbn) {
+        // check if package is blacklisted first
+        if (isPackageBlacklisted(sbn.getPackageName())) {
+            return false;
+        }
+
         if (mIsOccluded && !isDozing()) {
             boolean devicePublic = mLockscreenUserManager.
                     isLockscreenPublicMode(mLockscreenUserManager.getCurrentUserId());
@@ -5486,6 +5491,8 @@ public class StatusBar extends SystemUI implements DemoMode,
         return mDeviceInteractive;
     }
 
+    private ArrayList<String> mBlacklist = new ArrayList<String>();
+
     @Override  // NotificationData.Environment
     public boolean isDeviceProvisioned() {
         return mDeviceProvisionedController.isDeviceProvisioned();
@@ -5560,8 +5567,11 @@ public class StatusBar extends SystemUI implements DemoMode,
                     Settings.System.QS_TILE_STYLE),
                     false, this, UserHandle.USER_ALL);
 	    resolver.registerContentObserver(Settings.System.getUriFor(
-                  Settings.System.LOCKSCREEN_ALBUM_ART_FILTER),
-                  false, this, UserHandle.USER_ALL);
+                    Settings.System.LOCKSCREEN_ALBUM_ART_FILTER),
+                    false, this, UserHandle.USER_ALL);
+	    resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_BLACKLIST_VALUES),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -5605,6 +5615,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.LOCKSCREEN_ALBUM_ART_FILTER))) {
                 updateLockscreenFilter();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_BLACKLIST_VALUES))) {
+                updateBlacklistSettings();
 	    }
         }
 
@@ -5616,7 +5629,14 @@ public class StatusBar extends SystemUI implements DemoMode,
 	    setAmbientVis();
             updateTheme(false);
 	    updateLockscreenFilter();
+            updateBlacklistSettings();
         }
+    }
+
+    private void updateBlacklistSettings() {
+        final String blackString = Settings.System.getString(mContext.getContentResolver(),
+                Settings.System.HEADS_UP_BLACKLIST_VALUES);
+        splitAndAddToArrayList(mBlacklist, blackString, "\\|");
     }
 
     private void updateKeyguardStatusSettings() {
@@ -6115,6 +6135,21 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     protected void notifyHeadsUpGoingToSleep() {
         maybeEscalateHeadsUp();
+    }
+
+    private boolean isPackageBlacklisted(String packageName) {
+        return mBlacklist.contains(packageName);
+    }
+     private void splitAndAddToArrayList(ArrayList<String> arrayList,
+            String baseString, String separator) {
+        // clear first
+        arrayList.clear();
+        if (baseString != null) {
+            final String[] array = TextUtils.split(baseString, separator);
+            for (String item : array) {
+                arrayList.add(item.trim());
+            }
+        }
     }
 
     /**
