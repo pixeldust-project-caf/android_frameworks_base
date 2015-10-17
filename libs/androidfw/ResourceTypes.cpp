@@ -6396,7 +6396,7 @@ status_t ResTable::getEntry(
         // Particular types (ResTable_type) may be encoded with sparse entries, and so their
         // entryCount do not need to match.
         if (static_cast<size_t>(realEntryIndex) >= typeSpec->entryCount) {
-            ALOGW("For resource 0x%08x, entry index(%d) is beyond type entryCount(%d)",
+            ALOGV("For resource 0x%08x, entry index(%d) is beyond type entryCount(%d)",
                     Res_MAKEID(packageGroup->id - 1, typeIndex, entryIndex),
                     entryIndex, static_cast<int>(typeSpec->entryCount));
             // We should normally abort here, but some legacy apps declare
@@ -6724,7 +6724,7 @@ status_t ResTable::parsePackage(const ResTable_package* const pkg,
                     if (!typeList.isEmpty()) {
                         const Type* existingType = typeList[0];
                         if (existingType->entryCount != newEntryCount && idmapIndex < 0) {
-                            ALOGW("ResTable_typeSpec entry count inconsistent: "
+                            ALOGV("ResTable_typeSpec entry count inconsistent: "
                                   "given %d, previously %d",
                                   (int) newEntryCount, (int) existingType->entryCount);
                             // We should normally abort here, but some legacy apps declare
