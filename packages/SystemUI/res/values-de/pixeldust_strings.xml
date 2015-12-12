@@ -19,4 +19,11 @@
     <string name="quick_settings_caffeine_label">Koffein</string>
     <string name="accessibility_quick_settings_caffeine_off">Koffein aus</string>
     <string name="accessibility_quick_settings_caffeine_on">Koffein ein</string>
+
+	<!-- Ambient display QS tile -->
+    <string name="quick_settings_ambient_display_label">\"Ambient\"-Display</string>
+    <string name="accessibility_quick_settings_ambient_display_off">\"Ambient\"-Display ein</string>
+    <string name="accessibility_quick_settings_ambient_display_on">\"Ambient\"-Display aus</string>
+    <string name="accessibility_quick_settings_ambient_display_changed_off">\"Ambient\"-Display wurde deaktiviert.</string>
+    <string name="accessibility_quick_settings_ambient_display_changed_on">\"Ambient\"-Display wurde aktiviert.</string>
 </resources>
