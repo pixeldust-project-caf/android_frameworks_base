@@ -73,4 +73,7 @@
          1 - Fahrenheit -->
     <java-symbol type="integer" name="weather_lockscreen_default_unit" />
 
+    <!-- Hardware key binding -->
+    <java-symbol type="integer" name="config_deviceHardwareKeys" />
+
 </resources>
