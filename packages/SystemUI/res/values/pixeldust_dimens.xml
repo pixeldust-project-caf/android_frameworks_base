@@ -31,4 +31,7 @@
     <dimen name="opa_return_translation">-1.0dip</dimen>
     <dimen name="opa_rest_to_collapse">7.0dip</dimen>
 
+    <!-- Height of the status bar header bar -->
+    <dimen name="status_bar_header_height">130dp</dimen>
+
 </resources>
