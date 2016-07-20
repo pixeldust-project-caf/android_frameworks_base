@@ -13,4 +13,6 @@
     <string name="reboot_to_recovery_message">In Recovery-Modus neustarten\u2026</string>
     <string name="reboot_system_title">System</string>
     <string name="reboot_system_message">System wird neugestartet\u2026</string>
+
+    <string name="system_error_vendorprint">Das verwendete Vendor-Image stimmt nicht mit dem des Stand des Systems überein. Bitte das <xliff:g id="string">%s</xliff:g> Vendor-Image für ihr Gerät flashen.</string>
 </resources>
