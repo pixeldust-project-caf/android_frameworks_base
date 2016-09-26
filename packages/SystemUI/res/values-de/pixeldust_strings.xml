@@ -192,4 +192,11 @@
     <string name="recents_app_killed">App geschlossen</string>
     <string name="nope_cant_kill">Launcher kann nicht geschlossen werden</string>
 
+    <!-- Sync QS Tile -->
+    <string name="quick_settings_sync_label">Daten-Sync</string>
+    <string name="accessibility_quick_settings_sync_off">Sync aus</string>
+    <string name="accessibility_quick_settings_sync_on">Sync ein</string>
+    <string name="accessibility_quick_settings_sync_changed_off">Synchronisierung wurde deaktiviert</string>
+    <string name="accessibility_quick_settings_sync_changed_on">Synchronisierung wurde aktiviert</string>
+
 </resources>
