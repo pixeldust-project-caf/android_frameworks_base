@@ -37,5 +37,7 @@
     <string name="right">Rechts</string>
     <string name="navbar_editor_title">Editor</string>
     <string name="navbar_editor_summary">Navigationsleiste konfigurieren</string>
+    <string name="menu_ime_always_show">Menü- / Tastatur-Umschalter (immer anzeigen)</string>
+    <string name="search">Suche</string>
 
 </resources>
