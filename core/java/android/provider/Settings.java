@@ -5794,7 +5794,7 @@ public final class Settings {
         /** @hide */
         private static final Validator SLIM_RECENTS_ICON_PACK_VALIDATOR = ANY_STRING_VALIDATOR;
 
-       /**
+        /**
          * Slim Recents MemBar Color
          * @hide
          */
@@ -5803,7 +5803,7 @@ public final class Settings {
         /** @hide */
         private static final Validator SLIM_MEM_BAR_COLOR_VALIDATOR = ANY_INTEGER_VALIDATOR;
 
-       /**
+        /**
          * Slim Recents MemBar Text Color
          * @hide
          */
@@ -5840,6 +5840,15 @@ public final class Settings {
 
         /** @hide */
         private static final Validator SLIM_RECENT_ENTER_EXIT_ANIMATION_VALIDATOR = ANY_INTEGER_VALIDATOR;
+
+        /**
+         * @hide
+         */
+        public static final String LOCK_SHOW_STATUS_BAR = "lockscreen_show_status_bar";
+
+        /** @hide */
+        private static final Validator LOCK_SHOW_STATUS_BAR_VALIDATOR =
+               BOOLEAN_VALIDATOR;
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -5997,6 +6006,7 @@ public final class Settings {
             SLIM_RECENTS_CORNER_RADIUS,
             SLIM_RECENTS_BLACKLIST_VALUES,
             SLIM_RECENT_ENTER_EXIT_ANIMATION,
+            LOCK_SHOW_STATUS_BAR,
         };
 
         /**
@@ -6217,6 +6227,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(SLIM_RECENTS_CORNER_RADIUS);
             PRIVATE_SETTINGS.add(SLIM_RECENTS_BLACKLIST_VALUES);
             PRIVATE_SETTINGS.add(SLIM_RECENT_ENTER_EXIT_ANIMATION);
+            PRIVATE_SETTINGS.add(LOCK_SHOW_STATUS_BAR);
         }
 
         /**
@@ -6409,6 +6420,7 @@ public final class Settings {
             VALIDATORS.put(SLIM_RECENTS_CORNER_RADIUS, SLIM_RECENTS_CORNER_RADIUS_VALIDATOR);
             VALIDATORS.put(SLIM_RECENTS_BLACKLIST_VALUES, SLIM_RECENTS_BLACKLIST_VALUES_VALIDATOR);
             VALIDATORS.put(SLIM_RECENT_ENTER_EXIT_ANIMATION, SLIM_RECENT_ENTER_EXIT_ANIMATION_VALIDATOR);
+            VALIDATORS.put(LOCK_SHOW_STATUS_BAR, LOCK_SHOW_STATUS_BAR_VALIDATOR);
         }
 
         /**
