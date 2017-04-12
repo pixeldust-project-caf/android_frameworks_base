@@ -2050,7 +2050,7 @@ public final class CameraManager {
                 /* Force to expose only two cameras
                  * if the package name does not falls in this bucket
                  */
-                boolean exposeAuxCamera = false;
+                boolean exposeAuxCamera = Camera.shouldExposeAuxCamera();
                 String packageName = ActivityThread.currentOpPackageName();
                 String packageList = SystemProperties.get("vendor.camera.aux.packagelist");
                 if (packageList.length() > 0) {
@@ -2506,7 +2506,7 @@ public final class CameraManager {
             /* Force to ignore the aux or composite camera torch status update
              * if the package name does not falls in this bucket
              */
-            boolean exposeMonoCamera = false;
+            boolean exposeAuxCamera = Camera.shouldExposeAuxCamera();
             String packageName = ActivityThread.currentOpPackageName();
             String packageList = SystemProperties.get("vendor.camera.aux.packagelist");
             if (packageList.length() > 0) {
