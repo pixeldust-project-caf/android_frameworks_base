@@ -87,6 +87,13 @@
         android:title="@string/quick_settings_cellular_detail_title" />
 
     <SwitchPreference
+        android:icon="@drawable/ic_fourg"
+        android:key="show_fourg_icon"
+        android:title="@string/status_bar_show_fourg_title"
+        android:summary="@string/status_bar_show_fourg_summary"
+        android:defaultValue="@bool/config_showFourG" />
+
+    <SwitchPreference
         android:icon="@drawable/ic_status_bar_network_activity"
         android:key="status_bar_show_activity_indicators"
         android:title="@string/status_bar_show_activity_indicators_title"
