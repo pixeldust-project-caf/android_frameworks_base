@@ -109,7 +109,8 @@ import kotlin.Unit;
 /** Platform implementation of the network controller. **/
 @SysUISingleton
 public class NetworkControllerImpl extends BroadcastReceiver
-        implements NetworkController, DemoMode, DataUsageController.NetworkNameProvider, Dumpable {
+        implements NetworkController, DemoMode, DataUsageController.NetworkNameProvider,
+        Dumpable {
     // debug
     static final String TAG = "NetworkController";
     static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
@@ -225,7 +226,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
             new UserTracker.Callback() {
                 @Override
                 public void onUserChanged(int newUser, @NonNull Context userContext) {
-                    NetworkControllerImpl.this.onUserSwitched(newUser);
+                    NetworkControllerImpl.this.onUserChanged(newUser, userContext);
                 }
             };
 
@@ -778,9 +779,9 @@ public class NetworkControllerImpl extends BroadcastReceiver
         }.execute();
     }
 
-    private void onUserSwitched(int newUserId) {
-        mCurrentUserId = newUserId;
-        mAccessPoints.onUserSwitched(newUserId);
+    public void onUserChanged(int newUser, Context userContext) {
+        mCurrentUserId = newUser;
+        mAccessPoints.onUserSwitched(newUser);
         updateConnectivity();
     }
 
@@ -1009,7 +1010,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
                         this,
                         subscriptions.get(i),
                         mSubDefaults,
-                        mReceiverHandler.getLooper()
+                        mReceiverHandler.getLooper(),
+                        mUserTracker
                 );
                 controller.setUserSetupComplete(mUserSetup);
                 mMobileSignalControllers.put(subId, controller);
@@ -1493,7 +1495,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 this,
                 info,
                 mSubDefaults,
-                mReceiverHandler.getLooper()
+                mReceiverHandler.getLooper(),
+                mUserTracker
         );
 
         mMobileSignalControllers.put(id, controller);

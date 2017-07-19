@@ -25,14 +25,18 @@ import static com.android.settingslib.mobile.MobileMappings.toIconKey;
 import static android.telephony.TelephonyManager.UNKNOWN_CARRIER_ID;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.net.NetworkCapabilities;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.provider.Settings.Global;
 import android.telephony.AccessNetworkConstants;
 import android.telephony.CellSignalStrength;
@@ -67,6 +71,7 @@ import com.android.settingslib.mobile.MobileStatusTracker.SubscriptionDefaults;
 import com.android.settingslib.mobile.TelephonyIcons;
 import com.android.settingslib.net.SignalStrengthUtil;
 import com.android.systemui.R;
+import com.android.systemui.settings.UserTracker;
 import com.android.systemui.statusbar.policy.FiveGServiceClient;
 import com.android.systemui.statusbar.policy.FiveGServiceClient.FiveGServiceState;
 import com.android.systemui.statusbar.policy.FiveGServiceClient.IFiveGStateListener;
@@ -82,7 +87,8 @@ import java.util.Map;
 /**
  * Monitors the mobile signal changes and update the SysUI icons.
  */
-public class MobileSignalController extends SignalController<MobileState, MobileIconGroup> {
+public class MobileSignalController extends SignalController<MobileState, MobileIconGroup>
+        implements UserTracker.Callback {
     private static final SimpleDateFormat SSDF = new SimpleDateFormat("MM-dd HH:mm:ss.SSS");
     private static final int STATUS_HISTORY_SIZE = 64;
     private static final int IMS_TYPE_WWAN = 1;
@@ -95,7 +101,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     private final MobileMappingsProxy mMobileMappingsProxy;
     private final String mNetworkNameDefault;
     private final String mNetworkNameSeparator;
-    private final ContentObserver mObserver;
+    private final ContentObserver mSettingsObserver;
     private int mImsType = IMS_TYPE_WWAN;
     // Save entire info for logging, we only use the id.
     final SubscriptionInfo mSubscriptionInfo;
@@ -173,6 +179,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             notifyListenersIfNecessary();
         }
     };
+
+    private final UserTracker mUserTracker;
+
     // TODO: Reduce number of vars passed in, if we have the NetworkController, probably don't
     // need listener lists anymore.
     public MobileSignalController(
@@ -187,7 +196,8 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             SubscriptionDefaults defaults,
             Looper receiverLooper,
             CarrierConfigTracker carrierConfigTracker,
-            MobileStatusTrackerFactory mobileStatusTrackerFactory
+            MobileStatusTrackerFactory mobileStatusTrackerFactory,
+            UserTracker userTracker
     ) {
         super("MobileSignalController(" + info.getSubscriptionId() + ")", context,
                 NetworkCapabilities.TRANSPORT_CELLULAR, callbackHandler,
@@ -204,6 +214,17 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 R.string.status_bar_network_name_separator).toString();
         mNetworkNameDefault = getTextIfExists(
                 com.android.internal.R.string.lockscreen_carrier_default).toString();
+        mSettingsObserver = new ContentObserver(mReceiverHandler) {
+            @Override
+            public void onChange(boolean selfChange, Uri uri) {
+                if (Settings.System.SHOW_FOURG_ICON.equals(uri.getLastPathSegment())) {
+                    updateSettings();
+                } else {
+                    updateTelephony();
+                }
+            }
+        };
+        mUserTracker = userTracker;
 
         mNetworkToIconLookup = mMobileMappingsProxy.mapIconSets(mConfig);
         mDefaultIcons = mMobileMappingsProxy.getDefaultIcons(mConfig);
@@ -214,15 +235,13 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         mLastState.networkNameData = mCurrentState.networkNameData = networkName;
         mLastState.enabled = mCurrentState.enabled = hasMobileData;
         mLastState.iconGroup = mCurrentState.iconGroup = mDefaultIcons;
-
-        mObserver = new ContentObserver(new Handler(receiverLooper)) {
-            @Override
-            public void onChange(boolean selfChange) {
-                updateTelephony();
-            }
-        };
         mImsMmTelManager = ImsMmTelManager.createForSubscriptionId(info.getSubscriptionId());
         mMobileStatusTracker = mobileStatusTrackerFactory.createTracker(mMobileCallback);
+    }
+
+    private void updateSettings() {
+        setConfiguration(Config.readConfig(mContext));
+        notifyListenersIfNecessary();
     }
 
     void setConfiguration(Config config) {
@@ -252,6 +271,11 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         notifyListenersIfNecessary();
     }
 
+    @Override
+    public void onUserChanged(int newUser, Context userContext) {
+        updateSettings();
+    }
+
     void setCarrierNetworkChangeMode(boolean carrierNetworkChangeMode) {
         mCurrentState.carrierNetworkChangeMode = carrierNetworkChangeMode;
         updateTelephony();
@@ -262,16 +286,19 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
      */
     public void registerListener() {
         mMobileStatusTracker.setListening(true);
-        mContext.getContentResolver().registerContentObserver(Global.getUriFor(Global.MOBILE_DATA),
-                true, mObserver);
-        mContext.getContentResolver().registerContentObserver(Global.getUriFor(
+        final ContentResolver resolver = mContext.getContentResolver();
+        resolver.registerContentObserver(Global.getUriFor(Global.MOBILE_DATA), true, mSettingsObserver);
+        resolver.registerContentObserver(Global.getUriFor(
                 Global.MOBILE_DATA + mSubscriptionInfo.getSubscriptionId()),
-                true, mObserver);
-        mContext.getContentResolver().registerContentObserver(Global.getUriFor(Global.DATA_ROAMING),
-                true, mObserver);
-        mContext.getContentResolver().registerContentObserver(Global.getUriFor(
+                true, mSettingsObserver);
+        resolver.registerContentObserver(Global.getUriFor(Global.DATA_ROAMING), true, mSettingsObserver);
+        resolver.registerContentObserver(Global.getUriFor(
                 Global.DATA_ROAMING + mSubscriptionInfo.getSubscriptionId()),
-                true, mObserver);
+                true, mSettingsObserver);
+        resolver.registerContentObserver(
+            Settings.System.getUriFor(Settings.System.SHOW_FOURG_ICON),
+            false, mSettingsObserver, UserHandle.USER_ALL);
+        mUserTracker.addCallback(this, (r) -> { r.run(); });
         mContext.registerReceiver(mVolteSwitchObserver,
                 new IntentFilter("org.codeaurora.intent.action.ACTION_ENHANCE_4G_SWITCH"));
         if (mConfig.showVolteIcon || mConfig.showVowifiIcon) {
@@ -289,7 +316,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
      */
     public void unregisterListener() {
         mMobileStatusTracker.setListening(false);
-        mContext.getContentResolver().unregisterContentObserver(mObserver);
+        mContext.getContentResolver().unregisterContentObserver(mSettingsObserver);
         mContext.unregisterReceiver(mVolteSwitchObserver);
         if (mConfig.showVolteIcon || mConfig.showVowifiIcon) {
             mImsMmTelManager.unregisterImsStateCallback(mImsStateCallback);
