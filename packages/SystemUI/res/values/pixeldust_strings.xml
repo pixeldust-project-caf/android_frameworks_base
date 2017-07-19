@@ -35,4 +35,8 @@
     <string name="status_bar_ring_mode">Ring mode</string>
     <string name="status_bar_show_activity_indicators_title">Data activity indicators</string>
     <string name="status_bar_show_activity_indicators_summary">Show data activity for Wi-Fi and cellular connection</string>
+
+    <!-- Allow using 4G icon instead of LTE -->
+    <string name="status_bar_show_fourg_title">4G icon</string>
+    <string name="status_bar_show_fourg_summary">Display 4G icon in signal icon instead LTE</string>
 </resources>

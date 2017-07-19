@@ -33,8 +33,10 @@ import com.android.systemui.R;
 public class StatusBarTuner extends PreferenceFragment {
 
     private static final String SHOW_ACTIVITY_INDICATORS = "status_bar_show_activity_indicators";
+    private static final String SHOW_FOURG_ICON = "show_fourg_icon";
 
     private SwitchPreference mShowActivityIndicators;
+    private SwitchPreference mShowFourG;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -45,6 +47,11 @@ public class StatusBarTuner extends PreferenceFragment {
         mShowActivityIndicators.setChecked(Settings.System.getIntForUser(getActivity().getContentResolver(),
             Settings.System.STATUS_BAR_SHOW_ACTIVITY_INDICATORS,
             getActivity().getResources().getBoolean(R.bool.config_showActivity) ? 1 : 0,
+            UserHandle.USER_CURRENT) == 1);
+        mShowFourG = (SwitchPreference) findPreference(SHOW_FOURG_ICON);
+        mShowFourG.setChecked(Settings.System.getIntForUser(getActivity().getContentResolver(),
+            Settings.System.SHOW_FOURG_ICON,
+            getActivity().getResources().getBoolean(R.bool.config_showFourG) ? 1 : 0,
             UserHandle.USER_CURRENT) == 1);
     }
 
@@ -80,6 +87,11 @@ public class StatusBarTuner extends PreferenceFragment {
             boolean checked = ((SwitchPreference)preference).isChecked();
             Settings.System.putInt(getActivity().getContentResolver(),
                     Settings.System.STATUS_BAR_SHOW_ACTIVITY_INDICATORS, checked ? 1 : 0);
+            return true;
+        } else if (preference == mShowFourG) {
+            boolean checked = ((SwitchPreference)preference).isChecked();
+            Settings.System.putInt(getActivity().getContentResolver(),
+                    Settings.System.SHOW_FOURG_ICON, checked ? 1 : 0);
             return true;
         }
         return super.onPreferenceTreeClick(preference);

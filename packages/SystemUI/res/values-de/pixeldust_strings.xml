@@ -29,4 +29,8 @@
     <string name="status_bar_ring_mode">Klingelmodus</string>
     <string name="status_bar_show_activity_indicators_title">Datenaktivitätsanzeige</string>
     <string name="status_bar_show_activity_indicators_summary">Datenaktivität für die WLAN und Mobilfunkverbindung anzeigen</string>
+
+    <!-- Allow using 4G icon instead of LTE -->
+    <string name="status_bar_show_fourg_title">4G-Icon</string>
+    <string name="status_bar_show_fourg_summary">4G am Signalsymbol anstelle von LTE anzeigen</string>
 </resources>
