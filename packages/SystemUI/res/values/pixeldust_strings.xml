@@ -37,6 +37,8 @@
     <string name="status_bar_show_activity_indicators_summary">Show data activity for Wi-Fi and cellular connection</string>
     <string name="lockscreen_default">Default</string>
     <string name="lockscreen_hidden">None</string>
+    <string name="status_bar_show_fourg_title">4G icon</string>
+    <string name="status_bar_show_fourg_summary">Display 4G icon in signal icon instead LTE</string>
 
     <!-- Shows when people have clicked on the custom lockscreen shortcut [CHAR LIMIT=60] -->
     <string name="custom_hint">Swipe from icon to launch</string>
