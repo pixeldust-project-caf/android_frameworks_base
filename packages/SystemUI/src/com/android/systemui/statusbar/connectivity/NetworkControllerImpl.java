@@ -74,7 +74,7 @@ import com.android.systemui.dump.DumpManager;
 import com.android.systemui.flags.FeatureFlags;
 import com.android.systemui.flags.Flags;
 import com.android.systemui.qs.tiles.dialog.InternetDialogFactory;
-import com.android.systemui.settings.CurrentUserTracker;
+import com.android.systemui.settings.UserTracker;
 import com.android.systemui.statusbar.policy.ConfigurationController;
 import com.android.systemui.statusbar.policy.DataSaverController;
 import com.android.systemui.statusbar.policy.DataSaverControllerImpl;
@@ -100,7 +100,8 @@ import javax.inject.Inject;
 /** Platform implementation of the network controller. **/
 @SysUISingleton
 public class NetworkControllerImpl extends BroadcastReceiver
-        implements NetworkController, DemoMode, DataUsageController.NetworkNameProvider, Dumpable {
+        implements NetworkController, DemoMode, DataUsageController.NetworkNameProvider,
+        Dumpable, UserTracker.Callback {
     // debug
     static final String TAG = "NetworkController";
     static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
@@ -124,7 +125,6 @@ public class NetworkControllerImpl extends BroadcastReceiver
     private final boolean mHasMobileDataFeature;
     private final SubscriptionDefaults mSubDefaults;
     private final DataSaverController mDataSaverController;
-    private final CurrentUserTracker mUserTracker;
     private final BroadcastDispatcher mBroadcastDispatcher;
     private final DemoModeController mDemoModeController;
     private final Object mLock = new Object();
@@ -187,6 +187,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
     private final Executor mBgExecutor;
     // Handler that all callbacks are made on.
     private final CallbackHandler mCallbackHandler;
+    private final UserTracker mUserTracker;
 
     private int mEmergencySource;
     private boolean mIsEmergency;
@@ -231,7 +232,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
             @Main Handler handler,
             InternetDialogFactory internetDialogFactory,
             FeatureFlags featureFlags,
-            DumpManager dumpManager) {
+            DumpManager dumpManager,
+            UserTracker userTracker) {
         this(context, connectivityManager,
                 telephonyManager,
                 telephonyListenerManager,
@@ -251,7 +253,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 trackerFactory,
                 handler,
                 featureFlags,
-                dumpManager);
+                dumpManager,
+                userTracker);
         mReceiverHandler.post(mRegisterListeners);
         mInternetDialogFactory = internetDialogFactory;
     }
@@ -276,7 +279,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
             WifiStatusTrackerFactory trackerFactory,
             @Main Handler handler,
             FeatureFlags featureFlags,
-            DumpManager dumpManager
+            DumpManager dumpManager,
+            UserTracker userTracker
     ) {
         mContext = context;
         mTelephonyListenerManager = telephonyListenerManager;
@@ -297,6 +301,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
         mCarrierConfigTracker = carrierConfigTracker;
         mFeatureFlags = featureFlags;
         mDumpManager = dumpManager;
+        mUserTracker = userTracker;
 
         // telephony
         mPhone = telephonyManager;
@@ -325,13 +330,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
 
         // AIRPLANE_MODE_CHANGED is sent at boot; we've probably already missed it
         updateAirplaneMode(true /* force callback */);
-        mUserTracker = new CurrentUserTracker(broadcastDispatcher) {
-            @Override
-            public void onUserSwitched(int newUserId) {
-                NetworkControllerImpl.this.onUserSwitched(newUserId);
-            }
-        };
-        mUserTracker.startTracking();
+        mUserTracker.addCallback(this, (r) -> { r.run(); });
         deviceProvisionedController.addCallback(new DeviceProvisionedListener() {
             @Override
             public void onUserSetupChanged() {
@@ -758,9 +757,10 @@ public class NetworkControllerImpl extends BroadcastReceiver
         }.execute();
     }
 
-    private void onUserSwitched(int newUserId) {
-        mCurrentUserId = newUserId;
-        mAccessPoints.onUserSwitched(newUserId);
+    @Override
+    public void onUserChanged(int newUser, Context userContext) {
+        mCurrentUserId = newUser;
+        mAccessPoints.onUserSwitched(newUser);
         updateConnectivity();
     }
 
@@ -958,7 +958,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
                         mHasMobileDataFeature, mPhone.createForSubscriptionId(subId),
                         mCallbackHandler, this, subscriptions.get(i),
                         mSubDefaults, mReceiverHandler.getLooper(), mCarrierConfigTracker,
-                        mFeatureFlags);
+                        mFeatureFlags, mUserTracker);
                 controller.setUserSetupComplete(mUserSetup);
                 mMobileSignalControllers.put(subId, controller);
                 if (subscriptions.get(i).getSimSlotIndex() == 0) {
@@ -1441,7 +1441,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 mConfig, mHasMobileDataFeature,
                 mPhone.createForSubscriptionId(info.getSubscriptionId()), mCallbackHandler, this,
                 info, mSubDefaults, mReceiverHandler.getLooper(), mCarrierConfigTracker,
-                mFeatureFlags);
+                mFeatureFlags, mUserTracker);
         mMobileSignalControllers.put(id, controller);
         controller.getState().userSetup = true;
         return info;
