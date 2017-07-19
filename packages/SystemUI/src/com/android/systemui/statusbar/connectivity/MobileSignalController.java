@@ -19,12 +19,16 @@ import static com.android.settingslib.mobile.MobileMappings.getDefaultIcons;
 import static com.android.settingslib.mobile.MobileMappings.getIconKey;
 import static com.android.settingslib.mobile.MobileMappings.mapIconSets;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.net.NetworkCapabilities;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.provider.Settings.Global;
 import android.telephony.CellSignalStrength;
 import android.telephony.CellSignalStrengthCdma;
@@ -46,6 +50,7 @@ import com.android.settingslib.mobile.MobileStatusTracker.SubscriptionDefaults;
 import com.android.settingslib.mobile.TelephonyIcons;
 import com.android.settingslib.net.SignalStrengthUtil;
 import com.android.systemui.R;
+import com.android.systemui.settings.UserTracker;
 import com.android.systemui.util.CarrierConfigTracker;
 
 import java.io.PrintWriter;
@@ -57,7 +62,8 @@ import java.util.Map;
 /**
  * Monitors the mobile signal changes and update the SysUI icons.
  */
-public class MobileSignalController extends SignalController<MobileState, MobileIconGroup> {
+public class MobileSignalController extends SignalController<MobileState, MobileIconGroup>
+        implements UserTracker.Callback {
     private static final SimpleDateFormat SSDF = new SimpleDateFormat("MM-dd HH:mm:ss.SSS");
     private static final int STATUS_HISTORY_SIZE = 64;
     private final TelephonyManager mPhone;
@@ -65,7 +71,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     private final SubscriptionDefaults mDefaults;
     private final String mNetworkNameDefault;
     private final String mNetworkNameSeparator;
-    private final ContentObserver mObserver;
+    private final ContentObserver mSettingsObserver;
     // Save entire info for logging, we only use the id.
     final SubscriptionInfo mSubscriptionInfo;
     private Map<String, MobileIconGroup> mNetworkToIconLookup;
@@ -112,6 +118,8 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 }
             };
 
+    private final UserTracker mUserTracker;
+
     // TODO: Reduce number of vars passed in, if we have the NetworkController, probably don't
     // need listener lists anymore.
     public MobileSignalController(
@@ -125,7 +133,8 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             SubscriptionDefaults defaults,
             Looper receiverLooper,
             CarrierConfigTracker carrierConfigTracker,
-            MobileStatusTrackerFactory mobileStatusTrackerFactory
+            MobileStatusTrackerFactory mobileStatusTrackerFactory,
+            UserTracker userTracker
     ) {
         super("MobileSignalController(" + info.getSubscriptionId() + ")", context,
                 NetworkCapabilities.TRANSPORT_CELLULAR, callbackHandler,
@@ -139,6 +148,17 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 R.string.status_bar_network_name_separator).toString();
         mNetworkNameDefault = getTextIfExists(
                 com.android.internal.R.string.lockscreen_carrier_default).toString();
+        mSettingsObserver = new ContentObserver(mReceiverHandler) {
+            @Override
+            public void onChange(boolean selfChange, Uri uri) {
+                if (Settings.System.SHOW_FOURG_ICON.equals(uri.getLastPathSegment())) {
+                    updateSettings();
+                } else {
+                    updateTelephony();
+                }
+            }
+        };
+        mUserTracker = userTracker;
 
         mNetworkToIconLookup = mapIconSets(mConfig);
         mDefaultIcons = getDefaultIcons(mConfig);
@@ -149,13 +169,12 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         mLastState.networkNameData = mCurrentState.networkNameData = networkName;
         mLastState.enabled = mCurrentState.enabled = hasMobileData;
         mLastState.iconGroup = mCurrentState.iconGroup = mDefaultIcons;
-        mObserver = new ContentObserver(new Handler(receiverLooper)) {
-            @Override
-            public void onChange(boolean selfChange) {
-                updateTelephony();
-            }
-        };
         mMobileStatusTracker = mobileStatusTrackerFactory.createTracker(mMobileCallback);
+    }
+
+    private void updateSettings() {
+        setConfiguration(Config.readConfig(mContext));
+        notifyListenersIfNecessary();
     }
 
     void setConfiguration(Config config) {
@@ -185,6 +204,11 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         notifyListenersIfNecessary();
     }
 
+    @Override
+    public void onUserChanged(int newUser, Context userContext) {
+        updateSettings();
+    }
+
     void setCarrierNetworkChangeMode(boolean carrierNetworkChangeMode) {
         mCurrentState.carrierNetworkChangeMode = carrierNetworkChangeMode;
         updateTelephony();
@@ -195,11 +219,15 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
      */
     public void registerListener() {
         mMobileStatusTracker.setListening(true);
-        mContext.getContentResolver().registerContentObserver(Global.getUriFor(Global.MOBILE_DATA),
-                true, mObserver);
-        mContext.getContentResolver().registerContentObserver(Global.getUriFor(
+        final ContentResolver resolver = mContext.getContentResolver();
+        resolver.registerContentObserver(Global.getUriFor(Global.MOBILE_DATA), true, mSettingsObserver);
+        resolver.registerContentObserver(Global.getUriFor(
                 Global.MOBILE_DATA + mSubscriptionInfo.getSubscriptionId()),
-                true, mObserver);
+                true, mSettingsObserver);
+        resolver.registerContentObserver(
+            Settings.System.getUriFor(Settings.System.SHOW_FOURG_ICON),
+            false, mSettingsObserver, UserHandle.USER_ALL);
+        mUserTracker.addCallback(this, (r) -> { r.run(); });
     }
 
     /**
@@ -207,7 +235,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
      */
     public void unregisterListener() {
         mMobileStatusTracker.setListening(false);
-        mContext.getContentResolver().unregisterContentObserver(mObserver);
+        mContext.getContentResolver().unregisterContentObserver(mSettingsObserver);
     }
 
     private void updateInflateSignalStrength() {

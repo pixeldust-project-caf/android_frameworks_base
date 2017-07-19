@@ -234,5 +234,6 @@ public class SystemSettingsValidators {
                         return new InclusiveIntegerRangeValidator(0, 1000).validate(item);
                     }
                 });
+        VALIDATORS.put(System.SHOW_FOURG_ICON, BOOLEAN_VALIDATOR);
     }
 }
