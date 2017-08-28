@@ -28,4 +28,7 @@
 
     <!-- Whether to handle audio direction changes between major call states -->
     <java-symbol type="bool" name="config_handleAudioDirectionChangesBetweenCallStateChanges" />
+
+    <!-- Power menu -->
+    <java-symbol type="array" name="config_rebootActionsList" />
 </resources>
