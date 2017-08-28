@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2023 The PixelDust Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+    <string-array translatable="false" name="config_rebootActionsList">
+        <item>restart</item>
+        <item>reboot_recovery</item>
+        <item>reboot_bootloader</item>
+    </string-array>
+
+    <!-- Defines all possible global actions -->
+    <string-array translatable="false" name="values_globalActionsList">
+        <item>power</item>
+        <item>airplane</item>
+        <item>bugreport</item>
+        <item>silent</item>
+        <item>users</item>
+        <item>settings</item>
+        <item>lockdown</item>
+        <item>assist</item>
+        <item>voiceassist</item>
+        <item>restart</item>
+    </string-array>
+</resources>
