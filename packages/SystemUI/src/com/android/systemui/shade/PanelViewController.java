@@ -210,6 +210,8 @@ public abstract class PanelViewController {
 
     protected final ShadeLogger mShadeLog;
 
+    protected boolean mDoubleTapToSleepEnabled = true;
+
     protected abstract void onExpandingFinished();
 
     protected void onExpandingStarted() {
@@ -1372,7 +1374,7 @@ public abstract class PanelViewController {
                         onTrackingStarted();
                     }
                     if (isFullyCollapsed() && !mHeadsUpManager.hasPinnedHeadsUp()
-                            && !mCentralSurfaces.isBouncerShowing()) {
+                            && !mCentralSurfaces.isBouncerShowing() && !mDoubleTapToSleepEnabled) {
                         startOpening(event);
                     }
                     break;

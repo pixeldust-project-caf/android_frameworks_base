@@ -100,6 +100,7 @@ import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
 import com.android.internal.policy.ScreenDecorationsUtils;
 import com.android.internal.policy.SystemBarUtils;
 import com.android.internal.util.LatencyTracker;
+import com.android.internal.util.pixeldust.PixeldustUtils;
 import com.android.keyguard.ActiveUnlockConfig;
 import com.android.keyguard.EmergencyButton;
 import com.android.keyguard.EmergencyButtonController;
@@ -375,6 +376,9 @@ public final class NotificationPanelViewController extends PanelViewController {
     private int mQsTrackingPointer;
     private VelocityTracker mQsVelocityTracker;
     private boolean mQsTracking;
+
+    private GestureDetector mDoubleTapToSleepGesture;
+    private int mStatusBarHeaderHeight;
 
     /**
      * If set, the ongoing touch gesture might both trigger the expansion in {@link
@@ -924,6 +928,16 @@ public final class NotificationPanelViewController extends PanelViewController {
         mQsFrameTranslateController = qsFrameTranslateController;
         updateUserSwitcherFlags();
         mKeyguardBottomAreaViewModel = keyguardBottomAreaViewModel;
+
+        mDoubleTapToSleepGesture = new GestureDetector(mView.getContext(),
+                new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                PixeldustUtils.switchScreenOff(mView.getContext());
+                return true;
+            }
+        });
+
         onFinishInflate();
         keyguardUnlockAnimationController.addKeyguardUnlockAnimationListener(
                 new KeyguardUnlockAnimationController.KeyguardUnlockAnimationListener() {
@@ -1092,6 +1106,8 @@ public final class NotificationPanelViewController extends PanelViewController {
         mUdfpsMaxYBurnInOffset = mResources.getDimensionPixelSize(R.dimen.udfps_burn_in_offset_y);
         mSplitShadeScrimTransitionDistance = mResources.getDimensionPixelSize(
                 R.dimen.split_shade_scrim_transition_distance);
+        mStatusBarHeaderHeight = mResources.getDimensionPixelSize(
+                R.dimen.status_bar_height);
     }
 
     private void updateViewControllers(KeyguardStatusView keyguardStatusView,
@@ -4282,6 +4298,13 @@ public final class NotificationPanelViewController extends PanelViewController {
                 if (mLastEventSynthesizedDown && event.getAction() == MotionEvent.ACTION_UP) {
                     expand(true /* animate */);
                 }
+
+                if ((!mPulsing && !mDozing
+                        && mBarState == StatusBarState.KEYGUARD) ||
+                        (!mQsExpanded && event.getY() < mStatusBarHeaderHeight)) {
+                    mDoubleTapToSleepGesture.onTouchEvent(event);
+                }
+
                 initDownStates(event);
 
                 // If pulse is expanding already, let's give it the touch. There are situations
