@@ -128,6 +128,12 @@ public class FlashlightControllerImpl implements FlashlightController {
         return mTorchAvailable;
     }
 
+    public synchronized void initFlashLight() {
+        if (mCameraId == null) {
+            tryInitCamera();
+        }
+    }
+
     @Override
     public void addCallback(@NonNull FlashlightListener l) {
         synchronized (mListeners) {
