@@ -992,6 +992,9 @@ public class StatusBar extends SystemUI implements
             Log.v(TAG, "start(): no wallpaper service ");
         }
 
+        mSbSettingsObserver.observe();
+        mSbSettingsObserver.update();
+
         // Set up the initial notification state. This needs to happen before CommandQueue.disable()
         setUpPresenter();
 
@@ -3897,6 +3900,9 @@ public class StatusBar extends SystemUI implements
             resolver.registerContentObserver(Settings.Secure.getUriFor(
                     Settings.Secure.PULSE_ON_NEW_TRACKS),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.DOUBLE_TAP_SLEEP_LOCKSCREEN),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -3905,11 +3911,15 @@ public class StatusBar extends SystemUI implements
             if (uri.equals(Settings.Secure.getUriFor(
                     Settings.Secure.PULSE_ON_NEW_TRACKS))) {
                 setPulseOnNewTracks();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.DOUBLE_TAP_SLEEP_LOCKSCREEN))) {
+                setLockscreenDoubleTapToSleep();
             }
         }
 
         public void update() {
             setPulseOnNewTracks();
+            setLockscreenDoubleTapToSleep();
         }
     }
 
@@ -3918,6 +3928,12 @@ public class StatusBar extends SystemUI implements
             KeyguardSliceProvider.getAttachedInstance().setPulseOnNewTracks(Settings.Secure.getIntForUser(mContext.getContentResolver(),
                     Settings.Secure.PULSE_ON_NEW_TRACKS, 0,
                     UserHandle.USER_CURRENT) == 1);
+        }
+    }
+
+    private void setLockscreenDoubleTapToSleep() {
+        if (mNotificationPanelViewController != null) {
+            mNotificationPanelViewController.setLockscreenDoubleTapToSleep();
         }
     }
 
