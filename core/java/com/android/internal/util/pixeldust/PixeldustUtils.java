@@ -146,7 +146,8 @@ public class PixeldustUtils {
                 return mStatusBarService;
             }
         }
-         public static void toggleCameraFlash() {
+
+        public static void toggleCameraFlash() {
             IStatusBarService service = getStatusBarService();
             if (service != null) {
                 try {
