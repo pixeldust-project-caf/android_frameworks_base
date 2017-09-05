@@ -119,4 +119,10 @@
     <!-- VoLTE switch -->
     <string name="volte_switch_title" translatable="false">VoLTE icon</string>
     <string name="volte_switch_summary">Display VoLTE icon</string>
+
+    <!-- LTE QS Tile -->
+    <string name="qs_lte_label">LTE</string>
+    <string name="lte_on">LTE ON </string>
+    <string name="lte_off">LTE OFF</string>
+
 </resources>

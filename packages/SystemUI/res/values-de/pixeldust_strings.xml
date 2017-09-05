@@ -81,4 +81,9 @@
     <!-- Screenshot QS tile -->
     <string name="quick_settings_screenrecord_label">Bildschirmaufnahme</string>
 
+    <!-- LTE QS Tile -->
+    <string name="qs_lte_label">LTE</string>
+    <string name="lte_on">LTE EIN</string>
+    <string name="lte_off">LTE AUS</string>
+
 </resources>
