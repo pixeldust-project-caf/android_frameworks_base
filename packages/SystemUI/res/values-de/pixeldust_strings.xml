@@ -15,14 +15,8 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- Text to use when the number in a notification info is too large
-         (greater than status_bar_notification_info_maxnum, defined in
-         values/config.xml) and must be truncated.
-         [CHAR LIMIT=4] -->
-    <string name="status_bar_notification_info_overflow" translatable="false">\u221E</string>
-
     <!-- Caffeine QS Tile -->
-    <string name="quick_settings_caffeine_label">Caffeine</string>
-    <string name="accessibility_quick_settings_caffeine_off">Caffeine off</string>
-    <string name="accessibility_quick_settings_caffeine_on">Caffeine on</string>
+    <string name="quick_settings_caffeine_label">Koffein</string>
+    <string name="accessibility_quick_settings_caffeine_off">Koffein aus</string>
+    <string name="accessibility_quick_settings_caffeine_on">Koffein ein</string>
 </resources>
