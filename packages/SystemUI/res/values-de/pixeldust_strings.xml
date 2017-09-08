@@ -40,4 +40,7 @@
     <string name="menu_ime_always_show">Menü- / Tastatur-Umschalter (immer anzeigen)</string>
     <string name="search">Suche</string>
 
+    <!-- Statusbar Tuner -->
+    <string name="statusbar_items_title">Elemente der Statusleiste</string>
+
 </resources>
