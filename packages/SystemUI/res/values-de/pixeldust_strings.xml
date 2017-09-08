@@ -60,4 +60,7 @@
 
     <!-- Battery saver extreme [CHAR LIMIT=NONE]-->
     <string name="extreme_battery_saver_text">Extrem</string>
+
+    <!-- Statusbar tuner -->
+    <string name="statusbar_items_title">Statusleisten-Symbole</string>
 </resources>
