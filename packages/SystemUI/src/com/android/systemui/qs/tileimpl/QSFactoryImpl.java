@@ -52,6 +52,7 @@ import com.android.systemui.qs.tiles.ReduceBrightColorsTile;
 import com.android.systemui.qs.tiles.RotationLockTile;
 import com.android.systemui.qs.tiles.ScreenRecordTile;
 import com.android.systemui.qs.tiles.SyncTile;
+import com.android.systemui.qs.tiles.ScreenshotTile;
 import com.android.systemui.qs.tiles.UiModeNightTile;
 import com.android.systemui.qs.tiles.UserTile;
 import com.android.systemui.qs.tiles.VpnTile;
@@ -106,6 +107,7 @@ public class QSFactoryImpl implements QSFactory {
     private final Provider<DataSwitchTile> mDataSwitchTileProvider;
     private final Provider<PDSettingsTile> mPDSettingsTileProvider;
     private final Provider<LocaleTile> mLocaleTileProvider;
+    private final Provider<ScreenshotTile> mScreenshotTileProvider;
 
     private final Lazy<QSHost> mQsHostLazy;
     private final Provider<CustomTile.Builder> mCustomTileBuilderProvider;
@@ -148,8 +150,8 @@ public class QSFactoryImpl implements QSFactory {
             Provider<AODTile> aodTileProvider,
             Provider<DataSwitchTile> dataSwitchTileProvider,
             Provider<PDSettingsTile> pdSettingsTileProvider,
-            Provider<LocaleTile> localeTileProvider) {
-
+            Provider<LocaleTile> localeTileProvider,
+            Provider<ScreenshotTile> screenshotTileProvider) {
         mQsHostLazy = qsHostLazy;
         mCustomTileBuilderProvider = customTileBuilderProvider;
 
@@ -188,6 +190,7 @@ public class QSFactoryImpl implements QSFactory {
         mDataSwitchTileProvider = dataSwitchTileProvider;
         mPDSettingsTileProvider = pdSettingsTileProvider;
         mLocaleTileProvider = localeTileProvider;
+        mScreenshotTileProvider = screenshotTileProvider;
     }
 
     public QSTile createTile(String tileSpec) {
@@ -270,6 +273,8 @@ public class QSFactoryImpl implements QSFactory {
                 return mPDSettingsTileProvider.get();
             case "locale":
                 return mLocaleTileProvider.get();
+            case "screenshot":
+                return mScreenshotTileProvider.get();
         }
 
         // Custom tiles

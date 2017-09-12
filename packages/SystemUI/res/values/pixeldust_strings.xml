@@ -127,4 +127,8 @@
 
     <!-- Now playing lockscreen / ambient music ticker -->
     <string name="ambientmusic_songinfo" formatted="false" translatable="false">%s • %s</string>
+
+    <!-- Screenshot QS tile -->
+    <string name="quick_settings_screenshot_label">Screenshot</string>
+    <string name="quick_settings_region_screenshot_label">Partial screenshot</string>
 </resources>

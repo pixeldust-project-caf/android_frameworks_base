@@ -112,4 +112,8 @@
     <!-- kill foreground app -->
     <string name="task_helper_app_killed">%1$s hart beendet</string>
     <string name="empty_app_killed">App</string>
+
+    <!-- Screenshot QS tile -->
+    <string name="quick_settings_screenshot_label">Ganzen Bildschirm aufnehmen</string>
+    <string name="quick_settings_region_screenshot_label">Bildauschnitt aufnehmen</string>
 </resources>
