@@ -40,6 +40,9 @@ import android.content.pm.UserInfo;
 import android.database.ContentObserver;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraAccessException;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
@@ -133,6 +136,7 @@ class GlobalActionsDialog implements DialogInterface.OnDismissListener,
     private static final String GLOBAL_ACTION_KEY_LOGOUT = "logout";
     private static final String GLOBAL_ACTION_KEY_SCREENSHOT = "screenshot";
     private static final String GLOBAL_ACTION_KEY_ADVANCED = "advanced";
+    private static final String GLOBAL_ACTION_KEY_TORCH = "torch";
 
     private static final int SHOW_TOGGLES_BUTTON = 1;
     private static final int RESTART_HOT_BUTTON = 2;
@@ -173,6 +177,7 @@ class GlobalActionsDialog implements DialogInterface.OnDismissListener,
     private final boolean mShowSilentToggle;
     private final EmergencyAffordanceManager mEmergencyAffordanceManager;
     private final ScreenshotHelper mScreenshotHelper;
+    private boolean mTorchEnabled = false;
 
     /**
      * @param context everything needs a context :(
@@ -451,6 +456,11 @@ class GlobalActionsDialog implements DialogInterface.OnDismissListener,
                     mItems.add(getLockdownAction());
                     mHasLockdownButton = true;
                 }
+            } else if (GLOBAL_ACTION_KEY_TORCH.equals(actionKey)) {
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_TORCH, 0) != 0) {
+                    mItems.add(getTorchToggleAction());
+                }
             /*} else if (GLOBAL_ACTION_KEY_VOICEASSIST.equals(actionKey)) {
                 mItems.add(getVoiceAssistAction());
             } else if (GLOBAL_ACTION_KEY_ASSIST.equals(actionKey)) {
@@ -614,6 +624,37 @@ class GlobalActionsDialog implements DialogInterface.OnDismissListener,
         public boolean showBeforeProvisioning() {
             return false;
         }
+    }
+
+    private Action getTorchToggleAction() {
+        return new SinglePressAction(com.android.systemui.R.drawable.ic_lock_torch,
+                com.android.systemui.R.string.quick_settings_flashlight_label) {
+
+            public void onPress() {
+                try {
+                    CameraManager cameraManager = (CameraManager)
+                            mContext.getSystemService(Context.CAMERA_SERVICE);
+                    for (final String cameraId : cameraManager.getCameraIdList()) {
+                        CameraCharacteristics characteristics =
+                            cameraManager.getCameraCharacteristics(cameraId);
+                        int orient = characteristics.get(CameraCharacteristics.LENS_FACING);
+                        if (orient == CameraCharacteristics.LENS_FACING_BACK) {
+                            cameraManager.setTorchMode(cameraId, !mTorchEnabled);
+                            mTorchEnabled = !mTorchEnabled;
+                        }
+                    }
+                } catch (CameraAccessException e) {
+                }
+            }
+
+            public boolean showDuringKeyguard() {
+                return true;
+            }
+
+            public boolean showBeforeProvisioning() {
+                return false;
+            }
+        };
     }
 
     private class BugReportAction extends SinglePressAction implements LongPressAction {
