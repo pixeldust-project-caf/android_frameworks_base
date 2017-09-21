@@ -76,6 +76,7 @@ import android.metrics.LogMaker;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Process;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.os.RemoteException;
@@ -124,6 +125,11 @@ import com.android.internal.logging.UiEventLoggerImpl;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.statusbar.RegisterStatusBarResult;
+import com.android.internal.util.hwkeys.ActionConstants;
+import com.android.internal.util.hwkeys.ActionUtils;
+import com.android.internal.util.hwkeys.PackageMonitor;
+import com.android.internal.util.hwkeys.PackageMonitor.PackageChangedListener;
+import com.android.internal.util.hwkeys.PackageMonitor.PackageState;
 import com.android.internal.util.pixeldust.PixeldustUtils;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
@@ -267,7 +273,8 @@ import dagger.Lazy;
 public class StatusBar extends SystemUI implements
         ActivityStarter,
         CommandQueue.Callbacks,
-        LifecycleOwner {
+        LifecycleOwner,
+        PackageChangedListener {
     public static final boolean MULTIUSER_DEBUG = false;
 
     protected static final int MSG_DISMISS_KEYBOARD_SHORTCUTS_MENU = 1027;
@@ -571,6 +578,8 @@ public class StatusBar extends SystemUI implements
     private boolean mTransientShown;
 
     private final DisplayMetrics mDisplayMetrics;
+
+    private PackageMonitor mPackageMonitor;
 
     // XXX: gesture research
     private final GestureRecorder mGestureRec = DEBUG_GESTURES
@@ -957,6 +966,10 @@ public class StatusBar extends SystemUI implements
         mStatusBarHideIconsForBouncerManager.setDisplayId(mDisplayId);
         mSettingsObserver = new SettingsObserver(mMainHandler);
         mSettingsObserver.observe();
+
+        mPackageMonitor = new PackageMonitor();
+        mPackageMonitor.register(mContext, mMainHandler);
+        mPackageMonitor.addListener(this);
 
         // start old BaseStatusBar.start().
         mWindowManagerService = WindowManagerGlobal.getWindowManagerService();
@@ -2986,6 +2999,26 @@ public class StatusBar extends SystemUI implements
                                 0 /* flags */,
                                 animationController),
                 delay);
+    }
+
+    @Override
+    public void onPackageChanged(String pkg, PackageState state) {
+        if (state == PackageState.PACKAGE_REMOVED
+                || state == PackageState.PACKAGE_CHANGED) {
+            final Context ctx = mContext;
+            final Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (!ActionUtils.hasNavbarByDefault(ctx)) {
+                        ActionUtils.resolveAndUpdateButtonActions(ctx,
+                                ActionConstants
+                                        .getDefaults(ActionConstants.HWKEYS));
+                    }
+                }
+            });
+            thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
+            thread.start();
+        }
     }
 
     public void showKeyguard() {
