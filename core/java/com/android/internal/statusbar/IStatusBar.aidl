@@ -287,7 +287,7 @@ oneway interface IStatusBar
     void runGcForTest();
 
     /**
-     * Aex
+     * Custom extensions
      */
     void toggleCameraFlash();
 }
