@@ -67,6 +67,8 @@
     <!-- Battery saver extreme [CHAR LIMIT=NONE]-->
     <string name="extreme_battery_saver_text">Extreme</string>
 
-    <!-- Statusbar tuner -->
+    <!-- SystemUI Tuner -->
     <string name="statusbar_items_title">Statusbar icon</string>
+    <string name="lockscreen_default">Default</string>
+    <string name="lockscreen_hidden">None</string>
 </resources>
