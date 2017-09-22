@@ -43,4 +43,7 @@
     <!-- Statusbar Tuner -->
     <string name="statusbar_items_title">Elemente der Statusleiste</string>
 
+    <string name="lockscreen_default">Standard</string>
+    <string name="lockscreen_hidden">Keine Aktion</string>
+
 </resources>
