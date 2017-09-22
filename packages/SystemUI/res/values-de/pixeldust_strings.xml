@@ -29,4 +29,6 @@
     <string name="status_bar_ring_mode">Klingelmodus</string>
     <string name="status_bar_show_activity_indicators_title">Datenaktivitätsanzeige</string>
     <string name="status_bar_show_activity_indicators_summary">Datenaktivität für die WLAN und Mobilfunkverbindung anzeigen</string>
+    <string name="lockscreen_default">Standard</string>
+    <string name="lockscreen_hidden">Keine</string>
 </resources>
