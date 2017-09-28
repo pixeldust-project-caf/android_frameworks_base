@@ -45,5 +45,7 @@
 
     <string name="lockscreen_default">Standard</string>
     <string name="lockscreen_hidden">Keine Aktion</string>
+    <!-- Shows when people have clicked on the custom lockscreen shortcut [CHAR LIMIT=60] -->
+    <string name="custom_hint">Zum Öffnen über das Symbol wischen</string>
 
 </resources>
