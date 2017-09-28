@@ -86,4 +86,8 @@
     <string name="lte_on">LTE EIN</string>
     <string name="lte_off">LTE AUS</string>
 
+    <!-- Language toggle tile -->
+    <string name="quick_settings_locale_label">Sprache</string>
+    <string name="quick_settings_locale_more_locales_toast">Bitte konfigurieren Sie mehrere Sprachen, um die Umschaltfunktion zu verwenden</string>
+
 </resources>
