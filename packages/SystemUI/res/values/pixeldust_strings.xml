@@ -37,4 +37,7 @@
     <string name="status_bar_show_activity_indicators_summary">Show data activity for Wi-Fi and cellular connection</string>
     <string name="lockscreen_default">Default</string>
     <string name="lockscreen_hidden">None</string>
+
+    <!-- Shows when people have clicked on the custom lockscreen shortcut [CHAR LIMIT=60] -->
+    <string name="custom_hint">Swipe from icon to launch</string>
 </resources>
