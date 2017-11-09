@@ -218,4 +218,14 @@
     <!-- Ambient Display Pixel-Like string -->
     <string name="ambientmusic_songinfo">%s von %s</string>
 
+    <!-- Screen Stabilization -->
+    <string name="quick_settings_stabilization_label">Bildschirmstabilisierung</string>
+    <string name="quick_settings_stabilization_off">Stabilisierung ist deaktiviert</string>
+    <string name="quick_settings_stabilization_on">Stabilisierung ist aktiviert</string>
+    <string name="low_label">Niedrig</string>
+    <string name="high_label">Hoch</string>
+    <string name="stabilization_velocity_friction">Bewegungsgeschwindigkeit</string>
+    <string name="stabilization_velocity_amplitude">Geschwindigkeitsamplitude</string>
+    <string name="stabilization_position_friction">Position verschieben</string>
+
 </resources>
