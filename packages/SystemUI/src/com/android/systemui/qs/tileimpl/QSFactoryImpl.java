@@ -47,6 +47,7 @@ import com.android.systemui.qs.tiles.LocaleTile;
 import com.android.systemui.qs.tiles.LocationTile;
 import com.android.systemui.qs.tiles.NfcTile;
 import com.android.systemui.qs.tiles.NightDisplayTile;
+import com.android.systemui.qs.tiles.RebootTile;
 import com.android.systemui.qs.tiles.RotationLockTile;
 import com.android.systemui.qs.tiles.ScreenrecordTile;
 import com.android.systemui.qs.tiles.ThemeTile;
@@ -100,6 +101,7 @@ public class QSFactoryImpl implements QSFactory {
     private final Provider<DataSwitchTile> mDataSwitchTileProvider;
     private final Provider<GamingModeTile> mGamingModeTileProvider;
     private final Provider<ScreenStabilizationTile> mScreenStabilizationTileProvider;
+    private final Provider<RebootTile> mRebootTileProvider;
 
     private QSTileHost mHost;
 
@@ -134,7 +136,8 @@ public class QSFactoryImpl implements QSFactory {
             Provider<SyncTile> syncTileProvider,
             Provider<DataSwitchTile> dataSwitchTileProvider,
             Provider<GamingModeTile> GamingModeTileProvider,
-            Provider<ScreenStabilizationTile> screenStabilizationTileProvider) {
+            Provider<ScreenStabilizationTile> screenStabilizationTileProvider,
+            Provider<RebootTile> rebootTileProvider) {
         mWifiTileProvider = wifiTileProvider;
         mBluetoothTileProvider = bluetoothTileProvider;
         mCellularTileProvider = cellularTileProvider;
@@ -166,6 +169,7 @@ public class QSFactoryImpl implements QSFactory {
         mDataSwitchTileProvider = dataSwitchTileProvider;
         mGamingModeTileProvider = GamingModeTileProvider;
         mScreenStabilizationTileProvider = screenStabilizationTileProvider;
+        mRebootTileProvider = rebootTileProvider;
     }
 
     public void setHost(QSTileHost host) {
@@ -247,6 +251,8 @@ public class QSFactoryImpl implements QSFactory {
                 return mGamingModeTileProvider.get();
             case "screenstabilization":
                 return mScreenStabilizationTileProvider.get();
+            case "reboot":
+                return mRebootTileProvider.get();
         }
 
         // Intent tiles.
