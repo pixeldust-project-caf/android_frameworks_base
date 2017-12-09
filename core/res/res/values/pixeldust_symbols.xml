@@ -45,8 +45,8 @@
     <!-- Pocket bridge -->
     <java-symbol type="string" name="config_pocketBridgeSysfsInpocket" />
 
-  <!-- Emergency button in power menu -->
-  <java-symbol type="bool" name="config_showEmergencyButtonInPowerMenu" />
+    <!-- Emergency button in power menu -->
+    <java-symbol type="bool" name="config_showEmergencyButtonInPowerMenu" />
 
     <!-- Weather icons -->
     <java-symbol type="drawable" name="weather_clear_night" />
@@ -76,12 +76,16 @@
     <!-- Hardware key binding -->
     <java-symbol type="integer" name="config_deviceHardwareKeys" />
 
-  <!-- Smartnav anims -->
-  <java-symbol type="anim" name="inv_app_in" />
-  <java-symbol type="anim" name="inv_app_out" />
+    <!-- Smartnav anims -->
+    <java-symbol type="anim" name="inv_app_in" />
+    <java-symbol type="anim" name="inv_app_out" />
 
-  <!-- SystemUI Restart -->
-  <java-symbol type="string" name="systemui_restart_title" />
-  <java-symbol type="string" name="systemui_restart_message" />
+    <!-- SystemUI Restart -->
+    <java-symbol type="string" name="systemui_restart_title" />
+    <java-symbol type="string" name="systemui_restart_message" />
+
+    <!-- Toast text and bg colors -->
+    <java-symbol type="color" name="toast_bg_color" />
+    <java-symbol type="color" name="toast_text_color" />
 
 </resources>
