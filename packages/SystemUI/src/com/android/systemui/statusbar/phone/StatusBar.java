@@ -443,6 +443,8 @@ public class StatusBar extends SystemUI implements DemoMode,
     protected KeyguardViewMediator mKeyguardViewMediator;
     private ZenModeController mZenController;
 
+    private boolean mSysuiRoundedFwvals;
+
     /**
      * Helper that is responsible for showing the right toast when a disallowed activity operation
      * occurred. In pinned mode, we show instructions on how to break out of this mode, whilst in
@@ -2163,6 +2165,35 @@ public class StatusBar extends SystemUI implements DemoMode,
             e.printStackTrace();
         }
         return themeInfo != null && themeInfo.isEnabled();
+    }
+
+    public boolean isCurrentRoundedSameAsFw() {
+        float density = Resources.getSystem().getDisplayMetrics().density;
+        Resources res = null;
+        try {
+            res = mContext.getPackageManager().getResourcesForApplication("com.android.systemui");
+        } catch (NameNotFoundException e) {
+            e.printStackTrace();
+            // If we can't get resources, return true so that updateCorners doesn't attempt to
+            // set corner values
+            return true;
+        }
+
+        // Resource IDs for framework properties
+        int resourceIdRadius = res.getIdentifier("com.android.systemui:dimen/rounded_corner_radius", null, null);
+        int resourceIdPadding = res.getIdentifier("com.android.systemui:dimen/rounded_corner_content_padding", null, null);
+
+        // Values on framework resources
+        int cornerRadiusRes = (int) (res.getDimension(resourceIdRadius) / density);
+        int contentPaddingRes = (int) (res.getDimension(resourceIdPadding) / density);
+
+        // Values in Settings DBs
+        int cornerRadius = Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                Settings.Secure.SYSUI_ROUNDED_SIZE, cornerRadiusRes, UserHandle.USER_CURRENT);
+        int contentPadding = Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                Settings.Secure.SYSUI_ROUNDED_CONTENT_PADDING, contentPaddingRes, UserHandle.USER_CURRENT);
+
+        return (cornerRadiusRes == cornerRadius) && (contentPaddingRes == contentPadding);
     }
 
     @Nullable
@@ -4064,6 +4095,28 @@ public class StatusBar extends SystemUI implements DemoMode,
             // Make sure we have the correct navbar/statusbar colors.
             mStatusBarWindowManager.setKeyguardDark(useDarkText);
         }
+        updateCorners();
+    }
+
+    private void updateCorners() {
+        if (mSysuiRoundedFwvals && !isCurrentRoundedSameAsFw()) {
+            float density = Resources.getSystem().getDisplayMetrics().density;
+            Resources res = null;
+            try {
+                res = mContext.getPackageManager().getResourcesForApplication("com.android.systemui");
+            } catch (NameNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            if (res != null) {
+                int resourceIdRadius = res.getIdentifier("com.android.systemui:dimen/rounded_corner_radius", null, null);
+                Settings.Secure.putIntForUser(mContext.getContentResolver(),
+                    Settings.Secure.SYSUI_ROUNDED_SIZE, (int) (res.getDimension(resourceIdRadius) / density), UserHandle.USER_CURRENT);
+                int resourceIdPadding = res.getIdentifier("com.android.systemui:dimen/rounded_corner_content_padding", null, null);
+                Settings.Secure.putIntForUser(mContext.getContentResolver(),
+                    Settings.Secure.SYSUI_ROUNDED_CONTENT_PADDING, (int) (res.getDimension(resourceIdPadding) / density), UserHandle.USER_CURRENT);
+            }
+        }
     }
 
     private void updateDozingState() {
@@ -5256,6 +5309,15 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.LOCKSCREEN_MEDIA_METADATA),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.Secure.SYSUI_ROUNDED_FWVALS),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.Secure.SYSUI_ROUNDED_SIZE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.Secure.SYSUI_ROUNDED_CONTENT_PADDING),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -5270,6 +5332,17 @@ public class StatusBar extends SystemUI implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.LOCKSCREEN_MEDIA_METADATA))) {
                 setLockscreenMediaMetadata();
+            } else if (uri.equals(Settings.Secure.getUriFor(
+                    Settings.Secure.SYSUI_ROUNDED_FWVALS))) {
+                mSysuiRoundedFwvals = Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                        Settings.Secure.SYSUI_ROUNDED_FWVALS, 0, UserHandle.USER_CURRENT) == 1;
+                updateCorners();
+            } else if (uri.equals(Settings.Secure.getUriFor(
+                    Settings.Secure.SYSUI_ROUNDED_SIZE))) {
+                updateCorners();
+            } else if (uri.equals(Settings.Secure.getUriFor(
+                    Settings.Secure.SYSUI_ROUNDED_CONTENT_PADDING))) {
+                updateCorners();
             }
         }
 
@@ -5277,6 +5350,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             updateKeyguardStatusSettings();
             setFpToDismissNotifications();
             setLockscreenMediaMetadata();
+            updateCorners();
         }
     }
 
