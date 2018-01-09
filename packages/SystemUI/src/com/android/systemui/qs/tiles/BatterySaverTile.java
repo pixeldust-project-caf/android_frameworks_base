@@ -40,7 +40,7 @@ public class BatterySaverTile extends QSTileImpl<BooleanState> implements
 
     private int mLevel;
     private boolean mPowerSave;
-    private boolean mCharging;
+    private static boolean mCharging;
     private boolean mPluggedIn;
 
     private final KeyguardMonitor mKeyguard;
@@ -108,7 +108,15 @@ public class BatterySaverTile extends QSTileImpl<BooleanState> implements
         BatterySaverIcon bsi = new BatterySaverIcon();
         bsi.mState = state.state;
         state.icon = bsi;
-        state.label = mContext.getString(R.string.battery_detail_switch_title);
+        if (mCharging) {
+            state.label = mContext.getString(R.string.keyguard_plugged_in);
+        } else {
+            if (mLevel == 100) {
+                state.label = mContext.getString(R.string.keyguard_charged);
+            } else {
+                state.label = mLevel + "%";
+            }
+        }
         state.contentDescription = state.label;
         state.value = mPowerSave;
         state.expandedAccessibilityClassName = Switch.class.getName();
@@ -153,7 +161,11 @@ public class BatterySaverTile extends QSTileImpl<BooleanState> implements
             super.setBatteryLevel(MAX_BATTERY);
             setMeterStyle(BatteryMeterDrawableBase.BATTERY_STYLE_PORTRAIT);
             setPowerSave(true);
-            setCharging(false);
+            if (mCharging) {
+                setCharging(true);
+            } else {
+                setCharging(false);
+            }
             setPowerSaveAsColorError(false);
             mPowerSaveAsColorError = true;
             mFramePaint.setColor(0);
