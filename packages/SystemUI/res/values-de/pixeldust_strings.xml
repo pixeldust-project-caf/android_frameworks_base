@@ -69,11 +69,19 @@
     <string name="screenrecord_notif_title">Bildschirmaufnahme läuft</string>
     <!-- Screenrecord notification action: Stop -->
     <string name="screenrecord_notif_stop">Stopp</string>
+    <string name="screenrecord_notif_completed">Bildschirmaufnahme erfolgreich</string>
     <!-- Screenrecord notification action: show/hide pointer -->
     <string name="screenrecord_notif_pointer_on">Zeiger einblenden</string>
     <string name="screenrecord_notif_pointer_off">Zeiger ausblenden</string>
     <!-- Screen record notification error title -->
     <string name="screenrecord_notif_error">Bildschirmaufnahme nicht möglich</string>
     <string name="notification_channel_screenrecord">Bildschirmaufnahmen</string>
+    <string name="screenrecord_hide_hint">Hinweis einblenden</string>
+    <string name="screenrecord_show_hint">Hinweis ausblenden</string>
+    <!-- Screenshot QS tile -->
+    <string name="quick_settings_screenrecord_label">Bildschirmaufnahme</string>
+    <string name="quick_settings_screenrecord_lq_label">Bildschirmaufnahme 480p</string>
+    <string name="quick_settings_screenrecord_mq_label">Bildschirmaufnahme 720p</string>
+    <string name="quick_settings_screenrecord_hq_label">Bildschirmaufnahme 720p+</string>
 
 </resources>
