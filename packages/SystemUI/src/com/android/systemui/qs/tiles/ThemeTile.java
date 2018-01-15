@@ -124,6 +124,8 @@ public class ThemeTile extends QSTileImpl<BooleanState> {
                 R.string.system_theme_style_dark, Settings.System.SYSTEM_THEME));
         sStyleItems.add(new ThemeTileItem(3, -1,
                 R.string.system_theme_style_black, Settings.System.SYSTEM_THEME));
+        sStyleItems.add(new ThemeTileItem(4, -1,
+                R.string.system_theme_style_shishunights, Settings.System.SYSTEM_THEME));
     }
 
     private enum Mode {
@@ -296,7 +298,7 @@ public class ThemeTile extends QSTileImpl<BooleanState> {
     }
 
     private ThemeTileItem getThemeItemForStyleMode() {
-        boolean isDark = ThemeAccentUtils.isUsingDarkTheme(mOverlayManager, mCurrentUserId) || ThemeAccentUtils.isUsingBlackTheme(mOverlayManager, mCurrentUserId);
+        boolean isDark = ThemeAccentUtils.isUsingDarkTheme(mOverlayManager, mCurrentUserId) || ThemeAccentUtils.isUsingBlackTheme(mOverlayManager, mCurrentUserId) || ThemeAccentUtils.isUsingShishuNightsTheme(mOverlayManager, mCurrentUserId);
         if (isDark) {
             return new ThemeTileItem(20, R.color.quick_settings_theme_tile_white,
                     R.string.quick_settings_theme_tile_color_white);

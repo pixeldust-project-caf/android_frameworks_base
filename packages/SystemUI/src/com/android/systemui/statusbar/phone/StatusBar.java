@@ -2251,6 +2251,10 @@ public class StatusBar extends SystemUI implements DemoMode,
         return ThemeAccentUtils.isUsingBlackTheme(mOverlayManager, mLockscreenUserManager.getCurrentUserId());
     }
 
+    public boolean isUsingShishuNightsTheme() {
+        return ThemeAccentUtils.isUsingShishuNightsTheme(mOverlayManager, mLockscreenUserManager.getCurrentUserId());
+    }
+
     // Unloads the stock dark theme
     public void unloadStockDarkTheme() {
         ThemeAccentUtils.unloadStockDarkTheme(mOverlayManager, mLockscreenUserManager.getCurrentUserId());
@@ -4123,6 +4127,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         int userThemeSetting = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.SYSTEM_THEME, 0, mLockscreenUserManager.getCurrentUserId());
+        boolean useShishuNightsTheme = false;
         boolean useBlackTheme = false;
         boolean useDarkTheme = false;
         if (userThemeSetting == 0) {
@@ -4139,6 +4144,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         } else {
             useDarkTheme = userThemeSetting == 2;
             useBlackTheme = userThemeSetting == 3;
+            useShishuNightsTheme = userThemeSetting == 4;
         }
         if (isUsingDarkTheme() != useDarkTheme) {
             unfuckBlackWhiteAccent(); // Check for black and white accent
@@ -4147,6 +4153,10 @@ public class StatusBar extends SystemUI implements DemoMode,
         if (isUsingBlackTheme() != useBlackTheme) {
             unfuckBlackWhiteAccent(); // Check for black and white accent
             ThemeAccentUtils.setBlackTheme(mOverlayManager, mLockscreenUserManager.getCurrentUserId(), useBlackTheme);
+        }
+        if (isUsingShishuNightsTheme() != useShishuNightsTheme) {
+            unfuckBlackWhiteAccent(); // Check for black and white accent
+            ThemeAccentUtils.setShishuNightsTheme(mOverlayManager, mLockscreenUserManager.getCurrentUserId(), useShishuNightsTheme);
         }
 
         // Lock wallpaper defines the color of the majority of the views, hence we'll use it
