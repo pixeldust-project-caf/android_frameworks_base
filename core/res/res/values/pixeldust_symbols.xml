@@ -188,4 +188,6 @@
     <java-symbol type="string" name="config_SmartChargingSupspendValue" />
     <java-symbol type="string" name="config_SmartChargingResumeValue" />
 
+  <java-symbol type="bool" name="config_canForceDozeNotifications" />
+
 </resources>

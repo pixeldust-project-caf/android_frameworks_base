@@ -138,4 +138,6 @@
     <string name="config_SmartChargingSupspendValue" translatable="false">0</string>
     <string name="config_SmartChargingResumeValue" translatable="false">1</string>
 
+    <bool name="config_canForceDozeNotifications">true</bool>
+
 </resources>
