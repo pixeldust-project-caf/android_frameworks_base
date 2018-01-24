@@ -18,6 +18,7 @@ package com.android.systemui.statusbar;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -41,7 +42,8 @@ public class SettingConfirmationSnackbarViewCreator {
     }
 
     private void initSnackBar() {
-        mSnackbarView = (SettingConfirmationSnackbarView) View.inflate(mContext,
+        ContextThemeWrapper themedContext = new ContextThemeWrapper(mContext, com.android.systemui.R.style.qs_base);
+        mSnackbarView = (SettingConfirmationSnackbarView) View.inflate(themedContext,
                 R.layout.setting_confirmation_snackbar, null);
         if (mSnackbarView != null) attachSnackBar();
     }

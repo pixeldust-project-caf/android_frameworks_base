@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/shadow"
-        android:background="@color/on_the_spot_background">
+        android:background="?android:attr/colorBackgroundFloating">
 
         <TextView
             android:id="@+id/description"
@@ -39,7 +39,7 @@
             android:layout_marginTop="18dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:textColor="@color/on_the_spot_text"
+            android:textColor="?android:attr/textColorPrimary"
             android:fontFamily="sans-serif"
             android:textStyle="normal" />
 
@@ -72,7 +72,7 @@
             android:minWidth="0dp"
             android:minHeight="0dp"
             android:background="@null"
-            android:textColor="@color/on_the_spot_confirm_text"
+            android:textColor="?android:attr/colorAccent"
             android:fontFamily="sans-serif-medium"
             android:textStyle="normal"
             android:text="@string/on_the_spot_confirm" />
