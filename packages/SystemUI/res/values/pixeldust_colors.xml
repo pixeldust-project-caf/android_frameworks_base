@@ -23,4 +23,7 @@
     <!-- OnTheSpot: OTS snackbar action denial button text color. -->
     <color name="on_the_spot_deny_text">#FF9B9B9B</color>
 
+    <!-- Navbar icon Colors -->
+    <color name="dark_nav_bar">#ff585858</color>
+
 </resources>
