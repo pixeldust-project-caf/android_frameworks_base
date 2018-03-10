@@ -98,4 +98,9 @@
     <!-- Wallpaper component -->
     <java-symbol type="string" name="default_wallpaper_component_custom" />
 
+    <!-- Forcefully tint notification icon text -->
+    <java-symbol type="bool" name="config_useDarkBgNotificationIconTextTinting" />
+    <java-symbol type="bool" name="config_useDarkBgNotificationTinting_override" />
+    <java-symbol type="bool" name="config_notificationTinting_override" />
+
 </resources>
