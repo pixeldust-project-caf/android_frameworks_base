@@ -94,4 +94,7 @@
     <string name="quick_settings_theme_tile_color_black">Schwarz</string>
     <string name="quick_settings_theme_tile_color_white">Weiß</string>
 
+    <string name="theme_info_title">Wussten Sie schon?</string>
+    <string name="theme_info_message">Die UI-Design-Kachel ist eine hervorragende Möglichkeit, um die Akzentfarbe oder den UI-Stil einfach zu wechseln.\n\nUm zwischen Akzentfarbe und UI-Stil zu wechseln, drücken Sie einfach lange auf die Kachel und tippen Sie dann erneut, um auf die jeweilige Auswahlseite zu gelangen.</string>
+
 </resources>
