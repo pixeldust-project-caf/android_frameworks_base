@@ -5701,6 +5701,12 @@ public final class Settings {
         public static final String RIGHT_VERTICAL_BACK_SWIPE_APP_ACTIVITY_ACTION = "right_vertical_back_swipe_app_activity_action";
 
         /**
+         * Whether to show battery percent on ambient bottom
+         * @hide
+         */
+        public static final String AMBIENT_BATTERY_PERCENT = "ambient_battery_percent";
+
+        /**
          * Keys we no longer back up under the current schema, but want to continue to
          * process when restoring historical backup datasets.
          *
@@ -6027,6 +6033,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK);
             PRIVATE_SETTINGS.add(HIGH_TOUCH_SENSITIVITY_ENABLE);
             PRIVATE_SETTINGS.add(BACK_GESTURE_HAPTIC);
+            PRIVATE_SETTINGS.add(AMBIENT_BATTERY_PERCENT);
         }
 
         /**
