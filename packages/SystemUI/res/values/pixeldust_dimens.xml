@@ -34,4 +34,7 @@
     <!-- Height of the status bar header bar -->
     <dimen name="status_bar_header_height">130dp</dimen>
 
+    <!-- right/left padding for collapsed statusbar -->
+    <dimen name="qs_corner_content_padding">8dp</dimen>
+
 </resources>
