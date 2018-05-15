@@ -4894,6 +4894,16 @@ public final class Settings {
                 ANY_INTEGER_VALIDATOR;
 
         /**
+         * Whether to change the color of the qs panel
+         * @hide
+         */
+        public static final String QS_PANEL_BG_COLOR = "qs_panel_bg_color";
+
+        /** @hide */
+        private static final Validator QS_PANEL_BG_COLOR_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -4963,6 +4973,7 @@ public final class Settings {
             STATUSBAR_CLOCK_DATE_FORMAT,
             STATUSBAR_CLOCK_DATE_POSITION,
             QS_PANEL_BG_ALPHA,
+            QS_PANEL_BG_COLOR,
         };
 
         /**
@@ -5130,6 +5141,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(STATUSBAR_CLOCK_DATE_FORMAT);
             PRIVATE_SETTINGS.add(STATUSBAR_CLOCK_DATE_POSITION);
             PRIVATE_SETTINGS.add(QS_PANEL_BG_ALPHA);
+            PRIVATE_SETTINGS.add(QS_PANEL_BG_COLOR);
         }
 
         /**
@@ -5243,6 +5255,7 @@ public final class Settings {
             VALIDATORS.put(STATUSBAR_CLOCK_DATE_FORMAT, STATUSBAR_CLOCK_DATE_FORMAT_VALIDATOR);
             VALIDATORS.put(STATUSBAR_CLOCK_DATE_POSITION, STATUSBAR_CLOCK_DATE_POSITION_VALIDATOR);
             VALIDATORS.put(QS_PANEL_BG_ALPHA, QS_PANEL_BG_ALPHA_VALIDATOR);
+            VALIDATORS.put(QS_PANEL_BG_COLOR, QS_PANEL_BG_COLOR_VALIDATOR);
         }
 
         /**
