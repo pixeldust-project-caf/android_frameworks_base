@@ -121,4 +121,7 @@
     <!-- Screen off delay -->
     <java-symbol type="integer" name="config_screen_off_delay" />
 
+    <!-- Flashlight proximity check -->
+    <java-symbol type="integer" name="config_flashlightProximityTimeout" />
+
 </resources>
