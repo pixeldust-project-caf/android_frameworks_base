@@ -4668,6 +4668,7 @@ public final class Settings {
          * 2 - force dark
          * 3 - force black
          * 4 - force shishunights
+         * 5 - force chocolate
          * @hide
          */
         public static final String SYSTEM_THEME = "system_theme";

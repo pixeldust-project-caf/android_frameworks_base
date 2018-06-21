@@ -2255,6 +2255,10 @@ public class StatusBar extends SystemUI implements DemoMode,
         return ThemeAccentUtils.isUsingShishuNightsTheme(mOverlayManager, mLockscreenUserManager.getCurrentUserId());
     }
 
+    public boolean isUsingChocolateTheme() {
+        return ThemeAccentUtils.isUsingChocolateTheme(mOverlayManager, mLockscreenUserManager.getCurrentUserId());
+    }
+
     // Unloads the stock dark theme
     public void unloadStockDarkTheme() {
         ThemeAccentUtils.unloadStockDarkTheme(mOverlayManager, mLockscreenUserManager.getCurrentUserId());
@@ -4127,6 +4131,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         int userThemeSetting = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.SYSTEM_THEME, 0, mLockscreenUserManager.getCurrentUserId());
+        boolean useChocolateTheme = false;
         boolean useShishuNightsTheme = false;
         boolean useBlackTheme = false;
         boolean useDarkTheme = false;
@@ -4145,6 +4150,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             useDarkTheme = userThemeSetting == 2;
             useBlackTheme = userThemeSetting == 3;
             useShishuNightsTheme = userThemeSetting == 4;
+            useChocolateTheme = userThemeSetting == 5;
         }
         if (isUsingDarkTheme() != useDarkTheme) {
             unfuckBlackWhiteAccent(); // Check for black and white accent
@@ -4157,6 +4163,10 @@ public class StatusBar extends SystemUI implements DemoMode,
         if (isUsingShishuNightsTheme() != useShishuNightsTheme) {
             unfuckBlackWhiteAccent(); // Check for black and white accent
             ThemeAccentUtils.setShishuNightsTheme(mOverlayManager, mLockscreenUserManager.getCurrentUserId(), useShishuNightsTheme);
+        }
+        if (isUsingChocolateTheme() != useChocolateTheme) {
+            unfuckBlackWhiteAccent(); // Check for black and white accent
+            ThemeAccentUtils.setChocolateTheme(mOverlayManager, mLockscreenUserManager.getCurrentUserId(), useChocolateTheme);
         }
 
         // Lock wallpaper defines the color of the majority of the views, hence we'll use it

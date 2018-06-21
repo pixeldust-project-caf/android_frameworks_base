@@ -70,6 +70,7 @@
     <string name="system_theme_style_dark">Dunkel</string>
     <string name="system_theme_style_black">Schwarz</string>
     <string name="system_theme_style_shishunights">Shishu Nights</string>
+    <string name="system_theme_style_chocolate">Schokolade</string>
     <string name="quick_settings_theme_tile_title">Akzentfarbe</string>
     <string name="quick_settings_theme_tile_accent_detail_title">Farbe wählen</string>
     <string name="quick_settings_theme_tile_style_detail_title">UI-Stil wählen</string>

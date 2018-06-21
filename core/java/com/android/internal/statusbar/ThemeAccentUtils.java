@@ -49,6 +49,13 @@ public class ThemeAccentUtils {
         "com.android.gboard.theme.shishunights", // 3
     };
 
+    private static final String[] CHOCOLATE_THEMES = {
+        "com.android.system.theme.chocolate", // 0
+        "com.android.settings.theme.chocolate", // 1
+        "com.android.settings.intelligence.theme.chocolate", // 2
+        "com.android.gboard.theme.chocolate", // 3
+    };
+
     // Accents
     private static final String[] ACCENTS = {
         "default_accent", // 0
@@ -133,6 +140,18 @@ public class ThemeAccentUtils {
         return themeInfo != null && themeInfo.isEnabled();
      }
 
+    // Check for the chocolate system theme
+    public static boolean isUsingChocolateTheme(IOverlayManager om, int userId) {
+        OverlayInfo themeInfo = null;
+        try {
+            themeInfo = om.getOverlayInfo(CHOCOLATE_THEMES[0],
+                    userId);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return themeInfo != null && themeInfo.isEnabled();
+     }
+
     // Set light / dark theme
     public static void setLightDarkTheme(IOverlayManager om, int userId, boolean useDarkTheme) {
         for (String theme : DARK_THEMES) {
@@ -178,11 +197,26 @@ public class ThemeAccentUtils {
         }
     }
 
+    // Set chocolate theme
+    public static void setChocolateTheme(IOverlayManager om, int userId, boolean useChocolateTheme) {
+        for (String theme : CHOCOLATE_THEMES) {
+            try {
+                om.setEnabled(theme,
+                        useChocolateTheme, userId);
+                unfuckBlackWhiteAccent(om, userId);
+                if (useChocolateTheme) {
+                    unloadStockDarkTheme(om, userId);
+                }
+            } catch (RemoteException e) {
+            }
+        }
+    }
+
     // Check for black and white accent overlays
     public static void unfuckBlackWhiteAccent(IOverlayManager om, int userId) {
         OverlayInfo themeInfo = null;
         try {
-            if (isUsingDarkTheme(om, userId) || isUsingBlackTheme(om, userId) || isUsingShishuNightsTheme(om, userId)) {
+            if (isUsingDarkTheme(om, userId) || isUsingBlackTheme(om, userId) || isUsingShishuNightsTheme(om, userId) || isUsingChocolateTheme(om, userId)) {
                 themeInfo = om.getOverlayInfo(ACCENTS[20],
                         userId);
                 if (themeInfo != null && themeInfo.isEnabled()) {
@@ -237,7 +271,7 @@ public class ThemeAccentUtils {
         } else if (accentSetting == 20) {
             try {
                 // If using a dark theme we use the white accent, otherwise use the black accent
-                if (isUsingDarkTheme(om, userId) || isUsingBlackTheme(om, userId) || isUsingShishuNightsTheme(om, userId)) {
+                if (isUsingDarkTheme(om, userId) || isUsingBlackTheme(om, userId) || isUsingShishuNightsTheme(om, userId) || isUsingChocolateTheme(om, userId)) {
                     om.setEnabled(ACCENTS[21],
                             true, userId);
                 } else {
