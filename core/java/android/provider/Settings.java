@@ -5540,6 +5540,15 @@ public final class Settings {
         public static final String STATUS_BAR_CLOCK = "status_bar_clock";
 
         /**
+         * AM/PM Style for clock options
+         * 0 - Normal AM/PM
+         * 1 - Small AM/PM
+         * 2 - No AM/PM  (default)
+         * @hide
+         */
+        public static final String STATUS_BAR_AM_PM = "status_bar_am_pm";
+
+        /**
          * IMPORTANT: If you add a new public settings you also have to add it to
          * PUBLIC_SETTINGS below. If the new setting is hidden you have to add
          * it to PRIVATE_SETTINGS below. Also add a validator that can validate
