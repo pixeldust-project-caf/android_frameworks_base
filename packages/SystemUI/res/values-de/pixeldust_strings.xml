@@ -21,4 +21,7 @@
 
     <!-- Screenshot Delete Toast -->
     <string name="delete_screenshot_toast">Bildschirmfoto gelöscht</string>
+
+    <!-- Name of the clock in status bar [CHAR LIMIT=30] -->
+    <string name="clock">Uhrzeit</string>
 </resources>
