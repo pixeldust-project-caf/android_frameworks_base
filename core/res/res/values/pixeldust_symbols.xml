@@ -121,7 +121,10 @@
     <!-- Flashlight proximity check -->
     <java-symbol type="integer" name="config_flashlightProximityTimeout" />
 
-  <!-- Whether auto face unlock is enabled by default -->
-  <java-symbol type="bool" name="config_face_unlock_enabled_by_default" />
+    <!-- Whether auto face unlock is enabled by default -->
+    <java-symbol type="bool" name="config_face_unlock_enabled_by_default" />
+
+    <!-- Whether device ignores the RSSNR signal implementation -->
+    <java-symbol type="bool" name="config_ignoreRssnrSignalLevel" />
 
 </resources>
