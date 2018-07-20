@@ -530,6 +530,8 @@ public class StatusBar extends SystemUI implements DemoMode,
     private boolean mWallpaperSupported;
 
     private VisualizerView mVisualizerView;
+    // LS visualizer on Ambient Display
+    private boolean mAmbientVisualizer;
 
     private int mChargingAnimation = 1;
 
@@ -744,6 +746,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.GESTURE_NAVBAR_BROWSER_ACTION),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.AMBIENT_VISUALIZER_ENABLED),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -775,6 +780,9 @@ public class StatusBar extends SystemUI implements DemoMode,
                 setUseLessBoringHeadsUp();
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.SHOW_MEDIA_HEADS_UP))) {
                 setMediaHeadsup();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.AMBIENT_VISUALIZER_ENABLED))) {
+                setAmbientVis();
             }
             update();
         }
@@ -788,7 +796,14 @@ public class StatusBar extends SystemUI implements DemoMode,
             updateChargingAnimation();
             setGestureNavOptions();
             setMediaHeadsup();
+            setAmbientVis();
         }
+    }
+
+    private void setAmbientVis() {
+        mAmbientVisualizer = Settings.System.getIntForUser(
+                mContext.getContentResolver(), Settings.System.AMBIENT_VISUALIZER_ENABLED, 0,
+                UserHandle.USER_CURRENT) == 1;
     }
 
     private RegisterStatusBarResult getRegisterStatusBarResult() {
@@ -4088,8 +4103,11 @@ public class StatusBar extends SystemUI implements DemoMode,
                 BiometricUnlockController.MODE_WAKE_AND_UNLOCK) {
             dozing = false;
         }
-
         mStatusBarStateController.setIsDozing(dozing);
+
+        if (mAmbientVisualizer && mDozing) {
+            mVisualizerView.setVisible(true);
+        }
     }
 
     private void updateKeyguardState() {

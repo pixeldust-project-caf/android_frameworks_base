@@ -5610,6 +5610,13 @@ public final class Settings {
         private static final Validator PULSE_AMBIENT_LIGHT_LAYOUT_VALIDATOR = ANY_INTEGER_VALIDATOR;
 
         /**
+         * Ambient Display Visualizer
+         *
+         * @hide
+         */
+        public static final String AMBIENT_VISUALIZER_ENABLED = "ambient_visualizer_enabled";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
