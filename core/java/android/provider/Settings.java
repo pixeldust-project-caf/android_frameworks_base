@@ -8347,6 +8347,14 @@ public final class Settings {
                 "packages_to_clear_data_before_full_restore";
 
         /**
+         * Ambient Display Visualizer
+         * @hide
+         */
+        public static final String AMBIENT_VISUALIZER_ENABLED = "ambient_visualizer";
+
+        private static final Validator AMBIENT_VISUALIZER_ENABLED_VALIDATOR = BOOLEAN_VALIDATOR;
+
+        /**
          * @hide
          */
         public static final String NAVIGATION_BAR_HEIGHT_LANDSCAPE = "navigation_bar_height_landscape";
@@ -9032,6 +9040,7 @@ public final class Settings {
             PULSE_ACCENT_COLOR_ENABLED,
             SMARTBAR_DOUBLETAP_SLEEP,
             VOLUME_LINK_NOTIFICATION,
+            AMBIENT_VISUALIZER_ENABLED,
         };
 
         /**
@@ -9245,6 +9254,7 @@ public final class Settings {
             VALIDATORS.put(SMARTBAR_DOUBLETAP_SLEEP, SMARTBAR_DOUBLETAP_SLEEP_VALIDATOR);
             VALIDATORS.put(LOCK_POWER_MENU_DISABLED, LOCK_POWER_MENU_DISABLED_VALIDATOR);
             VALIDATORS.put(VOLUME_LINK_NOTIFICATION, VOLUME_LINK_NOTIFICATION_VALIDATOR);
+            VALIDATORS.put(AMBIENT_VISUALIZER_ENABLED, AMBIENT_VISUALIZER_ENABLED_VALIDATOR);
         }
 
         /**
