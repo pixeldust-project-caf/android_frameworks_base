@@ -72,7 +72,6 @@ public class Clock extends TextView implements
         CommandQueue.Callbacks,
         DarkReceiver, ConfigurationListener {
 
-    public static final String CLOCK_SECONDS = "clock_seconds";
     private static final String CLOCK_SUPER_PARCELABLE = "clock_super_parcelable";
     private static final String CURRENT_USER_ID = "current_user_id";
     private static final String VISIBLE_BY_POLICY = "visible_by_policy";
@@ -81,6 +80,10 @@ public class Clock extends TextView implements
     private static final String VISIBILITY = "visibility";
 
     private final UserTracker mUserTracker;
+
+    public static final String STATUS_BAR_CLOCK_SECONDS =
+            "system:" + Settings.System.STATUS_BAR_CLOCK_SECONDS;
+
     private final CommandQueue mCommandQueue;
     private int mCurrentUserId;
 
@@ -197,7 +200,8 @@ public class Clock extends TextView implements
             // The receiver will return immediately if the view does not have a Handler yet.
             mBroadcastDispatcher.registerReceiverWithHandler(mIntentReceiver, filter,
                     Dependency.get(Dependency.TIME_TICK_HANDLER), UserHandle.ALL);
-            Dependency.get(TunerService.class).addTunable(this, CLOCK_SECONDS);
+            Dependency.get(TunerService.class).addTunable(this,
+                    STATUS_BAR_CLOCK_SECONDS);
             mCommandQueue.addCallback(this);
             mUserTracker.addCallback(mUserChangedCallback, mContext.getMainExecutor());
             mCurrentUserId = mUserTracker.getUserId();
@@ -337,9 +341,14 @@ public class Clock extends TextView implements
 
     @Override
     public void onTuningChanged(String key, String newValue) {
-        if (CLOCK_SECONDS.equals(key)) {
-            mShowSeconds = TunerService.parseIntegerSwitch(newValue, false);
-            updateShowSeconds();
+        switch (key) {
+            case STATUS_BAR_CLOCK_SECONDS:
+                mShowSeconds =
+                        TunerService.parseIntegerSwitch(newValue, false);
+                updateShowSeconds();
+                break;
+            default:
+                break;
         }
     }
 
