@@ -5586,6 +5586,11 @@ public final class Settings {
         public static final String OMNI_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS = "sysui_keyguard_show_battery_bar_always";
 
         /**
+         * @hide
+         */
+        public static final String OMNI_NAVIGATION_BAR_SHOW = "navbar_visibility";
+
+        /**
          * Whether to show battery percent on ambient bottom
          * @hide
          */
@@ -5751,6 +5756,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(NETWORK_TRAFFIC_VIEW_LOCATION);
             PRIVATE_SETTINGS.add(OMNI_KEYGUARD_SHOW_BATTERY_BAR);
             PRIVATE_SETTINGS.add(OMNI_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS);
+            PRIVATE_SETTINGS.add(OMNI_NAVIGATION_BAR_SHOW);
             PRIVATE_SETTINGS.add(AMBIENT_BATTERY_PERCENT);
             PRIVATE_SETTINGS.add(DATA_ACTIVITY_ARROW);
         }
