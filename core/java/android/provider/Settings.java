@@ -5568,6 +5568,11 @@ public final class Settings {
         public static final String OMNI_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS = "sysui_keyguard_show_battery_bar_always";
 
         /**
+         * @hide
+         */
+        public static final String OMNI_NAVIGATION_BAR_SHOW = "navbar_visibility";
+
+        /**
          * Keys we no longer back up under the current schema, but want to continue to
          * process when restoring historical backup datasets.
          *
@@ -5720,6 +5725,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(STATUSBAR_CLOCK_DATE_POSITION);
             PRIVATE_SETTINGS.add(OMNI_KEYGUARD_SHOW_BATTERY_BAR);
             PRIVATE_SETTINGS.add(OMNI_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS);
+            PRIVATE_SETTINGS.add(OMNI_NAVIGATION_BAR_SHOW);
         }
 
         /**
