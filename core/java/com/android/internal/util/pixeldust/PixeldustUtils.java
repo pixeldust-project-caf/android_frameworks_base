@@ -24,39 +24,42 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.PackageInfo;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.input.InputManager;
 import android.hardware.fingerprint.FingerprintManager;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.SystemClock;
+import android.os.SystemProperties;
+import android.os.UserHandle;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.DisplayCutout;
+import android.view.DisplayInfo;
 import android.view.IWindowManager;
 import android.view.WindowManagerGlobal;
 import android.view.InputDevice;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
-import android.telephony.TelephonyManager;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.DisplayCutout;
-import android.view.DisplayInfo;
+
 import com.android.internal.R;
+import com.android.internal.statusbar.IStatusBarService;
 
 import java.util.List;
 import java.util.Locale;
-
-import com.android.internal.statusbar.IStatusBarService;
-import android.content.pm.PackageManager.NameNotFoundException;
 
 /**
  * Some needful things
@@ -298,5 +301,31 @@ public class PixeldustUtils {
     public static boolean isChineseLanguage() {
        return Resources.getSystem().getConfiguration().locale.getLanguage().startsWith(
                Locale.CHINESE.getLanguage());
+    }
+
+    // Check if device has a navbar
+    public static boolean deviceSupportNavigationBar(Context context) {
+        return deviceSupportNavigationBarForUser(context, UserHandle.USER_CURRENT);
+    }
+
+    public static boolean deviceSupportNavigationBarForUser(Context context, int userId) {
+        final boolean showByDefault = context.getResources().getBoolean(
+                com.android.internal.R.bool.config_showNavigationBar);
+        final int hasNavigationBar = Settings.System.getIntForUser(
+                context.getContentResolver(),
+                Settings.System.OMNI_NAVIGATION_BAR_SHOW, -1, userId);
+
+        if (hasNavigationBar == -1) {
+            String navBarOverride = SystemProperties.get("qemu.hw.mainkeys");
+            if ("1".equals(navBarOverride)) {
+                return false;
+            } else if ("0".equals(navBarOverride)) {
+                return true;
+            } else {
+                return showByDefault;
+            }
+        } else {
+            return hasNavigationBar == 1;
+        }
     }
 }
