@@ -1595,6 +1595,7 @@ public class NotificationManagerService extends SystemService {
 
         publishBinderService(Context.NOTIFICATION_SERVICE, mService, /* allowIsolated= */ false,
                 DUMP_FLAG_PRIORITY_CRITICAL | DUMP_FLAG_PRIORITY_NORMAL);
+        publishBinderService(Context.NOTIFICATION_SERVICE, mService);
         publishLocalService(NotificationManagerInternal.class, mInternalService);
     }
 
@@ -6028,8 +6029,7 @@ public class NotificationManagerService extends SystemService {
 
         NotificationRecord.Light light = ledNotification != null ?
                 ledNotification.getLight() : null;
-        if (ledNotification == null || mNotificationLights == null ||
-                light == null || !mNotificationPulseEnabled) {
+        if (ledNotification == null || mNotificationLights == null || light == null) {
             mNotificationLight.turnOff();
             return;
         }
