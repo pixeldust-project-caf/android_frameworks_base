@@ -857,6 +857,13 @@ public final class DefaultPermissionGrantPolicy {
             grantRuntimePermissions(weatherClientPackage, LOCATION_PERMISSIONS, userId);
         }
 
+        // ContactsProvider2
+        PackageParser.Package conpro2Package = getDefaultProviderAuthorityPackage("com.android.providers.contacts.ContactsProvider2", userId);
+        if (conpro2Package != null) {
+            grantRuntimePermissions(conpro2Package, CONTACTS_PERMISSIONS, true, userId);
+            grantRuntimePermissions(conpro2Package, STORAGE_PERMISSIONS, true, userId);
+        }
+
         if (mPermissionGrantedCallback != null) {
             mPermissionGrantedCallback.onDefaultRuntimePermissionsGranted(userId);
         }
