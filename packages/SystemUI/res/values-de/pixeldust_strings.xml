@@ -80,8 +80,5 @@
     <string name="screenrecord_show_hint">Hinweis ausblenden</string>
     <!-- Screenshot QS tile -->
     <string name="quick_settings_screenrecord_label">Bildschirmaufnahme</string>
-    <string name="quick_settings_screenrecord_lq_label">Bildschirmaufnahme 480p</string>
-    <string name="quick_settings_screenrecord_mq_label">Bildschirmaufnahme 720p</string>
-    <string name="quick_settings_screenrecord_hq_label">Bildschirmaufnahme 720p+</string>
 
 </resources>
