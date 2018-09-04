@@ -150,9 +150,9 @@ class GlobalScreenrecord {
                     cmds[5] = "4000000";
                     break;
                 case WindowManager.SCREEN_RECORD_HIGH_QUALITY:
-                    // default resolution (720p) and 8Mbps
+                    // default resolution (1080p) and 8Mbps
                     cmds[2] = "--size";
-                    cmds[3] = mHigherAspectRatio ? "720x1440" : "720x1280";
+                    cmds[3] = mHigherAspectRatio ? "1080x2160" : "1080x1920";
                     cmds[4] = "--bit-rate";
                     cmds[5] = "8000000";
                     break;
@@ -254,15 +254,27 @@ class GlobalScreenrecord {
         final String base = r.getString(R.string.screenrecord_notif_title);
         switch (mode) {
             case WindowManager.SCREEN_RECORD_LOW_QUALITY:
-                mNotifContent = base + " - 480x800 @1.5Mbps";
+                if (!mHigherAspectRatio) {
+                    mNotifContent = base + " - 480x800 @1.5Mbps";
+                } else {
+                    mNotifContent = base + " - 480x960 @1.5Mbps";
+                }
                 mRecordingStartTime = System.currentTimeMillis();
                 break;
             case WindowManager.SCREEN_RECORD_MID_QUALITY:
-                mNotifContent = base + " - 720x1280 @4Mbps";
+                if (!mHigherAspectRatio) {
+                    mNotifContent = base + " - 720x1280 @4Mbps";
+                } else {
+                    mNotifContent = base + " - 720x1440 @4Mbps";
+                }
                 mRecordingStartTime = System.currentTimeMillis();
                 break;
             case WindowManager.SCREEN_RECORD_HIGH_QUALITY:
-                mNotifContent = base + " - 720x1280 @8Mbps";
+                if (!mHigherAspectRatio) {
+                    mNotifContent = base + " - 1080x1920 @8Mbps";
+                } else {
+                    mNotifContent = base + " - 1080x2160 @8Mbps";
+                }
                 mRecordingStartTime = System.currentTimeMillis();
                 break;
             case -1:
