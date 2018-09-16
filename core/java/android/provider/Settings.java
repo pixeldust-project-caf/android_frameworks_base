@@ -8126,6 +8126,494 @@ public final class Settings {
                 "packages_to_clear_data_before_full_restore";
 
         /**
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_HEIGHT_LANDSCAPE = "navigation_bar_height_landscape";
+        /** @hide */
+        private static final Validator NAVIGATION_BAR_HEIGHT_LANDSCAPE_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_HEIGHT = "navigation_bar_height";
+        /** @hide */
+        private static final Validator NAVIGATION_BAR_HEIGHT_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_WIDTH = "navigation_bar_width";
+        /** @hide */
+        private static final Validator NAVIGATION_BAR_WIDTH_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Add or remove software navigation bar
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_VISIBLE = "navigation_bar_visible";
+        /** @hide */
+        private static final Validator NAVIGATION_BAR_VISIBLE_VALIDATOR = BOOLEAN_VALIDATOR;
+
+        /**
+         * Navigation bar mode
+         *
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_MODE = "navigation_bar_mode";
+        /** @hide */
+        private static final Validator NAVIGATION_BAR_MODE_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Fling actions
+         *
+         * @hide
+         */
+        public static final String FLING_GESTURE_ACTIONS = "fling_gesture_configs";
+        /** @hide */
+        private static final Validator FLING_GESTURE_ACTIONS_VALIDATOR =
+                ANY_STRING_VALIDATOR;
+
+        /**
+         * Fling logo visible
+         *
+         * @hide
+         */
+        public static final String FLING_LOGO_VISIBLE = "fling_logo_visible";
+        /** @hide */
+        private static final Validator FLING_LOGO_VISIBLE_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
+         * Fling logo animates
+         *
+         * @hide
+         */
+        public static final String FLING_LOGO_ANIMATES= "fling_logo_animates";
+        /** @hide */
+        private static final Validator FLING_LOGO_ANIMATES_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
+         * Fling logo color
+         *
+         * @hide
+         */
+        //public static final String FLING_LOGO_COLOR = "fling_logo_color";
+
+        /**
+         * Fling logo opacity
+         *
+         * @hide
+         */
+        public static final String FLING_LOGO_OPACITY = "fling_logo_opacity";
+        /** @hide */
+        private static final Validator FLING_LOGO_OPACITY_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Fling pulse music visualizer
+         *
+         * @hide
+         */
+        public static final String FLING_PULSE_ENABLED = "fling_pulse_enabled";
+        /** @hide */
+        private static final Validator FLING_PULSE_ENABLED_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
+         * Fling pulse music visualizer color
+         *
+         * @hide
+         */
+        public static final String FLING_PULSE_COLOR = "fling_pulse_color";
+        /** @hide */
+        private static final Validator FLING_PULSE_COLOR_VALIDATOR =
+                ANY_STRING_VALIDATOR;
+
+        /**
+         * Fling ripple effect
+         *
+         * @hide
+         */
+        public static final String FLING_RIPPLE_ENABLED = "fling_ripple_enabled";
+        /** @hide */
+        private static final Validator FLING_RIPPLE_ENABLED_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
+         * Fling ripple color
+         *
+         * @hide
+         */
+        public static final String FLING_RIPPLE_COLOR = "fling_ripple_color";
+        /** @hide */
+        private static final Validator FLING_RIPPLE_COLOR_VALIDATOR =
+                ANY_STRING_VALIDATOR;
+
+        /**
+         * Fling gesture trails on/off
+         *
+         * @hide
+         */
+        public static final String FLING_TRAILS_ENABLED = "fling_trails_enabled";
+        /** @hide */
+        private static final Validator FLING_TRAILS_ENABLED_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
+         * Fling gesture trails color
+         *
+         * @hide
+         */
+        public static final String FLING_TRAILS_COLOR = "fling_trails_color";
+        /** @hide */
+        private static final Validator FLING_TRAILS_COLOR_VALIDATOR =
+                ANY_STRING_VALIDATOR;
+
+        /**
+         * Fling pulse lavalamp psychedelic colors
+         *
+         * @hide
+         */
+        public static final String FLING_PULSE_LAVALAMP_ENABLED = "fling_pulse_lavalamp_enabled";
+        /** @hide */
+        private static final Validator FLING_PULSE_LAVALAMP_ENABLED_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
+         * Fling pulse lavalamp animation speed
+         *
+         * @hide
+         */
+        public static final String FLING_PULSE_LAVALAMP_SPEED = "fling_pulse_lavalamp_speed";
+        /** @hide */
+        private static final Validator FLING_PULSE_LAVALAMP_SPEED_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Pulse renderer implementation
+         *
+         * @hide
+         */
+        public static final String PULSE_RENDER_STYLE_URI = "pulse_render_style";
+        /** @hide */
+        private static final Validator PULSE_RENDER_STYLE_URI_VALIDATOR =
+                ANY_STRING_VALIDATOR;
+
+        /**
+         * time it takes to execute Fling long press action
+         *
+         * @hide
+         */
+        public static final String FLING_LONGPRESS_TIMEOUT = "fling_longpress_timeout";
+        /** @hide */
+        private static final Validator FLING_LONGPRESS_TIMEOUT_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * distance to swipe right when device is in portrait orientation to
+         * trigger action
+         *
+         * @hide
+         */
+        public static final String FLING_LONGSWIPE_THRESHOLD_RIGHT_PORT = "fling_longswipe_threshold_right_port";
+        /** @hide */
+        private static final Validator FLING_LONGSWIPE_THRESHOLD_RIGHT_PORT_VALIDATOR =
+                ANY_STRING_VALIDATOR;
+
+        /**
+         * distance to swipe left when device is in portrait orientation to
+         * trigger action
+         *
+         * @hide
+         */
+        public static final String FLING_LONGSWIPE_THRESHOLD_LEFT_PORT = "fling_longswipe_threshold_left_port";
+        /** @hide */
+        private static final Validator FLING_LONGSWIPE_THRESHOLD_LEFT_PORT_VALIDATOR =
+                ANY_STRING_VALIDATOR;
+
+        /**
+         * distance to swipe right when device is in landscape orientation to
+         * trigger action. Apples to a horizontal layout (tablet/phablet)
+         *
+         * @hide
+         */
+        public static final String FLING_LONGSWIPE_THRESHOLD_RIGHT_LAND = "fling_longswipe_threshold_right_land";
+        /** @hide */
+        private static final Validator FLING_LONGSWIPE_THRESHOLD_RIGHT_LAND_VALIDATOR =
+                ANY_STRING_VALIDATOR;
+
+        /**
+         * distance to swipe left when device is in landscape orientation to
+         * trigger action. Apples to a horizontal layout (tablet/phablet)
+         *
+         * @hide
+         */
+        public static final String FLING_LONGSWIPE_THRESHOLD_LEFT_LAND = "fling_longswipe_threshold_left_land";
+        /** @hide */
+        private static final Validator FLING_LONGSWIPE_THRESHOLD_LEFT_LAND_VALIDATOR =
+                ANY_STRING_VALIDATOR;
+
+        /**
+         * distance to swipe up when device is in landscape orientation to
+         * trigger action. Apples to a vertical layout (phones)
+         *
+         * @hide
+         */
+        public static final String FLING_LONGSWIPE_THRESHOLD_UP_LAND = "fling_longswipe_threshold_up_land";
+        /** @hide */
+        private static final Validator FLING_LONGSWIPE_THRESHOLD_UP_LAND_VALIDATOR =
+                ANY_STRING_VALIDATOR;
+
+        /**
+         * distance to swipe down when device is in landscape orientation to
+         * trigger action. Apples to a horizontal layout (phones)
+         *
+         * @hide
+         */
+        public static final String FLING_LONGSWIPE_THRESHOLD_DOWN_LAND = "fling_longswipe_threshold_down_land";
+        /** @hide */
+        private static final Validator FLING_LONGSWIPE_THRESHOLD_DOWN_LAND_VALIDATOR =
+                ANY_STRING_VALIDATOR;
+
+        /**
+         * width of Fling trails stroke, in density pixels
+         *
+         * @hide
+         */
+        public static final String FLING_TRAILS_WIDTH = "fling_trails_width";
+        /** @hide */
+        private static final Validator FLING_TRAILS_WIDTH_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Navbar buttons transparency
+         * @hide
+         */
+        public static final String NAVBAR_BUTTONS_ALPHA = "navbar_buttons_alpha";
+        /** @hide */
+        private static final Validator NAVBAR_BUTTONS_ALPHA_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Custom Pulse Widths
+         * @hide
+         */
+        public static final String PULSE_CUSTOM_DIMEN = "pulse_custom_dimen";
+        /** @hide */
+        private static final Validator PULSE_CUSTOM_DIMEN_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Custom Spacing Between Pulse Bars
+         * @hide
+         */
+        public static final String PULSE_CUSTOM_DIV = "pulse_custom_div";
+        /** @hide */
+        private static final Validator PULSE_CUSTOM_DIV_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Custom Pulse Block Size
+         * @hide
+         */
+        public static final String PULSE_FILLED_BLOCK_SIZE = "pulse_filled_block_size";
+        /** @hide */
+        private static final Validator PULSE_FILLED_BLOCK_SIZE_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Custom Spacing Between Pulse Blocks
+         * @hide
+         */
+        public static final String PULSE_EMPTY_BLOCK_SIZE = "pulse_empty_block_size";
+        /** @hide */
+        private static final Validator PULSE_EMPTY_BLOCK_SIZE_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Custom Pulse Sanity Levels
+         * @hide
+         */
+        public static final String PULSE_CUSTOM_FUDGE_FACTOR = "pulse_custom_fudge_factor";
+        /** @hide */
+        private static final Validator PULSE_CUSTOM_FUDGE_FACTOR_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Pulse Fudge Factor
+         * @hide
+         */
+        public static final String PULSE_SOLID_FUDGE_FACTOR = "pulse_solid_fudge_factor";
+        /** @hide */
+        private static final Validator PULSE_SOLID_FUDGE_FACTOR_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Pulse Lavamp Animation Speed
+         * @hide
+         */
+        public static final String PULSE_LAVALAMP_SOLID_SPEED = "lava_lamp_solid_speed";
+        /** @hide */
+        private static final Validator PULSE_LAVALAMP_SOLID_SPEED_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Pulse Solid units count
+         * @hide
+         */
+        public static final String PULSE_SOLID_UNITS_COUNT = "pulse_solid_units_count";
+        /** @hide */
+        private static final Validator PULSE_SOLID_UNITS_COUNT_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Pulse Solid units opacity
+         * @hide
+         */
+        public static final String PULSE_SOLID_UNITS_OPACITY = "pulse_solid_units_opacity";
+        /** @hide */
+        private static final Validator PULSE_SOLID_UNITS_OPACITY_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * SmartBar buttons opacity on Pulse
+         * @hide
+         */
+        public static final String PULSE_CUSTOM_BUTTONS_OPACITY = "pulse_custom_buttons_opacity";
+        /** @hide */
+        private static final Validator PULSE_CUSTOM_BUTTONS_OPACITY_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Pulse accent color
+         *
+         * @hide
+         */
+        public static final String PULSE_ACCENT_COLOR_ENABLED = "pulse_accent_color_enabled";
+        /** @hide */
+        private static final Validator PULSE_ACCENT_COLOR_ENABLED_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
+         * Long press delay for smartbar buttons
+         * @hide
+         * 0: Default (fast)
+         * 1: Normal delay
+         * 2: Long delay
+         */
+        public static final String SMARTBAR_LONGPRESS_DELAY = "smartbar_longpress_delay";
+        /** @hide */
+        private static final Validator SMARTBAR_LONGPRESS_DELAY_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Scaling value for smartbar custom button icon
+         * @hide
+         */
+        public static final String SMARTBAR_CUSTOM_ICON_SIZE = "smartbar_custom_icon_size";
+        /** @hide */
+        private static final Validator SMARTBAR_CUSTOM_ICON_SIZE_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Whether to switch Fling double tap right/left actions to kb cursors when a keyboard is showing
+         * @hide
+         */
+        public static final String FLING_KEYBOARD_CURSORS = "fling_keyboard_cursors";
+        /** @hide */
+        private static final Validator FLING_KEYBOARD_CURSORS_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Whether to use automatic color for Pulse
+         * @hide
+         */
+        public static final String PULSE_AUTO_COLOR = "pulse_auto_color";
+        /** @hide */
+        private static final Validator PULSE_AUTO_COLOR_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
+         * Apps to skip for Pulse
+         * @hide
+         */
+        public static final String PULSE_APPS_BLACKLIST = "pulse_apps_blacklist";
+        /** @hide */
+        private static final Validator PULSE_APPS_BLACKLIST_VALIDATOR =
+               ANY_STRING_VALIDATOR;
+
+        /**
+         * Fling pulse lavalamp start and end colors
+         *
+         * @hide
+         */
+        public static final String FLING_PULSE_LAVALAMP_COLOR_FROM = "fling_lavalamp_color_from";
+        /** @hide */
+        private static final Validator FLING_PULSE_LAVALAMP_COLOR_FROM_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Fling pulse lavalamp start and end colors
+         *
+         * @hide
+         */
+        public static final String FLING_PULSE_LAVALAMP_COLOR_TO = "fling_lavalamp_color_to";
+        /** @hide */
+        private static final Validator FLING_PULSE_LAVALAMP_COLOR_TO_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Fling pulse bars smoothing
+         *
+         * @hide
+         */
+        public static final String FLING_PULSE_SMOOTHING_ENABLED = "fling_pulse_smoothing_enabled";
+        /** @hide */
+        private static final Validator FLING_PULSE_SMOOTHING_ENABLED_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
+         * Pulse Fading units opacity
+         * @hide
+         */
+        public static final String PULSE_FADING_BLOCKS_OPACITY = "pulse_fading_blocks_opacity";
+        /** @hide */
+        private static final Validator PULSE_FADING_BLOCKS_OPACITY_VALIDATOR =
+                ANY_INTEGER_VALIDATOR;
+
+        /**
+         * Whether to enable double tap to sleep for smartbar
+         * @hide
+         */
+        public static final String SMARTBAR_DOUBLETAP_SLEEP = "smartbar_doubletap_sleep";
+        /** @hide */
+        private static final Validator SMARTBAR_DOUBLETAP_SLEEP_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
+         * Display input method and media actions on smartbar
+         * @hide
+         */
+        public static final String SMARTBAR_IME_HINT_MODE = "smartbar_ime_hint_mode";
+
+        /**
+         * Smartbar context buttons layout position
+         * @hide
+         */
+        public static final String SMARTBAR_CONTEXT_MENU_MODE = "smartbar_context_menu_mode";
+
+        /**
+         * Smarbar button touch animation
+         * @hide
+         */
+        public static final String SMARTBAR_BUTTON_ANIMATION_STYLE = "smartbar_button_animation_style";
+
+        /**
          * This are the settings to be backed up.
          *
          * NOTE: Settings are backed up and restored in the order they appear
@@ -8226,7 +8714,60 @@ public final class Settings {
             VOLUME_HUSH_GESTURE,
             MANUAL_RINGER_TOGGLE_COUNT,
             HUSH_GESTURE_USED,
-            WIFI_DISCONNECT_DELAY_DURATION
+            WIFI_DISCONNECT_DELAY_DURATION,
+            NAVIGATION_BAR_VISIBLE,
+            NAVIGATION_BAR_HEIGHT_LANDSCAPE,
+            NAVIGATION_BAR_HEIGHT,
+            NAVIGATION_BAR_WIDTH,
+            NAVIGATION_BAR_MODE,
+            FLING_GESTURE_ACTIONS,
+            FLING_LOGO_VISIBLE,
+            FLING_LOGO_ANIMATES,
+            FLING_LOGO_OPACITY,
+            FLING_PULSE_ENABLED,
+            FLING_PULSE_COLOR,
+            FLING_GESTURE_ACTIONS,
+            FLING_RIPPLE_ENABLED,
+            FLING_RIPPLE_COLOR,
+            FLING_TRAILS_ENABLED,
+            FLING_TRAILS_COLOR,
+            FLING_PULSE_LAVALAMP_ENABLED,
+            FLING_PULSE_LAVALAMP_SPEED,
+            PULSE_RENDER_STYLE_URI,
+            FLING_LONGPRESS_TIMEOUT,
+            FLING_LONGSWIPE_THRESHOLD_RIGHT_PORT,
+            FLING_LONGSWIPE_THRESHOLD_LEFT_PORT,
+            FLING_LONGSWIPE_THRESHOLD_RIGHT_LAND,
+            FLING_LONGSWIPE_THRESHOLD_LEFT_LAND,
+            FLING_LONGSWIPE_THRESHOLD_UP_LAND,
+            FLING_LONGSWIPE_THRESHOLD_DOWN_LAND,
+            FLING_TRAILS_WIDTH,
+            FLING_TRAILS_COLOR,
+            FLING_PULSE_LAVALAMP_ENABLED,
+            FLING_PULSE_LAVALAMP_SPEED,
+            PULSE_RENDER_STYLE_URI,
+            NAVBAR_BUTTONS_ALPHA,
+            NAVBAR_BUTTONS_ALPHA,
+            PULSE_CUSTOM_DIV,
+            PULSE_FILLED_BLOCK_SIZE,
+            PULSE_EMPTY_BLOCK_SIZE,
+            PULSE_CUSTOM_FUDGE_FACTOR,
+            PULSE_SOLID_FUDGE_FACTOR,
+            PULSE_LAVALAMP_SOLID_SPEED,
+            PULSE_SOLID_UNITS_COUNT,
+            PULSE_SOLID_UNITS_OPACITY,
+            PULSE_CUSTOM_BUTTONS_OPACITY,
+            SMARTBAR_LONGPRESS_DELAY,
+            SMARTBAR_CUSTOM_ICON_SIZE,
+            FLING_KEYBOARD_CURSORS,
+            PULSE_AUTO_COLOR,
+            PULSE_APPS_BLACKLIST,
+            FLING_PULSE_LAVALAMP_COLOR_FROM,
+            FLING_PULSE_LAVALAMP_COLOR_TO,
+            FLING_PULSE_SMOOTHING_ENABLED,
+            PULSE_FADING_BLOCKS_OPACITY,
+            PULSE_ACCENT_COLOR_ENABLED,
+            SMARTBAR_DOUBLETAP_SLEEP
         };
 
         /**
@@ -8374,6 +8915,66 @@ public final class Settings {
             VALIDATORS.put(HUSH_GESTURE_USED, HUSH_GESTURE_USED_VALIDATOR);
             VALIDATORS.put(MANUAL_RINGER_TOGGLE_COUNT, MANUAL_RINGER_TOGGLE_COUNT_VALIDATOR);
             VALIDATORS.put(WIFI_DISCONNECT_DELAY_DURATION, WIFI_DISCONNECT_DELAY_DURATION_VALIDATOR);
+            VALIDATORS.put(NAVIGATION_BAR_VISIBLE, NAVIGATION_BAR_VISIBLE_VALIDATOR);
+            VALIDATORS.put(NAVIGATION_BAR_HEIGHT_LANDSCAPE, NAVIGATION_BAR_HEIGHT_LANDSCAPE_VALIDATOR);
+            VALIDATORS.put(NAVIGATION_BAR_HEIGHT, NAVIGATION_BAR_HEIGHT_VALIDATOR);
+            VALIDATORS.put(NAVIGATION_BAR_WIDTH, NAVIGATION_BAR_WIDTH_VALIDATOR);
+            VALIDATORS.put(NAVIGATION_BAR_MODE, NAVIGATION_BAR_MODE_VALIDATOR);
+            VALIDATORS.put(FLING_GESTURE_ACTIONS, FLING_GESTURE_ACTIONS_VALIDATOR);
+            VALIDATORS.put(FLING_LOGO_VISIBLE, FLING_LOGO_VISIBLE_VALIDATOR);
+            VALIDATORS.put(FLING_LOGO_ANIMATES, FLING_LOGO_ANIMATES_VALIDATOR);
+            VALIDATORS.put(FLING_LOGO_OPACITY, FLING_LOGO_OPACITY_VALIDATOR);
+            VALIDATORS.put(FLING_PULSE_ENABLED, FLING_PULSE_ENABLED_VALIDATOR);
+            VALIDATORS.put(FLING_PULSE_COLOR, FLING_PULSE_COLOR_VALIDATOR);
+            VALIDATORS.put(FLING_GESTURE_ACTIONS, FLING_GESTURE_ACTIONS_VALIDATOR);
+            VALIDATORS.put(FLING_RIPPLE_ENABLED, FLING_RIPPLE_ENABLED_VALIDATOR);
+            VALIDATORS.put(FLING_RIPPLE_COLOR, FLING_RIPPLE_COLOR_VALIDATOR);
+            VALIDATORS.put(FLING_TRAILS_ENABLED, FLING_TRAILS_ENABLED_VALIDATOR);
+            VALIDATORS.put(FLING_TRAILS_COLOR, FLING_TRAILS_COLOR_VALIDATOR);
+            VALIDATORS.put(FLING_PULSE_LAVALAMP_ENABLED, FLING_PULSE_LAVALAMP_ENABLED_VALIDATOR);
+            VALIDATORS.put(FLING_PULSE_LAVALAMP_SPEED, FLING_PULSE_LAVALAMP_SPEED_VALIDATOR);
+            VALIDATORS.put(PULSE_RENDER_STYLE_URI, PULSE_RENDER_STYLE_URI_VALIDATOR);
+            VALIDATORS.put(FLING_LONGPRESS_TIMEOUT, FLING_LONGPRESS_TIMEOUT_VALIDATOR);
+            VALIDATORS.put(FLING_LONGSWIPE_THRESHOLD_RIGHT_PORT, 
+                    FLING_LONGSWIPE_THRESHOLD_RIGHT_PORT_VALIDATOR);
+            VALIDATORS.put(FLING_LONGSWIPE_THRESHOLD_LEFT_PORT,
+                    FLING_LONGSWIPE_THRESHOLD_LEFT_PORT_VALIDATOR);
+            VALIDATORS.put(FLING_LONGSWIPE_THRESHOLD_RIGHT_LAND,
+                    FLING_LONGSWIPE_THRESHOLD_RIGHT_LAND_VALIDATOR);
+            VALIDATORS.put(FLING_LONGSWIPE_THRESHOLD_LEFT_LAND,
+                    FLING_LONGSWIPE_THRESHOLD_LEFT_LAND_VALIDATOR);
+            VALIDATORS.put(FLING_LONGSWIPE_THRESHOLD_UP_LAND,
+                    FLING_LONGSWIPE_THRESHOLD_UP_LAND_VALIDATOR);
+            VALIDATORS.put(FLING_LONGSWIPE_THRESHOLD_DOWN_LAND,
+                    FLING_LONGSWIPE_THRESHOLD_DOWN_LAND_VALIDATOR);
+            VALIDATORS.put(FLING_TRAILS_WIDTH, FLING_TRAILS_WIDTH_VALIDATOR);
+            VALIDATORS.put(FLING_TRAILS_COLOR, FLING_TRAILS_COLOR_VALIDATOR);
+            VALIDATORS.put(FLING_PULSE_LAVALAMP_ENABLED,
+                    FLING_PULSE_LAVALAMP_ENABLED_VALIDATOR);
+            VALIDATORS.put(FLING_PULSE_LAVALAMP_SPEED, FLING_PULSE_LAVALAMP_SPEED_VALIDATOR);
+            VALIDATORS.put(PULSE_RENDER_STYLE_URI, PULSE_RENDER_STYLE_URI_VALIDATOR);
+            VALIDATORS.put(NAVBAR_BUTTONS_ALPHA, NAVBAR_BUTTONS_ALPHA_VALIDATOR);
+            VALIDATORS.put(PULSE_CUSTOM_DIMEN, PULSE_CUSTOM_DIMEN_VALIDATOR);
+            VALIDATORS.put(PULSE_CUSTOM_DIV, PULSE_CUSTOM_DIV_VALIDATOR);
+            VALIDATORS.put(PULSE_FILLED_BLOCK_SIZE, PULSE_FILLED_BLOCK_SIZE_VALIDATOR);
+            VALIDATORS.put(PULSE_EMPTY_BLOCK_SIZE, PULSE_EMPTY_BLOCK_SIZE_VALIDATOR);
+            VALIDATORS.put(PULSE_CUSTOM_FUDGE_FACTOR, PULSE_CUSTOM_FUDGE_FACTOR_VALIDATOR);
+            VALIDATORS.put(PULSE_SOLID_FUDGE_FACTOR, PULSE_SOLID_FUDGE_FACTOR_VALIDATOR);
+            VALIDATORS.put(PULSE_LAVALAMP_SOLID_SPEED, PULSE_LAVALAMP_SOLID_SPEED_VALIDATOR);
+            VALIDATORS.put(PULSE_SOLID_UNITS_COUNT, PULSE_SOLID_UNITS_COUNT_VALIDATOR);
+            VALIDATORS.put(PULSE_SOLID_UNITS_OPACITY, PULSE_SOLID_UNITS_OPACITY_VALIDATOR);
+            VALIDATORS.put(PULSE_CUSTOM_BUTTONS_OPACITY, PULSE_CUSTOM_BUTTONS_OPACITY_VALIDATOR);
+            VALIDATORS.put(PULSE_ACCENT_COLOR_ENABLED, PULSE_ACCENT_COLOR_ENABLED_VALIDATOR);
+            VALIDATORS.put(SMARTBAR_LONGPRESS_DELAY, SMARTBAR_LONGPRESS_DELAY_VALIDATOR);
+            VALIDATORS.put(SMARTBAR_CUSTOM_ICON_SIZE, SMARTBAR_CUSTOM_ICON_SIZE_VALIDATOR);
+            VALIDATORS.put(FLING_KEYBOARD_CURSORS, FLING_KEYBOARD_CURSORS_VALIDATOR);
+            VALIDATORS.put(PULSE_AUTO_COLOR, PULSE_AUTO_COLOR_VALIDATOR);
+            VALIDATORS.put(PULSE_APPS_BLACKLIST, PULSE_APPS_BLACKLIST_VALIDATOR);
+            VALIDATORS.put(FLING_PULSE_LAVALAMP_COLOR_FROM, FLING_PULSE_LAVALAMP_COLOR_FROM_VALIDATOR);
+            VALIDATORS.put(FLING_PULSE_LAVALAMP_COLOR_TO, FLING_PULSE_LAVALAMP_COLOR_TO_VALIDATOR);
+            VALIDATORS.put(FLING_PULSE_SMOOTHING_ENABLED, FLING_PULSE_SMOOTHING_ENABLED_VALIDATOR);
+            VALIDATORS.put(PULSE_FADING_BLOCKS_OPACITY, PULSE_FADING_BLOCKS_OPACITY_VALIDATOR);
+            VALIDATORS.put(SMARTBAR_DOUBLETAP_SLEEP, SMARTBAR_DOUBLETAP_SLEEP_VALIDATOR);
         }
 
         /**

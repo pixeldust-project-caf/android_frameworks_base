@@ -24,4 +24,8 @@
     <string name="reboot_title">Neustart</string>
     <string name="reboot_message">System wird neu gestartet</string>
 
+  <string name="permlab_toggleNavigationEditor">Kontrolle über Navigationsleisten-Editor</string>
+  <!-- [CHAR LIMIT=NONE] Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+  <string name="permdesc_toggleNavigationEditor">Erlaubt es einer App, die Kontrolle über den Navigationsleisten-Editor zu übernehmen.</string>
+
 </resources>
