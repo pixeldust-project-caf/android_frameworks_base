@@ -25,6 +25,8 @@ import static android.view.InsetsState.containsType;
 import static android.view.WindowInsetsController.APPEARANCE_LOW_PROFILE_BARS;
 import static android.view.WindowInsetsController.APPEARANCE_OPAQUE_STATUS_BARS;
 import static android.view.WindowInsetsController.APPEARANCE_SEMI_TRANSPARENT_STATUS_BARS;
+import static android.view.WindowManagerPolicyConstants.NAV_BAR_MODE_3BUTTON_OVERLAY;
+import static android.view.WindowManagerPolicyConstants.NAV_BAR_MODE_GESTURAL_OVERLAY;
 
 import static androidx.core.view.ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_AUTO;
 import static androidx.core.view.ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS;
@@ -64,6 +66,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.om.IOverlayManager;
 import android.content.pm.IPackageManager;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -260,6 +263,8 @@ import com.android.wm.shell.bubbles.Bubbles;
 import com.android.wm.shell.legacysplitscreen.LegacySplitScreen;
 import com.android.wm.shell.startingsurface.SplashscreenContentDrawer;
 import com.android.wm.shell.startingsurface.StartingSurface;
+
+import com.android.internal.util.custom.NavbarUtils;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -684,6 +689,7 @@ public class StatusBar extends SystemUI implements
     private final LifecycleRegistry mLifecycle = new LifecycleRegistry(this);
     protected final BatteryController mBatteryController;
     protected boolean mPanelExpanded;
+    private IOverlayManager mOverlayManager;
     private UiModeManager mUiModeManager;
     protected boolean mIsKeyguard;
     private LogMaker mStatusBarStateLog;
@@ -954,6 +960,8 @@ public class StatusBar extends SystemUI implements
     public void start() {
         mScreenLifecycle.addObserver(mScreenObserver);
         mWakefulnessLifecycle.addObserver(mWakefulnessObserver);
+        mOverlayManager = IOverlayManager.Stub.asInterface(
+                ServiceManager.getService(Context.OVERLAY_SERVICE));
         mUiModeManager = mContext.getSystemService(UiModeManager.class);
         mBypassHeadsUpNotifier.setUp();
         if (mBubblesOptional.isPresent()) {
@@ -1004,6 +1012,8 @@ public class StatusBar extends SystemUI implements
         } catch (RemoteException ex) {
             ex.rethrowFromSystemServer();
         }
+
+        initCoreOverlays();
 
         createAndAddWindows(result);
 
@@ -1154,6 +1164,13 @@ public class StatusBar extends SystemUI implements
                 (requestTopUi, componentTag) -> mMainExecutor.execute(() ->
                         mNotificationShadeWindowController.setRequestTopUi(
                                 requestTopUi, componentTag))));
+    }
+
+    private void initCoreOverlays(){
+        boolean navbarEnabled = NavbarUtils.isEnabled(mContext);
+        if (!navbarEnabled) {
+            setNavBarInteractionMode(NAV_BAR_MODE_3BUTTON_OVERLAY);
+        }
     }
 
     // ================================================================================
@@ -3973,6 +3990,9 @@ public class StatusBar extends SystemUI implements
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SHOW_LOCKSCREEN_MEDIA_ART),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_SHOW),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -3993,9 +4013,12 @@ public class StatusBar extends SystemUI implements
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.LOCKSCREEN_MEDIA_BLUR))) {
                 setLockScreenMediaBlurLevel();
-            }  else if (uri.equals(Settings.System.getUriFor(
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.SHOW_LOCKSCREEN_MEDIA_ART))) {
                 setLockScreenMediaArt();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_SHOW))) {
+                setNavBarVisibility();
             }
         }
 
@@ -4005,6 +4028,7 @@ public class StatusBar extends SystemUI implements
             setStatusBarWindowViewOptions();
             setLockScreenMediaBlurLevel();
             setLockScreenMediaArt();         
+            setNavBarVisibility();
         }
     }
 
@@ -4013,6 +4037,26 @@ public class StatusBar extends SystemUI implements
             KeyguardSliceProvider.getAttachedInstance().setPulseOnNewTracks(Settings.Secure.getIntForUser(mContext.getContentResolver(),
                     Settings.Secure.PULSE_ON_NEW_TRACKS, 0,
                     UserHandle.USER_CURRENT) == 1);
+        }
+    }
+
+    private void setNavBarVisibility() {
+        if (mDisplayId == Display.DEFAULT_DISPLAY &&
+                mWindowManagerService != null) {
+            boolean navbarEnabled = NavbarUtils.isEnabled(mContext);
+            boolean hasNavbar = getNavigationBarView() != null;
+            if (navbarEnabled) {
+                if (!hasNavbar) {
+                    mNavigationBarController.onDisplayReady(mDisplayId);
+                    setNavBarInteractionMode(getOldNavBarModeOverlay());
+                }
+            } else {
+                saveNavBarCurrentModeOverlay();
+                setNavBarInteractionMode(NAV_BAR_MODE_3BUTTON_OVERLAY);
+                if (hasNavbar) {
+                    mNavigationBarController.onDisplayRemoved(mDisplayId);
+                }
+            }
         }
     }
 
@@ -4335,8 +4379,31 @@ public class StatusBar extends SystemUI implements
         }
         return mStatusBarKeyguardViewManager.isSecure();
     }
+
     public NotificationPanelViewController getPanelController() {
         return mNotificationPanelViewController;
+    }
+
+    private void setNavBarInteractionMode(String overlayPackage) {
+        try {
+            mOverlayManager.setEnabledExclusiveInCategory(overlayPackage, UserHandle.USER_CURRENT);
+        } catch (Exception e) {
+        }
+    }
+
+    private void saveNavBarCurrentModeOverlay() {
+        String navigationBarModeOverlay = NavbarUtils.getNavigationBarModeOverlay(mContext, mOverlayManager);
+        Settings.System.putString(mContext.getContentResolver(),
+                Settings.System.NAVIGATION_BAR_MODE_OVERLAY, navigationBarModeOverlay);
+    }
+
+    private String getOldNavBarModeOverlay() {
+        String navigationBarModeOverlay = Settings.System.getStringForUser(mContext.getContentResolver(),
+                Settings.System.NAVIGATION_BAR_MODE_OVERLAY, UserHandle.USER_CURRENT);
+        if (TextUtils.isEmpty(navigationBarModeOverlay)){
+            navigationBarModeOverlay = NAV_BAR_MODE_GESTURAL_OVERLAY;
+        }
+        return navigationBarModeOverlay;
     }
     // End Extra BaseStatusBarMethods.
 
