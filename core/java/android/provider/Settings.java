@@ -5747,6 +5747,18 @@ public final class Settings {
         public static final String FULLSCREEN_GESTURES = "fullscreen_gestures";
 
         /**
+         * Force show navigation bar setting.
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_SHOW = "navigation_bar_show";
+
+        /**
+         * Force show navigation bar setting.
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_MODE_OVERLAY = "navigation_bar_mode_overlay";
+
+        /**
          * These are all public system settings
          *
          * @hide
@@ -5868,6 +5880,8 @@ public final class Settings {
             PRIVATE_SETTINGS.add(OMNI_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS);
             PRIVATE_SETTINGS.add(OMNI_NAVIGATION_BAR_ARROW_KEYS);
             PRIVATE_SETTINGS.add(OMNI_GESTURE_HANDLE_HIDE);
+            PRIVATE_SETTINGS.add(NAVIGATION_BAR_SHOW);
+            PRIVATE_SETTINGS.add(NAVIGATION_BAR_MODE_OVERLAY);
         }
 
         /**

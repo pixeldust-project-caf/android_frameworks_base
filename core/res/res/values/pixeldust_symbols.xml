@@ -77,4 +77,7 @@
     <java-symbol type="anim" name="custom_app_in" />
     <java-symbol type="anim" name="custom_app_out" />
     <java-symbol type="integer" name="config_deviceHardwareKeys" />
+
+    <!-- Whether device can force navbar disabling -->
+    <java-symbol type="bool" name="config_canForceDisableNavigationBar" />
 </resources>
