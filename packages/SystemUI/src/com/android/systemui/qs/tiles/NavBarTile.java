@@ -39,7 +39,7 @@ public class NavBarTile extends QSTileImpl<BooleanState> {
         mSetting = new SystemSetting(mContext, mHandler,
                    Settings.System.NAVIGATION_BAR_SHOW) {
             @Override
-            protected void handleValueChanged(int value) {
+            protected void handleValueChanged(int value, boolean observedChange) {
                 handleRefreshState(value);
             }
         };
