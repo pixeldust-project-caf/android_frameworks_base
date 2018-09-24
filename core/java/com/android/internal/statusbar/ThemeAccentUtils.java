@@ -56,6 +56,7 @@ public class ThemeAccentUtils {
         "com.android.contacts.theme.shishunights", // 4
         "com.android.dialer.theme.shishunights", // 5
         "com.android.documentsui.theme.shishunights", // 6
+        "com.google.android.apps.wellbeing.theme.shishunights", // 7
     };
 
     private static final String[] CHOCOLATE_THEMES = {
@@ -66,6 +67,7 @@ public class ThemeAccentUtils {
         "com.android.contacts.theme.chocolate", // 4
         "com.android.dialer.theme.chocolate", // 5
         "com.android.documentsui.theme.chocolate", // 6
+        "com.google.android.apps.wellbeing.theme.chocolate", // 7
     };
 
     // Accents
