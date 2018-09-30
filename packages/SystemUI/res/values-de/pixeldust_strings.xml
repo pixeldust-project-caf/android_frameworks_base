@@ -93,6 +93,13 @@
     <string name="quick_settings_theme_tile_color_blue_grey">Blaugrau</string>
     <string name="quick_settings_theme_tile_color_black">Schwarz</string>
     <string name="quick_settings_theme_tile_color_white">Weiß</string>
+    <string name="quick_settings_theme_tile_color_user_one">Schmuddelrot</string>
+    <string name="quick_settings_theme_tile_color_user_two">Traubenfarben</string>
+    <string name="quick_settings_theme_tile_color_user_three">Blau</string>
+    <string name="quick_settings_theme_tile_color_user_four">Minze</string>
+    <string name="quick_settings_theme_tile_color_user_five">Geldscheingrün</string>
+    <string name="quick_settings_theme_tile_color_user_six">Sandfarben</string>
+    <string name="quick_settings_theme_tile_color_user_seven">Widdergelb</string>
 
     <string name="theme_info_title">Wussten Sie schon?</string>
     <string name="theme_info_message">Die UI-Design-Kachel ist eine hervorragende Möglichkeit, um die Akzentfarbe oder den UI-Stil einfach zu wechseln.\n\nUm zwischen Akzentfarbe und UI-Stil zu wechseln, drücken Sie einfach lange auf die Kachel und tippen Sie dann erneut, um auf die jeweilige Auswahlseite zu gelangen.</string>
