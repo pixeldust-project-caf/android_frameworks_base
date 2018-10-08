@@ -17,7 +17,10 @@
 package com.android.internal.util.pixeldust;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog; 
+import android.app.IActivityManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
@@ -31,6 +34,7 @@ import android.hardware.fingerprint.FingerprintManager;
 import android.Manifest;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.PowerManager;
 import android.os.RemoteException;
 import android.os.ServiceManager;
@@ -39,6 +43,7 @@ import android.os.SystemProperties;
 import android.view.IWindowManager;
 import android.view.WindowManagerGlobal;
 
+import com.android.internal.R;
 import com.android.internal.statusbar.IStatusBarService;
 
 import java.util.List;
@@ -75,6 +80,50 @@ public class PixeldustUtils {
        } catch (NameNotFoundException e) {
            return false;
        }
+    }
+
+    public static void restartSystemUi(Context context) {
+        new RestartSystemUiTask(context).execute();
+    }
+
+    public static void showSystemUiRestartDialog(Context context) {
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.systemui_restart_title)
+                .setMessage(R.string.systemui_restart_message)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        restartSystemUi(context);
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    private static class RestartSystemUiTask extends AsyncTask<Void, Void, Void> {
+        private Context mContext;
+
+        public RestartSystemUiTask(Context context) {
+            super();
+            mContext = context;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                ActivityManager am =
+                        (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+                IActivityManager ams = ActivityManager.getService();
+                for (ActivityManager.RunningAppProcessInfo app: am.getRunningAppProcesses()) {
+                    if ("com.android.systemui".equals(app.processName)) {
+                        ams.killApplicationProcess(app.processName, app.uid);
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
     public static boolean isPackageInstalled(Context context, String pkg, boolean ignoreState) {

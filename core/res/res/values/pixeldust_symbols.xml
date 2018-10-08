@@ -80,4 +80,8 @@
   <java-symbol type="anim" name="inv_app_in" />
   <java-symbol type="anim" name="inv_app_out" />
 
+  <!-- SystemUI Restart -->
+  <java-symbol type="string" name="systemui_restart_title" />
+  <java-symbol type="string" name="systemui_restart_message" />
+
 </resources>
