@@ -353,7 +353,7 @@ public class WallpaperManagerService extends IWallpaperManager.Stub
 
         public void startObserving(Context context) {
             context.getContentResolver().registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.THEME_MODE),
+                    Settings.System.getUriFor(Settings.System.SYSTEM_THEME),
                     false,
                     this);
         }
@@ -387,20 +387,23 @@ public class WallpaperManagerService extends IWallpaperManager.Stub
         boolean supportDarkTheme =
                 (colors.getColorHints() & WallpaperColors.HINT_SUPPORTS_DARK_THEME) != 0;
         switch (themeMode) {
-            case Settings.Secure.THEME_MODE_WALLPAPER:
-                if (mThemeMode == Settings.Secure.THEME_MODE_LIGHT) {
+            case Settings.System.SYSTEM_THEME_WALLPAPER:
+                if (mThemeMode == Settings.System.SYSTEM_THEME_LIGHT) {
                     result = supportDarkTheme;
                 } else {
                     result = !supportDarkTheme;
                 }
                 break;
-            case Settings.Secure.THEME_MODE_LIGHT:
-                if (mThemeMode == Settings.Secure.THEME_MODE_WALLPAPER) {
+            case Settings.System.SYSTEM_THEME_LIGHT:
+                if (mThemeMode == Settings.System.SYSTEM_THEME_WALLPAPER) {
                     result = supportDarkTheme;
                 }
                 break;
-            case Settings.Secure.THEME_MODE_DARK:
-                if (mThemeMode == Settings.Secure.THEME_MODE_WALLPAPER) {
+            case Settings.System.SYSTEM_THEME_DARK:
+            case Settings.System.SYSTEM_THEME_BLACK:
+            case Settings.System.SYSTEM_THEME_SHISHUNIGHTS:
+            case Settings.System.SYSTEM_THEME_CHOCOLATE:
+                if (mThemeMode == Settings.System.SYSTEM_THEME_WALLPAPER) {
                     result = !supportDarkTheme;
                 }
                 break;
@@ -416,9 +419,9 @@ public class WallpaperManagerService extends IWallpaperManager.Stub
         WallpaperData wallpaper;
         synchronized (mLock) {
             wallpaper = mWallpaperMap.get(mCurrentUserId);
-            int updatedThemeMode = Settings.Secure.getInt(
-                    mContext.getContentResolver(), Settings.Secure.THEME_MODE,
-                    Settings.Secure.THEME_MODE_WALLPAPER);
+            int updatedThemeMode = Settings.System.getInt(
+                    mContext.getContentResolver(), Settings.System.SYSTEM_THEME,
+                    Settings.System.SYSTEM_THEME_WALLPAPER);
 
             if (DEBUG) {
                 Slog.v(TAG, "onThemeSettingsChanged, mode = " + updatedThemeMode);
@@ -595,18 +598,18 @@ public class WallpaperManagerService extends IWallpaperManager.Stub
 
         int colorHints = colors.getColorHints();
         boolean supportDarkTheme = (colorHints & WallpaperColors.HINT_SUPPORTS_DARK_THEME) != 0;
-        if (mThemeMode == Settings.Secure.THEME_MODE_WALLPAPER ||
-                (mThemeMode == Settings.Secure.THEME_MODE_LIGHT && !supportDarkTheme) ||
-                (mThemeMode == Settings.Secure.THEME_MODE_DARK && supportDarkTheme)) {
+        if (mThemeMode == Settings.System.SYSTEM_THEME_WALLPAPER ||
+                (mThemeMode == Settings.System.SYSTEM_THEME_LIGHT && !supportDarkTheme) ||
+                ((mThemeMode == Settings.System.SYSTEM_THEME_DARK && supportDarkTheme) || (mThemeMode == Settings.System.SYSTEM_THEME_BLACK && supportDarkTheme) || (mThemeMode == Settings.System.SYSTEM_THEME_SHISHUNIGHTS && supportDarkTheme) || (mThemeMode == Settings.System.SYSTEM_THEME_CHOCOLATE && supportDarkTheme))) {
             return colors;
         }
 
         WallpaperColors themeColors = new WallpaperColors(colors.getPrimaryColor(),
                 colors.getSecondaryColor(), colors.getTertiaryColor());
 
-        if (mThemeMode == Settings.Secure.THEME_MODE_LIGHT) {
+        if (mThemeMode == Settings.System.SYSTEM_THEME_LIGHT) {
             colorHints &= ~WallpaperColors.HINT_SUPPORTS_DARK_THEME;
-        } else if (mThemeMode == Settings.Secure.THEME_MODE_DARK) {
+        } else if (mThemeMode == Settings.System.SYSTEM_THEME_DARK || mThemeMode == Settings.System.SYSTEM_THEME_BLACK || mThemeMode == Settings.System.SYSTEM_THEME_SHISHUNIGHTS || mThemeMode == Settings.System.SYSTEM_THEME_CHOCOLATE) {
             colorHints |= WallpaperColors.HINT_SUPPORTS_DARK_THEME;
         }
         themeColors.setColorHints(colorHints);
@@ -1505,9 +1508,9 @@ public class WallpaperManagerService extends IWallpaperManager.Stub
                 systemWallpaper.themeSettingsObserver = new ThemeSettingsObserver(null);
                 systemWallpaper.themeSettingsObserver.startObserving(mContext);
             }
-            mThemeMode = Settings.Secure.getInt(
-                    mContext.getContentResolver(), Settings.Secure.THEME_MODE,
-                    Settings.Secure.THEME_MODE_WALLPAPER);
+            mThemeMode = Settings.System.getInt(
+                    mContext.getContentResolver(), Settings.System.SYSTEM_THEME,
+                    Settings.System.SYSTEM_THEME_WALLPAPER);
             switchWallpaper(systemWallpaper, reply);
         }
 

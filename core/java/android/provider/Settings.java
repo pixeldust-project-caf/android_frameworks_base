@@ -4674,6 +4674,42 @@ public final class Settings {
         public static final String SYSTEM_THEME = "system_theme";
 
         /**
+         * SYSTEM_THEME value for wallpaper mode.
+         * @hide
+         */
+        public static final int SYSTEM_THEME_WALLPAPER = 0;
+
+        /**
+         * SYSTEM_THEME value for light theme mode.
+         * @hide
+         */
+        public static final int SYSTEM_THEME_LIGHT = 1;
+
+        /**
+         * SYSTEM_THEME value for dark theme mode.
+         * @hide
+         */
+        public static final int SYSTEM_THEME_DARK = 2;
+
+        /**
+         * SYSTEM_THEME value for black theme mode.
+         * @hide
+         */
+        public static final int SYSTEM_THEME_BLACK = 3;
+
+        /**
+         * SYSTEM_THEME value for sishunights theme mode.
+         * @hide
+         */
+        public static final int SYSTEM_THEME_SHISHUNIGHTS = 4;
+
+        /**
+         * SYSTEM_THEME value for chocolate theme mode.
+         * @hide
+         */
+        public static final int SYSTEM_THEME_CHOCOLATE = 5;
+
+        /**
          * Select various accents to go along with system themes
          *
          * @hide
