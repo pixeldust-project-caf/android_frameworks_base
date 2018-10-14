@@ -127,4 +127,7 @@
     <!-- Whether device supports internal audio recording -->
     <java-symbol type="bool" name="config_hasInternalAudioRecordingSupport" />
 
+    <!-- Screen off delay -->
+    <java-symbol type="integer" name="config_screen_off_delay" />
+
 </resources>
