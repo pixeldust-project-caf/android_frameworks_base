@@ -128,4 +128,11 @@ public class ThemesUtils {
             "com.android.theme.navbar.sammy",
             "com.android.theme.navbar.tecno",
     };
+
+    public static final String[] QS_TILE_THEMES = {
+            "com.android.systemui.qstile.default",
+            "com.android.systemui.qstile.circletrim",
+            "com.android.systemui.qstile.dualtonecircletrim",
+            "com.android.systemui.qstile.squircletrim",
+    };
 }
