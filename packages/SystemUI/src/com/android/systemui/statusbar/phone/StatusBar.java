@@ -665,6 +665,13 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private boolean mLockscreenMediaMetadata;
 
+    private static final String[] QS_TILE_THEMES = {
+        "com.android.systemui.qstile.default", // 0
+        "com.android.systemui.qstile.circletrim", // 1
+        "com.android.systemui.qstile.dualtonecircletrim", // 2
+        "com.android.systemui.qstile.squircletrim", // 3
+    };
+
     @Override
     public void start() {
         mGroupManager = Dependency.get(NotificationGroupManager.class);
@@ -4282,6 +4289,17 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
     }
 
+    // Switches qs tile style from stock to custom
+    public void updateTileStyle() {
+         int qsTileStyle = Settings.System.getIntForUser(mContext.getContentResolver(),
+                 Settings.System.QS_TILE_STYLE, 0, mLockscreenUserManager.getCurrentUserId());
+        updateTileStyle(mOverlayManager, mLockscreenUserManager.getCurrentUserId(), qsTileStyle);
+    }
+     // Unload all qs tile styles back to stock
+    public void stockTileStyle() {
+        stockTileStyle(mOverlayManager, mLockscreenUserManager.getCurrentUserId());
+    }
+
     private void updateDozingState() {
         Trace.traceCounter(Trace.TRACE_TAG_APP, "dozing", mDozing ? 1 : 0);
         Trace.beginSection("StatusBar#updateDozingState");
@@ -4298,6 +4316,34 @@ public class StatusBar extends SystemUI implements DemoMode,
         mVisualizerView.setDozing(mDozing);
         updateQsExpansionEnabled();
         Trace.endSection();
+    }
+
+    // Switches qs tile style to user selected.
+    private static void updateTileStyle(IOverlayManager om, int userId, int qsTileStyle) {
+        if (qsTileStyle == 0) {
+            stockTileStyle(om, userId);
+        } else {
+            try {
+                om.setEnabled(QS_TILE_THEMES[qsTileStyle],
+                        true, userId);
+            } catch (RemoteException e) {
+                Log.w(TAG, "Can't change qs tile icon", e);
+            }
+        }
+    }
+
+    // Switches qs tile style back to stock.
+    private static void stockTileStyle(IOverlayManager om, int userId) {
+        // skip index 0
+        for (int i = 1; i < QS_TILE_THEMES.length; i++) {
+            String qstiletheme = QS_TILE_THEMES[i];
+            try {
+                om.setEnabled(qstiletheme,
+                        false /*disable*/, userId);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void updateStackScrollerState(boolean goingToFullShade, boolean fromShadeLocked) {
@@ -5513,6 +5559,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_PANEL_BG_USE_ACCENT),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_TILE_STYLE),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -5549,6 +5598,10 @@ public class StatusBar extends SystemUI implements DemoMode,
                     uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_BG_COLOR_WALL)) ||
                     uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_BG_USE_ACCENT))) {
                 mQSPanel.getHost().reloadAllTiles();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_TILE_STYLE))) {
+                stockTileStyle();
+                updateTileStyle();
             }
         }
 
