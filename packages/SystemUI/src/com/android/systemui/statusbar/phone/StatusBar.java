@@ -674,6 +674,9 @@ public class StatusBar extends SystemUI implements DemoMode,
         "com.android.systemui.qstile.circletrim", // 5
         "com.android.systemui.qstile.dualtonecircletrim", // 6
         "com.android.systemui.qstile.squircletrim", // 7
+        "com.android.systemui.qstile.oreo", // 8
+        "com.android.systemui.qstile.oreocircletrim", // 9
+        "com.android.systemui.qstile.oreosquircletrim", // 10
     };
 
     @Override
