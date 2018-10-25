@@ -17,9 +17,12 @@ package com.android.systemui;
 
 import static android.app.StatusBarManager.DISABLE2_SYSTEM_ICONS;
 import static android.app.StatusBarManager.DISABLE_NONE;
+import static android.provider.Settings.System.SHOW_BATTERY_PERCENT;
+import static android.provider.Settings.System.STATUS_BAR_BATTERY_STYLE;
 
 import android.animation.ArgbEvaluator;
 import android.app.ActivityManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -27,6 +30,7 @@ import android.database.ContentObserver;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.ArraySet;
 import android.util.AttributeSet;
@@ -42,6 +46,7 @@ import android.widget.TextView;
 
 import com.android.settingslib.Utils;
 import com.android.settingslib.graph.BatteryMeterDrawableBase;
+import com.android.systemui.settings.CurrentUserTracker;
 import com.android.systemui.statusbar.phone.StatusBarIconController;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.BatteryController.BatteryStateChangeCallback;
@@ -58,14 +63,16 @@ import com.android.systemui.R;
 import java.text.NumberFormat;
 
 public class BatteryMeterView extends LinearLayout implements
-        BatteryStateChangeCallback, Tunable, DarkReceiver, ConfigurationListener {
+        BatteryStateChangeCallback, DarkReceiver, ConfigurationListener {
 
     private final BatteryMeterDrawableBase mDrawable;
     private final String mSlotBattery;
     private ImageView mBatteryIconView;
+    private final CurrentUserTracker mUserTracker;
     private TextView mBatteryPercentView;
 
     private BatteryController mBatteryController;
+    private SettingObserver mSettingObserver;
     private int mTextColor;
     private int mLevel;
     private boolean mForceShowPercent;
@@ -76,6 +83,9 @@ public class BatteryMeterView extends LinearLayout implements
     private int mLightModeBackgroundColor;
     private int mLightModeFillColor;
     private float mDarkIntensity;
+    private int mUser;
+
+    private final Context mContext;
 
     /**
      * Whether we should use colors that adapt based on wallpaper/the scrim behind quick settings.
@@ -86,13 +96,8 @@ public class BatteryMeterView extends LinearLayout implements
     private int mNonAdaptedBackgroundColor;
 
     private int mShowBatteryPercent;
-    private int mStyle = BatteryMeterDrawableBase.BATTERY_STYLE_CIRCLE;
+    private int mStyle = BatteryMeterDrawableBase.BATTERY_STYLE_PORTRAIT;
     private boolean mCharging;
-
-    private static final String SHOW_BATTERY_PERCENT =
-            "system:" + Settings.System.SHOW_BATTERY_PERCENT;
-    private static final String STATUS_BAR_BATTERY_STYLE =
-            "system:" + Settings.System.STATUS_BAR_BATTERY_STYLE;
 
     public BatteryMeterView(Context context) {
         this(context, null, 0);
@@ -104,6 +109,7 @@ public class BatteryMeterView extends LinearLayout implements
 
     public BatteryMeterView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        mContext = context;
 
         setOrientation(LinearLayout.HORIZONTAL);
         setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
@@ -115,6 +121,8 @@ public class BatteryMeterView extends LinearLayout implements
         mDrawable = new BatteryMeterDrawableBase(context, frameColor);
         atts.recycle();
 
+        mSettingObserver = new SettingObserver(new Handler(context.getMainLooper()));
+
         addOnAttachStateChangeListener(
                 new DisableStateTracker(DISABLE_NONE, DISABLE2_SYSTEM_ICONS));
 
@@ -124,6 +132,14 @@ public class BatteryMeterView extends LinearLayout implements
         setColorsFromContext(context);
         // Init to not dark at all.
         onDarkChanged(new Rect(), 0, DarkIconDispatcher.DEFAULT_ICON_TINT);
+
+        mUserTracker = new CurrentUserTracker(mContext) {
+            @Override
+            public void onUserSwitched(int newUserId) {
+                mUser = newUserId;
+                mSettingObserver.update();
+            }
+        };
 
         setClipChildren(false);
         setClipToPadding(false);
@@ -175,25 +191,6 @@ public class BatteryMeterView extends LinearLayout implements
     @Override
     public boolean hasOverlappingRendering() {
         return false;
-    }
-
-    @Override
-    public void onTuningChanged(String key, String newValue) {
-        switch (key) {
-            case STATUS_BAR_BATTERY_STYLE:
-                mStyle =
-                        newValue == null ? BatteryMeterDrawableBase.BATTERY_STYLE_CIRCLE : Integer.parseInt(newValue);
-                mDrawable.setMeterStyle(mStyle);
-                reloadImage();
-                break;
-            case SHOW_BATTERY_PERCENT:
-                mShowBatteryPercent =
-                        newValue == null ? 0 : Integer.parseInt(newValue);
-                break;
-            default:
-                break;
-        }
-        updateShowPercent();
     }
 
     private boolean isSymmetryBattery() {
@@ -259,16 +256,19 @@ public class BatteryMeterView extends LinearLayout implements
         super.onAttachedToWindow();
         mBatteryController = Dependency.get(BatteryController.class);
         mBatteryController.addCallback(this);
-        Dependency.get(TunerService.class).addTunable(this, SHOW_BATTERY_PERCENT);
-        Dependency.get(TunerService.class).addTunable(this, STATUS_BAR_BATTERY_STYLE);
+        mUser = ActivityManager.getCurrentUser();
+        mSettingObserver.observe();
+        mSettingObserver.update();
+        //updateShowPercent();
         Dependency.get(ConfigurationController.class).addCallback(this);
+        mUserTracker.startTracking();
     }
 
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        mUserTracker.stopTracking();
         mBatteryController.removeCallback(this);
-        Dependency.get(TunerService.class).removeTunable(this);
         Dependency.get(ConfigurationController.class).removeCallback(this);
     }
 
@@ -408,5 +408,76 @@ public class BatteryMeterView extends LinearLayout implements
 
     private int getColorForDarkIntensity(float darkIntensity, int lightColor, int darkColor) {
         return (int) ArgbEvaluator.getInstance().evaluate(darkIntensity, lightColor, darkColor);
+    }
+
+    private final class SettingObserver extends ContentObserver {
+        public SettingObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STYLE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.SHOW_BATTERY_PERCENT),
+                    false, this, UserHandle.USER_ALL);
+            update();
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            super.onChange(selfChange, uri);
+            update();
+        }
+
+        public void update() {
+            ContentResolver resolver = mContext.getContentResolver();
+            mShowBatteryPercent = Settings.System.getIntForUser(resolver,
+                SHOW_BATTERY_PERCENT, 0, mUser);
+            mStyle = Settings.System.getIntForUser(resolver,
+                STATUS_BAR_BATTERY_STYLE, BatteryMeterDrawableBase.BATTERY_STYLE_PORTRAIT, mUser);
+            updateBatteryStyle();
+            updateShowPercent();
+            updatePercentText();
+            mDrawable.refresh();
+        }
+    }
+
+    public void updateBatteryStyle() {
+        final int style = mStyle;
+
+        switch (style) {
+            case BatteryMeterDrawableBase.BATTERY_STYLE_HIDDEN:
+                if (mBatteryIconView != null) {
+                    removeView(mBatteryIconView);
+                    mBatteryIconView = null;
+                    removeView(mBatteryPercentView);
+                    mBatteryPercentView = null;
+                }
+                break;
+            case BatteryMeterDrawableBase.BATTERY_STYLE_TEXT:
+                if (mBatteryIconView != null) {
+                    removeView(mBatteryIconView);
+                    mBatteryIconView = null;
+                }
+                break;
+            default:
+                mDrawable.setMeterStyle(style);
+                if (mBatteryIconView == null) {
+                    mBatteryIconView = new ImageView(mContext);
+                    mBatteryIconView.setImageDrawable(mDrawable);
+                    final MarginLayoutParams mlp = new MarginLayoutParams(
+                            getResources().getDimensionPixelSize(R.dimen.status_bar_battery_icon_width),
+                            getResources().getDimensionPixelSize(R.dimen.status_bar_battery_icon_height));
+                    mlp.setMargins(0, 0, 0, getResources().getDimensionPixelOffset(R.dimen.battery_margin_bottom));
+                    addView(mBatteryIconView, mlp);
+                }
+                break;
+        }
+        updateVisibility();
+        updateShowPercent();
+        onDensityOrFontScaleChanged();
     }
 }
