@@ -4236,6 +4236,15 @@ public final class Settings {
         };
 
         /**
+         * Setting to show the battery percentage in the quickstatusbar.
+         * @hide
+         */
+        public static final String SHOW_BATTERY_PERCENT_ON_QSB = "show_battery_percent_on_qsb";
+
+        /** @hide */
+        private static final Validator SHOW_BATTERY_PERCENT_ON_QSB_VALIDATOR = BOOLEAN_VALIDATOR;
+
+        /**
          * IMPORTANT: If you add a new public settings you also have to add it to
          * PUBLIC_SETTINGS below. If the new setting is hidden you have to add
          * it to PRIVATE_SETTINGS below. Also add a validator that can validate
@@ -4643,6 +4652,7 @@ public final class Settings {
             LOCK_TO_APP_ENABLED,
             NOTIFICATION_SOUND,
             ACCELEROMETER_ROTATION,
+            SHOW_BATTERY_PERCENT_ON_QSB,
             NOTIFICATION_VIBRATION_INTENSITY,
             HAPTIC_FEEDBACK_INTENSITY,
             DISPLAY_COLOR_MODE,
@@ -4759,6 +4769,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(POINTER_SPEED);
             PRIVATE_SETTINGS.add(LOCK_TO_APP_ENABLED);
             PRIVATE_SETTINGS.add(EGG_MODE);
+            PRIVATE_SETTINGS.add(SHOW_BATTERY_PERCENT_ON_QSB);
             PRIVATE_SETTINGS.add(DISPLAY_COLOR_MODE);
 
             // Pocket mode handler.
@@ -4880,6 +4891,7 @@ public final class Settings {
             VALIDATORS.put(WEATHER_LOCKSCREEN_UNIT, WEATHER_LOCKSCREEN_UNIT_VALIDATOR);
             VALIDATORS.put(SHOW_FOURG, SHOW_FOURG_VALIDATOR);
             VALIDATORS.put(NOTIFICATION_LIGHT_SCREEN_ON, NOTIFICATION_LIGHT_SCREEN_ON_VALIDATOR);
+            VALIDATORS.put(SHOW_BATTERY_PERCENT_ON_QSB, SHOW_BATTERY_PERCENT_ON_QSB_VALIDATOR);
         }
 
         /**
