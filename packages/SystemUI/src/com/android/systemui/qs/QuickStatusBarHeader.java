@@ -179,7 +179,8 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         mIconManager.setTint(fillColor);
 
         mBatteryMeterView = findViewById(R.id.battery);
-        mBatteryMeterView.setForceShowPercent(true);
+        mBatteryMeterView.setIsQuickSbHeaderOrKeyguard(true);
+        mBatteryMeterView.updateShowPercent();
         mBatteryMeterView.setOnClickListener(this);
         mClockView = findViewById(R.id.clock);
         mClockView.setOnClickListener(this);
