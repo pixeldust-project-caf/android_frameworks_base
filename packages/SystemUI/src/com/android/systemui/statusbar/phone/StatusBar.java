@@ -666,10 +666,11 @@ public class StatusBar extends SystemUI implements DemoMode,
     private boolean mLockscreenMediaMetadata;
 
     private static final String[] QS_TILE_THEMES = {
-        "com.android.systemui.qstile.default", // 0
-        "com.android.systemui.qstile.circletrim", // 1
-        "com.android.systemui.qstile.dualtonecircletrim", // 2
-        "com.android.systemui.qstile.squircletrim", // 3
+        "default", // 0
+        "com.android.systemui.qstile.square", // 1
+        "com.android.systemui.qstile.roundedsquare", // 2
+        "com.android.systemui.qstile.squircle", // 3
+        "com.android.systemui.qstile.teardrop", // 4
     };
 
     @Override
@@ -4295,9 +4296,10 @@ public class StatusBar extends SystemUI implements DemoMode,
                  Settings.System.QS_TILE_STYLE, 0, mLockscreenUserManager.getCurrentUserId());
         updateTileStyle(mOverlayManager, mLockscreenUserManager.getCurrentUserId(), qsTileStyle);
     }
-     // Unload all qs tile styles back to stock
-    public void stockTileStyle() {
-        stockTileStyle(mOverlayManager, mLockscreenUserManager.getCurrentUserId());
+
+    // Unload all the qs tile styles
+    public void unlockQsTileStyles() {
+        unlockQsTileStyles(mOverlayManager, mLockscreenUserManager.getCurrentUserId());
     }
 
     private void updateDozingState() {
@@ -4321,7 +4323,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     // Switches qs tile style to user selected.
     private static void updateTileStyle(IOverlayManager om, int userId, int qsTileStyle) {
         if (qsTileStyle == 0) {
-            stockTileStyle(om, userId);
+            unlockQsTileStyles(om, userId);
         } else {
             try {
                 om.setEnabled(QS_TILE_THEMES[qsTileStyle],
@@ -4332,8 +4334,8 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
     }
 
-    // Switches qs tile style back to stock.
-    private static void stockTileStyle(IOverlayManager om, int userId) {
+    // Unload all the qs tile styles
+    private static void unlockQsTileStyles(IOverlayManager om, int userId) {
         // skip index 0
         for (int i = 1; i < QS_TILE_THEMES.length; i++) {
             String qstiletheme = QS_TILE_THEMES[i];
@@ -5600,7 +5602,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                 mQSPanel.getHost().reloadAllTiles();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.QS_TILE_STYLE))) {
-                stockTileStyle();
+                unlockQsTileStyles();
                 updateTileStyle();
             }
         }

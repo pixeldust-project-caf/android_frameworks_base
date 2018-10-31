@@ -4959,10 +4959,8 @@ public final class Settings {
         public static final String NETWORK_TRAFFIC_HIDEARROW = "network_traffic_hidearrow";
 
         /**
-         * 0 - Default
-         * 1 - Round with ring
-         * 2 - Two-toned round with ring
-         * 3 - Squircle with ring
+         * Select from various styles to use on the QS tiles
+         *
          * @hide
          */
         public static final String QS_TILE_STYLE = "qs_tile_style";
