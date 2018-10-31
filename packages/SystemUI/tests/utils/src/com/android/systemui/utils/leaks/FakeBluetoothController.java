@@ -96,6 +96,10 @@ public class FakeBluetoothController extends BaseLeakChecker<Callback> implement
     @Override
     public void removeOnMetadataChangedListener(CachedBluetoothDevice device,
             BluetoothAdapter.OnMetadataChangedListener listener) {
+    }
 
+    @Override
+    public int getBatteryLevel() {
+        return 0;
     }
 }
