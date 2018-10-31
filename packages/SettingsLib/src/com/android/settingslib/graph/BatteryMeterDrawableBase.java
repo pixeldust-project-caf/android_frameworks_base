@@ -344,8 +344,10 @@ public class BatteryMeterDrawableBase extends Drawable {
                 break;
             case BATTERY_STYLE_CIRCLE:
             case BATTERY_STYLE_DOTTED_CIRCLE:
-            default:
                 drawCircle(c);
+                break;
+            default:
+                drawRectangle(c);
                 break;
         }
     }
