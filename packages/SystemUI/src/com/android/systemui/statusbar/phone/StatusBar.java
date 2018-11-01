@@ -4348,6 +4348,18 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
     }
 
+    // Check for any QS tile styles overlay
+    public static boolean isUsingQsTileStyles(IOverlayManager om, int userId, int qsstyle) {
+        OverlayInfo themeInfo = null;
+        try {
+            themeInfo = om.getOverlayInfo(QS_TILE_THEMES[qsstyle],
+                    userId);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return themeInfo != null && themeInfo.isEnabled();
+    }
+
     public void updateStackScrollerState(boolean goingToFullShade, boolean fromShadeLocked) {
         if (mStackScroller == null) return;
         boolean onKeyguard = mState == StatusBarState.KEYGUARD;
