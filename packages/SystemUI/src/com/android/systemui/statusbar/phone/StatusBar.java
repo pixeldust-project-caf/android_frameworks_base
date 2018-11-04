@@ -671,12 +671,19 @@ public class StatusBar extends SystemUI implements DemoMode,
         "com.android.systemui.qstile.roundedsquare", // 2
         "com.android.systemui.qstile.squircle", // 3
         "com.android.systemui.qstile.teardrop", // 4
-        "com.android.systemui.qstile.circletrim", // 5
-        "com.android.systemui.qstile.dualtonecircletrim", // 6
-        "com.android.systemui.qstile.squircletrim", // 7
-        "com.android.systemui.qstile.oreo", // 8
-        "com.android.systemui.qstile.oreocircletrim", // 9
-        "com.android.systemui.qstile.oreosquircletrim", // 10
+        "com.android.systemui.qstile.circlegradient", // 5
+        "com.android.systemui.qstile.circletrim", // 6
+        "com.android.systemui.qstile.dottedcircle", // 7
+        "com.android.systemui.qstile.dualtonecircle", // 8
+        "com.android.systemui.qstile.dualtonecircletrim", // 9
+        "com.android.systemui.qstile.mountain", // 10
+        "com.android.systemui.qstile.ninja", // 11
+        "com.android.systemui.qstile.pokesign", // 12
+        "com.android.systemui.qstile.wavey", // 13
+        "com.android.systemui.qstile.squircletrim", // 14
+        "com.android.systemui.qstile.oreo", // 15
+        "com.android.systemui.qstile.oreocircletrim", // 16
+        "com.android.systemui.qstile.oreosquircletrim", // 17
     };
 
     @Override
