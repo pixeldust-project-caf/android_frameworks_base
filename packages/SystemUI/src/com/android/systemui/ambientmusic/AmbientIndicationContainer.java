@@ -23,9 +23,11 @@ import com.android.systemui.statusbar.phone.StatusBar;
 
 import com.android.systemui.ambientmusic.AmbientIndicationInflateListener;
 
+import pixeldust.support.lottie.LottieAnimationView;
+
 public class AmbientIndicationContainer extends AutoReinflateContainer {
     private View mAmbientIndication;
-    private ImageView mIcon;
+    private LottieAnimationView mIcon;
     private CharSequence mIndication;
     private StatusBar mStatusBar;
     private TextView mText;
@@ -62,7 +64,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer {
     public void updateAmbientIndicationView(View view) {
         mAmbientIndication = findViewById(R.id.ambient_indication);
         mText = (TextView)findViewById(R.id.ambient_indication_text);
-        mIcon = (ImageView)findViewById(R.id.ambient_indication_icon);
+        mIcon = (LottieAnimationView)findViewById(R.id.ambient_indication_icon);
         setIndication(mMediaMetaData, mMediaText, false);
     }
 
@@ -175,6 +177,8 @@ public class AmbientIndicationContainer extends AutoReinflateContainer {
         }
         mText.setText(mInfoToSet);
         mAmbientIndication.setVisibility(mKeyguard && (mInfoAvailable || mNpInfoAvailable) ? View.VISIBLE : View.INVISIBLE);
+        mIcon.setAnimation(R.raw.ambient_music_note);
+        mIcon.playAnimation();
     }
 
     public View getIndication() {
