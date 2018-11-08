@@ -4876,6 +4876,12 @@ public final class Settings {
          */
         public static final String WEATHER_LOCKSCREEN_ENABLED = "weather_lockscreen_enabled";
 
+        /**
+         * Whether to use black themes over dark ones
+         *
+         * @hide
+         */
+        public static final String PREFER_BLACK_THEMES = "prefer_black_themes";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
