@@ -110,34 +110,34 @@ public class ThemeAccentUtils {
         "com.accents.userfive", // 26
         "com.accents.usersix", // 27
         "com.accents.userseven", // 28
-        "com.accents.candyred", // 29
-        "com.accents.palered", // 30
-        "com.accents.extendedgreen", // 31
-        "com.accents.paleblue", // 32
-        "com.accents.jadegreen", // 33
-        "com.accents.holillusion", // 34
-        "com.accents.stock", // 35
-        "com.accents.seasidemint", // 36
-        "com.accents.movemint", // 37
-        "com.accents.diffdaygreen", // 38
-        "com.accents.obfusbleu", // 39
-        "com.accents.frenchbleu", // 40
-        "com.accents.coldbleu", // 41
-        "com.accents.heirloombleu", // 42
-        "com.accents.notimppurple", // 43
+        "com.accents.maniaamber", // 29
+        "com.accents.coldyellow", // 30
+        "com.accents.newhouseorange", // 31
+        "com.accents.warmthorange", // 32
+        "com.accents.burningred", // 33
+        "com.accents.candyred", // 34
+        "com.accents.palered", // 35
+        "com.accents.hazedpink", // 36
+        "com.accents.bubblegumpink", // 37
+        "com.accents.trufilpink", // 38
+        "com.accents.duskpurple", // 39
+        "com.accents.illusionspurple", // 40
+        "com.accents.spookedpurple", // 41
+        "com.accents.notimppurple", // 42
+        "com.accents.dreamypurple", // 43
         "com.accents.footprintpurple", // 44
-        "com.accents.duskpurple", // 45
-        "com.accents.illusionspurple", // 46
-        "com.accents.dreamypurple", // 47
-        "com.accents.spookedpurple", // 48
-        "com.accents.trufilpink", // 49
-        "com.accents.bubblegumpink", // 50
-        "com.accents.hazedpink", // 51
-        "com.accents.burningred", // 52
-        "com.accents.newhouseorange", // 53
-        "com.accents.warmthorange", // 54
-        "com.accents.maniaamber", // 55
-        "com.accents.coldyellow", // 56
+        "com.accents.obfusbleu", // 45
+        "com.accents.frenchbleu", // 46
+        "com.accents.coldbleu", // 47
+        "com.accents.heirloombleu", // 48
+        "com.accents.paleblue", // 49
+        "com.accents.holillusion", // 50
+        "com.accents.stock", // 51
+        "com.accents.seasidemint", // 52
+        "com.accents.movemint", // 53
+        "com.accents.extendedgreen", // 54
+        "com.accents.diffdaygreen", // 55
+        "com.accents.jadegreen", // 56
     };
 
     // Unloads the stock dark theme
