@@ -32,6 +32,7 @@
     <string name="statusbar_items_title">Statusbar icon</string>
     <string name="lockscreen_default">Default</string>
     <string name="lockscreen_hidden">None</string>
+    <string name="systemui_tuner_navbar_title">Stock navbar</string>
 
     <!-- Shows when people have clicked on the custom lockscreen shortcut [CHAR LIMIT=60] -->
     <string name="custom_hint">Swipe from icon to launch</string>
