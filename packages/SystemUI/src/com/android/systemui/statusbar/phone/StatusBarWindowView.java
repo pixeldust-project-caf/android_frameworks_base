@@ -130,7 +130,7 @@ public class StatusBarWindowView extends FrameLayout {
         mStatusBarHeaderHeight = context
                 .getResources().getDimensionPixelSize(R.dimen.status_bar_header_height);
         mSettingsObserver = new SettingsObserver(mHandler);
-        mDoubleTapHelper = new DoubleTapHelper(this, active -> {}, event -> {
+        mDoubleTapHelper = new DoubleTapHelper(this, active -> {}, () -> {
             if (mIsMusicTickerTap) {
                 mService.handleSystemKey(KeyEvent.KEYCODE_MEDIA_NEXT);
                 return true;
