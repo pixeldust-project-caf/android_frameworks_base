@@ -95,4 +95,7 @@
     <java-symbol type="bool" name="config_haveHigherAspectRatioScreen" />
     <java-symbol type="dimen" name="config_screenAspectRatio" />
 
+    <!-- Wallpaper component -->
+    <java-symbol type="string" name="default_wallpaper_component_custom" />
+
 </resources>
