@@ -4986,6 +4986,13 @@ public final class Settings {
                 new SettingsValidators.InclusiveIntegerRangeValidator(-3, 1);
 
         /**
+         * Whether to show weather on lockscreen
+         * @hide
+         */
+        public static final String WEATHER_LOCKSCREEN_ENABLED = "weather_lockscreen_enabled";
+
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
