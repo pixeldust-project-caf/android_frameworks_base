@@ -27,8 +27,6 @@ import com.android.systemui.statusbar.phone.StatusBar;
 
 import com.android.systemui.ambientmusic.AmbientIndicationInflateListener;
 
-import java.util.concurrent.TimeUnit;
-
 public class AmbientIndicationContainer extends AutoReinflateContainer implements
         NotificationMediaManager.MediaListener {
 
@@ -39,7 +37,6 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
     private CharSequence mIndication;
     private StatusBar mStatusBar;
     private TextView mText;
-    private TextView mTrackLength;
     private Context mContext;
     protected MediaMetadata mMediaMetaData;
     private String mMediaText;
@@ -47,7 +44,6 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
     private Handler mHandler;
     private boolean mInfoAvailable;
     private String mInfoToSet;
-    private String mLengthInfo;
     private boolean mKeyguard;
     private String mLastInfo;
 
@@ -80,7 +76,6 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
     public void updateAmbientIndicationView(View view) {
         mAmbientIndication = findViewById(R.id.ambient_indication);
         mText = (TextView)findViewById(R.id.ambient_indication_text);
-        mTrackLength = (TextView)findViewById(R.id.ambient_indication_track_length);
         mIcon = (ImageView)findViewById(R.id.ambient_indication_icon);
         setIndication(mMediaMetaData, mMediaText, false);
         if (DEBUG_AMBIENTMUSIC) {
@@ -99,14 +94,12 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         if (keyguard && (mInfoAvailable || mNpInfoAvailable)) {
             mText.setText(mInfoToSet);
             mLastInfo = mInfoToSet;
-            mTrackLength.setText(mLengthInfo);
             mAmbientIndication.setVisibility(View.VISIBLE);
             updatePosition();
         } else {
             setCleanLayout(-1);
             mAmbientIndication.setVisibility(View.INVISIBLE);
             mText.setText(null);
-            mTrackLength.setText(null);
         }
     }
 
@@ -160,23 +153,15 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         // never override local music ticker
         if (nowPlaying && mInfoAvailable || mAmbientIndication == null) return;
         CharSequence charSequence = null;
-        mLengthInfo = null;
         mInfoToSet = null;
         if (mediaMetaData != null) {
             CharSequence artist = mediaMetaData.getText(MediaMetadata.METADATA_KEY_ARTIST);
             CharSequence album = mediaMetaData.getText(MediaMetadata.METADATA_KEY_ALBUM);
             CharSequence title = mediaMetaData.getText(MediaMetadata.METADATA_KEY_TITLE);
-            long duration = mediaMetaData.getLong(MediaMetadata.METADATA_KEY_DURATION);
             if (artist != null && title != null) {
                 /* considering we are in Ambient mode here, it's not worth it to show
                     too many infos, so let's skip album name to keep a smaller text */
                 charSequence = String.format(mTrackInfoSeparator, title.toString(), artist.toString());
-                if (duration != 0) {
-                    mLengthInfo = String.format("%02d:%02d",
-                            TimeUnit.MILLISECONDS.toMinutes(duration),
-                            TimeUnit.MILLISECONDS.toSeconds(duration) -
-                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration))).toString();
-                }
             }
         }
         if (mKeyguard) {
@@ -189,7 +174,6 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
             mInfoToSet = charSequence.toString();
         } else if (!TextUtils.isEmpty(notificationText)) {
             mInfoToSet = notificationText;
-            mLengthInfo = null;
         }
 
         if (nowPlaying) {
@@ -211,7 +195,6 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
             }
         }
         if (mInfoToSet != null) mText.setText(mInfoToSet);
-        if (mLengthInfo != null) mTrackLength.setText(mLengthInfo);
         mAmbientIndication.setVisibility(mKeyguard && (mInfoAvailable || mNpInfoAvailable) ? View.VISIBLE : View.INVISIBLE);
     }
 
