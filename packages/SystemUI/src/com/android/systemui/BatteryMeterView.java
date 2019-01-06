@@ -290,7 +290,11 @@ public class BatteryMeterView extends LinearLayout implements
         if (mCharging != pluggedIn) {
             mCharging = pluggedIn;
             mDrawable.setCharging(mCharging);
-            setForceShowPercent(mCharging);
+            if (forcePercentageQsHeader()) {
+                setForceShowPercent(true);
+            } else {
+                setForceShowPercent(mCharging);
+            }
         }
         mDrawable.setBatteryLevel(level);
         mDrawable.setCharging(pluggedIn);
