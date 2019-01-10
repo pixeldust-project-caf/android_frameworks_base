@@ -55,6 +55,8 @@ class TelephonyIcons {
     static final int ICON_4G = R.drawable.ic_4g_mobiledata;
     static final int ICON_4G_PLUS = R.drawable.ic_4g_plus_mobiledata;
     static final int ICON_1X = R.drawable.ic_1x_mobiledata;
+    static final int ICON_5G = R.drawable.ic_5g_mobiledata;
+    static final int ICON_5G_SA = R.drawable.ic_5g_mobiledata;
     static final int ICON_5G_BASIC = R.drawable.ic_5g_mobiledata;
     static final int ICON_5G_UWB = R.drawable.ic_5g_uwb_mobiledata;
 
@@ -248,6 +250,19 @@ class TelephonyIcons {
             TelephonyIcons.ICON_2G,
             false);
 
+    static final MobileIconGroup FIVE_G = new MobileIconGroup(
+            "5G",
+            null,
+            null,
+            AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH,
+            0, 0,
+            0,
+            0,
+            AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH[0],
+            R.string.data_connection_5g,
+            TelephonyIcons.ICON_5G,
+            false);
+
     static final MobileIconGroup FIVE_G_BASIC = new MobileIconGroup(
             "5GBasic",
             null,
@@ -272,6 +287,19 @@ class TelephonyIcons {
             AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH[0],
             R.string.data_connection_5g_uwb,
             TelephonyIcons.ICON_5G_UWB,
+            false);
+
+    static final MobileIconGroup FIVE_G_SA = new MobileIconGroup(
+            "5GSA",
+            null,
+            null,
+            AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH,
+            0, 0,
+            0,
+            0,
+            AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH[0],
+            R.string.data_connection_5g_sa,
+            TelephonyIcons.ICON_5G_SA,
             false);
 
     static final int DATA_TYPE_UNKNOWN = 0;

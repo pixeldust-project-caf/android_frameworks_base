@@ -116,6 +116,7 @@ public class MobileSignalController extends SignalController<
         mPhoneStateListener = new MobilePhoneStateListener(info.getSubscriptionId(),
                 receiverLooper);
         mFiveGStateListener = new FiveGStateListener();
+        mFiveGState = new FiveGServiceState();
         mNetworkNameSeparator = getStringIfExists(R.string.status_bar_network_name_separator);
         mNetworkNameDefault = getStringIfExists(
                 com.android.internal.R.string.lockscreen_carrier_default);
@@ -312,7 +313,7 @@ public class MobileSignalController extends SignalController<
         if (mCurrentState.iconGroup == TelephonyIcons.CARRIER_NETWORK_CHANGE) {
             return SignalDrawable.getCarrierChangeState(getNumLevels());
         } else if (mCurrentState.connected) {
-            int level = is5GConnected() ? mFiveGState.getSignalLevel() : mCurrentState.level;
+            int level = mCurrentState.level;
             if (mConfig.inflateSignalStrengths) {
                 level++;
             }
@@ -330,6 +331,18 @@ public class MobileSignalController extends SignalController<
         } else {
             return 0;
         }
+    }
+
+    public int getCurrent5GIconId() {
+        int level = mFiveGState.getSignalLevel();
+        if (mConfig.inflateSignalStrengths) {
+            level++;
+        }
+        boolean dataDisabled = mCurrentState.userSetup
+                && mCurrentState.iconGroup == TelephonyIcons.DATA_DISABLED;
+        boolean noInternet = mCurrentState.inetCondition == 0;
+        boolean cutOut = dataDisabled || noInternet;
+        return SignalDrawable.getState(level, NUM_LEVELS_ON_5G , cutOut);
     }
 
     @Override
@@ -385,8 +398,11 @@ public class MobileSignalController extends SignalController<
         final boolean dataDisabled = mCurrentState.iconGroup == TelephonyIcons.DATA_DISABLED
                 && mCurrentState.userSetup;
 
-        if ( is5GConnected() && !dataDisabled) {
-            icons = mFiveGState.getIconGroup();
+        if ( is5GConnected() ) {
+            if ( mFiveGState.isConnectedOnSaMode()
+                    || mFiveGState.isConnectedOnNsaMode() && !dataDisabled ) {
+                icons = mFiveGState.getIconGroup();
+            }
         }
 
         String contentDescription = getStringIfExists(getContentDescription());
@@ -398,7 +414,7 @@ public class MobileSignalController extends SignalController<
         // Show icon in QS when we are connected or data is disabled.
         boolean showDataIcon = mCurrentState.dataConnected || dataDisabled;
         IconState statusIcon = new IconState(mCurrentState.enabled && !mCurrentState.airplaneMode,
-                getCurrentIconId(), contentDescription);
+                is5GConnected() ? getCurrent5GIconId() : getCurrentIconId(), contentDescription);
 
         int qsTypeIcon = 0;
         IconState qsIcon = null;
@@ -417,8 +433,8 @@ public class MobileSignalController extends SignalController<
                 && !mCurrentState.carrierNetworkChangeMode
                 && mCurrentState.activityOut;
         showDataIcon &= mCurrentState.isDefault || dataDisabled;
-        int typeIcon = (showDataIcon || mConfig.alwaysShowDataRatIcon || mAlwasyShowTypeIcon) ?
-                icons.mDataType : 0;
+        int typeIcon = (showDataIcon || mConfig.alwaysShowDataRatIcon || mAlwasyShowTypeIcon
+                || mFiveGState.isConnectedOnSaMode() ) ? icons.mDataType : 0;
         int volteIcon = mConfig.showVolteIcon && isVolteSwitchOn()   ? getVolteResId() : 0;
         if (DEBUG) {
             Log.d(mTag, "notifyListeners mAlwasyShowTypeIcon=" + mAlwasyShowTypeIcon
@@ -616,10 +632,12 @@ public class MobileSignalController extends SignalController<
 
         if ( mAlwasyShowTypeIcon ) {
             int iconType = TelephonyManager.NETWORK_TYPE_UNKNOWN;
-            if ( isDataNetworkTypeAvailable() ) {
-                iconType = mDataNetType;
-            }else {
-                iconType = getVoiceNetworkType();
+            if ( mCurrentState.connected ) {
+                if (isDataNetworkTypeAvailable()) {
+                    iconType = mDataNetType;
+                } else {
+                    iconType = getVoiceNetworkType();
+                }
             }
 
             if (mNetworkToIconLookup.indexOfKey(iconType) >= 0) {
@@ -752,7 +770,8 @@ public class MobileSignalController extends SignalController<
     }
 
     private boolean is5GConnected() {
-        return mFiveGState != null && mFiveGState.isConnected(isDataRegisteredOnLte());
+        return mFiveGState.isConnectedOnSaMode()
+                || mFiveGState.isConnectedOnNsaMode() && isDataRegisteredOnLte();
     }
 
     @Override
@@ -859,7 +878,7 @@ public class MobileSignalController extends SignalController<
             boolean isVideoCapable =
                     config.isCapable(MmTelFeature.MmTelCapabilities.CAPABILITY_TYPE_VIDEO);
             boolean isImsRegistered = mPhone.isImsRegistered(mSubscriptionInfo.getSubscriptionId());
-            mCurrentState.showHD = isImsRegistered&&(isVideoCapable||isVideoCapable);
+            mCurrentState.showHD = isImsRegistered&&(isVideoCapable || isVoiceCapable);
             Log.d(mTag, "onCapabilitiesStatusChanged isVoiceCapable=" + isVoiceCapable
                     + " isVideoCapable=" + isVideoCapable
                     + " isImsRegistered=" + isImsRegistered);

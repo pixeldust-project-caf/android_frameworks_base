@@ -127,7 +127,7 @@ public class HotspotTile extends QSTileImpl<AirplaneBooleanState> {
 
         if (arg instanceof CallbackInfo) {
             final CallbackInfo info = (CallbackInfo) arg;
-            state.value = transientEnabling || info.isHotspotEnabled;
+            state.value = isTransient || info.isHotspotEnabled;
             numConnectedDevices = info.numConnectedDevices;
             isDataSaverEnabled = info.isDataSaverEnabled;
         } else {

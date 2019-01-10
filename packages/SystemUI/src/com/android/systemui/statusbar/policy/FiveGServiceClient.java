@@ -78,7 +78,6 @@ public class FiveGServiceClient {
     private static final int MAX_RETRY = 4;
     private static final int DELAY_MILLISECOND = 3000;
     private static final int DELAY_INCREMENT = 2000;
-    private final int NUM_LEVELS;
     private final int mRsrpThresholds[];
     private final int mSnrThresholds[];
     private final SparseArray<IFiveGStateListener> mStatesListeners = new SparseArray<>();
@@ -95,8 +94,6 @@ public class FiveGServiceClient {
     private int mInitRetryTimes = 0;
 
     private ContentResolver mResolver;
-
-    private int mPhoneCount;
     private ContentObserver mConfigObserver;
 
     private class IndicatorConfig {
@@ -126,22 +123,25 @@ public class FiveGServiceClient {
             mUpperLayerInd = UpperLayerIndInfo.UPPER_LAYER_IND_INFO_UNAVAILABLE;
             mDcnr = DcParam.DCNR_RESTRICTED;
             mLevel = 0;
-            mNrConfigType = NrConfigType.INVALID;
+            mNrConfigType = NrConfigType.NSA_CONFIGURATION;
             mIconGroup = TelephonyIcons.UNKNOWN;
         }
 
-
-        public boolean isConnected(boolean isDataRegisteredOnLte) {
+        public boolean isConnectedOnSaMode() {
             boolean connected = false;
-            if ( mIconGroup != TelephonyIcons.UNKNOWN ) {
-                if ( mNrConfigType == NrConfigType.SA_CONFIGURATION ) {
-                    connected = true;
-                }else if ( mNrConfigType == NrConfigType.NSA_CONFIGURATION
-                        && isDataRegisteredOnLte ) {
-                    connected = true;
-                }
+            if ( mNrConfigType == NrConfigType.SA_CONFIGURATION
+                    &&  mIconGroup != TelephonyIcons.UNKNOWN) {
+                connected = true;
             }
+            return connected;
+        }
 
+        public boolean isConnectedOnNsaMode() {
+            boolean connected = false;
+            if ( mNrConfigType == NrConfigType.NSA_CONFIGURATION
+                    && mIconGroup != TelephonyIcons.UNKNOWN) {
+                connected = true;
+            }
             return connected;
         }
 
@@ -186,7 +186,7 @@ public class FiveGServiceClient {
                     append("mDcnr=" + mDcnr).append(", ").
                     append("mLevel=").append(mLevel).append(", ").
                     append("mNrConfigType=").append(mNrConfigType).append(", ").
-                    append("mIconGroup").append(mIconGroup);
+                    append("mIconGroup=").append(mIconGroup);
 
             return builder.toString();
         }
@@ -196,9 +196,6 @@ public class FiveGServiceClient {
         mContext = context;
         mPackageName = mContext.getPackageName();
         mResolver = mContext.getContentResolver();
-        TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-        mPhoneCount = tm.getPhoneCount();
-        NUM_LEVELS = getNumLevels(context);
 
         mRsrpThresholds =
                 mContext.getResources().getIntArray(R.array.config_5g_signal_rsrp_thresholds);
@@ -355,22 +352,16 @@ public class FiveGServiceClient {
             }
         };
 
-        if ( mPhoneCount > 1 ) {
-            for (int i = 0; i < mPhoneCount; i++) {
-                Uri uwbUri = Settings.Global.getUriFor(FIVEG_UWB_INDICATOR_CONFIG + i);
-                Uri basicUri = Settings.Global.getUriFor(FIVEG_BASIC_INDICATOR_CONFIG + i);
-                mResolver.registerContentObserver(uwbUri, false, mConfigObserver);
-                mResolver.registerContentObserver(basicUri, false, mConfigObserver);
-                Log.d(TAG, "addUri:" +uwbUri);
-                Log.d(TAG, "addUri:" +basicUri);
-            }
-        }else {
-            Uri uwbUri = Settings.Global.getUriFor(FIVEG_UWB_INDICATOR_CONFIG);
-            Uri basicUri = Settings.Global.getUriFor(FIVEG_BASIC_INDICATOR_CONFIG);
+        TelephonyManager tm = (TelephonyManager)
+                mContext.getSystemService(Context.TELEPHONY_SERVICE);
+        int phoneCount = tm.getPhoneCount();
+        for (int i = 0; i < phoneCount; i++) {
+            Uri uwbUri = Settings.Global.getUriFor(FIVEG_UWB_INDICATOR_CONFIG + i);
+            Uri basicUri = Settings.Global.getUriFor(FIVEG_BASIC_INDICATOR_CONFIG + i);
             mResolver.registerContentObserver(uwbUri, false, mConfigObserver);
             mResolver.registerContentObserver(basicUri, false, mConfigObserver);
-            Log.d(TAG, "addUri:" +uwbUri);
-            Log.d(TAG, "addUri:" +basicUri);
+            Log.d(TAG, "Register observer to watch global settings uri(" + uwbUri + ")");
+            Log.d(TAG, "Register observer to watch global settings uri(" + basicUri + ")");
         }
     }
 
@@ -378,11 +369,7 @@ public class FiveGServiceClient {
         IndicatorConfig config = mIndicatorConfigs.get(phoneId);
         if ( config == null ) {
             config = new IndicatorConfig();
-            if ( mPhoneCount > 1 ) {
-                loadConfg(phoneId, config);
-            }else {
-                loadConfg(config);
-            }
+            loadConfg(phoneId, config);
             Log.d(TAG, "new config for phoneId=" + phoneId + " confg=" + config);
             mIndicatorConfigs.put(phoneId, config);
         }
@@ -391,30 +378,15 @@ public class FiveGServiceClient {
     }
 
     private void onConfigChange() {
-        Log.d(TAG, "onConfigChange mPhoneCount=" + mPhoneCount);
-        if ( mPhoneCount > 1 ) {
-            for ( int i=0; i < mStatesListeners.size(); ++i ) {
-                int phoneId = mStatesListeners.keyAt(i);
-                IndicatorConfig config = getIndicatorConfig(phoneId);
-                loadConfg(phoneId, config);
-
-                Log.d(TAG, "phoneId=" + phoneId + " "
-                        + FIVEG_BASIC_INDICATOR_CONFIG + "=" + config.basic + " "
-                        + FIVEG_UWB_INDICATOR_CONFIG + "=" + config.uwb);
-
-                FiveGServiceState state = getCurrentServiceState(phoneId);
-                update5GIcon(state, phoneId);
-                notifyListenersIfNecessary(phoneId);
-            }
-        }else{
-            int phoneId = mStatesListeners.keyAt(0);
+        Log.d(TAG, "onConfigChange");
+        for ( int i=0; i < mStatesListeners.size(); ++i ) {
+            int phoneId = mStatesListeners.keyAt(i);
             IndicatorConfig config = getIndicatorConfig(phoneId);
-            loadConfg(config);
-            Log.d(TAG, "phoneId=" + phoneId + " "
-                    + FIVEG_BASIC_INDICATOR_CONFIG + "=" + config.basic + " "
-                    + FIVEG_UWB_INDICATOR_CONFIG + "=" + config.uwb);
-
+            loadConfg(phoneId, config);
             FiveGServiceState state = getCurrentServiceState(phoneId);
+
+            Log.d(TAG, "phoneId(" + phoneId + ") " + config + " state=" + state);
+
             update5GIcon(state, phoneId);
             notifyListenersIfNecessary(phoneId);
         }
@@ -430,14 +402,6 @@ public class FiveGServiceClient {
         config.basic = basic != null ? basic : INDICATOR_CONFIG_UNKNOWN;
     }
 
-    private void loadConfg(IndicatorConfig config) {
-        String uwb = Settings.Global.getString(mResolver,   FIVEG_UWB_INDICATOR_CONFIG);
-        config.uwb = uwb != null ? uwb : INDICATOR_CONFIG_UNKNOWN;
-
-        String basic  = Settings.Global.getString(mResolver, FIVEG_BASIC_INDICATOR_CONFIG);
-        config.basic = basic != null ? basic : INDICATOR_CONFIG_UNKNOWN;
-    }
-
     private void update5GIcon(FiveGServiceState state,int phoneId) {
         if ( state.mNrConfigType == NrConfigType.SA_CONFIGURATION ) {
             state.mIconGroup = getSaIcon(state);
@@ -450,7 +414,7 @@ public class FiveGServiceClient {
 
     private MobileIconGroup getSaIcon(FiveGServiceState state) {
         if ( state.mBearerAllocationStatus > BearerAllocationStatus.NOT_ALLOCATED ) {
-            return TelephonyIcons.FIVE_G_BASIC;
+            return TelephonyIcons.FIVE_G_SA;
         }else {
             return TelephonyIcons.UNKNOWN;
         }
@@ -483,7 +447,7 @@ public class FiveGServiceClient {
             // For FR44465
             if ( state.mUpperLayerInd == UpperLayerIndInfo.UPPER_LAYER_IND_INFO_AVAILABLE
                 && state.mDcnr == DcParam.DCNR_UNRESTRICTED ) {
-                iconGroup = TelephonyIcons.FIVE_G_BASIC;
+                iconGroup = TelephonyIcons.FIVE_G;
             }
         }
 
