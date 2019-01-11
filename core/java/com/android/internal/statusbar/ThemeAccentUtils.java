@@ -169,9 +169,10 @@ public class ThemeAccentUtils {
         "com.android.systemui.qstile.pokesign", // 12
         "com.android.systemui.qstile.wavey", // 13
         "com.android.systemui.qstile.squircletrim", // 14
-        "com.android.systemui.qstile.oreo", // 15
-        "com.android.systemui.qstile.oreocircletrim", // 16
-        "com.android.systemui.qstile.oreosquircletrim", // 17
+        "com.android.systemui.qstile.cookie", // 15
+        "com.android.systemui.qstile.oreo", // 16
+        "com.android.systemui.qstile.oreocircletrim", // 17
+        "com.android.systemui.qstile.oreosquircletrim", // 18
     };
 
     // Unloads the stock dark theme
