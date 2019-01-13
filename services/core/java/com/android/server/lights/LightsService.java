@@ -21,6 +21,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemProperties;
 import android.os.Trace;
 import android.provider.Settings;
 import android.util.Slog;
@@ -28,6 +29,7 @@ import android.util.Slog;
 public class LightsService extends SystemService {
     static final String TAG = "LightsService";
     static final boolean DEBUG = false;
+    static int rescale;
 
     final LightImpl mLights[] = new LightImpl[LightsManager.LIGHT_ID_COUNT];
 
@@ -35,6 +37,7 @@ public class LightsService extends SystemService {
 
         private LightImpl(int id) {
             mId = id;
+            rescale = SystemProperties.getInt("persist.sys.max-brightness", -1);
         }
 
         @Override
@@ -49,6 +52,11 @@ public class LightsService extends SystemService {
                 if (brightnessMode == BRIGHTNESS_MODE_LOW_PERSISTENCE) {
                     Slog.w(TAG, "setBrightness with LOW_PERSISTENCE unexpected #" + mId +
                             ": brightness=0x" + Integer.toHexString(brightness));
+                    return;
+                }
+
+                if (mId == 0 && rescale != -1) {
+                    setLightLocked(brightness * rescale / 255, LIGHT_FLASH_NONE, 0, 0, brightnessMode);
                     return;
                 }
 
