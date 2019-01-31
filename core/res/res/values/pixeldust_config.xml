@@ -26,4 +26,9 @@
     <!-- Whether to show emergency button in power menu -->
     <bool name="config_showEmergencyButtonInPowerMenu">false</bool>
 
+    <!-- Weather default unit
+         0 - Celsius
+         1 - Fahrenheit -->
+    <integer name="weather_lockscreen_default_unit">0</integer>
+
 </resources>

@@ -68,4 +68,9 @@
     <java-symbol type="drawable" name="weather_thunderstorms" />
     <java-symbol type="drawable" name="weather_windy" />
 
+    <!-- Weather default unit
+         0 - Celsius
+         1 - Fahrenheit -->
+    <java-symbol type="integer" name="weather_lockscreen_default_unit" />
+
 </resources>
