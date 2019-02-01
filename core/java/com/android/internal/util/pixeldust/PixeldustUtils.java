@@ -48,6 +48,8 @@ import android.os.UserHandle;
 import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.DisplayInfo;
 import android.view.IWindowManager;
@@ -62,6 +64,7 @@ import com.android.internal.statusbar.IStatusBarService;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -475,5 +478,21 @@ public class PixeldustUtils {
         Intent intent = new Intent(Intent.ACTION_SEARCH_LONG_PRESS);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    // Method to detect countries that use Fahrenheit
+    public static boolean mccCheck(Context context) {
+        // MCC's belonging to countries that use Fahrenheit
+        String[] mcc = {"364", "552", "702", "346", "550", "376", "330",
+                "310", "311", "312", "551"};
+
+        TelephonyManager tel = (TelephonyManager) context.getSystemService(
+                Context.TELEPHONY_SERVICE);
+        String networkOperator = tel.getNetworkOperator();
+
+        // Check the array to determine celsius or fahrenheit.
+        // Default to celsius if can't access MCC
+        return !TextUtils.isEmpty(networkOperator) && Arrays.asList(mcc).contains(
+                networkOperator.substring(0, /*Filter only 3 digits*/ 3));
     }
 }
