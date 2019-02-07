@@ -40,6 +40,7 @@ public class ThemeAccentUtils {
         "com.accents.pink", // 7
         "com.android.systemui.theme.dark", // 8
         "com.android.wellbeing.theme.dark", // 9
+        "com.google.intelligence.sense.theme.dark", // 10
     };
 
     private static final String[] BLACK_THEMES = {
@@ -53,6 +54,7 @@ public class ThemeAccentUtils {
         "com.accents.deeppurple", // 7
         "com.android.systemui.theme.black", // 8
         "com.android.wellbeing.theme.black", // 9
+        "com.google.intelligence.sense.theme.dark", // 10
     };
 
     private static final String[] SHISHUNIGHTS_THEMES = {
@@ -66,6 +68,7 @@ public class ThemeAccentUtils {
         "com.android.wellbeing.theme.shishunights", // 7
         "com.accents.userone", // 8
         "com.android.systemui.theme.shishunights", // 9
+        "com.google.intelligence.sense.theme.dark", // 10
     };
 
     private static final String[] CHOCOLATE_THEMES = {
@@ -79,6 +82,7 @@ public class ThemeAccentUtils {
         "com.android.wellbeing.theme.chocolate", // 7
         "com.accents.candyred", // 8
         "com.android.systemui.theme.chocolate", // 9
+        "com.google.intelligence.sense.theme.dark", // 10
     };
 
     private static final String[] LIGHT_THEMES = {
