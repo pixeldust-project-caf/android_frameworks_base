@@ -3437,6 +3437,10 @@ public class StatusBar extends SystemUI implements DemoMode,
         mScreenPinningRequest.onConfigurationChanged();
     }
 
+    public NotificationLockscreenUserManager getNotificationLockscreenUserManager() {
+        return mLockscreenUserManager;
+    }
+
     @Override
     public void setLockscreenUser(int newUserId) {
         if (mLockscreenWallpaper != null) {
@@ -4105,6 +4109,12 @@ public class StatusBar extends SystemUI implements DemoMode,
         mNotificationPanel.setDozing(mDozing, animate, mWakeUpTouchLocation);
         mVisualizerView.setDozing(mDozing);
         updateQsExpansionEnabled();
+
+        if (isAmbientContainerAvailable()) {
+            ((AmbientIndicationContainer)mAmbientIndicationContainer)
+                    .updateDozingState(mDozing);
+        }
+
         Trace.endSection();
     }
 
