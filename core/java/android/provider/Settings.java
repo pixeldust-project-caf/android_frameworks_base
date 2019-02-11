@@ -4934,6 +4934,16 @@ public final class Settings {
                 BOOLEAN_VALIDATOR;
 
         /**
+         * Whether to use framework styles and resources on qs panel
+         * @hide
+         */
+        public static final String QS_PANEL_BG_USE_ACCENT = "qs_panel_bg_use_accent";
+
+        /** @hide */
+        private static final Validator QS_PANEL_BG_USE_ACCENT_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -5007,6 +5017,7 @@ public final class Settings {
             QS_PANEL_BG_COLOR_WALL,
             QS_PANEL_BG_USE_WALL,
             QS_PANEL_BG_USE_FW,
+            QS_PANEL_BG_USE_ACCENT,
         };
 
         /**
@@ -5178,6 +5189,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(QS_PANEL_BG_COLOR_WALL);
             PRIVATE_SETTINGS.add(QS_PANEL_BG_USE_WALL);
             PRIVATE_SETTINGS.add(QS_PANEL_BG_USE_FW);
+            PRIVATE_SETTINGS.add(QS_PANEL_BG_USE_ACCENT);
         }
 
         /**
@@ -5295,6 +5307,7 @@ public final class Settings {
             VALIDATORS.put(QS_PANEL_BG_COLOR_WALL, QS_PANEL_BG_COLOR_WALL_VALIDATOR);
             VALIDATORS.put(QS_PANEL_BG_USE_WALL, QS_PANEL_BG_USE_WALL_VALIDATOR);
             VALIDATORS.put(QS_PANEL_BG_USE_FW, QS_PANEL_BG_USE_FW_VALIDATOR);
+            VALIDATORS.put(QS_PANEL_BG_USE_ACCENT, QS_PANEL_BG_USE_ACCENT_VALIDATOR);
         }
 
         /**
