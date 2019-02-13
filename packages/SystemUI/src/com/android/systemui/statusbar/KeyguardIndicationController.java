@@ -79,6 +79,7 @@ import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.dock.DockManager;
 import com.android.systemui.keyguard.KeyguardIndication;
 import com.android.systemui.keyguard.KeyguardIndicationRotateTextViewController;
+import com.android.systemui.omni.BatteryBarView;
 import com.android.systemui.plugins.FalsingManager;
 import com.android.systemui.plugins.statusbar.StatusBarStateController;
 import com.android.systemui.statusbar.phone.KeyguardBypassController;
@@ -169,6 +170,9 @@ public class KeyguardIndicationController {
 
     private KeyguardUpdateMonitorCallback mUpdateMonitorCallback;
 
+    // omni additions
+    private BatteryBarView mBatteryBar;
+
     private boolean mDozing;
     private final ViewClippingUtil.ClippingParameters mClippingParams =
             new ViewClippingUtil.ClippingParameters() {
@@ -247,6 +251,7 @@ public class KeyguardIndicationController {
             mStatusBarStateController);
         updateIndication(false /* animate */);
         updateDisclosure();
+        mBatteryBar = indicationArea.findViewById(R.id.battery_bar_view);
         if (mBroadcastReceiver == null) {
             // Update the disclosure proactively to avoid IPC on the critical path.
             mBroadcastReceiver = new BroadcastReceiver() {
@@ -686,61 +691,69 @@ public class KeyguardIndicationController {
     }
 
     protected final void updateIndication(boolean animate) {
-        if (!mVisible) {
-            return;
-        }
+        if (mVisible) {
+            boolean showBatteryBar = Settings.System.getIntForUser(mContext.getContentResolver(),
+                     Settings.System.OMNI_KEYGUARD_SHOW_BATTERY_BAR, 0, UserHandle.USER_CURRENT) == 1;
+            boolean showBatteryBarAlways = Settings.System.getIntForUser(mContext.getContentResolver(),
+                     Settings.System.OMNI_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS, 0, UserHandle.USER_CURRENT) == 1;
+            // A few places might need to hide the indication, so always start by making it visible
+            mIndicationArea.setVisibility(VISIBLE);
 
-        // A few places might need to hide the indication, so always start by making it visible
-        mIndicationArea.setVisibility(VISIBLE);
+            // Walk down a precedence-ordered list of what indication
+            // should be shown based on user or device state
+            // AoD
+            mBatteryBar.setVisibility(View.GONE);
 
-        // Walk down a precedence-ordered list of what indication
-        // should be shown based on user or device state
-        // AoD
-        if (mDozing) {
-            mLockScreenIndicationView.setVisibility(View.GONE);
-            mTopIndicationView.setVisibility(VISIBLE);
-            // When dozing we ignore any text color and use white instead, because
-            // colors can be hard to read in low brightness.
-            mTopIndicationView.setTextColor(Color.WHITE);
-            if (!TextUtils.isEmpty(mBiometricMessage)) {
-                mWakeLock.setAcquired(true);
-                mTopIndicationView.switchIndication(mBiometricMessage, null,
-                        true, () -> mWakeLock.setAcquired(false));
-            } else if (!TextUtils.isEmpty(mTransientIndication)) {
-                mWakeLock.setAcquired(true);
-                mTopIndicationView.switchIndication(mTransientIndication, null,
-                        true, () -> mWakeLock.setAcquired(false));
-            } else if (!mBatteryPresent) {
-                // If there is no battery detected, hide the indication and bail
-                mIndicationArea.setVisibility(GONE);
-            } else if (!TextUtils.isEmpty(mAlignmentIndication)) {
-                mTopIndicationView.switchIndication(mAlignmentIndication, null,
-                        false /* animate */, null /* onAnimationEndCallback */);
-                mTopIndicationView.setTextColor(mContext.getColor(R.color.misalignment_text_color));
-            } else if (mPowerPluggedIn || mEnableBatteryDefender) {
-                String indication = computePowerIndication();
-                if (animate) {
+            if (mDozing) {
+                mLockScreenIndicationView.setVisibility(View.GONE);
+                mTopIndicationView.setVisibility(VISIBLE);
+                // When dozing we ignore any text color and use white instead, because
+                // colors can be hard to read in low brightness.
+                mTopIndicationView.setTextColor(Color.WHITE);
+                if (!TextUtils.isEmpty(mBiometricMessage)) {
                     mWakeLock.setAcquired(true);
-                    mTopIndicationView.switchIndication(indication, null, true /* animate */,
-                            () -> mWakeLock.setAcquired(false));
+                    mTopIndicationView.switchIndication(mBiometricMessage, null,
+                            true, () -> mWakeLock.setAcquired(false));
+                } else if (!TextUtils.isEmpty(mTransientIndication)) {
+                    mWakeLock.setAcquired(true);
+                    mTopIndicationView.switchIndication(mTransientIndication, null,
+                            true, () -> mWakeLock.setAcquired(false));
+                } else if (!mBatteryPresent) {
+                    // If there is no battery detected, hide the indication and bail
+                    mIndicationArea.setVisibility(GONE);
+                } else if (!TextUtils.isEmpty(mAlignmentIndication)) {
+                    mTopIndicationView.switchIndication(mAlignmentIndication, null,
+                            false /* animate */, null /* onAnimationEndCallback */);
+                    mTopIndicationView.setTextColor(mContext.getColor(R.color.misalignment_text_color));
+                } else if (mPowerPluggedIn || mEnableBatteryDefender) {
+                    String indication = computePowerIndication();
+                    if (animate) {
+                        mWakeLock.setAcquired(true);
+                        mTopIndicationView.switchIndication(indication, null, true /* animate */,
+                                () -> mWakeLock.setAcquired(false));
+                    } else {
+                        mTopIndicationView.switchIndication(indication, null, false /* animate */,
+                                null /* onAnimationEndCallback */);
+                    }
+                    if (showBatteryBar) {
+                        mBatteryBar.setVisibility(View.VISIBLE);
+                        mBatteryBar.setBatteryPercent(mBatteryLevel);
+                        mBatteryBar.setBarColor(Color.WHITE);
+                    }
                 } else {
-                    mTopIndicationView.switchIndication(indication, null, false /* animate */,
-                            null /* onAnimationEndCallback */);
+                    String percentage = NumberFormat.getPercentInstance()
+                            .format(mBatteryLevel / 100f);
+                    mTopIndicationView.switchIndication(percentage, null /* indication */,
+                            false /* animate */, null /* onAnimationEnd*/);
                 }
-            } else {
-                String percentage = NumberFormat.getPercentInstance()
-                        .format(mBatteryLevel / 100f);
-                mTopIndicationView.switchIndication(percentage, null /* indication */,
-                        false /* animate */, null /* onAnimationEnd*/);
+                return;
             }
-            return;
+            // LOCK SCREEN
+            mTopIndicationView.setVisibility(GONE);
+            mTopIndicationView.setText(null);
+            mLockScreenIndicationView.setVisibility(View.VISIBLE);
+            updatePersistentIndications(animate, KeyguardUpdateMonitor.getCurrentUser());
         }
-
-        // LOCK SCREEN
-        mTopIndicationView.setVisibility(GONE);
-        mTopIndicationView.setText(null);
-        mLockScreenIndicationView.setVisibility(View.VISIBLE);
-        updatePersistentIndications(animate, KeyguardUpdateMonitor.getCurrentUser());
     }
 
     // animates textView - textView moves up and bounces down
