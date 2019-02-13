@@ -9,4 +9,7 @@
 
     <!-- Maximum vertical offset of statusbar for burn-in protection -->
     <dimen name="status_bar_offset_max_y">4dp</dimen>
+
+    <!-- AoD battery bar -->
+    <dimen name="battery_bar_view_height">6dp</dimen>
 </resources>
