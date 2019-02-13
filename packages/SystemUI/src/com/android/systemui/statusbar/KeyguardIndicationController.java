@@ -65,6 +65,7 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.view.View;
@@ -95,6 +96,7 @@ import com.android.systemui.keyguard.KeyguardIndication;
 import com.android.systemui.keyguard.KeyguardIndicationRotateTextViewController;
 import com.android.systemui.keyguard.ScreenLifecycle;
 import com.android.systemui.keyguard.domain.interactor.AlternateBouncerInteractor;
+import com.android.systemui.omni.BatteryBarView;
 import com.android.systemui.plugins.FalsingManager;
 import com.android.systemui.plugins.log.LogLevel;
 import com.android.systemui.plugins.statusbar.StatusBarStateController;
@@ -197,6 +199,9 @@ public class KeyguardIndicationController {
     private boolean mInited;
 
     private KeyguardUpdateMonitorCallback mUpdateMonitorCallback;
+
+    // omni additions
+    private BatteryBarView mBatteryBar;
 
     private boolean mDozing;
     private final ScreenLifecycle mScreenLifecycle;
@@ -336,6 +341,7 @@ public class KeyguardIndicationController {
                 mStatusBarStateController,
                 mKeyguardLogger
         );
+        mBatteryBar = indicationArea.findViewById(R.id.battery_bar_view);
         updateDeviceEntryIndication(false /* animate */);
         updateOrganizedOwnedDevice();
         if (mBroadcastReceiver == null) {
@@ -839,54 +845,69 @@ public class KeyguardIndicationController {
      */
     protected final void updateDeviceEntryIndication(boolean animate) {
         mKeyguardLogger.logUpdateDeviceEntryIndication(animate, mVisible, mDozing);
-        if (!mVisible) {
-            return;
-        }
+        if (mVisible) {
+            boolean showBatteryBar = Settings.System.getIntForUser(mContext.getContentResolver(),
+                     Settings.System.OMNI_KEYGUARD_SHOW_BATTERY_BAR, 0, UserHandle.USER_CURRENT) == 1;
+            boolean showBatteryBarAlways = Settings.System.getIntForUser(mContext.getContentResolver(),
+                     Settings.System.OMNI_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS, 0, UserHandle.USER_CURRENT) == 1;
+            // A few places might need to hide the indication, so always start by making it visible
+            mIndicationArea.setVisibility(VISIBLE);
 
-        // A few places might need to hide the indication, so always start by making it visible
-        mIndicationArea.setVisibility(VISIBLE);
+            // Walk down a precedence-ordered list of what indication
+            // should be shown based on user or device state
+            // AoD
+            mBatteryBar.setVisibility(View.GONE);
 
-        // Walk down a precedence-ordered list of what indication
-        // should be shown based on device state
-        if (mDozing) {
-            mLockScreenIndicationView.setVisibility(View.GONE);
-            mTopIndicationView.setVisibility(VISIBLE);
-            // When dozing we ignore any text color and use white instead, because
-            // colors can be hard to read in low brightness.
-            mTopIndicationView.setTextColor(Color.WHITE);
+            if (mDozing) {
+                mLockScreenIndicationView.setVisibility(View.GONE);
+                mTopIndicationView.setVisibility(VISIBLE);
+                // When dozing we ignore any text color and use white instead, because
+                // colors can be hard to read in low brightness.
+                mTopIndicationView.setTextColor(Color.WHITE);
 
-            CharSequence newIndication;
-            if (!TextUtils.isEmpty(mBiometricMessage)) {
-                newIndication = mBiometricMessage; // note: doesn't show mBiometricMessageFollowUp
-            } else if (!TextUtils.isEmpty(mTransientIndication)) {
-                newIndication = mTransientIndication;
-            } else if (!mBatteryPresent) {
-                // If there is no battery detected, hide the indication and bail
-                mIndicationArea.setVisibility(GONE);
+                CharSequence newIndication = null;
+                if (!TextUtils.isEmpty(mBiometricMessage)) {
+                    newIndication = mBiometricMessage;
+                } else if (!TextUtils.isEmpty(mTransientIndication)) {
+                    newIndication = mTransientIndication;
+                } else if (!mBatteryPresent) {
+                    // If there is no battery detected, hide the indication and bail
+                    mIndicationArea.setVisibility(GONE);
+                    return;
+                } else if (!TextUtils.isEmpty(mAlignmentIndication)) {
+                    newIndication = mAlignmentIndication;
+                    mTopIndicationView.setTextColor(mContext.getColor(R.color.misalignment_text_color));
+                } else if (mPowerPluggedIn || mEnableBatteryDefender) {
+                    newIndication = computePowerIndication();
+                    if (showBatteryBar || showBatteryBarAlways) {
+                        mBatteryBar.setVisibility(View.VISIBLE);
+                        mBatteryBar.setBatteryPercent(mBatteryLevel);
+                        mBatteryBar.setBarColor(Color.WHITE);
+                    }
+                } else {
+                    newIndication = NumberFormat.getPercentInstance()
+                            .format(mBatteryLevel / 100f);
+                    if (showBatteryBarAlways) {
+                        mBatteryBar.setVisibility(View.VISIBLE);
+                        mBatteryBar.setBatteryPercent(mBatteryLevel);
+                        mBatteryBar.setBarColor(Color.WHITE);
+                    }
+                }
+
+                if (!TextUtils.equals(mTopIndicationView.getText(), newIndication)) {
+                    mWakeLock.setAcquired(true);
+                    mTopIndicationView.switchIndication(newIndication, null,
+                            true, () -> mWakeLock.setAcquired(false));
+                }
                 return;
-            } else if (!TextUtils.isEmpty(mAlignmentIndication)) {
-                newIndication = mAlignmentIndication;
-                mTopIndicationView.setTextColor(mContext.getColor(R.color.misalignment_text_color));
-            } else if (mPowerPluggedIn || mEnableBatteryDefender) {
-                newIndication = computePowerIndication();
-            } else {
-                newIndication = NumberFormat.getPercentInstance()
-                        .format(mBatteryLevel / 100f);
             }
 
-            if (!TextUtils.equals(mTopIndicationView.getText(), newIndication)) {
-                mWakeLock.setAcquired(true);
-                mTopIndicationView.switchIndication(newIndication, null,
-                        true, () -> mWakeLock.setAcquired(false));
-            }
-            return;
+            // LOCK SCREEN
+            mTopIndicationView.setVisibility(GONE);
+            mTopIndicationView.setText(null);
+            mLockScreenIndicationView.setVisibility(View.VISIBLE);
+            updateLockScreenIndications(animate, getCurrentUser());
         }
-
-        // LOCK SCREEN
-        mTopIndicationView.setVisibility(GONE);
-        mTopIndicationView.setText(null);
-        mLockScreenIndicationView.setVisibility(View.VISIBLE);
-        updateLockScreenIndications(animate, getCurrentUser());
     }
 
     /**
