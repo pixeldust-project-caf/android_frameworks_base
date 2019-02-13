@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2023 The PixelDust Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+    <!-- AoD battery bar -->
+    <dimen name="battery_bar_view_height">6dp</dimen>
+</resources>
