@@ -8649,6 +8649,13 @@ public final class Settings {
         public static final String SMARTBAR_BUTTON_ANIMATION_STYLE = "smartbar_button_animation_style";
 
         /**
+         * Whether user has to unlock the secured lock screen before they can use a quick settings tile.
+         * @hide
+         */
+        public static final String QSTILE_REQUIRES_UNLOCKING =
+                "qstile_requires_unlocking";
+
+        /**
          * This are the settings to be backed up.
          *
          * NOTE: Settings are backed up and restored in the order they appear
