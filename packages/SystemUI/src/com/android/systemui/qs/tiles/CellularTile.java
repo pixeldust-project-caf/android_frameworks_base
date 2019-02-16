@@ -23,6 +23,7 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.service.quicksettings.Tile;
 import android.text.TextUtils;
@@ -123,7 +124,7 @@ public class CellularTile extends QSTileImpl<SignalState> {
                 mUiHandler.post(this::maybeShowDisableDialog);
             }
         } else {
-            if (mKeyguard.isSecure() && mKeyguard.isShowing()) {
+            if (mKeyguard.isSecure() && mKeyguard.isShowing() && isUnlockingRequired()) {
                 Dependency.get(ActivityStarter.class).postQSRunnableDismissingKeyguard(() -> {
                     mHost.openPanels();
                     mDataController.setMobileDataEnabled(true);
@@ -132,6 +133,12 @@ public class CellularTile extends QSTileImpl<SignalState> {
             }
             mDataController.setMobileDataEnabled(true);
         }
+    }
+
+    private boolean isUnlockingRequired() {
+        return (Settings.Secure.getIntForUser(
+                mContext.getContentResolver(), Settings.Secure.QSTILE_REQUIRES_UNLOCKING, 1,
+                UserHandle.USER_CURRENT) == 1);
     }
 
     private void maybeShowDisableDialog() {
