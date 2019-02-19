@@ -4137,7 +4137,6 @@ public class StatusBar extends SystemUI implements DemoMode,
         return true;
     }
 
-
     /**
      * Switches theme from light to dark and vice-versa.
      */
@@ -4167,19 +4166,19 @@ public class StatusBar extends SystemUI implements DemoMode,
             useShishuNightsTheme = userThemeSetting == 4;
             useChocolateTheme = userThemeSetting == 5;
         }
-        if (isUsingDarkTheme() != useDarkTheme) {
+        if (themeNeedsRefresh() || isUsingDarkTheme() != useDarkTheme) {
             unfuckBlackWhiteAccent(); // Check for black and white accent
             ThemeAccentUtils.setLightDarkTheme(mOverlayManager, mLockscreenUserManager.getCurrentUserId(), useDarkTheme);
         }
-        if (isUsingBlackTheme() != useBlackTheme) {
+        if (themeNeedsRefresh() || isUsingBlackTheme() != useBlackTheme) {
             unfuckBlackWhiteAccent(); // Check for black and white accent
             ThemeAccentUtils.setBlackTheme(mOverlayManager, mLockscreenUserManager.getCurrentUserId(), useBlackTheme);
         }
-        if (isUsingShishuNightsTheme() != useShishuNightsTheme) {
+        if (themeNeedsRefresh() || isUsingShishuNightsTheme() != useShishuNightsTheme) {
             unfuckBlackWhiteAccent(); // Check for black and white accent
             ThemeAccentUtils.setShishuNightsTheme(mOverlayManager, mLockscreenUserManager.getCurrentUserId(), useShishuNightsTheme);
         }
-        if (isUsingChocolateTheme() != useChocolateTheme) {
+        if (themeNeedsRefresh() || isUsingChocolateTheme() != useChocolateTheme) {
             unfuckBlackWhiteAccent(); // Check for black and white accent
             ThemeAccentUtils.setChocolateTheme(mOverlayManager, mLockscreenUserManager.getCurrentUserId(), useChocolateTheme);
         }
@@ -5498,7 +5497,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                 updateCutoutOverlay();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.SYSTEM_THEME))) {
-                updateTheme();
+                updateTheme(false);
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.ACCENT_PICKER))) {
                 unloadAccents(); // Unload the accents when users request it
