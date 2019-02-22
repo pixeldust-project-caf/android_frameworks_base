@@ -77,6 +77,7 @@ public class Clock extends TextView implements
     private static final String VISIBLE_BY_USER = "visible_by_user";
     private static final String SHOW_SECONDS = "show_seconds";
     private static final String VISIBILITY = "visibility";
+    private static final String QSHEADER = "qsheader";
 
     public static final String STATUS_BAR_CLOCK_SECONDS =
             "system:" + Settings.System.STATUS_BAR_CLOCK_SECONDS;
@@ -104,6 +105,7 @@ public class Clock extends TextView implements
     private final int mAmPmStyle;
     private boolean mShowSeconds;
     private Handler mSecondsHandler;
+    private boolean mQsHeader;
 
     // Fields to cache the width so the clock remains at an approximately constant width
     private int mCharsAtCurrentWidth = -1;
@@ -151,6 +153,7 @@ public class Clock extends TextView implements
         bundle.putBoolean(VISIBLE_BY_USER, mClockVisibleByUser);
         bundle.putBoolean(SHOW_SECONDS, mShowSeconds);
         bundle.putInt(VISIBILITY, getVisibility());
+        bundle.putBoolean(QSHEADER, mQsHeader);
 
         return bundle;
     }
@@ -174,6 +177,7 @@ public class Clock extends TextView implements
         if (bundle.containsKey(VISIBILITY)) {
             super.setVisibility(bundle.getInt(VISIBILITY));
         }
+        mQsHeader = bundle.getBoolean(QSHEADER, false);
     }
 
     @Override
@@ -272,6 +276,10 @@ public class Clock extends TextView implements
         }
 
         super.setVisibility(visibility);
+    }
+
+    public void setQsHeader() {
+        mQsHeader = true;
     }
 
     public void setClockVisibleByUser(boolean visible) {
