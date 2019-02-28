@@ -829,7 +829,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         final Context context = mContext;
         updateDisplaySize(); // populates mDisplayMetrics
         updateResources();
-        updateTheme();
+        updateTheme(themeNeedsRefresh());
 
         inflateStatusBarWindow(context);
         mStatusBarWindow.setService(this);
@@ -2142,7 +2142,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     @Override
     public void onColorsChanged(ColorExtractor extractor, int which) {
-        updateTheme();
+        updateTheme(false);
     }
 
     public boolean isUsingDarkTheme() {
@@ -3247,7 +3247,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     public void onConfigChanged(Configuration newConfig) {
         updateResources();
         updateDisplaySize(); // populates mDisplayMetrics
-        updateTheme();
+        updateTheme(false);
 
         if (DEBUG) {
             Log.v(TAG, "configuration changed: " + mContext.getResources().getConfiguration());
@@ -3966,7 +3966,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             }
         }
         mNotificationPanel.setBarState(mState, mKeyguardFadingAway, goingToFullShade);
-        updateTheme();
+        updateTheme(false);
         updateDozingState();
         updatePublicMode();
         updateStackScrollerState(goingToFullShade, fromShadeLocked);
@@ -3990,10 +3990,11 @@ public class StatusBar extends SystemUI implements DemoMode,
         return true;
     }
 
+
     /**
      * Switches theme from light to dark and vice-versa.
      */
-    protected void updateTheme() {
+    protected void updateTheme(boolean themeNeedsRefresh) {
         final boolean inflated = mStackScroller != null && mStatusBarWindowManager != null;
 
         // The system wallpaper defines if QS should be light or dark.
@@ -4006,7 +4007,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                 && (config.uiMode & Configuration.UI_MODE_NIGHT_MASK)
                     == Configuration.UI_MODE_NIGHT_YES;
         final boolean useDarkTheme = nightModeWantsDarkTheme;
-        if (themeNeedsRefresh() || isUsingDarkTheme() != useDarkTheme) {
+        if (themeNeedsRefresh || isUsingDarkTheme() != useDarkTheme) {
             mUiOffloadThread.submit(() -> {
                 try {
                     mOverlayManager.setEnabled("com.android.systemui.theme.dark",
@@ -4208,7 +4209,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         mStackScroller.setStatusBarState(state);
         updateReportRejectedTouchVisibility();
         updateDozing();
-        updateTheme();
+        updateTheme(false);
         touchAutoDim();
         mNotificationShelf.setStatusBarState(state);
     }
