@@ -77,4 +77,7 @@
     <!-- Pocket Lock -->
     <bool name="config_pocketModeSupported">true</bool>
 
+    <!-- Whether device has a physical display cutout -->
+    <bool name="config_physicalDisplayCutout">false</bool>
+
 </resources>
