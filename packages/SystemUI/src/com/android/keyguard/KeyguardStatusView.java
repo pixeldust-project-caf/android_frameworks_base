@@ -762,6 +762,18 @@ public class KeyguardStatusView extends GridLayout implements
 	if (lockClockFont == 31) {
             mClockView.setTypeface(Typeface.create("samsung-sys", Typeface.NORMAL));
         }
+	if (lockClockFont == 32) {
+            mClockView.setTypeface(Typeface.create("mexcellent-sys", Typeface.NORMAL));
+        }
+	if (lockClockFont == 33) {
+            mClockView.setTypeface(Typeface.create("burnstown-sys", Typeface.NORMAL));
+        }
+        if (lockClockFont == 34) {
+            mClockView.setTypeface(Typeface.create("dumbledor-sys", Typeface.NORMAL));
+        }
+	if (lockClockFont == 35) {
+            mClockView.setTypeface(Typeface.create("phantombold-sys", Typeface.NORMAL));
+	}
     }
 
     private void refreshLockDateFont() {
@@ -855,14 +867,26 @@ public class KeyguardStatusView extends GridLayout implements
         if (lockDateFont == 28) {
             mKeyguardSlice.setViewsTypeface(Typeface.create("googlesans-sys", Typeface.NORMAL));
         }
-	    if (lockDateFont == 29) {
+        if (lockDateFont == 29) {
             mKeyguardSlice.setViewsTypeface(Typeface.create("neoneon-sys", Typeface.NORMAL));
         }
         if (lockDateFont == 30) {
             mKeyguardSlice.setViewsTypeface(Typeface.create("themeable-sys", Typeface.NORMAL));
     	}
-	    if (lockDateFont == 31) {
+        if (lockDateFont == 31) {
             mKeyguardSlice.setViewsTypeface(Typeface.create("samsung-sys", Typeface.NORMAL));
+        }
+	if (lockDateFont == 32) {
+            mKeyguardSlice.setViewsTypeface(Typeface.create("mexcellent-sys", Typeface.NORMAL));
+        }
+	if (lockDateFont == 33) {
+            mKeyguardSlice.setViewsTypeface(Typeface.create("burnstown-sys", Typeface.NORMAL));
+        }
+        if (lockDateFont == 34) {
+            mKeyguardSlice.setViewsTypeface(Typeface.create("dumbledor-sys", Typeface.NORMAL));
+        }
+	if (lockDateFont == 35) {
+            mKeyguardSlice.setViewsTypeface(Typeface.create("phantombold-sys", Typeface.NORMAL));
         }
     }
 
