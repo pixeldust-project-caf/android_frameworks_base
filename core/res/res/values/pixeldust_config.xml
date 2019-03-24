@@ -143,4 +143,7 @@
     <!-- Whether device has a physical display cutout -->
     <bool name="config_physicalDisplayCutout">false</bool>
 
+    <!-- Whether the Dreamliner (Pixel Stand) service should be enabled -->
+    <bool name="config_enableDreamlinerService">false</bool>
+
 </resources>

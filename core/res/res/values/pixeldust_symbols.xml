@@ -201,4 +201,7 @@
     <!-- Whether device has a physical display cutout -->
     <java-symbol type="bool" name="config_physicalDisplayCutout" />
 
+    <!-- Dreamliner service -->
+    <java-symbol type="bool" name="config_enableDreamlinerService" />
+
 </resources>
