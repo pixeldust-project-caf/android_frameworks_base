@@ -128,4 +128,8 @@ interface IStatusBarService
     void killForegroundApp();
     void setPartialScreenshot(boolean active);
     void screenPinningStateChanged(boolean enabled);
+
+    // Used to show or hide in display fingerprint view
+    void showInDisplayFingerprintView();
+    void hideInDisplayFingerprintView();
 }

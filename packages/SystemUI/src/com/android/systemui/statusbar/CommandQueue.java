@@ -121,7 +121,8 @@ public class CommandQueue extends IStatusBar.Stub implements CallbackController<
     private static final int MSG_TOGGLE_SETTINGS_PANEL         = 100 << MSG_SHIFT;
     private static final int MSG_KILL_FOREGROUND_APP           = 101 << MSG_SHIFT;
     private static final int MSG_PARTIAL_SCREENSHOT_ACTIVE     = 102 << MSG_SHIFT;
-
+    private static final int MSG_SHOW_IN_DISPLAY_FINGERPRINT_VIEW = 103 << MSG_SHIFT;
+    private static final int MSG_HIDE_IN_DISPLAY_FINGERPRINT_VIEW = 104 << MSG_SHIFT;
     private static final int MSG_SCREEN_PINNING_STATE_CHANGED  = 105 << MSG_SHIFT;
     private static final int MSG_LEFT_IN_LANDSCAPE_STATE_CHANGED  = 106 << MSG_SHIFT;
 
@@ -288,6 +289,8 @@ public class CommandQueue extends IStatusBar.Stub implements CallbackController<
         default void onBiometricHelp(String message) { }
         default void onBiometricError(String error) { }
         default void hideBiometricDialog() { }
+        default void showInDisplayFingerprintView() { }
+        default void hideInDisplayFingerprintView() { }
         default void setBlockedGesturalNavigation(boolean blocked) { }
 
         /**
@@ -818,6 +821,20 @@ public class CommandQueue extends IStatusBar.Stub implements CallbackController<
     }
 
     @Override
+    public void showInDisplayFingerprintView() {
+        synchronized (mLock) {
+            mHandler.obtainMessage(MSG_SHOW_IN_DISPLAY_FINGERPRINT_VIEW).sendToTarget();
+        }
+    }
+
+    @Override
+    public void hideInDisplayFingerprintView() {
+        synchronized (mLock) {
+            mHandler.obtainMessage(MSG_HIDE_IN_DISPLAY_FINGERPRINT_VIEW).sendToTarget();
+        }
+    }
+
+    @Override
     public void setBlockedGesturalNavigation(boolean blocked) {
         synchronized (mLock) {
             mHandler.removeMessages(MSG_SET_BLOCKED_GESTURAL_NAVIGATION);
@@ -1206,6 +1223,16 @@ public class CommandQueue extends IStatusBar.Stub implements CallbackController<
                 case MSG_LEFT_IN_LANDSCAPE_STATE_CHANGED:
                     for (int i = 0; i < mCallbacks.size(); i++) {
                         mCallbacks.get(i).leftInLandscapeChanged(msg.arg1 != 0);
+                    }
+                    break;
+                case MSG_SHOW_IN_DISPLAY_FINGERPRINT_VIEW:
+                    for (int i = 0; i < mCallbacks.size(); i++) {
+                        mCallbacks.get(i).showInDisplayFingerprintView();
+                    }
+                    break;
+                case MSG_HIDE_IN_DISPLAY_FINGERPRINT_VIEW:
+                    for (int i = 0; i < mCallbacks.size(); i++) {
+                        mCallbacks.get(i).hideInDisplayFingerprintView();
                     }
                     break;
             }
