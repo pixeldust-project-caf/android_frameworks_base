@@ -4180,16 +4180,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     protected void updateTheme(boolean themeNeedsRefresh) {
         final boolean inflated = mStackScroller != null && mStatusBarWindowManager != null;
 
-        // The system wallpaper defines if system should be light or dark.
-        WallpaperColors systemColors = mColorExtractor
-                .getWallpaperColors(WallpaperManager.FLAG_SYSTEM);
-        final boolean wallpaperWantsDarkTheme = systemColors != null
-                && (systemColors.getColorHints() & WallpaperColors.HINT_SUPPORTS_DARK_THEME) != 0;
-        final Configuration config = mContext.getResources().getConfiguration();
-        final boolean nightModeWantsDarkTheme = DARK_THEME_IN_NIGHT_MODE
-                && (config.uiMode & Configuration.UI_MODE_NIGHT_MASK)
-                    == Configuration.UI_MODE_NIGHT_YES;
-        boolean useDarkTheme = wallpaperWantsDarkTheme || nightModeWantsDarkTheme;
+        boolean useDarkTheme = shouldUseDarkTheme();
         boolean useBlackTheme = (Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.PREFER_BLACK_THEMES, 0, UserHandle.USER_CURRENT) == 1);
 
@@ -4223,6 +4214,19 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
         updateCorners();
         updateQSPanel();
+    }
+
+    private boolean shouldUseDarkTheme() {
+        // The system wallpaper defines if system should be light or dark.
+        WallpaperColors systemColors = mColorExtractor
+                .getWallpaperColors(WallpaperManager.FLAG_SYSTEM);
+        final boolean wallpaperWantsDarkTheme = systemColors != null
+                && (systemColors.getColorHints() & WallpaperColors.HINT_SUPPORTS_DARK_THEME) != 0;
+        final Configuration config = mContext.getResources().getConfiguration();
+        final boolean nightModeWantsDarkTheme = DARK_THEME_IN_NIGHT_MODE
+                && (config.uiMode & Configuration.UI_MODE_NIGHT_MASK)
+                == Configuration.UI_MODE_NIGHT_YES;
+        return wallpaperWantsDarkTheme || nightModeWantsDarkTheme;
     }
 
     private void updateCorners() {
