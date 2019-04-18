@@ -19,6 +19,7 @@
     <!-- CustomText clock -->
     <string name="high_noon_first_row">High</string>
     <string name="high_noon_second_row">Noon</string>
+    <string name="twelve_am">Twelve</string>
     <string name="custom_text_clock_top_text_default">It\'s</string>
     <string name="text_clock_zero_h_min">O\'</string>
     <string name="text_clock_high">High</string>
