@@ -127,4 +127,7 @@
     <!-- Whether device ignores the RSSNR signal implementation -->
     <java-symbol type="bool" name="config_ignoreRssnrSignalLevel" />
 
+    <!-- Pocket Lock -->
+    <java-symbol type="bool" name="config_pocketModeSupported" />
+
 </resources>
