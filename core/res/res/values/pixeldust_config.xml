@@ -64,9 +64,6 @@
     <!-- True if the notifications should tint the app name with the dynamic or the accent color -->
     <bool name="config_allowNotificationAppNameTextTinting">false</bool>
 
-    <!-- Screen off delay -->
-    <integer name="config_screen_off_delay">1000</integer>
-
     <!-- Time to give to the proximity sensor before toggling the flashlight with the Power button.
     Set to -1 to disable the proximity sensor check at all-->
     <integer name="config_flashlightProximityTimeout">300</integer>
