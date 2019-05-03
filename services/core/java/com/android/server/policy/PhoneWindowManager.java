@@ -2893,14 +2893,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mTorchActionMode = Settings.Secure.getIntForUser(resolver,
                     Settings.Secure.TORCH_POWER_BUTTON_GESTURE, 0,
                     UserHandle.USER_CURRENT);
-
-            boolean doShowNavbar = Settings.Secure.getIntForUser(resolver,
-                    Settings.Secure.NAVIGATION_BAR_VISIBLE,
-                    ActionUtils.hasNavbarByDefault(mContext) ? 1 : 0,
-                    UserHandle.USER_CURRENT) == 1;
-            if (doShowNavbar != mNavbarVisible) {
-                mNavbarVisible = doShowNavbar;
-            }
         }
 
         boolean doShowNavbar = Settings.Secure.getIntForUser(resolver,
