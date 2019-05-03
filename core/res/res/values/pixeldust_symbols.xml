@@ -118,9 +118,6 @@
     <java-symbol type="color" name="autofill_save_title_color" />
     <java-symbol type="color" name="autofill_autofill_save_custom_subtitle_color" />
 
-    <!-- Screen off delay -->
-    <java-symbol type="integer" name="config_screen_off_delay" />
-
     <!-- Flashlight proximity check -->
     <java-symbol type="integer" name="config_flashlightProximityTimeout" />
 
