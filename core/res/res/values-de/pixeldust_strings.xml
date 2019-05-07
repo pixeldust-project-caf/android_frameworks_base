@@ -18,7 +18,7 @@
 
     <!-- Power menu -->
     <string name="reboot_to_recovery_title">Recovery</string>
-    <string name="reboot_to_recovery_message">Restarting wird gestartet</string>
+    <string name="reboot_to_recovery_message">Recovery wird gestartet</string>
     <string name="reboot_to_bootloader_title">Bootloader</string>
     <string name="reboot_to_bootloader_message">Bootloader wird gestartet</string>
     <string name="reboot_title">Neustart</string>
