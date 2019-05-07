@@ -35,6 +35,7 @@ import android.text.TextUtils;
 import android.text.TextUtils.TruncateAt;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -169,6 +170,12 @@ public class KeyguardSliceView extends LinearLayout implements View.OnClickListe
             return;
         }
 
+        final ContentResolver resolver = mContext.getContentResolver();
+        boolean mClockSelection = Settings.System.getIntForUser(resolver,
+                Settings.System.LOCKSCREEN_CLOCK_SELECTION, 0, UserHandle.USER_CURRENT) == 9;
+        int mTextClockAlign = Settings.System.getIntForUser(resolver,
+                Settings.System.LOCKSCREEN_TEXT_CLOCK_ALIGN, 0, UserHandle.USER_CURRENT);
+
         ListContent lc = new ListContent(getContext(), mSlice);
         mHasHeader = lc.hasHeader();
         List<SliceItem> subItems = new ArrayList<SliceItem>();
@@ -198,6 +205,22 @@ public class KeyguardSliceView extends LinearLayout implements View.OnClickListe
         final int subItemsCount = subItems.size();
         final int blendedColor = getTextColor();
         final int startIndex = mHasHeader ? 1 : 0; // First item is header; skip it
+        final int paddingPixel = (int) mContext.getResources().getDimension(R.dimen.custom_clock_left_padding);
+        if (mClockSelection) {
+            if (mTextClockAlign == 0) {
+                mRow.setPaddingRelative(paddingPixel, 0, 0, 0);
+                mRow.setGravity(Gravity.START);
+            } else if (mTextClockAlign == 1) {
+                mRow.setPaddingRelative(0, 0, 0, 0);
+                mRow.setGravity(Gravity.CENTER);
+            } else { // mTextClockAlign == 2
+                mRow.setPaddingRelative(0, 0, paddingPixel, 0);
+                mRow.setGravity(Gravity.END);
+            }
+        } else { // center align date & weather for other clock styles
+            mRow.setPaddingRelative(0, 0, 0, 0);
+            mRow.setGravity(Gravity.CENTER);
+        }
         mRow.setVisibility(subItemsCount > 0 ? ((mShowInfo || mDarkAmount == 1) ? VISIBLE : GONE)
                 : GONE);
         mRowAvailable = subItemsCount > 0;
