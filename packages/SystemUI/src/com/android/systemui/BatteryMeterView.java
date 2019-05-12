@@ -171,7 +171,11 @@ public class BatteryMeterView extends LinearLayout implements
      *                                    components
      */
     public void useWallpaperTextColor(boolean shouldUseWallpaperTextColor) {
-        if (shouldUseWallpaperTextColor == mUseWallpaperTextColors) {
+        useWallpaperTextColor(shouldUseWallpaperTextColor, false);
+    }
+
+    public void useWallpaperTextColor(boolean shouldUseWallpaperTextColor, boolean force) {
+        if (!force && shouldUseWallpaperTextColor == mUseWallpaperTextColors) {
             return;
         }
 
@@ -535,6 +539,7 @@ public class BatteryMeterView extends LinearLayout implements
                 }
                 break;
         }
+        useWallpaperTextColor(mUseWallpaperTextColors, true);
         updateVisibility();
         if (forcePercentageQsHeader()
                 || ((isCircleBattery() || style == BatteryMeterDrawableBase.BATTERY_STYLE_PORTRAIT) && mCharging)) {
