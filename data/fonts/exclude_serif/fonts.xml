@@ -111,6 +111,9 @@
     <alias name="gobold-light-sys" to="gobold-sys" weight="300" />
 
     <!-- Lockscren Fonts -->
+    <family name="gobold-sys">
+	<font weight="300" style="normal">Gobold.ttf</font>
+    </family>
     <family name="roadrage-sys">
         <font weight="300" style="normal">RoadRage-Regular.ttf</font>
     </family>
@@ -120,86 +123,26 @@
     <family name="googlesans-sys">
         <font weight="300" style="normal">GoogleSans-Medium.ttf</font>
     </family>
-    <family name="themeable-clock">
-        <font weight="300" style="normal">ThemeableClock-vcrosd.ttf</font>
-    </family>
-    <family name="themeable-date">
-        <font weight="300" style="normal">ThemeableDate-fc.ttf</font>
-    </family>
-    <family name="themeable-owner">
-        <font weight="300" style="normal">ThemeableOwner-fc.ttf</font>
-    </family>
-    <family name="adamcg-pro">
-        <font weight="300" style="normal">AdamCGPro-Regular.ttf</font>
-    </family>
-    <family name="alexana-neue">
-        <font weight="300" style="normal">AlexanaNeue-Regular.ttf</font>
-    </family>
-    <family name="alien-league">
-        <font weight="300" style="normal">AlienLeague-Regular.ttf</font>
-    </family>
-    <family name="azedo-light">
-        <font weight="300" style="normal">Azedo-Light.ttf</font>
-    </family>
-    <family name="bignoodle-italic">
-        <font weight="300" style="normal">BigNoodleTilting-Italic.ttf</font>
-    </family>
-    <family name="bignoodle-regular">
-        <font weight="300" style="normal">BigNoodleTilting-Regular.ttf</font>
-    </family>
-    <family name="biko">
-        <font weight="300" style="normal">Biko-Regular.ttf</font>
-    </family>
-    <family name="blern">
-        <font weight="300" style="normal">Blern-Regular.ttf</font>
-    </family>
-    <family name="cocobiker">
-        <font weight="300" style="normal">CoCoBiker-Regular.ttf</font>
-    </family>
-    <family name="fester">
-        <font weight="300" style="normal">Fester-Medium.ttf</font>
-    </family>
-    <family name="ginora-sans">
-        <font weight="300" style="normal">GinoraSans-Regular.ttf</font>
-    </family>
-    <family name="inkferno">
-        <font weight="300" style="normal">Inkferno-Regular.ttf</font>
-    </family>
-    <family name="instruction">
-        <font weight="300" style="normal">Instruction-Regular.ttf</font>
-    </family>
-    <family name="jacklane">
-        <font weight="300" style="normal">JackLane-Regular.ttf</font>
-    </family>
-    <family name="metropolis1920">
-        <font weight="300" style="normal">Metropolis1920-Regular.ttf</font>
-    </family>
-    <family name="monad">
-        <font weight="300" style="normal">Monad-Regular.ttf</font>
-    </family>
-    <family name="neonneon">
+    <family name="neoneon-sys">
         <font weight="300" style="normal">Neoneon-Regular.ttf</font>
     </family>
-    <family name="noir">
-        <font weight="300" style="normal">Noir-Regular.ttf</font>
+    <family name="themeable-sys">
+        <font weight="300" style="normal">ThemeableFont-Regular.ttf</font>
     </family>
-    <family name="northfont">
-        <font weight="300" style="normal">North-Regular.ttf</font>
+    <family name="samsung-sys">
+	<font weight="300" style="normal">Shamshung.ttf</font>
     </family>
-    <family name="outrun-future">
-        <font weight="300" style="normal">OutrunFuture-Regular.ttf</font>
+    <family name="mexcellent-sys">
+        <font weight="300" style="normal">Mexcellent-Regular.ttf</font>
     </family>
-    <family name="qontra">
-        <font weight="300" style="normal">Qontra-Regular.ttf</font>
+    <family name="burnstown-sys">
+        <font weight="300" style="normal">Burnstown-Regular.ttf</font>
     </family>
-    <family name="riviera">
-        <font weight="300" style="normal">Riviera-Regular.ttf</font>
+    <family name="dumbledor-sys">
+        <font weight="300" style="normal">Dumbledor-Regular.ttf</font>
     </family>
-    <family name="the-outbox">
-        <font weight="300" style="normal">TheOutbox-Regular.ttf</font>
-    </family>
-    <family name="unionfont">
-        <font weight="300" style="normal">Union-Regular.ttf</font>
+    <family name="phantombold-sys">
+        <font weight="300" style="normal">PhantomBold-Regular.ttf</font>
     </family>
 
     <!-- La fontage v2.1 fonts -->
