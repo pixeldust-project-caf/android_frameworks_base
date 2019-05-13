@@ -450,12 +450,12 @@ public class KeyguardStatusView extends GridLayout implements
 
     private int getLockClockSize() {
         return Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.LOCKCLOCK_FONT_SIZE, 78);
+                Settings.System.LOCKCLOCK_FONT_SIZE, 68);
     }
 
     private int getLockDateSize() {
         return Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.LOCKDATE_FONT_SIZE, 14);
+                Settings.System.LOCKDATE_FONT_SIZE, 16);
     }
 
     private void refreshFormat() {
@@ -1000,7 +1000,7 @@ public class KeyguardStatusView extends GridLayout implements
     public void refreshclocksize() {
         final Resources res = getContext().getResources();
         boolean isPrimary = UserHandle.getCallingUserId() == UserHandle.USER_OWNER;
-        int lockClockSize = isPrimary ? getLockClockSize() : 78;
+        int lockClockSize = isPrimary ? getLockClockSize() : 68;
 
         if (lockClockSize == 50) {
         mClockView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -1185,7 +1185,7 @@ public class KeyguardStatusView extends GridLayout implements
     public void refreshdatesize() {
         final Resources res = getContext().getResources();
         boolean isPrimary = UserHandle.getCallingUserId() == UserHandle.USER_OWNER;
-        int lockDateSize = isPrimary ? getLockDateSize() : 14;
+        int lockDateSize = isPrimary ? getLockDateSize() : 16;
 
         if (lockDateSize == 0) {
         mKeyguardSlice.setViewsTextSize(TypedValue.COMPLEX_UNIT_PX,
