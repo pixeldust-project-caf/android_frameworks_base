@@ -564,7 +564,8 @@ public class StatusBar extends SystemUI implements DemoMode,
                 return;
             }
             WallpaperInfo info = wallpaperManager.getWallpaperInfo();
-            mWallpaperSupportsAmbientMode = info != null && info.getSupportsAmbientMode();
+            final boolean supportsAmbientMode = info != null &&
+                    (info.getSupportsAmbientMode() || "com.breel.wallpapers18".equals(info.getPackageName()));
 
             mStatusBarWindowManager.setWallpaperSupportsAmbientMode(mWallpaperSupportsAmbientMode);
             mScrimController.setWallpaperSupportsAmbientMode(mWallpaperSupportsAmbientMode);
