@@ -99,6 +99,17 @@
         <font weight="400" style="normal">CarroisGothicSC-Regular.ttf</font>
     </family>
 
+    <family name="product-sans">
+        <font weight="300" style="light">ProductSans-Light.ttf</font>
+        <font weight="300" style="light-italic">ProductSans-LightItalic.ttf</font>
+        <font weight="400" style="normal">ProductSans-Regular.ttf</font>
+        <font weight="400" style="italic">ProductSans-Italic.ttf</font>
+        <font weight="400" style="thin">ProductSans-Thin.ttf</font>
+        <font weight="400" style="thin-italic">ProductSans-ThinItalic.ttf</font>
+    </family>
+
+    <alias name="product-sans-light" to="product-sans" weight="300" />
+
     <!-- Lockscren Fonts -->
     <family name="gobold-sys">
 	<font weight="300" style="normal">Gobold.ttf</font>
@@ -109,8 +120,8 @@
     <family name="snowstorm-sys">
         <font weight="300" style="normal">Snowstorm-Regular.ttf</font>
     </family>
-    <family name="googlesans-sys">
-        <font weight="300" style="normal">GoogleSans-Medium.ttf</font>
+    <family name="productsans-sys">
+        <font weight="300" style="normal">ProductSans-Light.ttf</font>
     </family>
     <family name="neoneon-sys">
         <font weight="300" style="normal">Neoneon-Regular.ttf</font>

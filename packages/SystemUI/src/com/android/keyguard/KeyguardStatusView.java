@@ -751,7 +751,7 @@ public class KeyguardStatusView extends GridLayout implements
             mClockView.setTypeface(Typeface.create("snowstorm-sys", Typeface.NORMAL));
         }
         if (lockClockFont == 28) {
-            mClockView.setTypeface(Typeface.create("googlesans-sys", Typeface.NORMAL));
+            mClockView.setTypeface(Typeface.create("productsans-sys", Typeface.NORMAL));
         }
 	if (lockClockFont == 29) {
             mClockView.setTypeface(Typeface.create("neoneon-sys", Typeface.NORMAL));
@@ -865,7 +865,7 @@ public class KeyguardStatusView extends GridLayout implements
             mKeyguardSlice.setViewsTypeface(Typeface.create("snowstorm-sys", Typeface.NORMAL));
         }
         if (lockDateFont == 28) {
-            mKeyguardSlice.setViewsTypeface(Typeface.create("googlesans-sys", Typeface.NORMAL));
+            mKeyguardSlice.setViewsTypeface(Typeface.create("productsans-sys", Typeface.NORMAL));
         }
         if (lockDateFont == 29) {
             mKeyguardSlice.setViewsTypeface(Typeface.create("neoneon-sys", Typeface.NORMAL));
