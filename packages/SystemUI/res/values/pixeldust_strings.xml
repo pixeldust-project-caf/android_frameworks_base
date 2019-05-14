@@ -59,9 +59,6 @@
     <string name="menu_ime_always_show">Menu / Keyboard Switcher (always show)</string>
     <string name="search">Search</string>
 
-    <!-- Statusbar Tuner -->
-    <string name="statusbar_items_title">Statusbar icon</string>
-
     <string name="lockscreen_default">Default</string>
     <string name="lockscreen_hidden">None</string>
     <!-- Shows when people have clicked on the custom lockscreen shortcut [CHAR LIMIT=60] -->
