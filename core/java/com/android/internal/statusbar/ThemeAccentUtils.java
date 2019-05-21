@@ -40,59 +40,51 @@ public class ThemeAccentUtils {
 
     // Dark themes
     private static final String[] DARK_THEMES = {
-        "com.android.system.theme.dark", // 0
-        "com.android.settings.theme.dark", // 1
-        "com.android.settings.intelligence.theme.dark", // 2
-        "com.android.gboard.theme.dark", // 3      
-        "com.android.contacts.theme.dark", // 4
-        "com.android.dialer.theme.dark", // 5
-        "com.android.documentsui.theme.dark", // 6
-        "com.accents.pink", // 7
-        "com.android.systemui.theme.dark", // 8
-        "com.android.wellbeing.theme.dark", // 9
-        "com.google.intelligence.sense.theme.dark", // 10
+        "com.accents.pink", // 0
+        "com.android.system.theme.dark", // 1
+        "com.android.settings.theme.dark", // 2
+        "com.android.settings.intelligence.theme.dark", // 3
+        "com.android.gboard.theme.dark", // 4
+        "com.android.systemui.theme.dark", // 5
+        "com.android.wellbeing.theme.dark", // 6
+        "com.google.intelligence.sense.theme.dark", // 7
     };
 
     private static final String[] BLACK_THEMES = {
-        "com.android.system.theme.black", // 0
-        "com.android.settings.theme.black", // 1
-        "com.android.settings.intelligence.theme.black", // 2
-        "com.android.gboard.theme.black", // 3
-        "com.android.contacts.theme.black", // 4
-        "com.android.dialer.theme.black", // 5
-        "com.android.documentsui.theme.black", // 6
-        "com.accents.deeppurple", // 7
-        "com.android.systemui.theme.black", // 8
-        "com.android.wellbeing.theme.black", // 9
-        "com.google.intelligence.sense.theme.dark", // 10
+        "com.accents.deeppurple", // 0
+        "com.android.system.theme.black", // 1
+        "com.android.settings.theme.black", // 2
+        "com.android.settings.intelligence.theme.black", // 3
+        "com.android.gboard.theme.black", // 4
+        "com.android.documentsui.theme.black", // 5
+        "com.android.systemui.theme.black", // 6
+        "com.android.wellbeing.theme.black", // 7
+        "com.google.intelligence.sense.theme.dark", // 8
     };
 
     private static final String[] SHISHUNIGHTS_THEMES = {
-        "com.android.system.theme.shishunights", // 0
-        "com.android.settings.theme.shishunights", // 1
-        "com.android.settings.intelligence.theme.shishunights", // 2
-        "com.android.gboard.theme.shishunights", // 3
-        "com.android.contacts.theme.shishunights", // 4
-        "com.android.dialer.theme.shishunights", // 5
+        "com.accents.userone", // 0
+        "com.android.system.theme.shishunights", // 1
+        "com.android.settings.theme.shishunights", // 2
+        "com.android.settings.intelligence.theme.black", // 3
+        "com.android.gboard.theme.shishunights", // 4
+        "com.google.android.gms.theme.shishunights", // 5
         "com.android.documentsui.theme.shishunights", // 6
         "com.android.wellbeing.theme.shishunights", // 7
-        "com.accents.userone", // 8
-        "com.android.systemui.theme.shishunights", // 9
-        "com.google.intelligence.sense.theme.dark", // 10
+        "com.android.systemui.theme.shishunights", // 8
+        "com.google.intelligence.sense.theme.dark", // 9
     };
 
     private static final String[] CHOCOLATE_THEMES = {
-        "com.android.system.theme.chocolate", // 0
-        "com.android.settings.theme.chocolate", // 1
-        "com.android.settings.intelligence.theme.chocolate", // 2
-        "com.android.gboard.theme.chocolate", // 3
-        "com.android.contacts.theme.chocolate", // 4
-        "com.android.dialer.theme.chocolate", // 5
-        "com.android.documentsui.theme.chocolate", // 6
-        "com.android.wellbeing.theme.chocolate", // 7
-        "com.accents.candyred", // 8
-        "com.android.systemui.theme.chocolate", // 9
-        "com.google.intelligence.sense.theme.dark", // 10
+        "com.accents.candyred", // 0
+        "com.android.system.theme.chocolate", // 1
+        "com.android.settings.theme.chocolate", // 2
+        "com.android.settings.intelligence.theme.black", // 3
+        "com.android.gboard.theme.chocolate", // 4
+        "com.android.documentsui.theme.chocolate", // 5
+        "com.android.wellbeing.theme.chocolate", // 6
+        "com.android.systemui.theme.chocolate", // 7
+        "com.google.intelligence.sense.theme.dark", // 8
     };
 
     private static final String[] LIGHT_THEMES = {
