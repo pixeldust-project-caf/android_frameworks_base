@@ -4985,6 +4985,15 @@ public final class Settings {
         public static final Validator LIVE_DISPLAY_HINTED_VALIDATOR =
                 new SettingsValidators.InclusiveIntegerRangeValidator(-3, 1);
 
+	/**
+         * Whether to show VoLTE icon or not
+         * @hide
+         */
+        public static final String SHOW_VOLTE_ICON = "volte_icon";
+
+        /** @hide */
+        public static final Validator SHOW_VOLTE_ICON_VALIDATOR = BOOLEAN_VALIDATOR;
+
         /**
          * Whether to show weather on lockscreen
          * @hide
@@ -5239,6 +5248,8 @@ public final class Settings {
             PRIVATE_SETTINGS.add(STATUSBAR_CLOCK_DATE_STYLE);
             PRIVATE_SETTINGS.add(STATUSBAR_CLOCK_DATE_FORMAT);
             PRIVATE_SETTINGS.add(STATUSBAR_CLOCK_DATE_POSITION);
+	    // VolteIcon
+	    PRIVATE_SETTINGS.add(SHOW_VOLTE_ICON);
         }
 
         /**
@@ -5355,6 +5366,7 @@ public final class Settings {
             VALIDATORS.put(STATUSBAR_CLOCK_DATE_STYLE, STATUSBAR_CLOCK_DATE_STYLE_VALIDATOR);
             VALIDATORS.put(STATUSBAR_CLOCK_DATE_FORMAT, STATUSBAR_CLOCK_DATE_FORMAT_VALIDATOR);
             VALIDATORS.put(STATUSBAR_CLOCK_DATE_POSITION, STATUSBAR_CLOCK_DATE_POSITION_VALIDATOR);
+	    VALIDATORS.put(SHOW_VOLTE_ICON, SHOW_VOLTE_ICON_VALIDATOR);
         }
 
         /**
