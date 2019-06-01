@@ -44,9 +44,12 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.google.android.collect.Lists;
 import com.android.internal.annotations.VisibleForTesting;
 
 import java.lang.Exception;
+import java.util.ArrayList;
+import java.lang.ref.WeakReference;
 
 import org.codeaurora.internal.BearerAllocationStatus;
 import org.codeaurora.internal.Client;
@@ -62,6 +65,7 @@ import org.codeaurora.internal.Token;
 import org.codeaurora.internal.UpperLayerIndInfo;
 import org.codeaurora.internal.NetworkCallbackBase;
 
+import com.android.keyguard.KeyguardUpdateMonitorCallback;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.MobileSignalController.MobileIconGroup;
 
@@ -76,6 +80,9 @@ public class FiveGServiceClient {
     private final int mRsrpThresholds[];
     private final int mSnrThresholds[];
 
+    private static FiveGServiceClient sInstance;
+    private final ArrayList<WeakReference<KeyguardUpdateMonitorCallback>>
+            mKeyguardUpdateMonitorCallbacks = Lists.newArrayList();
     @VisibleForTesting
     final SparseArray<IFiveGStateListener> mStatesListeners = new SparseArray<>();
     private final SparseArray<FiveGServiceState> mCurrentServiceStates = new SparseArray<>();
@@ -216,6 +223,19 @@ public class FiveGServiceClient {
                 mContext.getResources().getIntArray(R.array.config_5g_signal_snr_thresholds);
     }
 
+    public static FiveGServiceClient getInstance(Context context) {
+        if ( sInstance == null ) {
+            sInstance = new FiveGServiceClient(context);
+        }
+
+        return sInstance;
+    }
+
+    public void registerCallback(KeyguardUpdateMonitorCallback callback) {
+        mKeyguardUpdateMonitorCallbacks.add(
+                new WeakReference<KeyguardUpdateMonitorCallback>(callback));
+    }
+
     public void registerListener(int phoneId, IFiveGStateListener listener) {
         Log.d(TAG, "registerListener phoneId=" + phoneId);
 
@@ -253,7 +273,7 @@ public class FiveGServiceClient {
     }
 
     @VisibleForTesting
-    FiveGServiceState getCurrentServiceState(int phoneId) {
+    public FiveGServiceState getCurrentServiceState(int phoneId) {
         return getServiceState(phoneId, mCurrentServiceStates);
     }
 
@@ -313,6 +333,13 @@ public class FiveGServiceClient {
             IFiveGStateListener listener = mStatesListeners.get(phoneId);
             if (listener != null) {
                 listener.onStateChanged(currentState);
+            }
+
+            for (int i = 0; i < mKeyguardUpdateMonitorCallbacks.size(); i++) {
+                KeyguardUpdateMonitorCallback cb = mKeyguardUpdateMonitorCallbacks.get(i).get();
+                if (cb != null) {
+                    cb.onRefreshCarrierInfo();
+                }
             }
 
         }
@@ -479,7 +506,6 @@ public class FiveGServiceClient {
             if (status.get() == Status.SUCCESS) {
                 FiveGServiceState state = getCurrentServiceState(slotId);
                 state.mDcnr = dcParam.getDcnr();
-                update5GIcon(state, slotId);
                 notifyListenersIfNecessary(slotId);
             }
         }
@@ -528,7 +554,6 @@ public class FiveGServiceClient {
                 FiveGServiceState state = getCurrentServiceState(slotId);
                 state.mPlmn = uilInfo.getPlmnInfoListAvailable();
                 state.mUpperLayerInd = uilInfo.getUpperLayerIndInfoAvailable();
-                update5GIcon(state, slotId);
                 notifyListenersIfNecessary(slotId);
             }
         }

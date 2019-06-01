@@ -43,6 +43,9 @@ import com.android.settingslib.WirelessUtils;
 
 import android.telephony.TelephonyManager;
 
+import com.android.systemui.statusbar.policy.FiveGServiceClient;
+import com.android.systemui.statusbar.policy.FiveGServiceClient.FiveGServiceState;
+
 public class CarrierText extends TextView {
     private static final boolean DEBUG = KeyguardConstants.DEBUG;
     private static final String TAG = "CarrierText";
@@ -62,6 +65,8 @@ public class CarrierText extends TextView {
     private WifiManager mWifiManager;
 
     private boolean[] mSimErrorState = new boolean[TelephonyManager.getDefault().getPhoneCount()];
+
+    private FiveGServiceClient mFiveGServiceClient;
 
     private final KeyguardUpdateMonitorCallback mCallback = new KeyguardUpdateMonitorCallback() {
         @Override
@@ -203,6 +208,18 @@ public class CarrierText extends TextView {
                     }
                     networkClass = networkClassToString(TelephonyManager
                             .getNetworkClass(networkType));
+                    int slotIndex = subs.get(i).getSimSlotIndex();
+                    if ( mFiveGServiceClient == null ) {
+                        mFiveGServiceClient = FiveGServiceClient.getInstance(mContext);
+                        mFiveGServiceClient.registerCallback(mCallback);
+                    }
+                    FiveGServiceState fiveGServiceState =
+                            mFiveGServiceClient.getCurrentServiceState(slotIndex);
+                    if ( fiveGServiceState.isConnectedOnNsaMode() ) {
+                        networkClass =
+                                mContext.getResources().getString(R.string.data_connection_5g);
+                    }
+
                 }
             }
             CharSequence carrierName = subs.get(i).getCarrierName();
@@ -328,6 +345,9 @@ public class CarrierText extends TextView {
                 ConnectivityManager.TYPE_MOBILE)) {
             mKeyguardUpdateMonitor = KeyguardUpdateMonitor.getInstance(mContext);
             mKeyguardUpdateMonitor.registerCallback(mCallback);
+
+            mFiveGServiceClient = FiveGServiceClient.getInstance(mContext);
+            mFiveGServiceClient.registerCallback(mCallback);
         } else {
             // Don't listen and clear out the text when the device isn't a phone.
             mKeyguardUpdateMonitor = null;
