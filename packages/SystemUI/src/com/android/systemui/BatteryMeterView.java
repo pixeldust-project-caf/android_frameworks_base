@@ -49,6 +49,7 @@ import android.widget.TextView;
 import com.android.settingslib.Utils;
 import com.android.settingslib.graph.BatteryMeterDrawableBase;
 import com.android.settingslib.graph.ThemedBatteryDrawable;
+import com.android.systemui.R;
 import com.android.systemui.settings.CurrentUserTracker;
 import com.android.systemui.statusbar.phone.StatusBarIconController;
 import com.android.systemui.statusbar.policy.BatteryController;
@@ -61,7 +62,6 @@ import com.android.systemui.statusbar.policy.IconLogger;
 import com.android.systemui.tuner.TunerService;
 import com.android.systemui.tuner.TunerService.Tunable;
 import com.android.systemui.util.Utils.DisableStateTracker;
-import com.android.systemui.R;
 
 import java.text.NumberFormat;
 
@@ -223,8 +223,15 @@ public class BatteryMeterView extends LinearLayout implements
     }
 
     private boolean forcePercentageQsHeader() {
-        return (mQsHeaderOrKeyguard || mPowerSave) && mShowPercentOnQSB == 1
-                && mShowBatteryPercent != 1;
+        boolean mBatteryInQS = getResources().getBoolean(R.bool.config_batteryInQSPanel);
+        if (mBatteryInQS) {
+            return ((misQsbHeader && !mShowEstimate) || mPowerSave)
+                    && mShowPercentOnQSB == 1
+                    && mShowBatteryPercent != 1;
+        } else {
+            return (mQsHeaderOrKeyguard || mPowerSave) && mShowPercentOnQSB == 1
+                    && mShowBatteryPercent != 1;
+        }
     }
 
     private void loadImageView() {
@@ -394,7 +401,7 @@ public class BatteryMeterView extends LinearLayout implements
         final boolean showing = mBatteryPercentView != null;
         boolean mShow = mForceShowPercent;
 
-        if (mShowBatteryPercent == 1 /*percentage_text_next*/ || mStyle == BatteryMeterDrawableBase.BATTERY_STYLE_TEXT || mForceShowPercent) {
+        if (mShowBatteryPercent == 1 /*percentage_text_next*/ || mStyle == BatteryMeterDrawableBase.BATTERY_STYLE_TEXT || mForceShowPercent || (mShowEstimate && misQsbHeader)) {
                 mShow = true;      
         } else if (mShowBatteryPercent == 2 /*percentage_default*/) {
                 mShow = false;
@@ -569,7 +576,6 @@ public class BatteryMeterView extends LinearLayout implements
                 SHOW_BATTERY_PERCENT_ON_QSB, 1, mUser);
 	    setShowEstimate();
             updateBatteryStyle();
-            updateShowPercent();
             mDrawable.refresh();
         }
     }
