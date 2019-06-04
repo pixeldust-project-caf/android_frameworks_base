@@ -29,7 +29,4 @@
     <!-- Config to enable/diaable qs tile tinting -->
     <bool name="config_enable_qs_tile_tinting">false</bool>
 
-    <!-- Show battery icon in the QS Panel instead of in the header -->
-    <bool name="config_batteryInQSPanel">true</bool>
-
 </resources>

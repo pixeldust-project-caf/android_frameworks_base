@@ -4991,6 +4991,10 @@ public final class Settings {
          */
         public static final String WEATHER_LOCKSCREEN_ENABLED = "weather_lockscreen_enabled";
 
+        /**
+         * @hide
+         */
+        public static final String SHOW_BATTERY_INDICATOR_IN_QS = "show_battery_indicator_in_qs";
 
         /**
          * @hide
