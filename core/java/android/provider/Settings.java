@@ -4738,6 +4738,11 @@ public final class Settings {
         /**
          * @hide
          */
+        public static final String SHOW_BATTERY_INDICATOR_IN_QS = "show_battery_indicator_in_qs";
+
+        /**
+         * @hide
+         */
         public static final String SHOW_BATTERY_ESTIMATE = "show_battery_estimate";
 
         /**

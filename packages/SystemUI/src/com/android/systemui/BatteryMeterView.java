@@ -81,6 +81,7 @@ public class BatteryMeterView extends LinearLayout implements
     private int mLevel;
     private boolean mForceShowPercent;
     private boolean mShowEstimate;
+    private boolean mShowBatteryInQsb;
 
     private int mDarkModeSingleToneColor;
     private int mDarkModeBackgroundColor;
@@ -223,8 +224,7 @@ public class BatteryMeterView extends LinearLayout implements
     }
 
     private boolean forcePercentageQsHeader() {
-        boolean mBatteryInQS = getResources().getBoolean(R.bool.config_batteryInQSPanel);
-        if (mBatteryInQS) {
+        if (mShowBatteryInQsb) {
             return ((misQsbHeader && !mShowEstimate) || mPowerSave)
                     && mShowPercentOnQSB == 1
                     && mShowBatteryPercent != 1;
@@ -547,6 +547,9 @@ public class BatteryMeterView extends LinearLayout implements
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SHOW_BATTERY_ESTIMATE),
  	            false, this, UserHandle.USER_CURRENT);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.SHOW_BATTERY_INDICATOR_IN_QS),
+ 	            false, this, UserHandle.USER_CURRENT);
 	    update();
         }
 
@@ -555,7 +558,10 @@ public class BatteryMeterView extends LinearLayout implements
             super.onChange(selfChange, uri);
             if (uri.equals(Settings.System.getUriFor(
                 Settings.System.SHOW_BATTERY_ESTIMATE))) {
-	    setShowEstimate();
+	        setShowEstimate();
+            } else if (uri.equals(Settings.System.getUriFor(
+                Settings.System.SHOW_BATTERY_INDICATOR_IN_QS))) {
+                setShowBatteryInQsb();
             }
 	    update();
         }
@@ -575,6 +581,7 @@ public class BatteryMeterView extends LinearLayout implements
             mShowPercentOnQSB = Settings.System.getIntForUser(resolver,
                 SHOW_BATTERY_PERCENT_ON_QSB, 1, mUser);
 	    setShowEstimate();
+            setShowBatteryInQsb();
             updateBatteryStyle();
             mDrawable.refresh();
         }
@@ -587,6 +594,11 @@ public class BatteryMeterView extends LinearLayout implements
     public void setShowEstimate() {
         mShowEstimate = Settings.System.getIntForUser(getContext().getContentResolver(),
                 Settings.System.SHOW_BATTERY_ESTIMATE, 0, UserHandle.USER_CURRENT) == 1;
+    }
+
+    public void setShowBatteryInQsb() {
+        mShowBatteryInQsb = Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.SHOW_BATTERY_INDICATOR_IN_QS, 1, UserHandle.USER_CURRENT) == 1;
     }
 
     public void updateBatteryStyle() {

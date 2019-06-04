@@ -31,7 +31,9 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.media.AudioManager;
 import android.os.Handler;
+import android.os.UserHandle;
 import android.provider.AlarmClock;
+import android.provider.Settings;
 import android.service.notification.ZenModeConfig;
 import android.support.annotation.VisibleForTesting;
 import android.widget.FrameLayout;
@@ -188,13 +190,15 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         mBatteryMeterView.setOnClickListener(this);
         mBatteryRemainingIcon = findViewById(R.id.batteryRemainingIcon);
 
-        mBatteryInQS = getResources().getBoolean(R.bool.config_batteryInQSPanel);
+        mBatteryInQS = Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.SHOW_BATTERY_INDICATOR_IN_QS, 1, UserHandle.USER_CURRENT) == 1;
         if (mBatteryInQS) {
             ((ViewGroup) mBatteryMeterView.getParent()).removeView(mBatteryMeterView);
             mBatteryMeterView = null;
 
             mBatteryRemainingIcon.isQsbHeader();
             mBatteryRemainingIcon.setShowEstimate();
+            mBatteryRemainingIcon.setShowBatteryInQsb();
             mBatteryRemainingIcon.setOnClickListener(this);
         } else {
             ((ViewGroup) mBatteryRemainingIcon.getParent()).removeView(mBatteryRemainingIcon);
@@ -202,6 +206,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
 
             mBatteryMeterView.setIsQuickSbHeaderOrKeyguard(true);
             mBatteryMeterView.setShowEstimate();
+            mBatteryMeterView.setShowBatteryInQsb();
             mBatteryMeterView.setOnClickListener(this);
         }
 
