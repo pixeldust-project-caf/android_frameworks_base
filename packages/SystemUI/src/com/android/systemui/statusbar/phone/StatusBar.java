@@ -2073,9 +2073,17 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     @Override
     public boolean shouldPeek(Entry entry, StatusBarNotification sbn) {
+
+        boolean gamingModeOn = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.ENABLE_GAMING_MODE, 1) == 1;
+
         // check if package is blacklisted first
         if (isPackageBlacklisted(sbn.getPackageName())) {
             return false;
+        }
+
+        if (gamingModeOn && isGameAppDialer(sbn.getPackageName())) {
+            return true;
         }
 
         if (mIsOccluded && !isDozing()) {
@@ -2114,6 +2122,11 @@ public class StatusBar extends SystemUI implements DemoMode,
             }
         }
         return true;
+    }
+
+    private boolean isGameAppDialer(String packageName) {
+        return packageName.equals("com.android.dialer")
+            || packageName.equals("com.google.android.dialer");
     }
 
     @Override  // NotificationData.Environment
