@@ -186,9 +186,6 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         mIconManager.setTint(fillColor);
 
         mBatteryMeterView = findViewById(R.id.battery);
-        mBatteryMeterView.setIsQuickSbHeaderOrKeyguard(true);
-        mBatteryMeterView.updateShowPercent();
-        mBatteryMeterView.setOnClickListener(this);
         mBatteryRemainingIcon = findViewById(R.id.batteryRemainingIcon);
 
         mBatteryInQS = Settings.System.getIntForUser(getContext().getContentResolver(),
@@ -205,6 +202,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
             mBatteryMeterView.setShowEstimate();
             mBatteryMeterView.setShowBatteryInQsb();
             mBatteryMeterView.setOnClickListener(this);
+            mBatteryMeterView.updateShowPercent();
         } else {
             ((ViewGroup) mBatteryMeterView.getParent()).removeView(mBatteryMeterView);
             mBatteryMeterView = null;
@@ -213,6 +211,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
             mBatteryRemainingIcon.setShowEstimate();
             mBatteryRemainingIcon.setShowBatteryInQsb();
             mBatteryRemainingIcon.setOnClickListener(this);
+            mBatteryRemainingIcon.updateShowPercent();
         }
 
         mClockView = findViewById(R.id.clock);

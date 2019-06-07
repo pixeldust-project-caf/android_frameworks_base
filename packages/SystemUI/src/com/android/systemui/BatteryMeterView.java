@@ -110,7 +110,6 @@ public class BatteryMeterView extends LinearLayout implements
     private boolean mCharging;
     private int mTextChargingSymbol;
 
-    private boolean mQsHeaderOrKeyguard;
     private boolean misQsbHeader;
     private boolean mPowerSave;
 
@@ -214,10 +213,6 @@ public class BatteryMeterView extends LinearLayout implements
         mLightModeFillColor = Utils.getColorAttr(dualToneLightTheme, R.attr.fillColor);
     }
 
-    public void setIsQuickSbHeaderOrKeyguard(boolean qs) {
-        mQsHeaderOrKeyguard = qs;
-    }
-
     @Override
     public boolean hasOverlappingRendering() {
         return false;
@@ -229,7 +224,7 @@ public class BatteryMeterView extends LinearLayout implements
                     && mShowPercentOnQSB == 1
                     && mShowBatteryPercent != 1;
         } else {
-            return (mQsHeaderOrKeyguard || mPowerSave) && mShowPercentOnQSB == 1
+            return (misQsbHeader || mPowerSave) && mShowPercentOnQSB == 1
                     && mShowBatteryPercent != 1;
         }
     }
