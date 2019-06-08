@@ -365,7 +365,7 @@ public class BatteryMeterView extends LinearLayout implements
 
     private void onEstimateFetchComplete(String estimate) {
         if (estimate != null) {
-            mBatteryPercentView.setText(estimate);
+            mBatteryPercentView.setText(estimate+" "); //todo: add proper padding
         } else {
             setPercentTextAtCurrentLevel();
         }
