@@ -86,6 +86,11 @@ public class PixeldustUtils {
         "com.android.systemui.qstile.oreo", // 16
         "com.android.systemui.qstile.oreocircletrim", // 17
         "com.android.systemui.qstile.oreosquircletrim", // 18
+        "com.android.systemui.qstile.neonlike", // 19
+        "com.android.systemui.qstile.oos", // 20
+        "com.android.systemui.qstile.triangles", // 21
+        "com.android.systemui.qstile.divided", // 22
+        "com.android.systemui.qstile.cosmos", // 23
     };
 
     public static final String INTENT_SCREENSHOT = "action_take_screenshot";
