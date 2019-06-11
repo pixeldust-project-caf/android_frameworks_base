@@ -351,7 +351,7 @@ public class ThemeAccentUtils {
             //On selecting default accent, set accent to pink if Dark Theme is being used
             if (isUsingDarkTheme(om, userId)) {
                 try {
-                    om.setEnabled(DARK_THEMES[7],
+                    om.setEnabled(DARK_THEMES[0],
                         true, userId);
                 } catch (RemoteException e) {
                     Log.w(TAG, "Can't change theme", e);
@@ -359,7 +359,7 @@ public class ThemeAccentUtils {
             //On selecting default accent, set accent to deep purple if Black Theme is being used
             } else if (isUsingBlackTheme(om, userId)) {
                 try {
-                    om.setEnabled(BLACK_THEMES[7],
+                    om.setEnabled(BLACK_THEMES[0],
                         true, userId);
                 } catch (RemoteException e) {
                     Log.w(TAG, "Can't change theme", e);
@@ -367,7 +367,7 @@ public class ThemeAccentUtils {
             //On selecting default accent, set accent to dirty red if ShishuNights Theme is being used
             } else if (isUsingShishuNightsTheme(om, userId)) {
                 try {
-                    om.setEnabled(SHISHUNIGHTS_THEMES[8],
+                    om.setEnabled(SHISHUNIGHTS_THEMES[0],
                         true, userId);
                 } catch (RemoteException e) {
                     Log.w(TAG, "Can't change theme", e);
@@ -375,7 +375,7 @@ public class ThemeAccentUtils {
             //On selecting default accent, set accent to candy red if Chocolate Theme is being used
             } else if (isUsingChocolateTheme(om, userId)) {
                 try {
-                    om.setEnabled(CHOCOLATE_THEMES[8],
+                    om.setEnabled(CHOCOLATE_THEMES[0],
                         true, userId);
                 } catch (RemoteException e) {
                     Log.w(TAG, "Can't change theme", e);
