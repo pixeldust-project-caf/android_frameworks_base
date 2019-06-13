@@ -116,4 +116,7 @@
     <string name="accessibility_quick_settings_reading_mode_changed_on">Reading mode turned on.</string>
     <string name="accessibility_quick_settings_reading_mode_changed_off">Reading mode turned off.</string>
 
+    <!-- VoLTE switch -->
+    <string name="volte_switch_title" translatable="false">VoLTE icon</string>
+    <string name="volte_switch_summary">Display VoLTE icon</string>
 </resources>
