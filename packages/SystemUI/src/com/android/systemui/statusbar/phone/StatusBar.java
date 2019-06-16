@@ -2247,7 +2247,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         return themeInfo != null && themeInfo.isEnabled();
     }
 
-    private void handleThemeStates(boolean useBlackTheme, boolean useDarkTheme) {
+    private void handleThemeStates(boolean useBlackTheme, boolean useDarkTheme, boolean themeNeedsRefresh) {
         useBlackTheme = useDarkTheme && useBlackTheme;
         if (useBlackTheme)
             useDarkTheme = false;
@@ -2255,7 +2255,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         // We can only use final variables in lambdas
         final boolean finalUseBlackTheme = useBlackTheme;
         final boolean finalUseDarkTheme = useDarkTheme;
-        if ((isUsingBlackTheme() != finalUseBlackTheme) ||
+        if (themeNeedsRefresh || (isUsingBlackTheme() != finalUseBlackTheme) ||
                 (isUsingDarkTheme() != finalUseDarkTheme)) {
             mUiOffloadThread.submit(() -> {
                 setDarkThemeState(finalUseDarkTheme);
@@ -4185,7 +4185,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         boolean useBlackTheme = (Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.PREFER_BLACK_THEMES, 0, UserHandle.USER_CURRENT) == 1);
 
-        handleThemeStates(useBlackTheme, useDarkTheme);
+        handleThemeStates(useBlackTheme, useDarkTheme, themeNeedsRefresh);
 
         // Lock wallpaper defines the color of the majority of the views, hence we'll use it
         // to set our default theme.
@@ -5526,7 +5526,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                 Settings.Secure.AMBIENT_VISUALIZER_ENABLED))) {
                 setAmbientVis();
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.PREFER_BLACK_THEMES))) {
-                updateTheme();
+                updateTheme(false);
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_BG_USE_WALL))) {
                 updateQSPanel();
                 mQSPanel.getHost().reloadAllTiles();
@@ -5544,7 +5544,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             setLockscreenMediaMetadata();
             updateCorners();
 	    setAmbientVis();
-            updateTheme();
+            updateTheme(false);
         }
     }
 
