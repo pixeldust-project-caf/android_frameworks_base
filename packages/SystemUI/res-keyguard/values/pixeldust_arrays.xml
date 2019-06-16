@@ -29,7 +29,20 @@
         <item>Nine</item>
         <item>Ten</item>
         <item>Eleven</item>
+        <item>Twelve</item>
+        <item>Thirteen</item>
+        <item>Fourteen</item>
+        <item>Fifteen</item>
+        <item>Sixteen</item>
+        <item>Seventeen</item>
+        <item>Eighteen</item>
+        <item>Nineteen</item>
+        <item>Twenty</item>
+        <item>Twenty one</item>
+        <item>Twenty two</item>
+        <item>Twenty three</item>
     </string-array>
+
     <string-array name="type_clock_minutes">
         <item>O’Clock</item>
         <item>O’One</item>
