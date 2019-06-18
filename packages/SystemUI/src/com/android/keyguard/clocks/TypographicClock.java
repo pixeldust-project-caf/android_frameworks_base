@@ -109,11 +109,14 @@ public class TypographicClock extends TextView {
             }
         }
 
+        final int h = hours;
+        final int m = minutes;
+
         fadeOut.setAnimationListener(new Animation.AnimationListener() {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                setText(TextUtils.expandTemplate(colored, mHours[hours], mMinutes[minutes]));
+                setText(TextUtils.expandTemplate(colored, mHours[h], mMinutes[m]));
                 startAnimation(fadeIn);
             }
 
