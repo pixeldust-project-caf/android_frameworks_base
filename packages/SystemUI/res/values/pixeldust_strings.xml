@@ -175,7 +175,7 @@
     <!-- Ambient Display Pixel-Like string -->
     <string name="ambientmusic_songinfo">%s by %s</string>
 
-    <!-- FireHound Gaming -->
+    <!-- Gaming mode -->
     <string name="notification_channel_gaming">Gaming Mode</string>
 
 </resources>

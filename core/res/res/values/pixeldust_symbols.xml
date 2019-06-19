@@ -190,7 +190,7 @@
 
     <java-symbol type="bool" name="config_canForceDozeNotifications" />
 
-    <!-- FireHound Gaming -->
+    <!-- Gaming mode -->
     <java-symbol type="string" name="gaming_notif_title" />
     <java-symbol type="string" name="gaming_notif_ticker" />
     <java-symbol type="string" name="notification_channel_gaming" />
