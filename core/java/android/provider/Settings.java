@@ -4881,13 +4881,6 @@ public final class Settings {
         public static final String WEATHER_LOCKSCREEN_ENABLED = "weather_lockscreen_enabled";
 
         /**
-         * Whether to use black themes over dark ones
-         *
-         * @hide
-         */
-        public static final String PREFER_BLACK_THEMES = "prefer_black_themes";
-
-        /**
          * Transparency of the qs panel
          * @hide
          */
@@ -8115,6 +8108,7 @@ public final class Settings {
          * 0 - The mode that theme will controlled by wallpaper color.<br/>
          * 1 - The mode that will always light theme.<br/>
          * 2 - The mode that will always dark theme.<br/>
+         * 3 - The mode that will always black theme.<br/>
          *
          * @hide
          */
@@ -8137,6 +8131,12 @@ public final class Settings {
          * @hide
          */
         public static final int THEME_MODE_DARK = 2;
+
+        /**
+         * THEME_MODE value for black theme mode.
+         * @hide
+         */
+        public static final int THEME_MODE_BLACK = 3;
 
         /**
          * Whether screensavers are enabled.

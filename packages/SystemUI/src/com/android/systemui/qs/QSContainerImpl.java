@@ -160,9 +160,6 @@ public class QSContainerImpl extends FrameLayout {
             getContext().getContentResolver().registerContentObserver(Settings.Secure
                     .getUriFor(Settings.Secure.THEME_MODE), false,
                     this, UserHandle.USER_ALL);
-            getContext().getContentResolver().registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.PREFER_BLACK_THEMES), false,
-                    this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -191,8 +188,6 @@ public class QSContainerImpl extends FrameLayout {
                 UserHandle.USER_CURRENT);
         mUserThemeSetting = Settings.Secure.getIntForUser(mContext.getContentResolver(),
                 Settings.Secure.THEME_MODE, 0, ActivityManager.getCurrentUser());
-        boolean blackTheme = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.PREFER_BLACK_THEMES, 0, ActivityManager.getCurrentUser()) == 1;
         if (mUserThemeSetting == 0) {
             // The system wallpaper defines if system theme should be light or dark.
             WallpaperColors systemColors = null;
@@ -202,7 +197,7 @@ public class QSContainerImpl extends FrameLayout {
                     && (systemColors.getColorHints() & WallpaperColors.HINT_SUPPORTS_DARK_THEME) != 0;
         } else {
             mUseDarkTheme = mUserThemeSetting == 2;
-            mUseBlackTheme = blackTheme && mUseDarkTheme;
+            mUseBlackTheme = mUserThemeSetting == 3;
             // Make sure we turn off dark theme if we plan using black
             if (mUseBlackTheme)
                 mUseDarkTheme = false;

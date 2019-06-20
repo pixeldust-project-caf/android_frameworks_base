@@ -4181,9 +4181,10 @@ public class StatusBar extends SystemUI implements DemoMode,
     protected void updateTheme(boolean themeNeedsRefresh) {
         final boolean inflated = mStackScroller != null && mStatusBarWindowManager != null;
 
-        boolean useDarkTheme = shouldUseDarkTheme();
-        boolean useBlackTheme = (Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.PREFER_BLACK_THEMES, 0, UserHandle.USER_CURRENT) == 1);
+        boolean useDarkTheme = shouldUseDarkTheme() || (Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                Settings.Secure.THEME_MODE, 0, UserHandle.USER_CURRENT) == 2);;
+        boolean useBlackTheme = (Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                Settings.Secure.THEME_MODE, 0, UserHandle.USER_CURRENT) == 3);
 
         handleThemeStates(useBlackTheme, useDarkTheme, themeNeedsRefresh);
 
@@ -5479,8 +5480,8 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.Secure.AMBIENT_VISUALIZER_ENABLED),
                     false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.PREFER_BLACK_THEMES),
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.Secure.THEME_MODE),
                     false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_PANEL_BG_USE_WALL),
@@ -5525,8 +5526,6 @@ public class StatusBar extends SystemUI implements DemoMode,
             } else if (uri.equals(Settings.Secure.getUriFor(
                 Settings.Secure.AMBIENT_VISUALIZER_ENABLED))) {
                 setAmbientVis();
-            } else if (uri.equals(Settings.System.getUriFor(Settings.System.PREFER_BLACK_THEMES))) {
-                updateTheme(false);
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_BG_USE_WALL))) {
                 updateQSPanel();
                 mQSPanel.getHost().reloadAllTiles();
