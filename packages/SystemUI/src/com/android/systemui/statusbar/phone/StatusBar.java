@@ -2248,10 +2248,6 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     private void handleThemeStates(boolean useBlackTheme, boolean useDarkTheme, boolean themeNeedsRefresh) {
-        useBlackTheme = useDarkTheme && useBlackTheme;
-        if (useBlackTheme)
-            useDarkTheme = false;
-
         // We can only use final variables in lambdas
         final boolean finalUseBlackTheme = useBlackTheme;
         final boolean finalUseDarkTheme = useDarkTheme;
@@ -2261,7 +2257,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                 setDarkThemeState(finalUseDarkTheme);
                 setBlackThemeState(finalUseBlackTheme);
                 setCommonThemeState(finalUseDarkTheme || finalUseBlackTheme);
-                mNotificationPanel.setLockscreenClockTheme(finalUseDarkTheme);
+                mNotificationPanel.setLockscreenClockTheme(finalUseDarkTheme || finalUseBlackTheme);
             });
         }
     }
