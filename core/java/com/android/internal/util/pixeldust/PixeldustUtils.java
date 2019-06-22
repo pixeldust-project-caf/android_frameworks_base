@@ -23,6 +23,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.om.IOverlayManager;
+import android.content.om.OverlayInfo;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -47,6 +49,7 @@ import android.os.SystemClock;
 import android.os.SystemProperties;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
@@ -61,6 +64,29 @@ import java.util.List;
 import java.util.Locale;
 
 public class PixeldustUtils {
+    public static final String TAG = "PixeldustUtils";
+
+    private static final String[] QS_TILE_THEMES = {
+        "default", // 0
+        "com.android.systemui.qstile.square", // 1
+        "com.android.systemui.qstile.roundedsquare", // 2
+        "com.android.systemui.qstile.squircle", // 3
+        "com.android.systemui.qstile.teardrop", // 4
+        "com.android.systemui.qstile.circlegradient", // 5
+        "com.android.systemui.qstile.circletrim", // 6
+        "com.android.systemui.qstile.dottedcircle", // 7
+        "com.android.systemui.qstile.dualtonecircle", // 8
+        "com.android.systemui.qstile.dualtonecircletrim", // 9
+        "com.android.systemui.qstile.mountain", // 10
+        "com.android.systemui.qstile.ninja", // 11
+        "com.android.systemui.qstile.pokesign", // 12
+        "com.android.systemui.qstile.wavey", // 13
+        "com.android.systemui.qstile.squircletrim", // 14
+        "com.android.systemui.qstile.cookie", // 15
+        "com.android.systemui.qstile.oreo", // 16
+        "com.android.systemui.qstile.oreocircletrim", // 17
+        "com.android.systemui.qstile.oreosquircletrim", // 18
+    };
 
     public static final String INTENT_SCREENSHOT = "action_take_screenshot";
     public static final String INTENT_REGION_SCREENSHOT = "action_take_region_screenshot";
@@ -358,6 +384,46 @@ public class PixeldustUtils {
             wm.screenRecordAction(mode);
         } catch (RemoteException e) {
             e.printStackTrace();
+        }
+    }
+
+    // Check for any QS tile styles overlay
+    public static boolean isUsingQsTileStyles(IOverlayManager om, int userId, int qsstyle) {
+        OverlayInfo themeInfo = null;
+        try {
+            themeInfo = om.getOverlayInfo(QS_TILE_THEMES[qsstyle],
+                    userId);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return themeInfo != null && themeInfo.isEnabled();
+    }
+
+    // Switches qs tile style to user selected.
+    public static void updateTileStyle(IOverlayManager om, int userId, int qsTileStyle) {
+        if (qsTileStyle == 0) {
+            unlockQsTileStyles(om, userId);
+        } else {
+            try {
+                om.setEnabled(QS_TILE_THEMES[qsTileStyle],
+                        true, userId);
+            } catch (RemoteException e) {
+                Log.w(TAG, "Can't change qs tile icon", e);
+            }
+        }
+    }
+
+    // Unload all the qs tile styles
+    public static void unlockQsTileStyles(IOverlayManager om, int userId) {
+        // skip index 0
+        for (int i = 1; i < QS_TILE_THEMES.length; i++) {
+            String qstiletheme = QS_TILE_THEMES[i];
+            try {
+                om.setEnabled(qstiletheme,
+                        false /*disable*/, userId);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
