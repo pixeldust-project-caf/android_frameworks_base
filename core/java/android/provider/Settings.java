@@ -8139,6 +8139,12 @@ public final class Settings {
         public static final int THEME_MODE_BLACK = 3;
 
         /**
+         * THEME_MODE value for shishunights theme mode.
+         * @hide
+         */
+        public static final int THEME_MODE_SHISHUNIGHTS = 4;
+
+        /**
          * Whether screensavers are enabled.
          * @hide
          */

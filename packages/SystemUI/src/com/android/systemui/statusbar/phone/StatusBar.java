@@ -2236,6 +2236,17 @@ public class StatusBar extends SystemUI implements DemoMode,
                 (sbPaddingRes == sbPadding);
     }
 
+    private boolean isUsingSNTheme() {
+        OverlayInfo themeInfo = null;
+        try {
+            themeInfo = mOverlayManager.getOverlayInfo("com.android.system.theme.shishunights",
+                    mLockscreenUserManager.getCurrentUserId());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return themeInfo != null && themeInfo.isEnabled();
+    }
+
     private boolean isUsingBlackTheme() {
         OverlayInfo themeInfo = null;
         try {
@@ -2247,17 +2258,19 @@ public class StatusBar extends SystemUI implements DemoMode,
         return themeInfo != null && themeInfo.isEnabled();
     }
 
-    private void handleThemeStates(boolean useBlackTheme, boolean useDarkTheme, boolean themeNeedsRefresh) {
+    private void handleThemeStates(boolean useSNTheme, boolean useBlackTheme, boolean useDarkTheme, boolean themeNeedsRefresh) {
         // We can only use final variables in lambdas
+        final boolean finalUseSNTheme = useSNTheme;
         final boolean finalUseBlackTheme = useBlackTheme;
         final boolean finalUseDarkTheme = useDarkTheme;
-        if (themeNeedsRefresh || (isUsingBlackTheme() != finalUseBlackTheme) ||
+        if (themeNeedsRefresh || (isUsingSNTheme() != finalUseSNTheme) || (isUsingBlackTheme() != finalUseBlackTheme) ||
                 (isUsingDarkTheme() != finalUseDarkTheme)) {
             mUiOffloadThread.submit(() -> {
                 setDarkThemeState(finalUseDarkTheme);
                 setBlackThemeState(finalUseBlackTheme);
-                setCommonThemeState(finalUseDarkTheme || finalUseBlackTheme);
-                mNotificationPanel.setLockscreenClockTheme(finalUseDarkTheme || finalUseBlackTheme);
+                setSNThemeState(finalUseSNTheme);
+                setCommonThemeState(finalUseSNTheme || finalUseDarkTheme || finalUseBlackTheme);
+                mNotificationPanel.setLockscreenClockTheme(finalUseSNTheme || finalUseDarkTheme || finalUseBlackTheme);
             });
         }
     }
@@ -2313,6 +2326,10 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private void setBlackThemeState(boolean enable) {
         setThemeStateFromList(enable, getThemePkgs("android.theme.black"));
+    }
+
+    private void setSNThemeState(boolean enable) {
+        setThemeStateFromList(enable, getThemePkgs("android.theme.shishunights"));
     }
 
     private void setCommonThemeState(boolean enable) {
@@ -4181,8 +4198,10 @@ public class StatusBar extends SystemUI implements DemoMode,
                 Settings.Secure.THEME_MODE, 0, UserHandle.USER_CURRENT) == 2);;
         boolean useBlackTheme = (Settings.Secure.getIntForUser(mContext.getContentResolver(),
                 Settings.Secure.THEME_MODE, 0, UserHandle.USER_CURRENT) == 3);
+        boolean useSNTheme = (Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                Settings.Secure.THEME_MODE, 0, UserHandle.USER_CURRENT) == 4);
 
-        handleThemeStates(useBlackTheme, useDarkTheme, themeNeedsRefresh);
+        handleThemeStates(useSNTheme, useBlackTheme, useDarkTheme, themeNeedsRefresh);
 
         // Lock wallpaper defines the color of the majority of the views, hence we'll use it
         // to set our default theme.
