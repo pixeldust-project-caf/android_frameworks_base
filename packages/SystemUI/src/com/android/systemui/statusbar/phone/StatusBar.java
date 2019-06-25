@@ -2258,7 +2258,20 @@ public class StatusBar extends SystemUI implements DemoMode,
         return themeInfo != null && themeInfo.isEnabled();
     }
 
-    private void handleThemeStates(boolean useSNTheme, boolean useBlackTheme, boolean useDarkTheme, boolean themeNeedsRefresh) {
+    private void handleThemeStates(boolean themeNeedsRefresh) {
+        boolean useLightTheme = Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                Settings.Secure.THEME_MODE, 0, UserHandle.USER_CURRENT) == 1;
+        boolean useDarkTheme = Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                Settings.Secure.THEME_MODE, 0, UserHandle.USER_CURRENT) == 2;
+        boolean useBlackTheme = Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                Settings.Secure.THEME_MODE, 0, UserHandle.USER_CURRENT) == 3;
+        boolean useSNTheme = Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                Settings.Secure.THEME_MODE, 0, UserHandle.USER_CURRENT) == 4;
+
+        if (!useSNTheme && !useBlackTheme && !useDarkTheme && !useLightTheme) {
+            // The system wallpaper defines if system should be light or dark.
+            useDarkTheme = shouldUseDarkTheme();
+        }
         // We can only use final variables in lambdas
         final boolean finalUseSNTheme = useSNTheme;
         final boolean finalUseBlackTheme = useBlackTheme;
@@ -4194,14 +4207,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     protected void updateTheme(boolean themeNeedsRefresh) {
         final boolean inflated = mStackScroller != null && mStatusBarWindowManager != null;
 
-        boolean useDarkTheme = shouldUseDarkTheme() || (Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                Settings.Secure.THEME_MODE, 0, UserHandle.USER_CURRENT) == 2);;
-        boolean useBlackTheme = (Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                Settings.Secure.THEME_MODE, 0, UserHandle.USER_CURRENT) == 3);
-        boolean useSNTheme = (Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                Settings.Secure.THEME_MODE, 0, UserHandle.USER_CURRENT) == 4);
-
-        handleThemeStates(useSNTheme, useBlackTheme, useDarkTheme, themeNeedsRefresh);
+        handleThemeStates(themeNeedsRefresh);
 
         // Lock wallpaper defines the color of the majority of the views, hence we'll use it
         // to set our default theme.
