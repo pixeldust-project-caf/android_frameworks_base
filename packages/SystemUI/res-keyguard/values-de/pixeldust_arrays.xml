@@ -45,7 +45,7 @@
     </string-array>
 
     <string-array name="type_clock_minutes">
-        <item>Uhr</item>
+        <item></item>
         <item>Eins</item>
         <item>Zwei</item>
         <item>Drei</item>
