@@ -5032,26 +5032,9 @@ public final class Settings {
         public static final String FORCE_AMBIENT_FOR_MEDIA = "force_ambient_for_media";
 
         /**
-         * Save the user defined brightness state
+         * Gaming mode active state - to disable via notification / tile
          */
-        public static final String GAMING_SCREEN_BRIGHTNESS_MODE = "gaming_screen_brightness_mode";
-
-        /**
-         * Save the current user ringer mode
-         */
-        public static final String GAMING_RINGER_STATE = "gaming_ringer_state";
-
-        /**
-         * Save the current user zend mode
-         */
-        public static final String GAMING_MODE_ZEN_STATE = "gaming_mode_zen_state";
-
-        /**
-         * Whether to enable gaming mode or not
-         *
-         * @hide
-         */
-        public static final String ENABLE_GAMING_MODE = "enable_gaming_mode";
+        public static final String GAMING_MODE_ACTIVE = "gaming_mode_active";
 
         /**
          * Package name of apps for enabling Gaming mode
@@ -5059,7 +5042,6 @@ public final class Settings {
          * @hide
          */
         public static final String GAMING_MODE_VALUES = "gaming_mode_values";
-
         public static final String GAMING_MODE_DUMMY = "gaming_mode_dummy";
 
         /**
@@ -5084,7 +5066,7 @@ public final class Settings {
         public static final String GAMING_MODE_RINGER_MODE = "gaming_mode_ringer_mode";
 
         /**
-         * Whether to show notifications/toasts (0:OFF, 1:notifications, 2:toasts, 3: all
+         * Whether to show notifications/toasts (0:OFF, 1:notifications, 2:toasts, 3: all)
          *
          * @hide
          */
@@ -5109,7 +5091,7 @@ public final class Settings {
          * Gaming Mode master switch
          * @hide
          */
-        public static final String GAMING_MODE_MASTER_SWITCH = "gaming_mode_master_switch";
+        public static final String GAMING_MODE_ENABLED = "gaming_mode_enabled";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -9686,20 +9668,6 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_VISUALIZER_ENABLED = "lockscreen_visualizer_enabled";
-
-        /**
-         * Save hardware buttons toggle state.
-         * @hide
-         */
-        public static final String GAMING_HARDWARE_KEYS_DISABLE = "gaming_hardware_keys_disable";
-
-        /**
-         * Save user defined heads up toggle state.
-         *
-         * @hide
-         */
-        public static final String GAMING_HEADS_UP_NOTIFICATIONS_ENABLED =
-                "gaming_heads_up_notifications_enabled";
 
         /**
          * This are the settings to be backed up.
