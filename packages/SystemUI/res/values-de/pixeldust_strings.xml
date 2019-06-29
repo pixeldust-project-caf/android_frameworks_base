@@ -208,4 +208,12 @@
     <string name="qs_data_switch_changed_1">Datenkarte auf SIM 1 umschalten.</string>
     <string name="qs_data_switch_changed_2">Datenkarte auf SIM 2 umschalten.</string>
 
+    <!-- Gaming mode -->
+    <string name="gaming_mode_not_enabled">Der Spielemodus ist in den Einstellungen deaktiviert</string>
+    <string name="quick_settings_gaming_mode_label">Spielemodus</string>
+    <!-- Content description of the Gaming mode tile in quick settings when disabled (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_gaming_mode_disabled">Spielemodus ist deaktiviert.</string>
+    <!-- Content description of the Gaming mode tile in quick settings when enabled (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_gaming_mode_enabled">Spielemodus ist aktiviert.</string>
+
 </resources>

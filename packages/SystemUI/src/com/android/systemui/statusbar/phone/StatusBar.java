@@ -302,6 +302,10 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private static final String SYSUI_ROUNDED_FWVALS =
             Settings.Secure.SYSUI_ROUNDED_FWVALS;
+    private static final String GAMING_MODE_ACTIVE =
+            "system:" + Settings.System.GAMING_MODE_ACTIVE;
+    private static final String GAMING_MODE_HEADSUP_TOGGLE =
+            "system:" + Settings.System.GAMING_MODE_HEADSUP_TOGGLE;
 
     private static final String BANNER_ACTION_CANCEL =
             "com.android.systemui.statusbar.banner_action_cancel";
@@ -496,6 +500,8 @@ public class StatusBar extends SystemUI implements DemoMode,
     private PackageMonitor mPackageMonitor;
 
     private boolean mSysuiRoundedFwvals;
+
+    private boolean mHeadsUpDisabled, mGamingModeActivated;
 
     // XXX: gesture research
     private final GestureRecorder mGestureRec = DEBUG_GESTURES
@@ -966,6 +972,8 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         final TunerService tunerService = Dependency.get(TunerService.class);
         tunerService.addTunable(this, SYSUI_ROUNDED_FWVALS);
+        tunerService.addTunable(this, GAMING_MODE_ACTIVE);
+        tunerService.addTunable(this, GAMING_MODE_HEADSUP_TOGGLE);
 
         mDisplayManager = mContext.getSystemService(DisplayManager.class);
 
@@ -5381,10 +5389,24 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     @Override
     public void onTuningChanged(String key, String newValue) {
-        if (key == SYSUI_ROUNDED_FWVALS) {
-            mSysuiRoundedFwvals =
-                    TunerService.parseIntegerSwitch(newValue, true);
-            updateCorners();
+        switch (key) {
+            case SYSUI_ROUNDED_FWVALS:
+                mSysuiRoundedFwvals =
+                        TunerService.parseIntegerSwitch(newValue, true);
+                updateCorners();
+                break;
+            case GAMING_MODE_ACTIVE:
+                mGamingModeActivated =
+                        TunerService.parseIntegerSwitch(newValue, false);
+                mNotificationInterruptionStateProvider.setGamingPeekMode(mGamingModeActivated && mHeadsUpDisabled);
+                break;
+            case GAMING_MODE_HEADSUP_TOGGLE:
+                mHeadsUpDisabled =
+                        TunerService.parseIntegerSwitch(newValue, true);
+                mNotificationInterruptionStateProvider.setGamingPeekMode(mGamingModeActivated && mHeadsUpDisabled);
+                break;
+            default:
+                break;
         }
     }
     // End Extra BaseStatusBarMethods.

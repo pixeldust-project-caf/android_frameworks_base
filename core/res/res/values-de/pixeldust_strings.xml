@@ -52,4 +52,11 @@
     <!-- Bluetooth service -->
     <string name="bluetooth_airplane_mode_toast">Bluetooth bleibt im Flugzeugmodus eingeschaltet</string>
 
+    <!-- Gaming mode -->
+    <string name="notification_channel_gaming">Spielemodus</string>
+    <string name="gaming_mode_notification_title">Spielemodus aktiviert</string>
+    <string name="gaming_mode_notification_content">Tippen, um den Spielemodus zu deaktivieren</string>
+    <string name="gaming_mode_enabled_toast">Spielemodus aktiviert</string>
+    <string name="gaming_mode_disabled_toast">Spielemodus deaktiviert</string>
+
 </resources>
