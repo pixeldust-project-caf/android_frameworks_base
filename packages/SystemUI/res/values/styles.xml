@@ -263,7 +263,6 @@
 
     <style name="TextAppearance.QS.DataUsage">
         <item name="android:textSize">@dimen/qs_data_usage_text_size</item>
-        <item name="android:textColor">@color/detailed_data_usage_color</item>
     </style>
 
     <style name="TextAppearance.QS.DataUsage.Usage">
@@ -272,7 +271,7 @@
     </style>
 
     <style name="TextAppearance.QS.DataUsage.Secondary">
-        <item name="android:textColor">@color/detailed_data_usage_color</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
     <style name="TextAppearance.QS.TileLabel">
