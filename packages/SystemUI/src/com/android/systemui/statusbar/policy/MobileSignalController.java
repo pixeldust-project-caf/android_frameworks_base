@@ -770,7 +770,7 @@ public class MobileSignalController extends SignalController<
     }
 
     public void unregisterFiveGStateListener(FiveGServiceClient client) {
-        int phoneId = SubscriptionManager.getPhoneId(mSubscriptionInfo.getSubscriptionId());
+        int phoneId = mSubscriptionInfo.getSimSlotIndex();
         client.unregisterListener(phoneId);
     }
 

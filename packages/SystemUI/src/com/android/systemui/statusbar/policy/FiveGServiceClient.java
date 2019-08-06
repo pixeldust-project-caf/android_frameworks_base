@@ -74,6 +74,7 @@ public class FiveGServiceClient {
     private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG)||true;
     private static final int MESSAGE_REBIND = 1024;
     private static final int MESSAGE_REINIT = MESSAGE_REBIND+1;
+    private static final int MESSAGE_NOTIFIY_MONITOR_CALLBACK = MESSAGE_REBIND+2;
     private static final int MAX_RETRY = 4;
     private static final int DELAY_MILLISECOND = 3000;
     private static final int DELAY_INCREMENT = 2000;
@@ -335,12 +336,7 @@ public class FiveGServiceClient {
                 listener.onStateChanged(currentState);
             }
 
-            for (int i = 0; i < mKeyguardUpdateMonitorCallbacks.size(); i++) {
-                KeyguardUpdateMonitorCallback cb = mKeyguardUpdateMonitorCallbacks.get(i).get();
-                if (cb != null) {
-                    cb.onRefreshCarrierInfo();
-                }
-            }
+            mHandler.sendEmptyMessage(MESSAGE_NOTIFIY_MONITOR_CALLBACK);
 
         }
     }
@@ -426,6 +422,15 @@ public class FiveGServiceClient {
         return iconGroup;
     }
 
+    private void notifyMonitorCallback() {
+        for (int i = 0; i < mKeyguardUpdateMonitorCallbacks.size(); i++) {
+            KeyguardUpdateMonitorCallback cb = mKeyguardUpdateMonitorCallbacks.get(i).get();
+            if (cb != null) {
+                cb.onRefreshCarrierInfo();
+            }
+        }
+    }
+
     private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             int what = msg.what;
@@ -436,6 +441,10 @@ public class FiveGServiceClient {
 
                 case MESSAGE_REINIT:
                     initFiveGServiceState();
+                    break;
+
+                case MESSAGE_NOTIFIY_MONITOR_CALLBACK:
+                    notifyMonitorCallback();
                     break;
             }
 

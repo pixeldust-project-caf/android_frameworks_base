@@ -330,8 +330,8 @@ public class StatusBar extends SystemUI implements DemoMode,
     /** Whether to force dark theme if Configuration.UI_MODE_NIGHT_YES. */
     private static final boolean DARK_THEME_IN_NIGHT_MODE = true;
 
-    /** Whether to switch the device into night mode in battery saver. */
-    private static final boolean NIGHT_MODE_IN_BATTERY_SAVER = true;
+    /** Whether to switch the device into night mode in battery saver. (Disabled.) */
+    private static final boolean NIGHT_MODE_IN_BATTERY_SAVER = false;
 
     /**
      * Never let the alpha become zero for surfaces that draw with SRC - otherwise the RenderNode
@@ -4581,6 +4581,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         @Override
         public void onScreenTurnedOff() {
+            updateDozing();
             mFalsingManager.onScreenOff();
             mScrimController.onScreenTurnedOff();
             // If we pulse in from AOD, we turn the screen off first. However, updatingIsKeyguard
@@ -4850,6 +4851,8 @@ public class StatusBar extends SystemUI implements DemoMode,
                 DozeLog.traceDozing(mContext, mDozing);
                 updateDozing();
                 updateIsKeyguard();
+            }else{
+                mDozingRequested = true;
             }
         }
 

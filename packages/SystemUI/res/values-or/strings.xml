@@ -399,6 +399,7 @@
     <string name="interruption_level_none_twoline" msgid="3957581548190765889">"ସମ୍ପୂର୍ଣ୍ଣ\nନୀରବ"</string>
     <string name="interruption_level_priority_twoline" msgid="1564715335217164124">"କେବଳ\nପ୍ରାଥମିକତା"</string>
     <string name="interruption_level_alarms_twoline" msgid="3266909566410106146">"କେବଳ\nଆଲାର୍ମ"</string>
+    <string name="keyguard_indication_charging_time_wireless" msgid="5376059837186496558">"<xliff:g id="PERCENTAGE">%2$s</xliff:g> • ୱାୟାର୍‍‍ଲେସ୍‍‍ଭାବରେ ଚାର୍ଜ ହେଉଛି (ପୂର୍ଣ୍ଣ ହେବା ପାଇଁ <xliff:g id="CHARGING_TIME_LEFT">%1$s</xliff:g> ବଳକା ଅଛି)"</string>
     <string name="keyguard_indication_charging_time" msgid="2056340799276374421">"<xliff:g id="PERCENTAGE">%2$s</xliff:g> • ଚାର୍ଜ ହେଉଛି (ପୂର୍ଣ୍ଣ ହେବା ପାଇଁ <xliff:g id="CHARGING_TIME_LEFT">%s</xliff:g> ବଳକା ଅଛି)"</string>
     <string name="keyguard_indication_charging_time_fast" msgid="7767562163577492332">"<xliff:g id="PERCENTAGE">%2$s</xliff:g> • ଶୀଘ୍ର ଚାର୍ଜ ହେଉଛି (ପୂର୍ଣ୍ଣ ହେବା ପାଇଁ <xliff:g id="CHARGING_TIME_LEFT">%s</xliff:g> ବଳକା ଅଛି)"</string>
     <string name="keyguard_indication_charging_time_slowly" msgid="3769655133567307069">"<xliff:g id="PERCENTAGE">%2$s</xliff:g> • ଧୀରେ ଚାର୍ଜ ହେଉଛି (ପୂର୍ଣ୍ଣ ହେବା ପାଇଁ <xliff:g id="CHARGING_TIME_LEFT">%s</xliff:g> ବଳକା ଅଛି)"</string>
@@ -798,6 +799,9 @@
     <string name="high_temp_title" msgid="4589508026407318374">"ଫୋନ୍‍ ଗରମ ହୋଇଯାଉଛି"</string>
     <string name="high_temp_notif_message" msgid="5642466103153429279">"ଫୋନ୍‍ ଥଣ୍ଡା ହେବା ସମୟରେ କିଛି ଫିଚର୍ ସୀମିତ ଭାବେ କାମ କରିଥାଏ"</string>
     <string name="high_temp_dialog_message" msgid="6840700639374113553">"ଆପଣଙ୍କ ଫୋନ୍‍ ସ୍ୱଚାଳିତ ଭାବେ ଥଣ୍ଡା ହେବାକୁ ଚେଷ୍ଟା କରିବ। ଆପଣ ତଥାପି ନିଜ ଫୋନ୍‍ ବ୍ୟବହାର କରିପାରିବେ, କିନ୍ତୁ ଏହା ଧୀରେ ଚାଲିପାରେ।\n\nଆପଣଙ୍କ ଫୋନ୍‍ ଥଣ୍ଡା ହୋଇଯିବାପରେ, ଏହା ସାମାନ୍ୟ ଭାବେ ଚାଲିବ।"</string>
+    <string name="high_temp_alarm_title" msgid="442812040762745210">"ଚାର୍ଜର୍‍ ଅନ୍‍ପ୍ଲଗ୍‌ କରନ୍ତୁ"</string>
+    <string name="high_temp_alarm_notify_message" msgid="519359725058131592">"ଏହି ଡିଭାଇସ୍‌ ଚାର୍ଜ କରିବାରେ ଗୋଟିଏ ସମସ୍ୟା ଅଛି ଯେହେତୁ କେବଲ୍‌ ଗରମ ହୋ‍ଇଯାଇପାରେ, ତେଣୁ ପାୱାର୍‌ ଆଡାପ୍ଟର୍‌ ଅନ୍‌ପ୍ଲଗ୍‌ କରନ୍ତୁ ଏବଂ ଯତ୍ନ ନିଅନ୍ତୁ।"</string>
+    <string name="high_temp_alarm_help_care_steps" msgid="3631075329318070726">"ସେବା ସମ୍ବନ୍ଧିତ ଷ୍ଟେପ୍‌ଗୁଡ଼ିକ ଦେଖନ୍ତୁ"</string>
     <string name="lockscreen_shortcut_left" msgid="2182769107618938629">"ବାମ ଶର୍ଟକଟ୍‍"</string>
     <string name="lockscreen_shortcut_right" msgid="3328683699505226536">"ଡାହାଣ ଶର୍ଟକଟ୍‍"</string>
     <string name="lockscreen_unlock_left" msgid="2043092136246951985">"ବାମ ଶର୍ଟକଟ୍‍ ମଧ୍ୟ ଅନଲକ୍‍ କରେ"</string>

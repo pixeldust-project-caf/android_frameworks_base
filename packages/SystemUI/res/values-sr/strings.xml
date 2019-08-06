@@ -402,6 +402,7 @@
     <string name="interruption_level_none_twoline" msgid="3957581548190765889">"Потпуна\nтишина"</string>
     <string name="interruption_level_priority_twoline" msgid="1564715335217164124">"Само\nприорит. прекиди"</string>
     <string name="interruption_level_alarms_twoline" msgid="3266909566410106146">"Само\nаларми"</string>
+    <string name="keyguard_indication_charging_time_wireless" msgid="5376059837186496558">"<xliff:g id="PERCENTAGE">%2$s</xliff:g> • Бежично пуњење (напуниће се за <xliff:g id="CHARGING_TIME_LEFT">%1$s</xliff:g>)"</string>
     <string name="keyguard_indication_charging_time" msgid="2056340799276374421">"<xliff:g id="PERCENTAGE">%2$s</xliff:g> • Пуни се (напуниће се за <xliff:g id="CHARGING_TIME_LEFT">%s</xliff:g>)"</string>
     <string name="keyguard_indication_charging_time_fast" msgid="7767562163577492332">"<xliff:g id="PERCENTAGE">%2$s</xliff:g> • Брзо се пуни (напуниће се за <xliff:g id="CHARGING_TIME_LEFT">%s</xliff:g>)"</string>
     <string name="keyguard_indication_charging_time_slowly" msgid="3769655133567307069">"<xliff:g id="PERCENTAGE">%2$s</xliff:g> • Споро се пуни (напуниће се за <xliff:g id="CHARGING_TIME_LEFT">%s</xliff:g>)"</string>
@@ -803,6 +804,9 @@
     <string name="high_temp_title" msgid="4589508026407318374">"Телефон се загрејао"</string>
     <string name="high_temp_notif_message" msgid="5642466103153429279">"Неке функције су ограничене док се телефон не охлади"</string>
     <string name="high_temp_dialog_message" msgid="6840700639374113553">"Телефон ће аутоматски покушати да се охлади. И даље ћете моћи да користите телефон, али ће спорије реаговати.\n\nКада се телефон охлади, нормално ће радити."</string>
+    <string name="high_temp_alarm_title" msgid="442812040762745210">"Искључите пуњач из напајања"</string>
+    <string name="high_temp_alarm_notify_message" msgid="519359725058131592">"Дошло је до проблема са пуњењем овог уређаја. Искључите адаптер из напајања и будите пажљиви јер кабл може да буде топао."</string>
+    <string name="high_temp_alarm_help_care_steps" msgid="3631075329318070726">"Погледајте упозорења"</string>
     <string name="lockscreen_shortcut_left" msgid="2182769107618938629">"Лева пречица"</string>
     <string name="lockscreen_shortcut_right" msgid="3328683699505226536">"Десна пречица"</string>
     <string name="lockscreen_unlock_left" msgid="2043092136246951985">"И лева пречица откључава"</string>
