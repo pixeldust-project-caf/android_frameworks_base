@@ -63,5 +63,8 @@
     <!-- Whether to dim the FOD icon -->
     <bool name="config_fodIconDim">false</bool>
 
+    <!-- Asus stitch editor component name -->
+    <string name="config_stitchEditor">com.asus.stitchimage/com.asus.stitchimage.editor.ScreenshotEditorActivity</string>
+
 </resources>
 
