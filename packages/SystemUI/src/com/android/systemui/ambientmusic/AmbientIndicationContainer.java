@@ -194,7 +194,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer {
             }
         }
         mText.setText(mInfoToSet);
-        mAmbientIndication.setVisibility(mKeyguard && (mInfoAvailable || mNpInfoAvailable) ? View.VISIBLE : View.INVISIBLE);
+        mAmbientIndication.setVisibility(shouldShow() ? View.VISIBLE : View.INVISIBLE);
     }
 
     public View getIndication() {
