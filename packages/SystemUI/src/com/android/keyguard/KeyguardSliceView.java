@@ -377,17 +377,7 @@ public class KeyguardSliceView extends LinearLayout implements View.OnClickListe
     }
 
     public void setViewPadding(int left, int top, int right, int bottom) {
-        final ContentResolver resolver = mContext.getContentResolver();
-        boolean mClockSelection = Settings.System.getIntForUser(resolver,
-                Settings.System.LOCKSCREEN_CLOCK_SELECTION, 0, UserHandle.USER_CURRENT) == 9;
-        if (mClockSelection) {
-            mRow.setPaddingRelative((int) mContext.getResources().getDimension(R.dimen.custom_clock_left_padding), top,right,bottom);
-            mRow.setGravity(Gravity.START);
-        }
-        else {
-            mRow.setPadding(left,top,right,bottom);
-            mRow.setGravity(Gravity.CENTER);
-        }
+        mRow.setPadding(left,top,right,bottom);
     }
 
     private void updateTextColors() {
