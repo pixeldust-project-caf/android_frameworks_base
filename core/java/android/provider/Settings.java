@@ -9894,6 +9894,14 @@ public final class Settings {
         private static final Validator FP_SWIPE_TO_DISMISS_NOTIFICATIONS_VALIDATOR = BOOLEAN_VALIDATOR;
 
         /**
+         * Whether tethering is allowed to use VPN upstreams
+         * 0 = false, 1 = true
+         */
+        public static final String TETHERING_ALLOW_VPN_UPSTREAMS = "tethering_allow_vpn_upstreams";
+
+        private static final Validator TETHERING_ALLOW_VPN_UPSTREAMS_VALIDATOR = BOOLEAN_VALIDATOR;
+
+        /**
          * Holds comma separated list of ordering of QS tiles.
          * @hide
          */
@@ -10702,6 +10710,7 @@ public final class Settings {
             VALIDATORS.put(AWARE_TAP_PAUSE_TOUCH_COUNT, NON_NEGATIVE_INTEGER_VALIDATOR);
             VALIDATORS.put(TAP_GESTURE, TAP_GESTURE_VALIDATOR);
             VALIDATORS.put(LOCKSCREEN_VISUALIZER_ENABLED, LOCKSCREEN_VISUALIZER_ENABLED_VALIDATOR);
+            VALIDATORS.put(TETHERING_ALLOW_VPN_UPSTREAMS, TETHERING_ALLOW_VPN_UPSTREAMS_VALIDATOR);
         }
 
         /**
