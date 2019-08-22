@@ -204,4 +204,7 @@
     <!-- Dreamliner service -->
     <java-symbol type="bool" name="config_enableDreamlinerService" />
 
+    <!-- Whether device supports internal audio recording -->
+    <java-symbol type="bool" name="config_hasInternalAudioRecordingSupport" />
+
 </resources>
