@@ -117,4 +117,7 @@
     <!-- SBC Dual Channel (SBC HD Audio) -->
     <bool name="config_enableSBCDualChannelAudio">true</bool>
 
+    <!-- Whether device supports internal audio recording -->
+    <bool name="config_hasInternalAudioRecordingSupport">true</bool>
+
 </resources>

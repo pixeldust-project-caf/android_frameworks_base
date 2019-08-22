@@ -123,4 +123,7 @@
     <!-- SBC Dual Channel (SBC HD Audio) -->
     <java-symbol type="bool" name="config_enableSBCDualChannelAudio"/>
 
+    <!-- Whether device supports internal audio recording -->
+    <java-symbol type="bool" name="config_hasInternalAudioRecordingSupport" />
+
 </resources>
