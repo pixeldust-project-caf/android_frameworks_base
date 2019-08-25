@@ -146,10 +146,6 @@ import static android.os.IServiceManager.DUMP_FLAG_PRIORITY_NORMAL;
 import static android.os.IServiceManager.DUMP_FLAG_PROTO;
 import static android.view.Display.DEFAULT_DISPLAY;
 
-// LiveDisplay
-import com.android.server.custom.LineageHardwareService;
-import com.android.server.custom.display.LiveDisplayService;
-
 public final class SystemServer {
     private static final String TAG = "SystemServer";
 
@@ -1616,16 +1612,6 @@ public final class SystemServer {
                     com.android.internal.R.string.config_pocketBridgeSysfsInpocket).isEmpty()) {
                 traceBeginAndSlog("StartPocketBridgeService");
                 mSystemServiceManager.startService(PocketBridgeService.class);
-                traceEnd();
-            }
-
-            // LiveDisplay
-            if (!mOnlyCore){
-                traceBeginAndSlog("StartLineageHardwareService");
-                mSystemServiceManager.startService(LineageHardwareService.class);
-                traceEnd();
-                traceBeginAndSlog("StartLiveDisplayService");
-                mSystemServiceManager.startService(LiveDisplayService.class);
                 traceEnd();
             }
         }
