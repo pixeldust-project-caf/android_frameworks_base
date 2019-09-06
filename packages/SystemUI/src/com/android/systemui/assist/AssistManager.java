@@ -245,7 +245,7 @@ public class AssistManager implements ConfigurationChangedReceiver {
     }
 
     protected boolean shouldShowOrb() {
-        return false;
+        return true;
     }
 
     public void startAssist(Bundle args) {
