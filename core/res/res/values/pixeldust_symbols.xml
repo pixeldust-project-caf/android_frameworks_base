@@ -133,4 +133,7 @@
     <!-- Whether to show WiFi/Hotspot generation number -->
     <java-symbol type="bool" name="config_show_network_generation" />
 
+    <!-- Post reset runnable for all clients -->
+    <java-symbol type="bool" name="config_fingerprintPostResetRunnableForAllClients" />
+
 </resources>
