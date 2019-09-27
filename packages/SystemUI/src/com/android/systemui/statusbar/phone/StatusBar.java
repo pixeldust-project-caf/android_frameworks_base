@@ -897,6 +897,8 @@ public class StatusBar extends SystemUI implements DemoMode,
         try{
             mOverlayManager.setEnabled("com.google.android.pixel.setupwizard.overlay",
                 !aodAvailable, mLockscreenUserManager.getCurrentUserId());
+            mOverlayManager.setEnabled("com.google.android.apps.nexuslauncher.overlay",
+                true, mLockscreenUserManager.getCurrentUserId());
         } catch (RemoteException ignored) {
         }
     }
