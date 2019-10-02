@@ -50,4 +50,7 @@
     <string name="qs_data_switch_label">Daten SIM wechseln</string>
     <string name="qs_data_switch_changed_1">Wechsel die Daten SIM auf SIM 1.</string>
     <string name="qs_data_switch_changed_2">Wechsel die Daten SIM auf SIM 2.</string>
+
+    <!-- PixelDust Settings Tile -->
+    <string name="quick_settings_pixeldust_label">PixelDust Einstellungen</string>
 </resources>
