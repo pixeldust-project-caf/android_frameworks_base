@@ -103,4 +103,6 @@
 
     <java-symbol type="array" name="config_customPermissionsList" />
 
+    <java-symbol type="integer" name="config_screenBrightnessPulse" />
+
 </resources>
