@@ -26,7 +26,8 @@
     <string name="statusbar_items_title">Symbole in der Statusleiste</string>
     <string name="lockscreen_default">Standard</string>
     <string name="lockscreen_hidden">Keine</string>
-    <string name="systemui_tuner_navbar_title">Navigationsleiste</string>
+    <string name="systemui_tuner_navbar_title">Layout</string>
+    <string name="navigation_bar_format_title">Navigationsleisten-Layout</string>
 
     <!-- Shows when people have clicked on the custom lockscreen shortcut [CHAR LIMIT=60] -->
     <string name="custom_hint">Vom Symbol aus wischen zum Starten</string>
