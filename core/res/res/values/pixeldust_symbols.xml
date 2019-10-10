@@ -116,4 +116,7 @@
     <!-- ADB notification -->
     <java-symbol type="drawable" name="stat_sys_data_usb_custom" />
 
+    <!-- Ambient Pulse Light -->
+    <java-symbol type="integer" name="config_AmbientPulseLightColor" />
+
 </resources>
