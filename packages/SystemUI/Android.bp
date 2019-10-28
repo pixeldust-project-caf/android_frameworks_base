@@ -47,11 +47,13 @@ android_library {
         "../../../../external/google/SystemUIGoogle/src/com/google/android/systemui/smartspace/SmartSpaceData.java",
         "../../../../external/google/SystemUIGoogle/src/com/google/android/systemui/smartspace/SmartSpaceUpdateListener.java",
         "../../../../external/google/SystemUIGoogle/src/com/google/android/systemui/statusbar/NotificationEntryManagerGoogle.java",
+        "slimrecent/src/**/*.java",
     ],
     resource_dirs: [
         "res-keyguard",
         "res",
         "res-hwkeys",
+        "slimrecent/res",
     ],
     static_libs: [
         "SystemUIPluginLib",
@@ -72,6 +74,7 @@ android_library {
         "androidx.lifecycle_lifecycle-extensions",
         "androidx.dynamicanimation_dynamicanimation",
         "androidx-constraintlayout_constraintlayout",
+        "androidx.cardview_cardview",
         "iconloader_base",
         "SystemUI-tags",
         "SystemUI-proto",
