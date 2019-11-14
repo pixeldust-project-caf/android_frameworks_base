@@ -108,4 +108,7 @@
 
     <bool name="config_has_Soli">false</bool>
 
+    <!-- Whether device supports variable refresh rate -->
+    <bool name="config_hasVariableRefreshRate">false</bool>
+
 </resources>
