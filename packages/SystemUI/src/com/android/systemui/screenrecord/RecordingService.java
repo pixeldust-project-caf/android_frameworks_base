@@ -42,6 +42,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.android.systemui.R;
@@ -91,6 +92,8 @@ public class RecordingService extends Service {
     private boolean mUseAudio;
     private boolean mShowTaps;
     private File mTempFile;
+
+    private WindowManager mWindowManager;
 
     /**
      * Get an intent to start the recording service.
@@ -217,6 +220,9 @@ public class RecordingService extends Service {
 
         mMediaProjectionManager =
                 (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+
+        mWindowManager =
+            (WindowManager) getSystemService(Context.WINDOW_SERVICE);
     }
 
     /**
@@ -238,7 +244,8 @@ public class RecordingService extends Service {
             mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
 
             // Set up video
-            DisplayMetrics metrics = getResources().getDisplayMetrics();
+            DisplayMetrics metrics = new DisplayMetrics();
+            mWindowManager.getDefaultDisplay().getRealMetrics(metrics);
             int screenWidth = metrics.widthPixels;
             int screenHeight = metrics.heightPixels;
             mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
