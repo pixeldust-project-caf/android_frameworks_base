@@ -216,6 +216,14 @@ public class RecordingService extends Service {
         return null;
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        mWindowManager =
+            (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+    }
+
     /**
      * Begin the recording session
      */
