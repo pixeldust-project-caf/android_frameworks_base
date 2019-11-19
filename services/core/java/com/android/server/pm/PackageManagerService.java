@@ -3692,8 +3692,9 @@ public class PackageManagerService extends IPackageManager.Stub
         // There are several items that need to be combined together to safely
         // identify cached items. In particular, changing the value of certain
         // feature flags should cause us to invalidate any caches.
+        // IMPORTANT!!!! switch from FINGERPRINT to OMNI_FINGERPRINT
         final String cacheName = SystemProperties.digestOf(
-                Build.PROP_CUSTOM_FINGERPRINT,
+                "ro.build.date",
                 StorageManager.PROP_ISOLATED_STORAGE,
                 StorageManager.PROP_ISOLATED_STORAGE_SNAPSHOT);
 
