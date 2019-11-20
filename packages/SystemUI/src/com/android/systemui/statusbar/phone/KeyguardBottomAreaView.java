@@ -251,7 +251,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         updateCameraVisibility();
         mUnlockMethodCache = UnlockMethodCache.getInstance(getContext());
         mUnlockMethodCache.addListener(this);
-        mEmergencyCarrierArea.setVisibility(INVISIBLE);
+        mEmergencyCarrierArea.setVisibility(GONE);
         setClipChildren(false);
         setClipToPadding(false);
         inflateCameraPreview();
@@ -792,7 +792,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
             mEmergencyCarrierArea.setVisibility(INVISIBLE);
         } else {
             mOverlayContainer.setVisibility(VISIBLE);
-            mEmergencyCarrierArea.setVisibility(INVISIBLE);
+            mEmergencyCarrierArea.setVisibility(GONE);
             if (animate) {
                 startFinishDozeAnimation();
             }
