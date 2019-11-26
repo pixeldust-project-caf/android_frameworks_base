@@ -45,4 +45,11 @@
     <!-- AOD QS tile -->
     <string name="quick_settings_aod_label">AOD</string>
     <string name="quick_settings_aod_off_powersave_label">AOD aus\nEnergiesparmodus</string>
+
+    <!-- DataSwitch Tile -->
+    <string name="qs_data_switch_label">Daten SIM wechseln</string>
+    <string name="qs_data_switch_toast_0">Derzeit ist keine SIM-Karte eingelegt</string>
+    <string name="qs_data_switch_toast_1">Derzeit ist nur eine SIM-Karte eingelegt</string>
+    <string name="qs_data_switch_changed_1">Wechsel die Daten SIM auf SIM 1.</string>
+    <string name="qs_data_switch_changed_2">Wechsel die Daten SIM auf SIM 2.</string>
 </resources>
