@@ -55,6 +55,8 @@ public class StatusBarSignalPolicy implements SignalCallback,
 
     private static final String SHOW_ACTIVITY_INDICATORS =
             "system:" + Settings.System.STATUS_BAR_SHOW_ACTIVITY_INDICATORS;
+    private static final String USE_OLD_MOBILETYPE =
+            "system:" + Settings.System.USE_OLD_MOBILETYPE;
 
     private final String mSlotAirplane;
     private final String mSlotMobile;
@@ -128,7 +130,8 @@ public class StatusBarSignalPolicy implements SignalCallback,
         }
         mInitialized = true;
         mTunerService.addTunable(this, StatusBarIconController.ICON_HIDE_LIST,
-                SHOW_ACTIVITY_INDICATORS);
+                SHOW_ACTIVITY_INDICATORS,
+                USE_OLD_MOBILETYPE);
         mNetworkController.addCallback(this);
         mSecurityController.addCallback(this);
     }
@@ -162,6 +165,10 @@ public class StatusBarSignalPolicy implements SignalCallback,
 
     @Override
     public void onTuningChanged(String key, String newValue) {
+        if (USE_OLD_MOBILETYPE.equals(key)) {
+            mNetworkController.removeCallback(this);
+            mNetworkController.addCallback(this);
+        }
         if (StatusBarIconController.ICON_HIDE_LIST.equals(key)) {
             ArraySet<String> hideList = StatusBarIconController.getIconHideList(mContext, newValue);
             boolean hideAirplane = hideList.contains(mSlotAirplane);

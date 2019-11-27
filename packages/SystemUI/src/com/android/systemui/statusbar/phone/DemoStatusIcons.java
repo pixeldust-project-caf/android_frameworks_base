@@ -259,7 +259,7 @@ public class DemoStatusIcons extends StatusIconContainer implements DemoMode, Da
                 mContext, state.slot,
                 mFeatureFlags.isEnabled(Flags.COMBINED_STATUS_BAR_SIGNAL_ICONS));
 
-        view.applyMobileState(state);
+        view.applyMobileState(state, false);
         view.setStaticDrawableColor(mColor);
 
         // mobile always goes at the end
@@ -273,7 +273,7 @@ public class DemoStatusIcons extends StatusIconContainer implements DemoMode, Da
         for (int i = 0; i < mMobileViews.size(); i++) {
             StatusBarMobileView view = mMobileViews.get(i);
             if (view.getState().subId == state.subId) {
-                view.applyMobileState(state);
+                view.applyMobileState(state, false);
                 return;
             }
         }
