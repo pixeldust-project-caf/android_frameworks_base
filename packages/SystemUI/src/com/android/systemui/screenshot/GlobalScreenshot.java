@@ -73,6 +73,7 @@ import android.os.Handler;
 import android.os.PowerManager;
 import android.os.Process;
 import android.os.RemoteException;
+import android.os.ServiceManager;
 import android.os.SystemClock;
 import android.os.UserHandle;
 import android.os.UserManager;
@@ -97,6 +98,7 @@ import android.widget.Toast;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.config.sysui.SystemUiDeviceConfigFlags;
 import com.android.internal.messages.nano.SystemMessageProto.SystemMessage;
+import com.android.internal.statusbar.IStatusBarService;
 import com.android.systemui.R;
 import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.SystemUI;
@@ -793,11 +795,24 @@ class GlobalScreenshot {
                 new Rect(0, 0, mDisplayMetrics.widthPixels, mDisplayMetrics.heightPixels));
     }
 
+    void setBlockedGesturalNavigation(boolean blocked) {
+        IStatusBarService service = IStatusBarService.Stub.asInterface(
+                ServiceManager.getService(Context.STATUS_BAR_SERVICE));
+        if (service != null) {
+            try {
+                service.setBlockedGesturalNavigation(blocked);
+            } catch (RemoteException e) {
+                // end of the world
+            }
+        }
+    }
+
     /**
      * Displays a screenshot selector
      */
     void takeScreenshotPartial(final Consumer<Uri> finisher, final boolean statusBarVisible,
             final boolean navBarVisible) {
+        setBlockedGesturalNavigation(true);
         mWindowManager.addView(mScreenshotLayout, mWindowLayoutParams);
         mScreenshotSelectorView.setSelectionListener(
                 new ScreenshotSelectorView.OnSelectionListener() {
@@ -851,6 +866,7 @@ class GlobalScreenshot {
         mScreenshotSelectorView.stopSelection();
         mScreenshotSelectorView.setVisibility(View.GONE);
         mCaptureButton.setVisibility(View.GONE);
+        setBlockedGesturalNavigation(false);
     }
 
     /**
@@ -862,6 +878,8 @@ class GlobalScreenshot {
             mWindowManager.removeView(mScreenshotLayout);
             mScreenshotSelectorView.stopSelection();
         }
+
+        setBlockedGesturalNavigation(false);
     }
 
     /**
