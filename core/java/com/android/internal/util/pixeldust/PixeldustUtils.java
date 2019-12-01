@@ -280,6 +280,10 @@ public class PixeldustUtils {
         FireActions.sendSystemKeyToStatusBar(keyCode);
     }
 
+    public static void setPartialScreenshot(boolean active) {
+        FireActions.setPartialScreenshot(active);
+    }
+
     private static final class FireActions {
         private static IStatusBarService mStatusBarService = null;
         private static IStatusBarService getStatusBarService() {
@@ -352,6 +356,15 @@ public class PixeldustUtils {
             if (service != null) {
                 try {
                     service.toggleSettingsPanel();
+                } catch (RemoteException e) {}
+            }
+        }
+
+        public static void setPartialScreenshot(boolean active) {
+            IStatusBarService service = getStatusBarService();
+            if (service != null) {
+                try {
+                    service.setPartialScreenshot(active);
                 } catch (RemoteException e) {}
             }
         }
