@@ -130,7 +130,7 @@ public class QSFactoryImpl implements QSFactory {
             Provider<AlwaysOnDisplayTile> alwaysOnDisplayTileProvider,
             Provider<ImmersiveTile> immersiveTileProvider,
             Provider<SyncTile> syncTileProvider,
-            Provider<DataSwitchTile> dataSwitchTileProvider),
+            Provider<DataSwitchTile> dataSwitchTileProvider,
             Provider<GamingModeTile> GamingModeTileProvider) {
         mWifiTileProvider = wifiTileProvider;
         mBluetoothTileProvider = bluetoothTileProvider;
