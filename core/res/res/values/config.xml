@@ -4335,4 +4335,7 @@
     <!-- Whether to show activity indicators in the status bar -->
     <bool name="config_showActivity">true</bool>
 
+    <!-- Boolean indicating that the system will use autoSuspend. If set to false, autoSuspend
+         is not used and the system will only suspend upon an explicit request. -->
+    <bool translatable="false" name="config_enableAutoSuspend">true</bool>
 </resources>
