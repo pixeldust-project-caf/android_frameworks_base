@@ -590,14 +590,10 @@ public class QSCustomizer extends LinearLayout implements OnMenuItemClickListene
         menuItemOne.setChecked(rows == 1);
         MenuItem menuItemTwo = mToolbar.getMenu().findItem(R.id.menu_item_rows_two);
         menuItemTwo.setChecked(rows == 2);
-        if (mMaxAllowedRows > 2) {
-            MenuItem menuItemThree = mToolbar.getMenu().findItem(R.id.menu_item_rows_three);
-            menuItemThree.setChecked(rows == 3);
-            if (mMaxAllowedRows > 3) {
-                MenuItem menuItemFour = mToolbar.getMenu().findItem(R.id.menu_item_rows_four);
-                menuItemFour.setChecked(rows == 4);
-            }
-        }
+        MenuItem menuItemThree = mToolbar.getMenu().findItem(R.id.menu_item_rows_three);
+        menuItemThree.setChecked(rows == 3);
+        MenuItem menuItemFour = mToolbar.getMenu().findItem(R.id.menu_item_rows_four);
+        menuItemFour.setChecked(rows == 4);
 
         int rowsLandscape = Settings.System.getIntForUser(
                 mContext.getContentResolver(), Settings.System.QS_LAYOUT_ROWS_LANDSCAPE, 2,
