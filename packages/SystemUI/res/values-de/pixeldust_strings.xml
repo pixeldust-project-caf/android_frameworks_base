@@ -30,6 +30,8 @@
     <string name="navigation_bar_format_title">Navigationsleisten-Layout</string>
     <string name="navigation_bar_inverse_title">Button-Reihenfolge ändern</string>
     <string name="navigation_bar_inverse_summary">Position des Recents- und Back-Buttons tauschen</string>
+    <string name="navigation_bar_accessibility_dpad_left">Cursor links</string>
+    <string name="navigation_bar_accessibility_dpad_right">Cursor rechts</string>
 
     <!-- Shows when people have clicked on the custom lockscreen shortcut [CHAR LIMIT=60] -->
     <string name="custom_hint">Vom Symbol aus wischen zum Starten</string>
