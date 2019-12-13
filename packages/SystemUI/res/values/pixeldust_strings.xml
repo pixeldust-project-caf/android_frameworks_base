@@ -183,4 +183,8 @@
     <string name="quick_settings_theme_tile_color_xboxgreen">XboxGreen</string>
     <string name="quick_settings_theme_tile_color_xiaomiorange">XiaomiOrange</string>
 
+    <!-- Navbar arrow keys -->
+    <string name="navigation_bar_accessibility_dpad_left">Cursor left</string>
+    <string name="navigation_bar_accessibility_dpad_right">Cursor right</string>
+
 </resources>

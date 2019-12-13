@@ -5386,6 +5386,15 @@ public final class Settings {
         public static final String EDGE_GESTURE_Y_DEAD_ZONE = "edge_gesture_y_dead_zone";
 
         /**
+         * Whether to show arrow keys in navigation bar
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_ARROW_KEYS = "navigation_bar_menu_arrow_keys";
+
+        private static final Validator NAVIGATION_BAR_ARROW_KEYS_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -5510,6 +5519,7 @@ public final class Settings {
             CLOCK_SHOW_STATUS_AREA,
             QS_SHOW_BRIGHTNESS_ICON,
             QS_SHOW_BRIGHTNESS_MINMAX,
+            NAVIGATION_BAR_ARROW_KEYS,
         };
 
         /**
@@ -5701,6 +5711,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(CLOCK_SHOW_STATUS_AREA);
             PRIVATE_SETTINGS.add(QS_SHOW_BRIGHTNESS_ICON);
             PRIVATE_SETTINGS.add(QS_SHOW_BRIGHTNESS_MINMAX);
+            PRIVATE_SETTINGS.add(NAVIGATION_BAR_ARROW_KEYS);
         }
 
         /**
@@ -5862,6 +5873,7 @@ public final class Settings {
             VALIDATORS.put(CLOCK_SHOW_STATUS_AREA, CLOCK_SHOW_STATUS_AREA_VALIDATOR);
             VALIDATORS.put(QS_SHOW_BRIGHTNESS_ICON, QS_SHOW_BRIGHTNESS_ICON_VALIDATOR);
             VALIDATORS.put(QS_SHOW_BRIGHTNESS_MINMAX, QS_SHOW_BRIGHTNESS_MINMAX_VALIDATOR);
+            VALIDATORS.put(NAVIGATION_BAR_ARROW_KEYS, NAVIGATION_BAR_ARROW_KEYS_VALIDATOR);
         }
 
         /**
