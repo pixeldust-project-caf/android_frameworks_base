@@ -5225,6 +5225,15 @@ public final class Settings {
         private static final Validator PULSE_AMBIENT_LIGHT_COLOR_VALIDATOR = ANY_STRING_VALIDATOR;
 
         /**
+         * Wether to use color from wallpaper for Ambient edge light
+         * @hide
+         */
+        public static final String PULSE_AMBIENT_AUTO_COLOR = "pulse_ambient_auto_color";
+
+        /** @hide */
+        private static final Validator PULSE_AMBIENT_AUTO_COLOR_VALIDATOR = BOOLEAN_VALIDATOR;
+
+        /**
          * User definable value of pulse notification screen brightness
          *
          * @hide
@@ -5360,6 +5369,7 @@ public final class Settings {
             PULSE_AMBIENT_LIGHT_COLOR,
             OMNI_PULSE_BRIGHTNESS,
             OMNI_DOZE_BRIGHTNESS,
+            PULSE_AMBIENT_AUTO_COLOR,
         };
 
         /**
@@ -5541,6 +5551,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(PULSE_AMBIENT_LIGHT_COLOR);
             PRIVATE_SETTINGS.add(OMNI_PULSE_BRIGHTNESS);
             PRIVATE_SETTINGS.add(OMNI_DOZE_BRIGHTNESS);
+            PRIVATE_SETTINGS.add(PULSE_AMBIENT_AUTO_COLOR);
         }
 
         /**
@@ -5692,6 +5703,7 @@ public final class Settings {
             VALIDATORS.put(PULSE_AMBIENT_LIGHT_COLOR, PULSE_AMBIENT_LIGHT_COLOR_VALIDATOR);
             VALIDATORS.put(OMNI_PULSE_BRIGHTNESS, OMNI_PULSE_BRIGHTNESS_VALIDATOR);
             VALIDATORS.put(OMNI_DOZE_BRIGHTNESS, OMNI_DOZE_BRIGHTNESS_VALIDATOR);
+            VALIDATORS.put(PULSE_AMBIENT_AUTO_COLOR, PULSE_AMBIENT_AUTO_COLOR_VALIDATOR);
         }
 
         /**
