@@ -5369,6 +5369,16 @@ public final class Settings {
         private static final Validator QS_SHOW_BRIGHTNESS_MINMAX_VALIDATOR = BOOLEAN_VALIDATOR;
 
         /**
+         * Set edge gesture Y dead zone
+         * 0 - disabled - stock behavior - default
+         * 1 - smaller top area of the screen
+         * 2 - small top area of the screen
+         * 3 - half top of the screen
+         * @hide
+         */
+        public static final String EDGE_GESTURE_Y_DEAD_ZONE = "edge_gesture_y_dead_zone";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *

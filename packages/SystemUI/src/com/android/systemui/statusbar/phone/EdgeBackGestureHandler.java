@@ -130,6 +130,8 @@ public class EdgeBackGestureHandler implements DisplayListener {
 
     // The edge width where touch down is allowed
     private int mEdgeWidth;
+    // The edge height where touch down is allowed
+    private int mEdgeYDeadzone = 0;
     // The slop to distinguish between horizontal and vertical motion
     private final float mTouchSlop;
     // Duration after which we consider the event as longpress.
@@ -319,6 +321,24 @@ public class EdgeBackGestureHandler implements DisplayListener {
             return false;
         }
 
+        if (mEdgeYDeadzone != 0) {
+            int divider;
+            switch (mEdgeYDeadzone) {
+                default: // mode set to 1
+                    divider = 4;
+                    break;
+                case 2: // mode set to 2
+                    divider = 3;
+                    break;
+                case 3: // mode set to 3
+                    divider = 2;
+                    break;
+            }
+            if (y < (mDisplaySize.y / divider)) {
+                return false;
+            }
+        }
+
         if (x > mEdgeWidth + mLeftInset && x < (mDisplaySize.x - mEdgeWidth - mRightInset)) {
             return false;
         }
@@ -344,6 +364,10 @@ public class EdgeBackGestureHandler implements DisplayListener {
         cancelEv.setAction(MotionEvent.ACTION_CANCEL);
         mEdgePanel.handleTouch(cancelEv);
         cancelEv.recycle();
+    }
+
+    public void setEdgeGestureDeadZone(int mode) {
+        mEdgeYDeadzone = mode;
     }
 
     private void onMotionEvent(MotionEvent ev) {
