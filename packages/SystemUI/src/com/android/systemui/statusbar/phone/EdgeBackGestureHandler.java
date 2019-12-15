@@ -32,6 +32,8 @@ import android.os.Looper;
 import android.os.RemoteException;
 import android.os.SystemClock;
 import android.os.SystemProperties;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.Log;
 import android.util.MathUtils;
 import android.util.StatsLog;
@@ -188,6 +190,12 @@ public class EdgeBackGestureHandler implements DisplayListener {
         mMinArrowPosition = res.getDimensionPixelSize(R.dimen.navigation_edge_arrow_min_y);
         mFingerOffset = res.getDimensionPixelSize(R.dimen.navigation_edge_finger_offset);
         updateCurrentUserResources(res);
+        
+        int deadZoneMode = Settings.System.getIntForUser(mContext.getContentResolver(),
+            Settings.System.EDGE_GESTURE_Y_DEAD_ZONE, 0,
+            UserHandle.USER_CURRENT);
+        setEdgeGestureDeadZone(deadZoneMode);
+        
     }
 
     public void updateCurrentUserResources(Resources res) {
