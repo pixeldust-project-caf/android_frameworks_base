@@ -608,8 +608,8 @@ public class DozeTriggers implements DozeMachine.Part {
         }
 
         @Override
-        public void wakeUpFromDoubleTap() {
-            gentleWakeUp(DozeLog.REASON_SENSOR_DOUBLE_TAP);
+        public void wakeUpFromDoubleTap(int pulseReason) {
+            gentleWakeUp(pulseReason);
         }
     };
 }
