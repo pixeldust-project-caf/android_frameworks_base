@@ -776,8 +776,8 @@ public class NavigationBarView extends FrameLayout implements
         updatePanelSystemUiStateFlags();
     }
 
-    public void setEdgeGestureDeadZone(int mode) {
-        mEdgeBackGestureHandler.setEdgeGestureDeadZone(mode);
+    public void setEdgeGestureDeadZone() {
+        mEdgeBackGestureHandler.setEdgeGestureDeadZone();
     }
 
     /**
