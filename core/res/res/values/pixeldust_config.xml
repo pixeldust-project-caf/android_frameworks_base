@@ -106,4 +106,6 @@
     <!-- -1 means use same as config_screenBrightnessDoze -->
     <integer name="config_screenBrightnessPulse">-1</integer>
 
+    <bool name="config_has_Soli">false</bool>
+
 </resources>
