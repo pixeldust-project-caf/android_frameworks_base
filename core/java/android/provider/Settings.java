@@ -5076,14 +5076,21 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_STYLE = "status_bar_battery_style";
 
         /**
-         * Display style of the battery information in the quick status bar header
+         * Display style of the battery percentage in the quick status bar header
          *    0: Hide the battery percentage (default)
          *    1: Display the battery percentage next to the icon
          *    2: Display the battery percentage inside the icon
-         *    3: Display the battery estimates
          * @hide
          */
-        public static final String QS_BATTERY_MODE = "qs_battery_mode";
+        public static final String QS_SHOW_BATTERY_PERCENT = "qs_show_battery_percent";
+
+        /**
+         * QS battery estimate
+         * 0: Hide the battery estimate
+         * 1: Display the battery estimate
+         * @hide
+         */
+        public static final String QS_SHOW_BATTERY_ESTIMATE = "qs_show_battery_estimate";
 
         /**
          * Whether or not to show the battery percentage in the status bar
