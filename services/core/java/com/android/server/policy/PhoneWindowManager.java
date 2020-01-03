@@ -796,11 +796,15 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     break;
                 }
                 case MSG_TOGGLE_TORCH:
-                    performHapticFeedbackLw(null, HapticFeedbackConstants.LONG_PRESS, true);
-                    PixeldustUtils.toggleCameraFlash();
+                    toggleFlashLight();
                     break;
             }
         }
+    }
+
+    private void toggleFlashLight() {
+        performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, true, "Flashlight toggle");
+        PixeldustUtils.toggleCameraFlash();
     }
 
     private UEventObserver mHDMIObserver = new UEventObserver() {
@@ -1309,8 +1313,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         switch (behavior) {
             case MULTI_PRESS_POWER_NOTHING:
                 if ((mTorchActionMode == 1) && (!isScreenOn() || isDozeMode())) {
-                    performHapticFeedbackLw(null, HapticFeedbackConstants.LONG_PRESS, true);
-                    PixeldustUtils.toggleCameraFlash();
+                    toggleFlashLight();
                 }
                 break;
             case MULTI_PRESS_POWER_THEATER_MODE:
