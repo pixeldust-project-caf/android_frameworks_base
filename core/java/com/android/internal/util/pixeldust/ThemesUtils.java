@@ -44,5 +44,25 @@ public class ThemesUtils {
             "com.android.theme.color.red", // Red
             "com.android.theme.color.teal", // Teal
             "com.android.theme.color.yellow", // Yellow
+            // Brand colors
+            "com.android.theme.color.androidonegreen", // AndroidOneGreen
+            "com.android.theme.color.cocacolared", // CocaColaRed
+            "com.android.theme.color.discordpurple", // DiscordPurple
+            "com.android.theme.color.facebookblue", // FacebookBlue
+            "com.android.theme.color.instagramcerise", // InstagramCerise
+            "com.android.theme.color.jollibeecrimson", // JollibeeCrimson
+            "com.android.theme.color.monsterenergygreen", // MonsterEnergyGreen
+            "com.android.theme.color.nextbitmint", // NextbitMint
+            "com.android.theme.color.oneplusred", // OneplusRed
+            "com.android.theme.color.pepsiblue", // PepsiBlue
+            "com.android.theme.color.pocophoneyellow", // PocophoneYellow
+            "com.android.theme.color.razergreen", // RazerGreen
+            "com.android.theme.color.samsungblue", // SamsungBlue
+            "com.android.theme.color.spotifygreen", // SpotifyGreen
+            "com.android.theme.color.starbucksgreen", // StarbucksGreen
+            "com.android.theme.color.twitchpurple", // TwitchPurple
+            "com.android.theme.color.twitterblue", // TwitterBlue
+            "com.android.theme.color.xboxgreen", // XboxGreen
+            "com.android.theme.color.xiaomiorange", // XiaomiOrange
     };
 }

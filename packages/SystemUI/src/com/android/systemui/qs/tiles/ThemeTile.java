@@ -102,6 +102,44 @@ public class ThemeTile extends QSTileImpl<BooleanState> {
                 R.string.quick_settings_theme_tile_color_teal, "com.android.theme.color.teal"));
         sThemeItems.add(new ThemeTileItem(23, R.color.quick_settings_theme_tile_yellow,
                 R.string.quick_settings_theme_tile_color_yellow, "com.android.theme.color.yellow"));
+        sThemeItems.add(new ThemeTileItem(24, R.color.quick_settings_theme_tile_androidonegreen,
+                R.string.quick_settings_theme_tile_color_androidonegreen, "com.android.theme.color.androidonegreen"));
+        sThemeItems.add(new ThemeTileItem(25, R.color.quick_settings_theme_tile_cocacolared,
+                R.string.quick_settings_theme_tile_color_cocacolared, "com.android.theme.color.cocacolared"));
+        sThemeItems.add(new ThemeTileItem(26, R.color.quick_settings_theme_tile_discordpurple,
+                R.string.quick_settings_theme_tile_color_discordpurple, "com.android.theme.color.discordpurple"));
+        sThemeItems.add(new ThemeTileItem(27, R.color.quick_settings_theme_tile_facebookblue,
+                R.string.quick_settings_theme_tile_color_facebookblue, "com.android.theme.color.facebookblue"));
+        sThemeItems.add(new ThemeTileItem(28, R.color.quick_settings_theme_tile_instagramcerise,
+                R.string.quick_settings_theme_tile_color_instagramcerise, "com.android.theme.color.instagramcerise"));
+        sThemeItems.add(new ThemeTileItem(29, R.color.quick_settings_theme_tile_jollibeecrimson,
+                R.string.quick_settings_theme_tile_color_jollibeecrimson, "com.android.theme.color.jollibeecrimson"));
+        sThemeItems.add(new ThemeTileItem(30, R.color.quick_settings_theme_tile_monsterenergygreen,
+                R.string.quick_settings_theme_tile_color_monsterenergygreen, "com.android.theme.color.monsterenergygreen"));
+        sThemeItems.add(new ThemeTileItem(31, R.color.quick_settings_theme_tile_nextbitmint,
+                R.string.quick_settings_theme_tile_color_nextbitmint, "com.android.theme.color.nextbitmint"));
+        sThemeItems.add(new ThemeTileItem(32, R.color.quick_settings_theme_tile_oneplusred,
+                R.string.quick_settings_theme_tile_color_oneplusred, "com.android.theme.color.oneplusred"));
+        sThemeItems.add(new ThemeTileItem(33, R.color.quick_settings_theme_tile_pepsiblue,
+                R.string.quick_settings_theme_tile_color_pepsiblue, "com.android.theme.color.pepsiblue"));
+        sThemeItems.add(new ThemeTileItem(34, R.color.quick_settings_theme_tile_pocophoneyellow,
+                R.string.quick_settings_theme_tile_color_pocophoneyellow, "com.android.theme.color.pocophoneyellow"));
+        sThemeItems.add(new ThemeTileItem(35, R.color.quick_settings_theme_tile_razergreen,
+                R.string.quick_settings_theme_tile_color_razergreen, "com.android.theme.color.razergreen"));
+        sThemeItems.add(new ThemeTileItem(36, R.color.quick_settings_theme_tile_samsungblue,
+                R.string.quick_settings_theme_tile_color_samsungblue, "com.android.theme.color.samsungblue"));
+        sThemeItems.add(new ThemeTileItem(37, R.color.quick_settings_theme_tile_spotifygreen,
+                R.string.quick_settings_theme_tile_color_spotifygreen, "com.android.theme.color.spotifygreen"));
+        sThemeItems.add(new ThemeTileItem(38, R.color.quick_settings_theme_tile_starbucksgreen,
+                R.string.quick_settings_theme_tile_color_starbucksgreen, "com.android.theme.color.starbucksgreen"));
+        sThemeItems.add(new ThemeTileItem(39, R.color.quick_settings_theme_tile_twitchpurple,
+                R.string.quick_settings_theme_tile_color_twitchpurple, "com.android.theme.color.twitchpurple"));
+        sThemeItems.add(new ThemeTileItem(40, R.color.quick_settings_theme_tile_twitterblue,
+                R.string.quick_settings_theme_tile_color_twitterblue, "com.android.theme.color.twitterblue"));
+        sThemeItems.add(new ThemeTileItem(41, R.color.quick_settings_theme_tile_xboxgreen,
+                R.string.quick_settings_theme_tile_color_xboxgreen, "com.android.theme.color.xboxgreen"));
+        sThemeItems.add(new ThemeTileItem(42, R.color.quick_settings_theme_tile_xiaomiorange,
+                R.string.quick_settings_theme_tile_color_xiaomiorange, "com.android.theme.color.xiaomiorange"));
     }
 
     static final List<ThemeTileItem> sStyleItems = new ArrayList<ThemeTileItem>();

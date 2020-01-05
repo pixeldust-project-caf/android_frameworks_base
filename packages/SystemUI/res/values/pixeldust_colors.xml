@@ -43,6 +43,25 @@
     <color name="quick_settings_theme_tile_red">#FF990C04</color>
     <color name="quick_settings_theme_tile_teal">#FF009688</color>
     <color name="quick_settings_theme_tile_yellow">#FFFFEB3B</color>
+    <color name="quick_settings_theme_tile_androidonegreen">#7cd318</color>
+    <color name="quick_settings_theme_tile_cocacolared">#F40009</color>
+    <color name="quick_settings_theme_tile_discordpurple">#7289DA</color>
+    <color name="quick_settings_theme_tile_facebookblue">#3C5A99</color>
+    <color name="quick_settings_theme_tile_instagramcerise">#F00075</color>
+    <color name="quick_settings_theme_tile_jollibeecrimson">#e5173f</color>
+    <color name="quick_settings_theme_tile_monsterenergygreen">#95D600</color>
+    <color name="quick_settings_theme_tile_nextbitmint">#8dd7e2</color>
+    <color name="quick_settings_theme_tile_oneplusred">#EB0028</color>
+    <color name="quick_settings_theme_tile_pepsiblue">#005CB4</color>
+    <color name="quick_settings_theme_tile_pocophoneyellow">#FCC900</color>
+    <color name="quick_settings_theme_tile_razergreen">#00ff00</color>
+    <color name="quick_settings_theme_tile_samsungblue">#034EA2</color>
+    <color name="quick_settings_theme_tile_spotifygreen">#1DB954</color>
+    <color name="quick_settings_theme_tile_starbucksgreen">#00704A</color>
+    <color name="quick_settings_theme_tile_twitchpurple">#6441A4</color>
+    <color name="quick_settings_theme_tile_twitterblue">#1da1f2</color>
+    <color name="quick_settings_theme_tile_xboxgreen">#107C10</color>
+    <color name="quick_settings_theme_tile_xiaomiorange">#ff6700</color>
 
 </resources>
 
