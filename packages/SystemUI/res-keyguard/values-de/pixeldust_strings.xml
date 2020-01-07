@@ -141,7 +141,7 @@
     <!-- [CHAR LIMIT=8] -->
     <string name="clock_title_type" translatable="false">Typografisch</string>
     <string name="clock_title_binary">Binär</string>
-    <string name="clock_title_default_bold">Standard (fett)</string>
-    <string name="clock_title_samsung_bold">Samsung (fett)</string>
+    <string name="clock_title_two_line_digital">Samsung</string>
+    <string name="clock_title_one_line_digital">Standard (fett)</string>
 
 </resources>

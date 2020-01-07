@@ -27,6 +27,7 @@ import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.ArrayMap;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 
 import androidx.annotation.VisibleForTesting;
@@ -148,7 +149,8 @@ public final class ClockManager {
         LayoutInflater layoutInflater = injectionInflater.injectable(LayoutInflater.from(context));
 
         addBuiltinClock(() -> new DefaultClockController(res, layoutInflater, colorExtractor));
-        addBuiltinClock(() -> new BubbleClockController(res, layoutInflater, colorExtractor, context));
+        addBuiltinClock(() -> new OneLineDigitalClockController(res, layoutInflater, colorExtractor, context));
+        addBuiltinClock(() -> new TwoLineDigitalClockController(res, layoutInflater, colorExtractor, context));
         addBuiltinClock(() -> new AnalogClockController(res, layoutInflater, colorExtractor, context));
         addBuiltinClock(() -> new TypeClockController(res, layoutInflater, colorExtractor, context));
         addBuiltinClock(() -> new BinaryClockController(res, layoutInflater, colorExtractor, context));
@@ -327,7 +329,8 @@ public final class ClockManager {
                     .setTitle(plugin.getTitle())
                     .setId(id)
                     .setThumbnail(plugin::getThumbnail)
-                    .setPreview(() -> plugin.getPreview(mWidth, mHeight))
+                     // to make the preview bigger in ThemePicker
+                    .setPreview(() -> plugin.getPreview(mWidth / 2, mHeight / 2))
                     .build());
         }
 

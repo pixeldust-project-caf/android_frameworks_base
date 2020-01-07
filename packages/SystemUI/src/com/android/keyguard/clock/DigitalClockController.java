@@ -23,6 +23,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint.Style;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -36,112 +37,79 @@ import com.android.systemui.plugins.ClockPlugin;
 import java.util.TimeZone;
 
 /**
- * Controller for Stretch clock that can appear on lock screen and AOD.
+ * Controller for general digital clock that can appear on lock screen and AOD.
  */
-public class AnalogClockController implements ClockPlugin {
+public abstract class DigitalClockController implements ClockPlugin {
 
     /**
      * Resources used to get title and thumbnail.
      */
-    private final Resources mResources;
+    protected final Resources mResources;
 
     /**
      * LayoutInflater used to inflate custom clock views.
      */
-    private final LayoutInflater mLayoutInflater;
+    protected final LayoutInflater mLayoutInflater;
 
     /**
      * Extracts accent color from wallpaper.
      */
-    private final SysuiColorExtractor mColorExtractor;
-
-    /**
-     * Renders preview from clock view.
-     */
-    private final ViewPreviewer mRenderer = new ViewPreviewer();
+    protected final SysuiColorExtractor mColorExtractor;
 
     /**
      * Custom clock shown on AOD screen and behind stack scroller on lock.
      */
-    private ClockLayout mBigClockView;
-    private ImageClock mAnalogClock;
+    protected DigitalClock mDigitalClock;
+    protected ClockLayout mBigClockView;
+
+    /**
+     * Small clock shown on lock screen above stack scroller.
+     */
+    private boolean mTwoLine;
+    private boolean mBoldHours;
 
     private final Context mContext;
 
     /**
-     * Helper to extract colors from wallpaper palette for clock face.
-     */
-    private final ClockPalette mPalette = new ClockPalette();
-
-    /**
-     * Create a BubbleClockController instance.
+     * Create a DigitalClockController instance.
      *
      * @param res Resources contains title and thumbnail.
      * @param inflater Inflater used to inflate custom clock views.
      * @param colorExtractor Extracts accent color from wallpaper.
      */
-    public AnalogClockController(Resources res, LayoutInflater inflater,
-            SysuiColorExtractor colorExtractor) {
-        this(res, inflater, colorExtractor, null);
+    public DigitalClockController(Resources res, LayoutInflater inflater,
+            SysuiColorExtractor colorExtractor, boolean twoLine, boolean boldHours) {
+        this(res, inflater, colorExtractor, twoLine, boldHours, null);
     }
 
     /**
-     * Create a BubbleClockController instance.
+     * Create a DigitalClockController instance.
      *
      * @param res Resources contains title and thumbnail.
      * @param inflater Inflater used to inflate custom clock views.
      * @param colorExtractor Extracts accent color from wallpaper.
      * @param context A context.
      */
-    public AnalogClockController(Resources res, LayoutInflater inflater,
-            SysuiColorExtractor colorExtractor, Context context) {
+    public DigitalClockController(Resources res, LayoutInflater inflater,
+            SysuiColorExtractor colorExtractor, boolean twoLine, boolean boldHours, Context context) {
         mResources = res;
         mLayoutInflater = inflater;
         mColorExtractor = colorExtractor;
+        mTwoLine = twoLine;
+        mBoldHours = boldHours;
         mContext = context;
     }
 
     private void createViews() {
-        mBigClockView = (ClockLayout) mLayoutInflater.inflate(R.layout.analog_clock, null);
-        mAnalogClock = mBigClockView.findViewById(R.id.analog_clock);
+        mBigClockView = (ClockLayout) mLayoutInflater.inflate(R.layout.custom_digital_clock, null);
+        mDigitalClock = mBigClockView.findViewById(R.id.digital_clock);
+        mDigitalClock.setMode(mTwoLine, mBoldHours);
     }
 
     @Override
     public void onDestroyView() {
         mBigClockView = null;
-        mAnalogClock = null;
-    }
-
-    @Override
-    public String getName() {
-        return "analog";
-    }
-
-    @Override
-    public String getTitle() {
-        return mResources.getString(R.string.clock_title_analog);
-    }
-
-    @Override
-    public Bitmap getThumbnail() {
-        return BitmapFactory.decodeResource(mResources, R.drawable.analog_thumbnail);
-    }
-
-    @Override
-    public Bitmap getPreview(int width, int height) {
-
-        // Use the big clock view for the preview
-        View view = getBigClockView();
-
-        // Initialize state of plugin before generating preview.
-        setDarkAmount(1f);
-        setTextColor(Color.WHITE);
-        ColorExtractor.GradientColors colors = mColorExtractor.getColors(
-                WallpaperManager.FLAG_LOCK);
-        setColorPalette(colors.supportsDarkText(), colors.getColorPalette());
-        onTimeTick();
-
-        return mRenderer.createPreview(view, width, height);
+        mDigitalClock = null;
     }
 
     @Override
@@ -164,41 +132,45 @@ public class AnalogClockController implements ClockPlugin {
 
     @Override
     public void setTextColor(int color) {
-        updateColor();
+        mDigitalClock.setTextColor(color);
     }
 
     @Override
-    public void setColorPalette(boolean supportsDarkText, int[] colorPalette) {
-        mPalette.setColorPalette(supportsDarkText, colorPalette);
-        updateColor();
-    }
-
-    private void updateColor() {
-        final int primary = mPalette.getPrimaryColor();
-        final int secondary = mPalette.getSecondaryColor();
-        mAnalogClock.setClockColors(primary, secondary);
-    }
+    public void setColorPalette(boolean supportsDarkText, int[] colorPalette) {}
 
     @Override
     public void onTimeTick() {
-        mAnalogClock.onTimeChanged();
+        mDigitalClock.onTimeChanged();
         mBigClockView.onTimeChanged();
     }
 
     @Override
     public void setDarkAmount(float darkAmount) {
-        mPalette.setDarkAmount(darkAmount);
         mBigClockView.setDarkAmount(darkAmount);
+        mDigitalClock.setDarkAmount(darkAmount);
     }
 
     @Override
     public void onTimeZoneChanged(TimeZone timeZone) {
-        mAnalogClock.onTimeZoneChanged(timeZone);
+        mDigitalClock.onTimeZoneChanged(timeZone);
     }
 
     @Override
     public boolean shouldShowStatusArea() {
         if (mContext == null) return true;
-        return Settings.System.getInt(mContext.getContentResolver(), Settings.System.CLOCK_SHOW_STATUS_AREA, 1) == 1;
+        return Settings.System.getInt(mContext.getContentResolver(), Settings.System.CLOCK_SHOW_STATUS_AREA, 0) == 1;
+    }
+
+    @Override
+    public Bitmap getPreview(int width, int height) {
+        ViewPreviewer renderer = new ViewPreviewer();
+        // Use the big clock view for the preview
+        View view = getBigClockView();
+
+        setTextColor(Color.WHITE);
+        setDarkAmount(1f);
+        onTimeTick();
+
+        return renderer.createPreview(view, width, height);
     }
 }
