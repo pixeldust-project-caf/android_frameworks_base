@@ -65,4 +65,14 @@ public class ThemesUtils {
             "com.android.theme.color.xboxgreen", // XboxGreen
             "com.android.theme.color.xiaomiorange", // XiaomiOrange
     };
+
+    public static final String[] PITCH_BLACK = {
+            "com.android.theme.pitchblack.system",
+            "com.android.theme.pitchblack.systemui",
+    };
+
+    public static final String[] SOLARIZED_DARK = {
+            "com.android.theme.solarizeddark.system",
+            "com.android.theme.solarizeddark.systemui",
+    };
 }
