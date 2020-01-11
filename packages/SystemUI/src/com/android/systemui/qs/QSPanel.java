@@ -114,6 +114,10 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
 
     private final Vibrator mVibrator;
 
+    private ImageView mBrightnessIcon;
+    private ImageView mMinBrightness;
+    private ImageView mMaxBrightness;
+
     public QSPanel(Context context) {
         this(context, null);
     }
@@ -137,8 +141,7 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
             R.layout.quick_settings_brightness_dialog, this, false);
         mBrightnessPlaceholder = LayoutInflater.from(mContext).inflate(
             R.layout.quick_settings_brightness_placeholder, this, false);
-        ImageView brightnessIcon = mBrightnessView.findViewById(R.id.brightness_icon);
-        brightnessIcon.setVisibility(View.VISIBLE);
+        mBrightnessIcon = mBrightnessView.findViewById(R.id.brightness_icon);
         addView(mBrightnessPlaceholder);
         addView(mBrightnessView);
 
@@ -151,7 +154,7 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
         mQsTileRevealController = new QSTileRevealController(mContext, this,
                 (PagedTileLayout) mTileLayout);
 
-        ImageView mMinBrightness = mBrightnessView.findViewById(R.id.brightness_left);
+        mMinBrightness = mBrightnessView.findViewById(R.id.brightness_left);
         mMinBrightness.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -174,7 +177,7 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
             }
         });
 
-        ImageView mMaxBrightness = mBrightnessView.findViewById(R.id.brightness_right);
+        mMaxBrightness = mBrightnessView.findViewById(R.id.brightness_right);
         mMaxBrightness.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -353,6 +356,25 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
         return mHost.createTile(subPanel);
     }
 
+    private void setBrightnessButton() {
+        boolean brightnessIconEnabled = Settings.System.getIntForUser(
+            mContext.getContentResolver(), Settings.System.QS_SHOW_BRIGHTNESS_ICON,
+                1, UserHandle.USER_CURRENT) == 1;
+        boolean brightnessMinMaxEnabled = Settings.System.getIntForUser(
+            mContext.getContentResolver(), Settings.System.QS_SHOW_BRIGHTNESS_MINMAX,
+                1, UserHandle.USER_CURRENT) == 1;
+        if (mBrightnessVisible) {
+            mBrightnessIcon.setVisibility(brightnessIconEnabled ? View.VISIBLE : View.GONE);
+            mMaxBrightness.setVisibility(brightnessMinMaxEnabled ? View.VISIBLE : View.GONE);
+            mMinBrightness.setVisibility(brightnessMinMaxEnabled ? View.VISIBLE : View.GONE);
+        } else {
+            mBrightnessIcon.setVisibility(View.GONE);
+            mMaxBrightness.setVisibility(View.GONE);
+            mMinBrightness.setVisibility(View.GONE);
+        }
+        updateResources();
+    }
+
     public void setBrightnessMirror(BrightnessMirrorController c) {
         if (mBrightnessMirrorController != null) {
             mBrightnessMirrorController.removeCallback(this);
@@ -509,6 +531,7 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
         } else {
             mBrightnessController.unregisterCallbacks();
         }
+        setBrightnessButton();
     }
 
     public void refreshAllTiles() {

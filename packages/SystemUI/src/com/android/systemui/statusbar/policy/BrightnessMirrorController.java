@@ -50,6 +50,9 @@ public class BrightnessMirrorController
     private ImageView mIcon;
     private Context mContext;
 
+    private ImageView mMinBrightness;
+    private ImageView mMaxBrightness;
+
     public BrightnessMirrorController(Context context, StatusBarWindowView statusBarWindow,
             @NonNull Consumer<Boolean> visibilityCallback) {
         mContext = context;
@@ -62,7 +65,8 @@ public class BrightnessMirrorController
         mVisibilityCallback = visibilityCallback;
         mIcon = (ImageView) mBrightnessMirror.findViewById(R.id.brightness_icon);
         // enable the brightness icon
-        mIcon.setVisibility(View.VISIBLE);
+        mMinBrightness = (ImageView) mBrightnessMirror.findViewById(R.id.brightness_left);
+        mMaxBrightness = (ImageView) mBrightnessMirror.findViewById(R.id.brightness_right);
     }
 
     public void showMirror() {
@@ -159,5 +163,20 @@ public class BrightnessMirrorController
         mIcon.setImageResource(automatic ?
                 com.android.systemui.R.drawable.ic_qs_brightness_auto_on :
                 com.android.systemui.R.drawable.ic_qs_brightness_auto_off);
+        mMinBrightness = (ImageView) mBrightnessMirror.findViewById(R.id.brightness_left);
+        mMaxBrightness = (ImageView) mBrightnessMirror.findViewById(R.id.brightness_right);
+        setBrightnessButton();
+    }
+
+    private void setBrightnessButton() {
+        boolean brightnessIconEnabled = Settings.System.getIntForUser(
+            mContext.getContentResolver(), Settings.System.QS_SHOW_BRIGHTNESS_ICON,
+                1, UserHandle.USER_CURRENT) == 1;
+        boolean brightnessMinMaxEnabled = Settings.System.getIntForUser(
+            mContext.getContentResolver(), Settings.System.QS_SHOW_BRIGHTNESS_MINMAX,
+                1, UserHandle.USER_CURRENT) == 1;
+        mIcon.setVisibility(brightnessIconEnabled ? View.VISIBLE : View.GONE);
+        mMaxBrightness.setVisibility(brightnessMinMaxEnabled ? View.VISIBLE : View.GONE);
+        mMinBrightness.setVisibility(brightnessMinMaxEnabled ? View.VISIBLE : View.GONE);
     }
 }

@@ -44,6 +44,10 @@ public class BrightnessDialog extends Activity {
 
     private BrightnessController mBrightnessController;
 
+    private ImageView mBrightnessIcon;
+    private ImageView mMinBrightness;
+    private ImageView mMaxBrightness;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,12 +67,12 @@ public class BrightnessDialog extends Activity {
                 R.layout.quick_settings_brightness_dialog, null);
         setContentView(mBrightnessView);
 
-        final ImageView icon = findViewById(R.id.brightness_icon);
+        mBrightnessIcon = findViewById(R.id.brightness_icon);
         final ToggleSliderView slider = findViewById(R.id.brightness_slider);
 
-        mBrightnessController = new BrightnessController(this, icon, slider);
+        mBrightnessController = new BrightnessController(this, mBrightnessIcon, slider);
 
-        ImageView mMinBrightness = mBrightnessView.findViewById(R.id.brightness_left);
+        mMinBrightness = mBrightnessView.findViewById(R.id.brightness_left);
         mMinBrightness.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,7 +96,7 @@ public class BrightnessDialog extends Activity {
             }
         });
 
-        ImageView mMaxBrightness = mBrightnessView.findViewById(R.id.brightness_right);
+        mMaxBrightness = mBrightnessView.findViewById(R.id.brightness_right);
         mMaxBrightness.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,6 +119,16 @@ public class BrightnessDialog extends Activity {
                 return true;
             }
         });
+
+        boolean brightnessIconEnabled = Settings.System.getIntForUser(
+            resolver, Settings.System.QS_SHOW_BRIGHTNESS_ICON,
+                1, UserHandle.USER_CURRENT) == 1;
+        boolean brightnessMinMaxEnabled = Settings.System.getIntForUser(
+            resolver, Settings.System.QS_SHOW_BRIGHTNESS_MINMAX,
+                1, UserHandle.USER_CURRENT) == 1;
+        mBrightnessIcon.setVisibility(brightnessIconEnabled ? View.VISIBLE : View.GONE);
+        mMaxBrightness.setVisibility(brightnessMinMaxEnabled ? View.VISIBLE : View.GONE);
+        mMinBrightness.setVisibility(brightnessMinMaxEnabled ? View.VISIBLE : View.GONE);
     }
 
     private void setBrightnessMinMax(boolean min) {
