@@ -5270,6 +5270,16 @@ public final class Settings {
         public static final String REFRESH_RATE_SETTING = "refresh_rate_setting";
 
         /**
+         * Whether to display status area (date & weather information) on the cLock
+         * @hide
+         */
+        public static final String CLOCK_SHOW_STATUS_AREA = "clock_show_status_area";
+
+        /** @hide */
+        private static final Validator CLOCK_SHOW_STATUS_AREA_VALIDATOR =
+               BOOLEAN_VALIDATOR;
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -5386,6 +5396,7 @@ public final class Settings {
             OMNI_DOZE_BRIGHTNESS,
             PULSE_AMBIENT_AUTO_COLOR,
             PULSE_AMBIENT_LIGHT_DURATION,
+            CLOCK_SHOW_STATUS_AREA,
         };
 
         /**
@@ -5569,6 +5580,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(OMNI_DOZE_BRIGHTNESS);
             PRIVATE_SETTINGS.add(PULSE_AMBIENT_AUTO_COLOR);
             PRIVATE_SETTINGS.add(PULSE_AMBIENT_LIGHT_DURATION);
+            PRIVATE_SETTINGS.add(CLOCK_SHOW_STATUS_AREA);
         }
 
         /**
@@ -5722,6 +5734,7 @@ public final class Settings {
             VALIDATORS.put(OMNI_DOZE_BRIGHTNESS, OMNI_DOZE_BRIGHTNESS_VALIDATOR);
             VALIDATORS.put(PULSE_AMBIENT_AUTO_COLOR, PULSE_AMBIENT_AUTO_COLOR_VALIDATOR);
             VALIDATORS.put(PULSE_AMBIENT_LIGHT_DURATION, PULSE_AMBIENT_LIGHT_DURATION_VALIDATOR);
+            VALIDATORS.put(CLOCK_SHOW_STATUS_AREA, CLOCK_SHOW_STATUS_AREA_VALIDATOR);
         }
 
         /**
