@@ -30,6 +30,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.hardware.input.InputManager;
+import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.Looper;
@@ -67,31 +68,22 @@ public class PixeldustUtils {
 
     private static OverlayManager mOverlayService;
 
+    /*************************************************************************
+     * General helpers
+     ************************************************************************/
+
     public static boolean isChineseLanguage() {
        return Resources.getSystem().getConfiguration().locale.getLanguage().startsWith(
                Locale.CHINESE.getLanguage());
     }
 
+    /* deprecated */
     public static boolean deviceSupportsFlashLight(Context context) {
-        CameraManager cameraManager = (CameraManager) context.getSystemService(
-                Context.CAMERA_SERVICE);
-        try {
-            String[] ids = cameraManager.getCameraIdList();
-            for (String id : ids) {
-                CameraCharacteristics c = cameraManager.getCameraCharacteristics(id);
-                Boolean flashAvailable = c.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
-                Integer lensFacing = c.get(CameraCharacteristics.LENS_FACING);
-                if (flashAvailable != null
-                        && flashAvailable
-                        && lensFacing != null
-                        && lensFacing == CameraCharacteristics.LENS_FACING_BACK) {
-                    return true;
-                }
-            }
-        } catch (CameraAccessException e) {
-            // Ignore
-        }
-        return false;
+        return deviceHasFlashlight(context);
+    }
+
+    public static boolean deviceHasFlashlight(Context ctx) {
+        return ctx.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
     }
 
     public static boolean isWifiOnly(Context context) {
@@ -111,12 +103,24 @@ public class PixeldustUtils {
                 return false;
             }
         }
-
         return true;
     }
 
     public static boolean isPackageInstalled(Context context, String pkg) {
         return isPackageInstalled(context, pkg, true);
+    }
+
+    public static boolean isAvailableApp(String packageName, Context context) {
+       Context mContext = context;
+       final PackageManager pm = mContext.getPackageManager();
+       try {
+           pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
+           int enabled = pm.getApplicationEnabledSetting(packageName);
+           return enabled != PackageManager.COMPONENT_ENABLED_STATE_DISABLED &&
+               enabled != PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER;
+       } catch (NameNotFoundException e) {
+           return false;
+       }
     }
 
     private static int getScreenType(Context context) {
@@ -153,38 +157,9 @@ public class PixeldustUtils {
         return getScreenType(context) == DEVICE_TABLET;
     }
 
-    // Omni Switch Constants
-
-    /**
-     * Package name of the omnniswitch app
-     */
-    public static final String APP_PACKAGE_NAME = "org.omnirom.omniswitch";
-
-    /**
-     * Intent broadcast action for showing the omniswitch overlay
-     */
-    public static final String ACTION_SHOW_OVERLAY = APP_PACKAGE_NAME + ".ACTION_SHOW_OVERLAY";
-
-    /**
-     * Intent broadcast action for hiding the omniswitch overlay
-     */
-    public static final String ACTION_HIDE_OVERLAY = APP_PACKAGE_NAME + ".ACTION_HIDE_OVERLAY";
-
-    /**
-     * Intent broadcast action for toogle the omniswitch overlay
-     */
-    public static final String ACTION_TOGGLE_OVERLAY = APP_PACKAGE_NAME + ".ACTION_TOGGLE_OVERLAY";
-
-    /**
-     * Intent broadcast action for restoring the home stack
-     */
-    public static final String ACTION_RESTORE_HOME_STACK = APP_PACKAGE_NAME + ".ACTION_RESTORE_HOME_STACK";
-
-    /**
-     * Intent for launching the omniswitch settings actvity
-     */
-    public static Intent INTENT_LAUNCH_APP = new Intent(Intent.ACTION_MAIN)
-            .setClassName(APP_PACKAGE_NAME, APP_PACKAGE_NAME + ".SettingsActivity");
+    /*************************************************************************
+     * Actions used by ActiveEdge
+     ************************************************************************/
 
     // Screen off
     public static void switchScreenOff(Context ctx) {
@@ -209,51 +184,15 @@ public class PixeldustUtils {
         }
     }
 
-    public static boolean isAvailableApp(String packageName, Context context) {
-       Context mContext = context;
-       final PackageManager pm = mContext.getPackageManager();
-       try {
-           pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
-           int enabled = pm.getApplicationEnabledSetting(packageName);
-           return enabled != PackageManager.COMPONENT_ENABLED_STATE_DISABLED &&
-               enabled != PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER;
-       } catch (NameNotFoundException e) {
-           return false;
-       }
-    }
-
-    public static boolean deviceHasFlashlight(Context ctx) {
-        return ctx.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+    // Volume panel
+    public static void toggleVolumePanel(Context context) {
+        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        am.adjustVolume(AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI);
     }
 
     // Toggle flashlight
     public static void toggleCameraFlash() {
         FireActions.toggleCameraFlash();
-    }
-
-    public static void sendKeycode(int keycode) {
-        long when = SystemClock.uptimeMillis();
-        final KeyEvent evDown = new KeyEvent(when, when, KeyEvent.ACTION_DOWN, keycode, 0,
-                0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
-                KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY,
-                InputDevice.SOURCE_KEYBOARD);
-        final KeyEvent evUp = KeyEvent.changeAction(evDown, KeyEvent.ACTION_UP);
-
-        final Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                InputManager.getInstance().injectInputEvent(evDown,
-                        InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
-            }
-        });
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                InputManager.getInstance().injectInputEvent(evUp,
-                        InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
-            }
-        }, 20);
     }
 
     // Screenshots
@@ -290,30 +229,9 @@ public class PixeldustUtils {
         }
     }
 
-    /**
-     * @hide
-     */
-    public static final String SYSTEMUI_PACKAGE_NAME = "com.android.systemui";
-
-    /**
-     * @hide
-     */
-    public static final String ACTION_DISMISS_KEYGUARD = SYSTEMUI_PACKAGE_NAME +".ACTION_DISMISS_KEYGUARD";
-
-    /**
-     * @hide
-     */
-    public static final String DISMISS_KEYGUARD_EXTRA_INTENT = "launch";
-
-    /**
-     * @hide
-     */
-    public static void launchKeyguardDismissIntent(Context context, UserHandle user, Intent launchIntent) {
-        Intent keyguardIntent = new Intent(ACTION_DISMISS_KEYGUARD);
-        keyguardIntent.setPackage(SYSTEMUI_PACKAGE_NAME);
-        keyguardIntent.putExtra(DISMISS_KEYGUARD_EXTRA_INTENT, launchIntent);
-        context.sendBroadcastAsUser(keyguardIntent, user);
-    }
+    /*************************************************************************
+     * Methods used by KeyguardWeather, FruityPebbles, etc.
+     ************************************************************************/
 
     // Method to detect whether an overlay is enabled or not
     public static boolean isThemeEnabled(String packageName) {
@@ -367,5 +285,55 @@ public class PixeldustUtils {
         int state = enabled ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
         pm.setComponentEnabledSetting(componentName, state, PackageManager.DONT_KILL_APP);
+    }
+
+    /**
+     * @hide
+     */
+    public static final String SYSTEMUI_PACKAGE_NAME = "com.android.systemui";
+
+    /**
+     * @hide
+     */
+    public static final String ACTION_DISMISS_KEYGUARD = SYSTEMUI_PACKAGE_NAME +".ACTION_DISMISS_KEYGUARD";
+
+    /**
+     * @hide
+     */
+    public static final String DISMISS_KEYGUARD_EXTRA_INTENT = "launch";
+
+    /**
+     * @hide
+     */
+    public static void launchKeyguardDismissIntent(Context context, UserHandle user, Intent launchIntent) {
+        Intent keyguardIntent = new Intent(ACTION_DISMISS_KEYGUARD);
+        keyguardIntent.setPackage(SYSTEMUI_PACKAGE_NAME);
+        keyguardIntent.putExtra(DISMISS_KEYGUARD_EXTRA_INTENT, launchIntent);
+        context.sendBroadcastAsUser(keyguardIntent, user);
+    }
+
+    public static void sendKeycode(int keycode) {
+        long when = SystemClock.uptimeMillis();
+        final KeyEvent evDown = new KeyEvent(when, when, KeyEvent.ACTION_DOWN, keycode, 0,
+                0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
+                KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY,
+                InputDevice.SOURCE_KEYBOARD);
+        final KeyEvent evUp = KeyEvent.changeAction(evDown, KeyEvent.ACTION_UP);
+
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                InputManager.getInstance().injectInputEvent(evDown,
+                        InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
+            }
+        });
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                InputManager.getInstance().injectInputEvent(evUp,
+                        InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
+            }
+        }, 20);
     }
 }
