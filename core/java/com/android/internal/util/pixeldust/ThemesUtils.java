@@ -75,4 +75,22 @@ public class ThemesUtils {
             "com.android.theme.solarizeddark.system",
             "com.android.theme.solarizeddark.systemui",
     };
+
+    public static final String[] FONTS = {
+            "com.android.theme.font.aclonicasource",
+            "com.android.theme.font.amarantesource",
+            "com.android.theme.font.bariolsource",
+            "com.android.theme.font.cagliostrosource",
+            "com.android.theme.font.comicsanssource",
+            "com.android.theme.font.coolstorysource",
+            "com.android.theme.font.firasans",
+            "com.android.theme.font.googlesans",
+            "com.android.theme.font.lgsmartgothicsource",
+            "com.android.theme.font.notoserifsource",
+            "com.android.theme.font.oneplusslate", 
+            "com.android.theme.font.rosemarysource",
+            "com.android.theme.font.samsungone",
+            "com.android.theme.font.sonysketchsource",
+            "com.android.theme.font.surfersource",
+    };
 }
