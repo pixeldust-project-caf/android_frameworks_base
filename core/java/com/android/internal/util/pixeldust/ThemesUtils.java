@@ -90,6 +90,7 @@ public class ThemesUtils {
             "com.android.theme.font.oneplusslate", 
             "com.android.theme.font.rosemarysource",
             "com.android.theme.font.samsungone",
+            "com.android.theme.font.sanfrancisco",
             "com.android.theme.font.sonysketchsource",
             "com.android.theme.font.surfersource",
     };
