@@ -300,6 +300,7 @@ public class QSCustomizer extends LinearLayout implements OnMenuItemClickListene
         if (id == R.id.menu_item_reset) {
             MetricsLogger.action(getContext(), MetricsProto.MetricsEvent.ACTION_QS_EDIT_RESET);
             reset();
+            resetQsOptions();
         } else if (id == R.id.menu_item_columns_three) {
             Settings.System.putIntForUser(mContext.getContentResolver(),
                     Settings.System.QS_LAYOUT_COLUMNS, 3, UserHandle.USER_CURRENT);
@@ -363,6 +364,18 @@ public class QSCustomizer extends LinearLayout implements OnMenuItemClickListene
             tiles.add(tile);
         }
         mTileAdapter.resetTileSpecs(mHost, tiles);
+    }
+
+    private void resetQsOptions() {
+        int defaultColumns = Math.max(1, mContext.getResources().getInteger(R.integer.quick_settings_num_columns));
+        // reset QS panel columns
+        Settings.System.putInt(mContext.getContentResolver(),
+                Settings.System.QS_LAYOUT_COLUMNS, defaultColumns);
+        Settings.System.putInt(mContext.getContentResolver(),
+                Settings.System.QS_LAYOUT_COLUMNS_LANDSCAPE, defaultColumns);
+        // reset QS tile title visibility
+        Settings.System.putInt(mContext.getContentResolver(),
+                Settings.System.QS_TILE_TITLE_VISIBILITY, 1);
     }
 
     private void setTileSpecs() {
