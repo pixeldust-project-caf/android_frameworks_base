@@ -106,7 +106,7 @@ public class QSPanel extends LinearLayout implements Callback, BrightnessMirrorL
     private View mDivider;
 
     private boolean mBrightnessBottom;
-    private boolean mBrightnessVisible;
+    private boolean mFooterBrightnessSlider;
     private boolean mShowAutoBrightness;
     private boolean mShowMinMaxBrightness;
     private View mBrightnessPlaceholder;
@@ -234,15 +234,23 @@ public class QSPanel extends LinearLayout implements Callback, BrightnessMirrorL
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_SHOW_SECURITY),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_BRIGHTNESS_POSITION_BOTTOM),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_BRIGHTNESS_SLIDER_FOOTER),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.QS_SHOW_BRIGHTNESS))) {
+                    Settings.System.QS_SHOW_BRIGHTNESS)) ||
+                    uri.equals(Settings.System.getUriFor(
+                        Settings.System.QS_SHOW_BRIGHTNESS))) {
                 updateViewVisibilityForTuningValue(
                         Settings.System.getIntForUser(mContext.getContentResolver(),
-                        Settings.System.QS_SHOW_BRIGHTNESS, 1,
+                        Settings.System.QS_BRIGHTNESS_SLIDER_FOOTER, 1,
                         UserHandle.USER_CURRENT) == 1);
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.QS_BRIGHTNESS_POSITION_BOTTOM))) {
@@ -355,16 +363,14 @@ public class QSPanel extends LinearLayout implements Callback, BrightnessMirrorL
     }
 
     public void updateViewVisibilityForTuningValue(boolean visible) {
+        mFooterBrightnessSlider = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QS_BRIGHTNESS_SLIDER_FOOTER, 0) != 0;
         if (visible) {
-            mBrightnessVisible = true;
             mBrightnessView.setVisibility(VISIBLE);
-            if (!mBrightnessBottom) {
-                mBrightnessPlaceholder.setVisibility(View.GONE);
-            } else {
-                mBrightnessPlaceholder.setVisibility(View.VISIBLE);
+            if (mFooterBrightnessSlider) {
+                removeView(mBrightnessView);
             }
         } else {
-            mBrightnessVisible = false;
             mBrightnessView.setVisibility(GONE);
             mBrightnessPlaceholder.setVisibility(View.VISIBLE);
         }
@@ -520,7 +526,7 @@ public class QSPanel extends LinearLayout implements Callback, BrightnessMirrorL
     }
 
     public void updateBrightnessMirror() {
-        if (mBrightnessMirrorController != null) {
+        if (mBrightnessMirrorController != null && !mFooterBrightnessSlider) {
             ToggleSliderView brightnessSlider = findViewById(R.id.brightness_slider);
             ToggleSliderView mirrorSlider = mBrightnessMirrorController.getMirror()
                     .findViewById(R.id.brightness_slider);

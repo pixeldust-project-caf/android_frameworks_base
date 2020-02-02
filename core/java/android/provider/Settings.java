@@ -5427,6 +5427,16 @@ public final class Settings {
                 BOOLEAN_VALIDATOR;
 
         /**
+         * Whether to display QS brightness slider in QS footer
+         * @hide
+         */
+        public static final String QS_BRIGHTNESS_SLIDER_FOOTER = "qs_brightness_slider_footer";
+
+        /** @hide */
+        private static final Validator QS_BRIGHTNESS_SLIDER_FOOTER_VALIDATOR = new
+                SettingsValidators.InclusiveIntegerRangeValidator(0, 1);
+
+        /**
          * Set edge gesture Y dead zone
          * 0 - disabled - stock behavior - default
          * 1 - smaller top area of the screen
@@ -6531,6 +6541,7 @@ public final class Settings {
             VALIDATORS.put(SLIM_RECENT_ENTER_EXIT_ANIMATION, SLIM_RECENT_ENTER_EXIT_ANIMATION_VALIDATOR);
             VALIDATORS.put(LOCK_SHOW_STATUS_BAR, LOCK_SHOW_STATUS_BAR_VALIDATOR);
             VALIDATORS.put(LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED, LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED_VALIDATOR);
+            VALIDATORS.put(QS_BRIGHTNESS_SLIDER_FOOTER, QS_BRIGHTNESS_SLIDER_FOOTER_VALIDATOR);
         }
 
         /**

@@ -672,6 +672,8 @@ public class StatusBar extends SystemUI implements DemoMode,
     private final SysuiStatusBarStateController mStatusBarStateController =
             (SysuiStatusBarStateController) Dependency.get(StatusBarStateController.class);
 
+    private boolean mFooterBrightnessSlider;
+
     private final KeyguardUpdateMonitorCallback mUpdateCallback =
             new KeyguardUpdateMonitorCallback() {
                 @Override
@@ -787,6 +789,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.AMBIENT_VISUALIZER_ENABLED),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_BRIGHTNESS_SLIDER_FOOTER),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -821,6 +826,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL))) {
                 setScreenBrightnessMode();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_BRIGHTNESS_SLIDER_FOOTER))) {
+                updateBrightnessSliderOverlay();
             }
             update();
         }
@@ -2191,6 +2199,23 @@ public class StatusBar extends SystemUI implements DemoMode,
     @Override
     public void onColorsChanged(ColorExtractor extractor, int which) {
         updateTheme();
+    }
+
+    public void updateBrightnessSliderOverlay() {
+        boolean footerBrightnessSlider = Settings.System.getIntForUser(mContext.getContentResolver(),
+                        Settings.System.QS_BRIGHTNESS_SLIDER_FOOTER, 0, UserHandle.USER_CURRENT) == 1;
+        if (mFooterBrightnessSlider != footerBrightnessSlider){
+            mFooterBrightnessSlider = footerBrightnessSlider;
+            mUiOffloadThread.submit(() -> {
+                final IOverlayManager mOverlayManager = IOverlayManager.Stub.asInterface(
+                                ServiceManager.getService(Context.OVERLAY_SERVICE));
+                try {
+                    mOverlayManager.setEnabled("com.extendedui.overlay.brightnessslider",
+                                mFooterBrightnessSlider, mLockscreenUserManager.getCurrentUserId());
+                } catch (RemoteException ignored) {
+                }
+            });
+        }
     }
 
     @Nullable
