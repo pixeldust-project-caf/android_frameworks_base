@@ -5207,43 +5207,6 @@ public final class Settings {
         public static final String LOCKSCREEN_CHARGING_ANIMATION = "lockscreen_charging_animation";
 
         /**
-         * Whether to enable Ambient edge light
-         * @hide
-         */
-        public static final String PULSE_AMBIENT_LIGHT = "pulse_ambient_light";
-
-        /** @hide */
-        private static final Validator PULSE_AMBIENT_LIGHT_VALIDATOR = BOOLEAN_VALIDATOR;
-
-        /**
-         * What color to use for Ambient edge light
-         * @hide
-         */
-        public static final String PULSE_AMBIENT_LIGHT_COLOR = "pulse_ambient_light_color";
-
-        /** @hide */
-        private static final Validator PULSE_AMBIENT_LIGHT_COLOR_VALIDATOR = ANY_STRING_VALIDATOR;
-
-        /**
-         * Wether to use color from wallpaper for Ambient edge light
-         * @hide
-         */
-        public static final String PULSE_AMBIENT_AUTO_COLOR = "pulse_ambient_auto_color";
-
-        /** @hide */
-        private static final Validator PULSE_AMBIENT_AUTO_COLOR_VALIDATOR = BOOLEAN_VALIDATOR;
-
-        /**
-         * Duration of Ambient edge light in seconds
-         * @hide
-         */
-        public static final String PULSE_AMBIENT_LIGHT_DURATION = "pulse_ambient_light_duration";
-
-        /** @hide */
-        private static final Validator PULSE_AMBIENT_LIGHT_DURATION_VALIDATOR =
-                ANY_INTEGER_VALIDATOR;
-
-        /**
          * User definable value of pulse notification screen brightness
          *
          * @hide
@@ -5414,12 +5377,8 @@ public final class Settings {
             FORCE_FULLSCREEN_CUTOUT_APPS,
             ENABLE_CONDITIONS,
             ENABLE_SUGGESTIONS,
-            PULSE_AMBIENT_LIGHT,
-            PULSE_AMBIENT_LIGHT_COLOR,
             OMNI_PULSE_BRIGHTNESS,
             OMNI_DOZE_BRIGHTNESS,
-            PULSE_AMBIENT_AUTO_COLOR,
-            PULSE_AMBIENT_LIGHT_DURATION,
             CLOCK_SHOW_STATUS_AREA,
             QS_SHOW_BRIGHTNESS_ICON,
             QS_SHOW_BRIGHTNESS_MINMAX,
@@ -5600,12 +5559,8 @@ public final class Settings {
             PRIVATE_SETTINGS.add(NETWORK_TRAFFIC_FONT_SIZE);
             PRIVATE_SETTINGS.add(NETWORK_TRAFFIC_VIEW_LOCATION);
             PRIVATE_SETTINGS.add(POCKET_JUDGE);
-            PRIVATE_SETTINGS.add(PULSE_AMBIENT_LIGHT);
-            PRIVATE_SETTINGS.add(PULSE_AMBIENT_LIGHT_COLOR);
             PRIVATE_SETTINGS.add(OMNI_PULSE_BRIGHTNESS);
             PRIVATE_SETTINGS.add(OMNI_DOZE_BRIGHTNESS);
-            PRIVATE_SETTINGS.add(PULSE_AMBIENT_AUTO_COLOR);
-            PRIVATE_SETTINGS.add(PULSE_AMBIENT_LIGHT_DURATION);
             PRIVATE_SETTINGS.add(CLOCK_SHOW_STATUS_AREA);
             PRIVATE_SETTINGS.add(QS_SHOW_BRIGHTNESS_ICON);
             PRIVATE_SETTINGS.add(QS_SHOW_BRIGHTNESS_MINMAX);
@@ -5756,12 +5711,8 @@ public final class Settings {
             VALIDATORS.put(ENABLE_CONDITIONS, ENABLE_CONDITIONS_VALIDATOR);
             VALIDATORS.put(ENABLE_SUGGESTIONS, ENABLE_SUGGESTIONS_VALIDATOR);
             VALIDATORS.put(POCKET_JUDGE, POCKET_JUDGE_VALIDATOR);
-            VALIDATORS.put(PULSE_AMBIENT_LIGHT, PULSE_AMBIENT_LIGHT_VALIDATOR);
-            VALIDATORS.put(PULSE_AMBIENT_LIGHT_COLOR, PULSE_AMBIENT_LIGHT_COLOR_VALIDATOR);
             VALIDATORS.put(OMNI_PULSE_BRIGHTNESS, OMNI_PULSE_BRIGHTNESS_VALIDATOR);
             VALIDATORS.put(OMNI_DOZE_BRIGHTNESS, OMNI_DOZE_BRIGHTNESS_VALIDATOR);
-            VALIDATORS.put(PULSE_AMBIENT_AUTO_COLOR, PULSE_AMBIENT_AUTO_COLOR_VALIDATOR);
-            VALIDATORS.put(PULSE_AMBIENT_LIGHT_DURATION, PULSE_AMBIENT_LIGHT_DURATION_VALIDATOR);
             VALIDATORS.put(CLOCK_SHOW_STATUS_AREA, CLOCK_SHOW_STATUS_AREA_VALIDATOR);
             VALIDATORS.put(QS_SHOW_BRIGHTNESS_ICON, QS_SHOW_BRIGHTNESS_ICON_VALIDATOR);
             VALIDATORS.put(QS_SHOW_BRIGHTNESS_MINMAX, QS_SHOW_BRIGHTNESS_MINMAX_VALIDATOR);
