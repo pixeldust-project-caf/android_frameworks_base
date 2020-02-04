@@ -46,5 +46,8 @@
     <!-- Volume panel -->
     <dimen name="volume_dialog_panel_transparent_padding_left">20dp</dimen>
 
+    <!-- Smartspace -->
+    <dimen name="smartspace_icon_shadow">1dp</dimen>
+
 </resources>
 
