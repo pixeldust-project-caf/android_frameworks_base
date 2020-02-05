@@ -913,6 +913,9 @@ public class NetworkControllerImpl extends BroadcastReceiver
             case 8:
                 resourceId = R.drawable.ic_volte8;
                 break;
+            case 9:
+                resourceId = R.drawable.ic_volte_miui;
+                break;
             default:
                 resourceId = 0;
                 break;
