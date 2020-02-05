@@ -3197,6 +3197,25 @@ public class CarrierConfigManager {
             "subscription_group_uuid_string";
 
     /**
+     * Data switch validation minimal gap time, in milliseconds.
+     *
+     * Which means, if the same subscription on the same network (based on MCC+MNC+TAC+subId)
+     * was recently validated (within this time gap), and Telephony receives a request to switch to
+     * it again, Telephony will skip the validation part and switch to it as soon as connection
+     * is setup, as if it's already validated.
+     *
+     * If the network was validated within the gap but the latest validation result is false, the
+     * validation will not be skipped.
+     *
+     * If not set or set to 0, validation will never be skipped.
+     * The max acceptable value of this config is 24 hours.
+     *
+     * @hide
+     */
+    public static final String KEY_DATA_SWITCH_VALIDATION_MIN_GAP_LONG =
+            "data_switch_validation_min_gap_LONG";
+
+    /**
     * A boolean property indicating whether this subscription should be managed as an opportunistic
     * subscription.
     *
@@ -3699,6 +3718,7 @@ public class CarrierConfigManager {
         sDefaults.putLong(KEY_DATA_SWITCH_VALIDATION_TIMEOUT_LONG, 2000);
         sDefaults.putBoolean(KEY_CARRIER_SUPPORTS_MULTIANCHOR_CONFERENCE, false);
         sDefaults.putInt(KEY_DEFAULT_RTT_MODE_INT, 0);
+        sDefaults.putLong(KEY_DATA_SWITCH_VALIDATION_MIN_GAP_LONG, 0);
     }
 
     /**
