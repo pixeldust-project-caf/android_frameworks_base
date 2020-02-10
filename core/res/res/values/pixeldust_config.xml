@@ -114,4 +114,7 @@
     <!-- Default value for Ambient Pulse light color -->
     <integer name="config_ambientNotificationDefaultColor">0xFF3980FF</integer>
 
+    <!-- SBC Dual Channel (SBC HD Audio) -->
+    <bool name="config_enableSBCDualChannelAudio">true</bool>
+
 </resources>

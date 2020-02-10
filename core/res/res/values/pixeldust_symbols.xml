@@ -120,4 +120,7 @@
     <!-- Ambient Pulse Light -->
     <java-symbol type="integer" name="config_ambientNotificationDefaultColor" />
 
+    <!-- SBC Dual Channel (SBC HD Audio) -->
+    <java-symbol type="bool" name="config_enableSBCDualChannelAudio"/>
+
 </resources>
