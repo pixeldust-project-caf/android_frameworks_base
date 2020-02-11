@@ -220,13 +220,13 @@ public class DozeScreenBrightness extends BroadcastReceiver implements DozeMachi
 
     private int getDozeBrightnessValue() {
         return Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.OMNI_DOZE_BRIGHTNESS, mDefaultDozeBrightness,
+                Settings.System.DOZE_BRIGHTNESS, mDefaultDozeBrightness,
                 UserHandle.USER_CURRENT);
     }
 
     private int getPuleBrightnessValue() {
         return Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.OMNI_PULSE_BRIGHTNESS, mDefaultPulseBrightness,
+                Settings.System.PULSE_BRIGHTNESS, mDefaultPulseBrightness,
                 UserHandle.USER_CURRENT);
     }
 
