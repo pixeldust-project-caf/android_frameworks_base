@@ -65,22 +65,37 @@ public class NotificationLightsView extends RelativeLayout {
     }
 
     public void animateNotification() {
-        int usercolor = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.PULSE_AMBIENT_LIGHT_COLOR, 0xFF3980FF,
-                UserHandle.USER_CURRENT);
-        int duration = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.PULSE_AMBIENT_LIGHT_DURATION, 2,
-                UserHandle.USER_CURRENT) * 1000;
+        animateNotificationWithColor(getNotificationLightsColor());
+    }
+
+    public int getNotificationLightsColor() {
+        int color = getDefaultNotificationLightsColor();
         boolean useAccent = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.NOTIFICATION_PULSE_ACCENT,
                 0, UserHandle.USER_CURRENT) != 0;
-        int color = useAccent ?
-                Utils.getColorAccentDefaultColor(getContext()) : usercolor;
-        if (DEBUG) Log.d(TAG, "color = " + Integer.toHexString(color));
+        if (useAccent) {
+            color = Utils.getColorAccentDefaultColor(getContext());
+        }
+        return color;
+    }
+
+    public int getDefaultNotificationLightsColor() {
+        int defaultColor = getResources().getInteger(
+                com.android.internal.R.integer.config_ambientNotificationDefaultColor);
+        return  Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.PULSE_AMBIENT_LIGHT_COLOR, defaultColor,
+                UserHandle.USER_CURRENT);
+    }
+
+    public void animateNotificationWithColor(int color) {
         ImageView leftView = (ImageView) findViewById(R.id.notification_animation_left);
         ImageView rightView = (ImageView) findViewById(R.id.notification_animation_right);
         leftView.setColorFilter(color);
         rightView.setColorFilter(color);
+
+        int duration = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.PULSE_AMBIENT_LIGHT_DURATION, 2,
+                UserHandle.USER_CURRENT) * 1000;
         mLightAnimator = ValueAnimator.ofFloat(new float[]{0.0f, 2.0f});
         mLightAnimator.setDuration(duration);
         mLightAnimator.setRepeatCount(ValueAnimator.INFINITE);
