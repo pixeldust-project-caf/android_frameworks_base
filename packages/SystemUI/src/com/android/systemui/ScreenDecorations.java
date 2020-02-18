@@ -111,6 +111,7 @@ public class ScreenDecorations extends SystemUI implements Tunable,
             SystemProperties.getInt("vendor.display.disable_rounded_corner", 0);
 
     private static final boolean VERBOSE = false;
+    private static final boolean DEBUG_COLOR = DEBUG_SCREENSHOT_ROUNDED_CORNERS;
 
     private DisplayManager mDisplayManager;
     private DisplayManager.DisplayListener mDisplayListener;
@@ -464,6 +465,9 @@ public class ScreenDecorations extends SystemUI implements Tunable,
 
     private void updateColorInversion(int colorsInvertedValue) {
         int tint = colorsInvertedValue != 0 ? Color.WHITE : Color.BLACK;
+        if (DEBUG_COLOR) {
+            tint = Color.RED;
+        }
         ColorStateList tintList = ColorStateList.valueOf(tint);
         ((ImageView) mOverlay.findViewById(R.id.left)).setImageTintList(tintList);
         ((ImageView) mOverlay.findViewById(R.id.right)).setImageTintList(tintList);
