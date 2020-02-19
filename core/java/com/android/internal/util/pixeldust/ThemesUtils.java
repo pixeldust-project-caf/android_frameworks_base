@@ -66,6 +66,14 @@ public class ThemesUtils {
             "com.android.theme.color.xiaomiorange", // XiaomiOrange
     };
 
+    public static final String[] ADAPTIVE_ICON_SHAPE = {
+            "com.android.theme.icon.teardrop",
+            "com.android.theme.icon.squircle",
+            "com.android.theme.icon.roundedrect",
+            "com.android.theme.icon.cylinder",
+            "com.android.theme.icon.hexagon",
+    };
+
     public static final String[] PITCH_BLACK = {
             "com.android.theme.pitchblack.system",
             "com.android.theme.pitchblack.systemui",
@@ -74,6 +82,12 @@ public class ThemesUtils {
     public static final String[] SOLARIZED_DARK = {
             "com.android.theme.solarizeddark.system",
             "com.android.theme.solarizeddark.systemui",
+    };
+
+    public static final String[] STATUSBAR_ICONS = {
+            "com.android.theme.icon_pack.filled.android",
+            "com.android.theme.icon_pack.rounded.android",
+            "com.android.theme.icon_pack.circular.android",
     };
 
     public static final String[] FONTS = {
