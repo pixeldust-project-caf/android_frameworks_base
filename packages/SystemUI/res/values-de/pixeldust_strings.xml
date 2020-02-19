@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2020 The PixelDust Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- PixelDust Settings Tile -->
+    <string name="quick_settings_pixeldust_label">PixelDust Einstellungen</string>
+
+    <string name="statusbar_items_title">Elemente der Statusleiste</string>
+    <string name="lockscreen_default">Standard</string>
+    <string name="lockscreen_hidden">Keine Aktion</string>
+
+    <!-- Shows when people have clicked on the custom lockscreen shortcut [CHAR LIMIT=60] -->
+    <string name="custom_hint">Zum Öffnen über das Symbol wischen</string>
+
+    <!-- Power Menu -->
+    <string name="global_action_reboot">Neustart</string>
+    <string name="global_action_reboot_more">Neustart\u2026</string>
+    <string name="global_action_reboot_sub">System</string>
+    <string name="global_action_reboot_recovery">Recovery</string>
+    <string name="global_action_reboot_bootloader">Bootloader</string>
+    <string name="global_action_dismissable_dialog_text">Der erweiterte Neustart ist deaktiviert.\nMöchten Sie neu starten\u003f</string>
+    <string name="global_action_dnaa">Nicht mehr anzeigen</string>
+    <string name="global_action_settings">Einstellungen</string>
+    <string name="global_action_restart_sysui">SystemUI</string>
+
+    <!-- QS Config -->
+    <string name="qs_menu_item_columns">Spalten</string>
+    <string name="qs_menu_item_columns_landscape">Spalten (Landscape)</string>
+    <string name="qs_menu_item_columns_three">3</string>
+    <string name="qs_menu_item_columns_four">4</string>
+    <string name="qs_menu_item_columns_five">5</string>
+    <string name="qs_menu_item_columns_six">6</string>
+    <string name="qs_menu_item_columns_seven">7</string>
+    <string name="qs_menu_item_columns_eight">8</string>
+    <string name="qs_menu_item_columns_nine">9</string>
+    <string name="qs_menu_item_reset">Zurücksetzen</string>
+    <string name="qs_menu_item_titles">Beschriftungen anzeigen</string>
+    <string name="qs_menu_item_qs_columns">Kacheln auf Quickbar</string>
+    <string name="qs_menu_item_columns_auto">Automatisch</string>
+
+    <string name="tuner_quick_settings">Schnelleinstellungen</string>
+    <string name="tuner_show_brightness_new">Helligkeitsregler anzeigen</string>
+    <string name="tuner_brightness_position_bottom">Helligkeitsregler unten anzeigen</string>
+    <string name="tuner_show_secure_title">Sicherheitsfußzeile anzeigen</string>
+
+    <!-- LTE QS Tile -->
+    <string name="qs_lte_label">LTE</string>
+    <string name="lte_on">LTE EIN </string>
+    <string name="lte_off">LTE AUS</string>
+
+    <!-- Sound QS Tile -->
+    <string name="quick_settings_sound_label">Ton</string>
+    <string name="quick_settings_sound_ring">Klingelton</string>
+    <string name="quick_settings_sound_vibrate">Vibrieren</string>
+    <string name="quick_settings_sound_dnd">Nicht stören</string>
+
+    <!-- Caffeine QS Tile -->
+    <string name="quick_settings_caffeine_label">Koffein</string>
+    <string name="accessibility_quick_settings_caffeine_off">Koffein deaktiv</string>
+    <string name="accessibility_quick_settings_caffeine_on">Koffein aktiv</string>
+
+    <!-- Screenshot QS tile -->
+    <string name="quick_settings_screenshot_label">Bildschirmfoto</string>
+    <string name="quick_settings_region_screenshot_label">Bildschirm-Ausschnitt</string>
+    <string name="delete_screenshot_toast">Bildschirmfoto gelöscht</string>
+
+    <!-- HW Keys Tile -->
+    <string name="accessibility_quick_settings_hwkeys_on">HW Tasten ein</string>
+    <string name="accessibility_quick_settings_hwkeys_off">HW Tasten aus</string>
+    <string name="quick_settings_hwkeys_label">HW Tasten</string>
+
+    <!-- Screenrecord Powermenu / QS tile -->
+    <string name="quick_settings_screenrecord_label">Bildschirmaufnahme</string>
+    <string name="global_action_screenrecord">Bildschirmaufnahme</string>
+
+    <!-- 4G LTE switch -->
+    <string name="show_fourg_title">4G statt LTE</string>
+    <string name="show_fourg_summary">LTE-Symbol in der Statusleiste durch 4G ersetzen</string>
+
+    <!-- VoLTE switch -->
+    <string name="volte_switch_title">VoLTE</string>
+    <string name="volte_switch_summary">VoLTE-Symbol anzeigen</string>
+
+    <!-- Name of the nfc status bar icon. -->
+    <string name="status_bar_nfc">NFC</string>
+    <!-- Accessibility label for nfc icon (not shown on screen) [CHAR LIMIT=NONE] -->
+    <string name="accessibility_status_bar_nfc">Nfc</string>
+
+    <string name="status_bar_data_saver">Datensparmodus</string>
+    <string name="status_bar_vpn">VPN</string>
+    <string name="status_bar_roaming">Daten-Roaming</string>
+
+    <!-- Language toggle tile -->
+    <string name="quick_settings_locale_label">Sprache</string>
+    <string name="quick_settings_locale_more_locales_toast">Bitte konfiguriere weitere Sprachen, um diese Funktion verwenden zu können</string>
+
+    <!-- Data disabled icon -->
+    <string name="data_disabled_icon_title">Daten deaktiviert</string>
+    <string name="data_disabled_icon_summary">Ein Kreuzzeichen neben der Signalleiste anzeigen, wenn Daten deaktiviert sind</string>
+
+    <!-- Caffeine tile -->
+    <string name="caffeine_info_title">Wussten Sie schon?</string>
+    <string name="caffeine_info_message">Die Koffein-Kachel bewirkt, dass der Bildschirm sich nicht ausschaltet.\n\nBitte beachte, dass sich diese Einstellung automatisch wieder deaktiviert, wenn du den Bildschirm ausschaltest.</string>
+
+    <!-- Always on Display Tile -->
+    <string name="quick_settings_always_on_display_label">Always on Display</string>
+    <string name="accessibility_quick_settings_always_on_display_off">Always on Display aus.</string>
+    <string name="accessibility_quick_settings_always_on_display_on">Always on Display ein.</string>
+    <string name="accessibility_quick_settings_always_on_display_changed_off">Always on Display wurde deaktiviert.</string>
+    <string name="accessibility_quick_settings_always_on_display_changed_on">Always on Display wurde aktiviert.</string>
+
+    <!-- Dynamic Immersive Mode tile -->
+    <string name="quick_settings_immersive_tile">Vollbildmodus</string>
+    <string name="quick_settings_immersive_tile_off">Vollbildmodus aus</string>
+    <string name="quick_settings_immersive_tile_statusbar">Statusleiste verbergen</string>
+    <string name="quick_settings_immersive_tile_navbar">Navigationsleiste verbergen</string>
+    <string name="quick_settings_immersive_tile_full">Vollbildmodus</string>
+
+    <!-- Smartspace -->
+    <string name="smartspace_hours_mins">%1$s %2$s</string>
+    <string name="smartspace_now">Jetzt</string>
+    <string name="smartspace_pill_text_format">%1$s: %2$s</string>
+
+    <!-- Theme tile -->
+    <string name="system_theme_style_title">UI-Stil</string>
+    <string name="system_theme_style_light">Hell</string>
+    <string name="system_theme_style_dark">Dunkel</string>
+    <string name="system_theme_style_pitchblack">Pechschwarz</string>
+    <string name="system_theme_style_solarizeddark">Solarisiertes Dunkel</string>
+    <string name="quick_settings_theme_tile_title">Akzentfarbe</string>
+    <string name="quick_settings_theme_tile_accent_detail_title">Akzentfarbe wählen</string>
+    <string name="quick_settings_theme_tile_style_detail_title">UI-Stil wählen</string>
+    <string name="quick_settings_theme_tile_color_default">Standard</string>
+    <string name="quick_settings_theme_tile_color_space">Weltall</string>
+    <string name="quick_settings_theme_tile_color_purple">Lila</string>
+    <string name="quick_settings_theme_tile_color_orchid">Orchidee</string>
+    <string name="quick_settings_theme_tile_color_ocean">Ozean</string>
+    <string name="quick_settings_theme_tile_color_green">Grün</string>
+    <string name="quick_settings_theme_tile_color_cinnamon">Zimt</string>
+    <string name="quick_settings_theme_tile_color_amber">Bernstein</string>
+    <string name="quick_settings_theme_tile_color_blue">Blau</string>
+    <string name="quick_settings_theme_tile_color_bluegrey">Blaugrau</string>
+    <string name="quick_settings_theme_tile_color_brown">Braun</string>
+    <string name="quick_settings_theme_tile_color_cyan">Cyan</string>
+    <string name="quick_settings_theme_tile_color_deeporange">Dunkelorange</string>
+    <string name="quick_settings_theme_tile_color_deeppurple">Dunkellila</string>
+    <string name="quick_settings_theme_tile_color_grey">Grau</string>
+    <string name="quick_settings_theme_tile_color_indigo">Indigo</string>
+    <string name="quick_settings_theme_tile_color_lightblue">Hellblau</string>
+    <string name="quick_settings_theme_tile_color_lightgreen">Hellgrün</string>
+    <string name="quick_settings_theme_tile_color_lime">Limette</string>
+    <string name="quick_settings_theme_tile_color_orange">Orange</string>
+    <string name="quick_settings_theme_tile_color_pink">Pink</string>
+    <string name="quick_settings_theme_tile_color_red">Rot</string>
+    <string name="quick_settings_theme_tile_color_teal">Blaugrün</string>
+    <string name="quick_settings_theme_tile_color_yellow">Gelb</string>
+    <string name="quick_settings_theme_tile_color_androidonegreen">AndroidOneGrün</string>
+    <string name="quick_settings_theme_tile_color_cocacolared">CocaColaRot</string>
+    <string name="quick_settings_theme_tile_color_discordpurple">DiscordLila</string>
+    <string name="quick_settings_theme_tile_color_facebookblue">FacebookBlau</string>
+    <string name="quick_settings_theme_tile_color_instagramcerise">InstagramKirschrot</string>
+    <string name="quick_settings_theme_tile_color_jollibeecrimson">JollibeePurpur</string>
+    <string name="quick_settings_theme_tile_color_monsterenergygreen">MonsterEnergyGrün</string>
+    <string name="quick_settings_theme_tile_color_nextbitmint">NextbitMinze</string>
+    <string name="quick_settings_theme_tile_color_oneplusred">OneplusRot</string>
+    <string name="quick_settings_theme_tile_color_pepsiblue">PepsiBlau</string>
+    <string name="quick_settings_theme_tile_color_pocophoneyellow">PocophoneGelb</string>
+    <string name="quick_settings_theme_tile_color_razergreen">RazerGrün</string>
+    <string name="quick_settings_theme_tile_color_samsungblue">SamsungBlau</string>
+    <string name="quick_settings_theme_tile_color_spotifygreen">SpotifyGrün</string>
+    <string name="quick_settings_theme_tile_color_starbucksgreen">StarbucksGrün</string>
+    <string name="quick_settings_theme_tile_color_twitchpurple">TwitchLila</string>
+    <string name="quick_settings_theme_tile_color_twitterblue">TwitterBlau</string>
+    <string name="quick_settings_theme_tile_color_xboxgreen">XboxGrün</string>
+    <string name="quick_settings_theme_tile_color_xiaomiorange">XiaomiOrange</string>
+
+</resources>

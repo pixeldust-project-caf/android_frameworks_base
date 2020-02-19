@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-     Copyright (C) 2019 The PixelDust Project
+     Copyright (C) 2019-2020 The PixelDust Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -140,5 +140,8 @@
     <string name="clock_title_analog" translatable="false">Analog</string>
     <!-- [CHAR LIMIT=8] -->
     <string name="clock_title_type" translatable="false">Typografisch</string>
+    <string name="clock_title_binary">Binär</string>
+    <string name="clock_title_default_bold">Standard (fett)</string>
+    <string name="clock_title_samsung_bold">Samsung (fett)</string>
 
 </resources>
