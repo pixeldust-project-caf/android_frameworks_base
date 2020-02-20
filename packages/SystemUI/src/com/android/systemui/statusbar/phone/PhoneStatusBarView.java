@@ -67,7 +67,6 @@ public class PhoneStatusBarView extends PanelBar {
     StatusBar mBar;
 
     boolean mIsFullyOpenedPanel = false;
-    private final PhoneStatusBarTransitions mBarTransitions;
     private ScrimController mScrimController;
     private float mMinFraction;
     private Runnable mHideExpandedRunnable = new Runnable() {
@@ -95,12 +94,7 @@ public class PhoneStatusBarView extends PanelBar {
     public PhoneStatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        mBarTransitions = new PhoneStatusBarTransitions(this);
         mCommandQueue = getComponent(context, CommandQueue.class);
-    }
-
-    public BarTransitions getBarTransitions() {
-        return mBarTransitions;
     }
 
     public void setBar(StatusBar bar) {
@@ -125,7 +119,6 @@ public class PhoneStatusBarView extends PanelBar {
 
     @Override
     public void onFinishInflate() {
-        mBarTransitions.init();
         mBattery = findViewById(R.id.battery);
         mCutoutSpace = findViewById(R.id.cutout_space_view);
         mCenterIconSpace = findViewById(R.id.centered_icon_area);
