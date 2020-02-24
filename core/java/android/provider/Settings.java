@@ -5601,6 +5601,15 @@ public final class Settings {
         public static final String GESTURE_NAVBAR_BROWSER_ACTION = "gesture_navbar_browser_action";
 
         /**
+         * Ambient Edge Light Layout
+         * @hide
+         */
+        public static final String PULSE_AMBIENT_LIGHT_LAYOUT = "pulse_ambient_light_layout";
+
+        /** @hide */
+        private static final Validator PULSE_AMBIENT_LIGHT_LAYOUT_VALIDATOR = ANY_INTEGER_VALIDATOR;
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -5732,6 +5741,7 @@ public final class Settings {
             NAVIGATION_HANDLE_WIDTH,
             SCREENSHOT_SOUND,
             FORCE_SHOW_NAVBAR,
+            PULSE_AMBIENT_LIGHT_LAYOUT,
         };
 
         /**
@@ -5928,6 +5938,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(NAVIGATION_HANDLE_WIDTH);
             PRIVATE_SETTINGS.add(SCREENSHOT_SOUND);
             PRIVATE_SETTINGS.add(FORCE_SHOW_NAVBAR);
+            PRIVATE_SETTINGS.add(PULSE_AMBIENT_LIGHT_LAYOUT);
         }
 
         /**
@@ -6096,6 +6107,7 @@ public final class Settings {
             VALIDATORS.put(NAVIGATION_HANDLE_WIDTH, NAVIGATION_HANDLE_WIDTH_VALIDATOR);
             VALIDATORS.put(SCREENSHOT_SOUND, SCREENSHOT_SOUND_VALIDATOR);
             VALIDATORS.put(FORCE_SHOW_NAVBAR, FORCE_SHOW_NAVBAR_VALIDATOR);
+            VALIDATORS.put(PULSE_AMBIENT_LIGHT_LAYOUT, PULSE_AMBIENT_LIGHT_LAYOUT_VALIDATOR);
         }
 
         /**
