@@ -192,4 +192,6 @@
     <string name="navigation_bar_accessibility_dpad_left">Cursor links</string>
     <string name="navigation_bar_accessibility_dpad_right">Cursor rechts</string>
 
+    <string name="app_picker_dialog_title">App wählen</string>
+
 </resources>
