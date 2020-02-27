@@ -92,6 +92,7 @@ public class DigitalClock extends FrameLayout {
         if (mTwoLine) {
             mClockView.setSingleLine(false);
             mClockView.setLineSpacing(getResources().getDimensionPixelSize(R.dimen.digital_clock_two_line_spacing), 1);
+            mClockView.setLineSpacing(0, 0.8f);
             mClockView.setFormat12Hour(Html.fromHtml("<strong>hh</strong><br>mm"));
             mClockView.setFormat24Hour(Html.fromHtml("<strong>kk</strong><br>mm"));
         } else {
