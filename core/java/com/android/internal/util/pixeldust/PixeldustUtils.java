@@ -16,6 +16,7 @@
 
 package com.android.internal.util.pixeldust;
 
+import android.app.ActivityManager;
 import android.app.UiModeManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -202,6 +203,10 @@ public class PixeldustUtils {
         FireActions.toggleNotifications();
     }
 
+    public static void clearAllNotifications() {
+        FireActions.clearAllNotifications();
+    }
+
     private static final class FireActions {
         private static IStatusBarService mStatusBarService = null;
         private static IStatusBarService getStatusBarService() {
@@ -233,6 +238,16 @@ public class PixeldustUtils {
                 } catch (RemoteException e) {
                     // do nothing.
                 }
+            }
+        }
+
+        // Clear notifications
+        public static void clearAllNotifications() {
+            IStatusBarService service = getStatusBarService();
+            if (service != null) {
+                try {
+                    service.onClearAllNotifications(ActivityManager.getCurrentUser());
+                } catch (RemoteException e) {}
             }
         }
     }
