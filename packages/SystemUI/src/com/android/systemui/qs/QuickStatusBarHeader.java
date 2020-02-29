@@ -452,14 +452,14 @@ public class QuickStatusBarHeader extends RelativeLayout implements
 
     private void updateQSBatteryPercent() {
         mBatteryRemainingIcon.mShowBatteryPercent = Settings.System.getInt(mContext.getContentResolver(),
-        Settings.System.QS_SHOW_BATTERY_PERCENT, 2);
+        Settings.System.QS_SHOW_BATTERY_PERCENT, 0);
         mBatteryRemainingIcon.updatePercentView();
         mBatteryRemainingIcon.updateVisibility();
     }
 
     private void updateQSBatteryEstimate() {
         mBatteryRemainingIcon.mShowBatteryEstimate = Settings.System.getInt(mContext.getContentResolver(),
-        Settings.System.QS_SHOW_BATTERY_ESTIMATE, 0);
+        Settings.System.QS_SHOW_BATTERY_ESTIMATE, 1);
         mBatteryRemainingIcon.updatePercentView();
         mBatteryRemainingIcon.updateVisibility();
     }
