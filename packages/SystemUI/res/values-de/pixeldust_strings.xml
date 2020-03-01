@@ -194,4 +194,7 @@
 
     <string name="app_picker_dialog_title">App wählen</string>
 
+    <string name="recents_app_killed">App geschlossen</string>
+    <string name="nope_cant_kill">Launcher kann nicht geschlossen werden</string>
+
 </resources>
