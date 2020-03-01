@@ -32,15 +32,18 @@ import com.android.systemui.plugins.qs.QSTile.BooleanState;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.SecureSetting;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
+import com.android.systemui.statusbar.policy.BatteryController;
 
 import javax.inject.Inject;
 
-public class AlwaysOnDisplayTile extends QSTileImpl<BooleanState> {
+public class AlwaysOnDisplayTile extends QSTileImpl<BooleanState> implements
+        BatteryController.BatteryStateChangeCallback {
 
     private final SecureSetting mSetting;
+    private final BatteryController mBatteryController;
 
     @Inject
-    public AlwaysOnDisplayTile(QSHost host) {
+    public AlwaysOnDisplayTile(QSHost host, BatteryController batteryController) {
         super(host);
 
         mSetting = new SecureSetting(mContext, mHandler,
@@ -51,6 +54,14 @@ public class AlwaysOnDisplayTile extends QSTileImpl<BooleanState> {
                 handleRefreshState(value);
             }
         };
+
+        mBatteryController = batteryController;
+        batteryController.observe(getLifecycle(), this);
+    }
+
+    @Override
+    public void onPowerSaveChanged(boolean isPowerSave) {
+        refreshState();
     }
 
     @Override
@@ -78,6 +89,9 @@ public class AlwaysOnDisplayTile extends QSTileImpl<BooleanState> {
 
     @Override
     public CharSequence getTileLabel() {
+        if (mBatteryController.isAodPowerSave()) {
+            return mContext.getString(R.string.quick_settings_aod_off_powersave_label);
+        }
         return mContext.getString(R.string.quick_settings_always_on_display_label);
     }
 
@@ -94,7 +108,9 @@ public class AlwaysOnDisplayTile extends QSTileImpl<BooleanState> {
         state.value = enable;
         state.label = mContext.getString(R.string.quick_settings_always_on_display_label);
         state.icon = ResourceIcon.get(R.drawable.ic_qs_alwaysondisplay);
-        if (enable || isAodEnabled()) {
+        if (mBatteryController.isAodPowerSave()) {
+            state.state = Tile.STATE_UNAVAILABLE;
+        } else if (enable || isAodEnabled()) {
             state.contentDescription =  mContext.getString(
                     R.string.accessibility_quick_settings_always_on_display_on);
             state.state = Tile.STATE_ACTIVE;

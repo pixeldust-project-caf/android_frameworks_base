@@ -113,6 +113,7 @@
 
     <!-- Always on Display Tile -->
     <string name="quick_settings_always_on_display_label">Always on Display</string>
+    <string name="quick_settings_aod_off_powersave_label">AOD aus\nEnergiesparmodus</string>
     <string name="accessibility_quick_settings_always_on_display_off">Always on Display aus.</string>
     <string name="accessibility_quick_settings_always_on_display_on">Always on Display ein.</string>
     <string name="accessibility_quick_settings_always_on_display_changed_off">Always on Display wurde deaktiviert.</string>
