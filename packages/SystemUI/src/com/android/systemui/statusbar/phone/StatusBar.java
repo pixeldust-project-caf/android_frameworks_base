@@ -726,7 +726,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             if (uri.equals(Settings.Secure.getUriFor(
                     Settings.Secure.FP_SWIPE_TO_DISMISS_NOTIFICATIONS))) {
                 setFpToDismissNotifications();
-            } else if (uri.equals(Settings.Secure.getUriFor(
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.FORCE_SHOW_NAVBAR))) {
                 updateNavigationBarVisibility();
             } else if (uri.equals(Settings.System.getUriFor(
@@ -751,6 +751,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             if (mStatusBarWindow != null) {
                 mStatusBarWindow.updateSettings();
             }
+            updateNavigationBarVisibility();
             setFpToDismissNotifications();
             setPulseOnNewTracks();
             updateChargingAnimation();
