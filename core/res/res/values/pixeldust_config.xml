@@ -111,6 +111,12 @@
     <!-- Whether device supports variable refresh rate -->
     <bool name="config_hasVariableRefreshRate">false</bool>
 
+	<!-- Default refresh rate value for the device
+         0: Auto
+         1: 60Hz
+         2: 90Hz -->
+    <integer name="config_defaultRefreshRate">0</integer>
+
     <!-- Default value for Ambient Pulse light color -->
     <integer name="config_ambientNotificationDefaultColor">0xFF3980FF</integer>
 
