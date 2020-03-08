@@ -79,7 +79,7 @@
     <bool name="config_physicalDisplayCutout">false</bool>
 
     <!-- Whether device has a big physical display cutout -->
-    <bool name="config_bigPhysicalDisplayCutout">false</bool>
+    <bool name="config_physicalDisplayCutoutCentered">@bool/config_physicalDisplayCutout</bool>
 
     <!-- Name of a font family to use as light font. For theming purpose. -->
     <string name="config_lightFontFamily" translatable="false">sans-serif-light</string>
