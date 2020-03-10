@@ -48,6 +48,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.drawable.VectorDrawable;
 import android.hardware.display.DisplayManager;
@@ -923,7 +924,8 @@ public class ScreenDecorations extends SystemUI implements Tunable,
         private final Rect mBoundingRect = new Rect();
         private final Path mBoundingPath = new Path();
         // Don't initialize these yet because they may never exist
-        private Rect mProtectionRect;
+        private RectF mProtectionRect;
+        private RectF mProtectionRectOrig;
         private Path mProtectionPath;
         private Path mProtectionPathOrig;
         private Rect mTotalBounds = new Rect();
@@ -1019,7 +1021,11 @@ public class ScreenDecorations extends SystemUI implements Tunable,
                 mProtectionPath = new Path();
             }
             mProtectionPathOrig.set(protectionPath);
-            mProtectionRect = pathBounds;
+            if (mProtectionRectOrig == null) {
+                mProtectionRectOrig = new RectF();
+                mProtectionRect = new RectF();
+            }
+            mProtectionRectOrig.set(pathBounds);
         }
 
         void setShowProtection(boolean shouldShow) {
@@ -1106,6 +1112,7 @@ public class ScreenDecorations extends SystemUI implements Tunable,
                 // Reset the protection path so we don't aggregate rotations
                 mProtectionPath.set(mProtectionPathOrig);
                 mProtectionPath.transform(m);
+                m.mapRect(mProtectionRect, mProtectionRectOrig);
             }
         }
 
@@ -1168,7 +1175,8 @@ public class ScreenDecorations extends SystemUI implements Tunable,
             if (mShowProtection) {
                 // Make sure that our measured height encompases the protection
                 mTotalBounds.union(mBoundingRect);
-                mTotalBounds.union(mProtectionRect);
+                mTotalBounds.union((int) mProtectionRect.left, (int) mProtectionRect.top,
+                        (int) mProtectionRect.right, (int) mProtectionRect.bottom);
                 setMeasuredDimension(
                         resolveSizeAndState(mTotalBounds.width(), widthMeasureSpec, 0),
                         resolveSizeAndState(mTotalBounds.height(), heightMeasureSpec, 0));
