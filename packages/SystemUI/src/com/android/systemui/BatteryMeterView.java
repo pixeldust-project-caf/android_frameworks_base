@@ -472,16 +472,17 @@ public class BatteryMeterView extends LinearLayout implements
         final boolean showing = mBatteryPercentView != null;
         final boolean drawPercentInside = mShowBatteryPercent == 1
                                     && !mCharging;
-        final boolean addPecentView = mShowBatteryPercent == 2
+        final boolean addPercentView = mBatteryStyle != BATTERY_STYLE_HIDDEN
+                                    && (mShowBatteryPercent == 2
                                     || (mBatteryPercentCharging && mCharging)
                                     || mBatteryStyle == BATTERY_STYLE_TEXT
                                     || mShowPercentMode == MODE_ON
-                                    || mShowBatteryEstimate != 0;
+                                    || mShowBatteryEstimate != 0);
 
         mDrawable.setShowPercent(drawPercentInside);
         mXDrawable.setShowPercent(drawPercentInside);
 
-        if (addPecentView) {
+        if (addPercentView) {
             if (!showing) {
                 mBatteryPercentView = loadPercentView();
                 if (mPercentageStyleId != 0) { // Only set if specified as attribute
@@ -550,7 +551,7 @@ public class BatteryMeterView extends LinearLayout implements
     }
 
     public void updateBatteryStyle() {
-        if (mBatteryStyle == BATTERY_STYLE_HIDDEN) return;
+        if (mBatteryStyle == BATTERY_STYLE_HIDDEN || mBatteryStyle == BATTERY_STYLE_TEXT) return;
 
         if (mBatteryStyle == BATTERY_STYLE_Q) {
             mBatteryIconView.setImageDrawable(mDrawable);
