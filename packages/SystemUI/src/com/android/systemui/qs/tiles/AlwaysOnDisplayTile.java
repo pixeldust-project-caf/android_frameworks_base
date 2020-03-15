@@ -20,6 +20,7 @@ package com.android.systemui.qs.tiles;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.provider.Settings.Secure;
 import android.service.quicksettings.Tile;
@@ -80,6 +81,11 @@ public class AlwaysOnDisplayTile extends QSTileImpl<BooleanState> {
         return mContext.getString(R.string.quick_settings_always_on_display_label);
     }
 
+    private boolean isAodEnabled() {
+        return Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                    Settings.Secure.DOZE_ALWAYS_ON, 0, UserHandle.USER_CURRENT) == 1;
+    }
+
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
         if (mSetting == null) return;
@@ -88,7 +94,7 @@ public class AlwaysOnDisplayTile extends QSTileImpl<BooleanState> {
         state.value = enable;
         state.label = mContext.getString(R.string.quick_settings_always_on_display_label);
         state.icon = ResourceIcon.get(R.drawable.ic_qs_alwaysondisplay);
-        if (enable) {
+        if (enable || isAodEnabled()) {
             state.contentDescription =  mContext.getString(
                     R.string.accessibility_quick_settings_always_on_display_on);
             state.state = Tile.STATE_ACTIVE;
