@@ -528,11 +528,6 @@ public class BatteryMeterView extends LinearLayout implements
         scaleBatteryMeterViews();
     }
 
-    @Override
-    public void onOverlayChanged() {
-        updateShowPercent();
-    }
-
     /**
      * Looks up the scale factor for status bar icons and scales the battery view by that amount.
      */
