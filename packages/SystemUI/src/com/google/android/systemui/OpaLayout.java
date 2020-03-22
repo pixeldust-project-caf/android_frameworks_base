@@ -30,6 +30,7 @@ import android.widget.ImageView;
 
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
+import com.android.systemui.assist.AssistManager;
 import com.android.systemui.statusbar.phone.ButtonInterface;
 import com.android.systemui.statusbar.policy.KeyButtonView;
 import com.android.systemui.tuner.TunerService.Tunable;
@@ -555,7 +556,7 @@ public class OpaLayout extends FrameLayout implements ButtonInterface, Tunable {
         mWhite = (ImageView) findViewById(R.id.white);
         mHome = (KeyButtonView) findViewById(R.id.home_button);
 
-        setOpaEnabled(true);
+        setOpaEnabled(OpaUtils.shouldEnable(getContext()));
 
         hideAllOpa();
     }
