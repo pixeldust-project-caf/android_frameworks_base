@@ -41,7 +41,7 @@
     <string name="qs_menu_item_columns">Spalten</string>
     <string name="qs_menu_item_columns_landscape">Spalten (Landscape)</string>
     <string name="qs_menu_item_rows">Zeilen</string>
-    <string name="qs_menu_item_rows_landscape">Zeilen Landscape)</string>
+    <string name="qs_menu_item_rows_landscape">Zeilen (Landscape)</string>
     <string name="qs_menu_item_reset">Zurücksetzen</string>
     <string name="qs_menu_item_titles">Beschriftungen anzeigen</string>
     <string name="qs_menu_item_qs_columns">Kacheln auf Quickbar</string>
