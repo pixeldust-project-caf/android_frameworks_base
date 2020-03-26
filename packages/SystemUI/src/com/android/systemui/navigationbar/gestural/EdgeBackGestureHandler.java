@@ -971,6 +971,9 @@ public class EdgeBackGestureHandler extends CurrentUserTracker
         final MotionEvent ev = MotionEvent.obtain(now, now,
                 MotionEvent.ACTION_CANCEL, 0.0f, 0.0f, 0);
         cancelGesture(ev);
+        if (mEdgeHapticEnabled) {
+            vibrateTick();
+        }
     }
 
     private void triggerAction(boolean isVertical) {
