@@ -84,6 +84,11 @@ public class ThemesUtils {
             "com.android.theme.solarizeddark.systemui",
     };
 
+    public static final String[] CHOCO_X = {
+            "com.android.theme.chocox.system",
+            "com.android.theme.chocox.systemui",
+    };
+
     public static final String[] STATUSBAR_ICONS = {
             "com.android.theme.icon_pack.filled.android",
             "com.android.theme.icon_pack.rounded.android",

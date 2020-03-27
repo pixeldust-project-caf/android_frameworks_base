@@ -136,6 +136,7 @@
     <string name="system_theme_style_dark">Dunkel</string>
     <string name="system_theme_style_pitchblack">Pechschwarz</string>
     <string name="system_theme_style_solarizeddark">Solarisiertes Dunkel</string>
+    <string name="system_theme_style_chocox">Schwarzer Kaffee</string>
     <string name="quick_settings_theme_tile_title">Akzentfarbe</string>
     <string name="quick_settings_theme_tile_accent_detail_title">Akzentfarbe wählen</string>
     <string name="quick_settings_theme_tile_style_detail_title">UI-Stil wählen</string>

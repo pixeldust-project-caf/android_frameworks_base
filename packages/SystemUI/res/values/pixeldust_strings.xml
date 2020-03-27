@@ -140,6 +140,7 @@
     <string name="system_theme_style_dark">Google dark</string>
     <string name="system_theme_style_pitchblack">Pitch black</string>
     <string name="system_theme_style_solarizeddark">Solarized dark</string>
+    <string name="system_theme_style_chocox">Black coffee</string>
     <string name="quick_settings_theme_tile_title">Accent</string>
     <string name="quick_settings_theme_tile_accent_detail_title">Select accent</string>
     <string name="quick_settings_theme_tile_style_detail_title">Select theme</string>
