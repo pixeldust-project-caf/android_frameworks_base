@@ -731,6 +731,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.LESS_BORING_HEADS_UP),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.SHOW_MEDIA_HEADS_UP),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -757,6 +760,8 @@ public class StatusBar extends SystemUI implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.LESS_BORING_HEADS_UP))) {
                 setUseLessBoringHeadsUp();
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.SHOW_MEDIA_HEADS_UP))) {
+                setMediaHeadsup();
             }
             update();
         }
@@ -769,6 +774,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             setPulseOnNewTracks();
             updateChargingAnimation();
             setGestureNavOptions();
+            setMediaHeadsup();
         }
     }
 
@@ -798,6 +804,12 @@ public class StatusBar extends SystemUI implements DemoMode,
             }
         }
         mShowNavBar = showNavBar;
+    }
+
+    private void setMediaHeadsup() {
+        if (mMediaManager != null) {
+            mMediaManager.setMediaHeadsup();
+        }
     }
 
     private void setUseLessBoringHeadsUp() {
@@ -1656,6 +1668,9 @@ public class StatusBar extends SystemUI implements DemoMode,
         mRunningTaskId = taskId;
         mIsLauncherShowing = taskComponentName.equals(mDefaultHome);
         mTaskComponentName = taskComponentName;
+        if (mMediaManager != null) {
+            mMediaManager.setRunningPackage(mTaskComponentName.getPackageName());
+        }
     }
 
     @Nullable
