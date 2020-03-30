@@ -840,7 +840,7 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
                 setTypeface(Typeface.create("snowstorm-sys", Typeface.NORMAL));
                 break;
             case GOOGLESANS:
-                setTypeface(Typeface.create("googlesans-sys", Typeface.NORMAL));
+                setTypeface(Typeface.create("googlesans", Typeface.NORMAL));
                 break;
             case NEONEON:
                 setTypeface(Typeface.create("neoneon-sys", Typeface.NORMAL));
