@@ -96,6 +96,7 @@ public class ThemesUtils {
     };
 
     public static final String[] FONTS = {
+            "com.android.theme.font.notoserifsource",
             "com.android.theme.font.aclonicasource",
             "com.android.theme.font.amarantesource",
             "com.android.theme.font.bariolsource",
@@ -105,7 +106,6 @@ public class ThemesUtils {
             "com.android.theme.font.firasans",
             "com.android.theme.font.googlesans",
             "com.android.theme.font.lgsmartgothicsource",
-            "com.android.theme.font.notoserifsource",
             "com.android.theme.font.oneplusslate", 
             "com.android.theme.font.rosemarysource",
             "com.android.theme.font.samsungone",
