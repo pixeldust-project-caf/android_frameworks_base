@@ -105,6 +105,7 @@ public class ThemesUtils {
             "com.android.theme.font.coolstorysource",
             "com.android.theme.font.firasans",
             "com.android.theme.font.googlesans",
+            "com.android.theme.font.googlesansmedium",
             "com.android.theme.font.lgsmartgothicsource",
             "com.android.theme.font.oneplusslate", 
             "com.android.theme.font.rosemarysource",
