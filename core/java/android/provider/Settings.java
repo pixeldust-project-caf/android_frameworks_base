@@ -4813,6 +4813,12 @@ public final class Settings {
         public static final String STATUS_BAR_CLOCK_FONT_STYLE = "status_bar_clock_font_style";
 
         /**
+         * Whether the clock font should be reset
+         * @hide
+         */
+        public static final String STATUS_BAR_CLOCK_FONT_RESET = "status_bar_clock_font_reset";
+
+        /**
          * Whether to display sound panel in the power menu
          *
          * @hide

@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.TypedArray;
+import android.content.om.IOverlayManager;
 import android.database.ContentObserver;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -30,7 +31,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.os.SystemClock;
+import android.os.RemoteException;
 import android.os.UserHandle;
+import android.os.ServiceManager;
 import android.provider.Settings;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -53,6 +56,9 @@ import com.android.systemui.plugins.DarkIconDispatcher.DarkReceiver;
 import com.android.systemui.settings.CurrentUserTracker;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.policy.ConfigurationController.ConfigurationListener;
+
+import com.android.internal.util.pixeldust.PixeldustUtils;
+import com.android.internal.util.pixeldust.ThemesUtils;
 
 import libcore.icu.LocaleData;
 
@@ -747,16 +753,44 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
     private void updateClockFontStyle() {
         mClockFontStyle = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_CLOCK_FONT_STYLE, FONT_NORMAL,
-		UserHandle.USER_CURRENT);
-        getClockFontStyle(mClockFontStyle);
+                UserHandle.USER_CURRENT);
+        boolean shouldResetFont = (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_CLOCK_FONT_RESET, 0,
+                UserHandle.USER_CURRENT) == 1);
+        getClockFontStyle(mClockFontStyle, shouldResetFont);
         updateClock();
     }
 
-    public void getClockFontStyle(int font) {
+    private String getOverlayName(String[] overlays) {
+        String overlayName = null;
+        for (int i = 0; i < overlays.length; i++) {
+            String overlay = overlays[i];
+            if (PixeldustUtils.isThemeEnabled(overlay)) {
+                overlayName = overlay;
+            }
+        }
+        return overlayName;
+    }
+
+    public void getClockFontStyle(int font, boolean reset) {
         switch (font) {
             case FONT_NORMAL:
             default:
-                setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
+                String overlayName = getOverlayName(ThemesUtils.FONTS);
+                if (overlayName == null) {
+                    setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
+                } else if (reset) {
+                    IOverlayManager mOverlayManager = IOverlayManager.Stub.asInterface(
+                            ServiceManager.getService(Context.OVERLAY_SERVICE));
+                    try {
+                        mOverlayManager.setEnabled(overlayName, false, UserHandle.USER_SYSTEM);
+                        mOverlayManager.setEnabled(overlayName, true, UserHandle.USER_SYSTEM);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                    Settings.System.putInt(mContext.getContentResolver(),
+                            Settings.System.STATUS_BAR_CLOCK_FONT_RESET, 0);
+                }
                 break;
             case FONT_ITALIC:
                 setTypeface(Typeface.create("sans-serif", Typeface.ITALIC));
