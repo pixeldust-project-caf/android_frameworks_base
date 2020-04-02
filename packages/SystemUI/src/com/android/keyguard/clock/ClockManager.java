@@ -154,6 +154,7 @@ public final class ClockManager {
         addBuiltinClock(() -> new AnalogClockController(res, layoutInflater, colorExtractor, context));
         addBuiltinClock(() -> new TypeClockController(res, layoutInflater, colorExtractor, context));
         addBuiltinClock(() -> new BinaryClockController(res, layoutInflater, colorExtractor, context));
+        addBuiltinClock(() -> new DividedLinesClockController(res, layoutInflater, colorExtractor, context));
 
         // Store the size of the display for generation of clock preview.
         DisplayMetrics dm = res.getDisplayMetrics();
