@@ -49,6 +49,7 @@ import com.android.systemui.qs.tiles.NfcTile;
 import com.android.systemui.qs.tiles.NightDisplayTile;
 import com.android.systemui.qs.tiles.RebootTile;
 import com.android.systemui.qs.tiles.RotationLockTile;
+import com.android.systemui.qs.tiles.ScreenRecordTile;
 import com.android.systemui.qs.tiles.ThemeTile;
 import com.android.systemui.qs.tiles.UiModeNightTile;
 import com.android.systemui.qs.tiles.SoundTile;
@@ -88,6 +89,7 @@ public class QSFactoryImpl implements QSFactory {
     private final Provider<NfcTile> mNfcTileProvider;
     private final Provider<GarbageMonitor.MemoryTile> mMemoryTileProvider;
     private final Provider<UiModeNightTile> mUiModeNightTileProvider;
+    private final Provider<ScreenRecordTile> mScreenRecordTileProvider;
     private final Provider<SoundTile> mSoundTileProvider;
     private final Provider<CaffeineTile> mCaffeineTileProvider;
     private final Provider<ScreenshotTile> mScreenshotTileProvider;
@@ -134,7 +136,8 @@ public class QSFactoryImpl implements QSFactory {
             Provider<DataSwitchTile> dataSwitchTileProvider,
             Provider<GamingModeTile> GamingModeTileProvider,
             Provider<ScreenStabilizationTile> screenStabilizationTileProvider,
-            Provider<RebootTile> rebootTileProvider) {
+            Provider<RebootTile> rebootTileProvider,
+            Provider<ScreenRecordTile> screenRecordTileProvider) {
         mWifiTileProvider = wifiTileProvider;
         mBluetoothTileProvider = bluetoothTileProvider;
         mCellularTileProvider = cellularTileProvider;
@@ -154,6 +157,7 @@ public class QSFactoryImpl implements QSFactory {
         mNfcTileProvider = nfcTileProvider;
         mMemoryTileProvider = memoryTileProvider;
         mUiModeNightTileProvider = uiModeNightTileProvider;
+        mScreenRecordTileProvider = screenRecordTileProvider;
         mSoundTileProvider = soundTileProvider;
         mCaffeineTileProvider = caffeineTileProvider;
         mScreenshotTileProvider = screenshotTileProvider;
@@ -221,6 +225,8 @@ public class QSFactoryImpl implements QSFactory {
                 return mUiModeNightTileProvider.get();
             case "pixeldust_settings":
                 return new PDSettingsTile(mHost);
+            case "screen_record":
+                return mScreenRecordTileProvider.get();
             case "sound":
                 return mSoundTileProvider.get();
             case "caffeine":
