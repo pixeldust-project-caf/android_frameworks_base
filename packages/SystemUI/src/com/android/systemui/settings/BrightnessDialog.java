@@ -121,10 +121,10 @@ public class BrightnessDialog extends Activity {
         });
 
         boolean brightnessIconEnabled = Settings.System.getIntForUser(
-            resolver, Settings.System.QS_SHOW_BRIGHTNESS_ICON,
+            resolver, Settings.System.QS_SHOW_AUTO_BRIGHTNESS,
                 1, UserHandle.USER_CURRENT) == 1;
         boolean brightnessMinMaxEnabled = Settings.System.getIntForUser(
-            resolver, Settings.System.QS_SHOW_BRIGHTNESS_MINMAX,
+            resolver, Settings.System.QS_SHOW_MINMAX_BRIGHTNESS,
                 1, UserHandle.USER_CURRENT) == 1;
         mBrightnessIcon.setVisibility(brightnessIconEnabled ? View.VISIBLE : View.GONE);
         mMaxBrightness.setVisibility(brightnessMinMaxEnabled ? View.VISIBLE : View.GONE);

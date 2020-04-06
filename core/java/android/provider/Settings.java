@@ -5383,22 +5383,48 @@ public final class Settings {
         public static final String LOCKSCREEN_BATTERY_INFO = "lockscreen_battery_info";
 
         /**
-         * Whether to show Brightness Icon On Brightness Slider
+         * Whether to display QS brightness slider
          * @hide
          */
-        public static final String QS_SHOW_BRIGHTNESS_ICON = "qs_show_brightness_icon";
-
+        public static final String QS_SHOW_BRIGHTNESS = "qs_show_brightness";
         /** @hide */
-        private static final Validator QS_SHOW_BRIGHTNESS_ICON_VALIDATOR = BOOLEAN_VALIDATOR;
+        private static final Validator QS_SHOW_BRIGHTNESS_VALIDATOR =
+                BOOLEAN_VALIDATOR;
 
         /**
-         * Whether to show Min-Max button On Brightness Slider
+         * Whether to display QS brightness slider on bottom
          * @hide
          */
-        public static final String QS_SHOW_BRIGHTNESS_MINMAX = "qs_show_brightness_minmax";
-
+        public static final String QS_BRIGHTNESS_POSITION_BOTTOM = "qs_brightness_position_bottom";
         /** @hide */
-        private static final Validator QS_SHOW_BRIGHTNESS_MINMAX_VALIDATOR = BOOLEAN_VALIDATOR;
+        private static final Validator QS_BRIGHTNESS_POSITION_BOTTOM_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
+         * Whether to display QS security footer
+         * @hide
+         */
+        public static final String QS_SHOW_SECURITY = "qs_show_security";
+        /** @hide */
+        private static final Validator QS_SHOW_SECURITY_VALIDATOR = BOOLEAN_VALIDATOR;
+
+        /**
+         * Whether to display QS auto brightness button near brightness slider
+         * @hide
+         */
+        public static final String QS_SHOW_AUTO_BRIGHTNESS = "qs_show_auto_brightness";
+        /** @hide */
+        private static final Validator QS_SHOW_AUTO_BRIGHTNESS_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
+         * Whether to display QS min-max brightness button near brightness slider
+         * @hide
+         */
+        public static final String QS_SHOW_MINMAX_BRIGHTNESS = "qs_show_minmax_brightness";
+        /** @hide */
+        private static final Validator QS_SHOW_MINMAX_BRIGHTNESS_VALIDATOR =
+                BOOLEAN_VALIDATOR;
 
         /**
          * Set edge gesture Y dead zone
@@ -6053,8 +6079,11 @@ public final class Settings {
             PULSE_AMBIENT_LIGHT_DURATION,
             PULSE_AMBIENT_LIGHT_PULSE_FOR_ALL,
             CLOCK_SHOW_STATUS_AREA,
-            QS_SHOW_BRIGHTNESS_ICON,
-            QS_SHOW_BRIGHTNESS_MINMAX,
+            QS_SHOW_BRIGHTNESS,
+            QS_BRIGHTNESS_POSITION_BOTTOM,
+            QS_SHOW_SECURITY,
+            QS_SHOW_AUTO_BRIGHTNESS,
+            QS_SHOW_MINMAX_BRIGHTNESS,
             NAVIGATION_BAR_ARROW_KEYS,
             LOCKSCREEN_CHARGING_ANIMATION_STYLE,
             NAVIGATION_HANDLE_WIDTH,
@@ -6275,8 +6304,6 @@ public final class Settings {
             PRIVATE_SETTINGS.add(NOTIFICATION_PULSE_ACCENT);
             PRIVATE_SETTINGS.add(NOTIFICATION_PULSE_COLOR_AUTOMATIC);
             PRIVATE_SETTINGS.add(CLOCK_SHOW_STATUS_AREA);
-            PRIVATE_SETTINGS.add(QS_SHOW_BRIGHTNESS_ICON);
-            PRIVATE_SETTINGS.add(QS_SHOW_BRIGHTNESS_MINMAX);
             PRIVATE_SETTINGS.add(NAVIGATION_BAR_ARROW_KEYS);
             PRIVATE_SETTINGS.add(NAVIGATION_HANDLE_WIDTH);
             PRIVATE_SETTINGS.add(SCREENSHOT_SOUND);
@@ -6468,8 +6495,11 @@ public final class Settings {
             VALIDATORS.put(PULSE_AMBIENT_LIGHT_DURATION, PULSE_AMBIENT_LIGHT_DURATION_VALIDATOR);
             VALIDATORS.put(PULSE_AMBIENT_LIGHT_PULSE_FOR_ALL, PULSE_AMBIENT_LIGHT_PULSE_FOR_ALL_VALIDATOR);
             VALIDATORS.put(CLOCK_SHOW_STATUS_AREA, CLOCK_SHOW_STATUS_AREA_VALIDATOR);
-            VALIDATORS.put(QS_SHOW_BRIGHTNESS_ICON, QS_SHOW_BRIGHTNESS_ICON_VALIDATOR);
-            VALIDATORS.put(QS_SHOW_BRIGHTNESS_MINMAX, QS_SHOW_BRIGHTNESS_MINMAX_VALIDATOR);
+            VALIDATORS.put(QS_SHOW_BRIGHTNESS, QS_SHOW_BRIGHTNESS_VALIDATOR);
+            VALIDATORS.put(QS_BRIGHTNESS_POSITION_BOTTOM, QS_BRIGHTNESS_POSITION_BOTTOM_VALIDATOR);
+            VALIDATORS.put(QS_SHOW_SECURITY, QS_SHOW_SECURITY_VALIDATOR);
+            VALIDATORS.put(QS_SHOW_AUTO_BRIGHTNESS, QS_SHOW_AUTO_BRIGHTNESS_VALIDATOR);
+            VALIDATORS.put(QS_SHOW_MINMAX_BRIGHTNESS, QS_SHOW_MINMAX_BRIGHTNESS_VALIDATOR);
             VALIDATORS.put(NAVIGATION_BAR_ARROW_KEYS, NAVIGATION_BAR_ARROW_KEYS_VALIDATOR);
             VALIDATORS.put(LOCKSCREEN_CHARGING_ANIMATION_STYLE, LOCKSCREEN_CHARGING_ANIMATION_STYLE_VALIDATOR);
             VALIDATORS.put(NAVIGATION_HANDLE_WIDTH, NAVIGATION_HANDLE_WIDTH_VALIDATOR);

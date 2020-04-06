@@ -170,10 +170,10 @@ public class BrightnessMirrorController
 
     private void setBrightnessButton() {
         boolean brightnessIconEnabled = Settings.System.getIntForUser(
-            mContext.getContentResolver(), Settings.System.QS_SHOW_BRIGHTNESS_ICON,
+            mContext.getContentResolver(), Settings.System.QS_SHOW_AUTO_BRIGHTNESS,
                 1, UserHandle.USER_CURRENT) == 1;
         boolean brightnessMinMaxEnabled = Settings.System.getIntForUser(
-            mContext.getContentResolver(), Settings.System.QS_SHOW_BRIGHTNESS_MINMAX,
+            mContext.getContentResolver(), Settings.System.QS_SHOW_MINMAX_BRIGHTNESS,
                 1, UserHandle.USER_CURRENT) == 1;
         mIcon.setVisibility(brightnessIconEnabled ? View.VISIBLE : View.GONE);
         mMaxBrightness.setVisibility(brightnessMinMaxEnabled ? View.VISIBLE : View.GONE);

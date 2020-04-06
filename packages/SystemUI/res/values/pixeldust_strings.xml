@@ -56,11 +56,6 @@
     <string name="qs_menu_item_qs_columns">Quickbar columns</string>
     <string name="qs_menu_item_columns_auto">Automatic</string>
 
-    <string name="tuner_quick_settings">Quick settings</string>
-    <string name="tuner_show_brightness_new">Show brightness slider</string>
-    <string name="tuner_brightness_position_bottom">Brightness slider on bottom</string>
-    <string name="tuner_show_secure_title">Show security footer</string>
-
     <!-- Sound QS Tile -->
     <string name="quick_settings_sound_label">Sound</string>
     <string name="quick_settings_sound_ring">Ring</string>
