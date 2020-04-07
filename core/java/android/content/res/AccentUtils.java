@@ -16,6 +16,7 @@ public class AccentUtils {
                     "accent_device_default_dark",
                     "material_pixel_blue_dark",
                     "material_pixel_blue_bright",
+                    "colorAccent",
                     "omni_color5",
                     "omni_color4",
                     "dialer_theme_color",
