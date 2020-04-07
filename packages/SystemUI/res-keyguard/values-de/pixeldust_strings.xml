@@ -144,4 +144,6 @@
     <string name="clock_title_two_line_digital">Samsung</string>
     <string name="clock_title_one_line_digital">Standard (fett)</string>
 
+    <string name="date_long_title_today">Heute ist %s</string>
+
 </resources>
