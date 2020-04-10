@@ -72,6 +72,7 @@ public class ThemesUtils {
             "com.android.theme.icon.roundedrect",
             "com.android.theme.icon.cylinder",
             "com.android.theme.icon.hexagon",
+            "com.android.theme.icon.square",
     };
 
     public static final String[] PITCH_BLACK = {
