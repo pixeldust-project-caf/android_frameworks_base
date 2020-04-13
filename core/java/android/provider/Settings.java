@@ -5594,6 +5594,13 @@ public final class Settings {
         public static final String NOTIFICATION_SOUND_VIB_SCREEN_ON = "notification_sound_vib_screen_on";
 
         /**
+         * Gestures nav: whether left-to-right extended swipe triggers a Forward action
+         * when default browser is running
+         * @hide
+         */
+        public static final String GESTURE_NAVBAR_BROWSER_ACTION = "gesture_navbar_browser_action";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
