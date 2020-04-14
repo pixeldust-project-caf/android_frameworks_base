@@ -142,4 +142,7 @@
 
     <bool name="config_canForceDozeNotifications">true</bool>
 
+    <!-- Enable face auth when swiping security view -->
+    <bool name="config_faceAuthOnSecurityView">false</bool>
+
 </resources>
