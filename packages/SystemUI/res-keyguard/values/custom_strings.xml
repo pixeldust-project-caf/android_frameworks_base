@@ -22,6 +22,8 @@
     <string name="clock_title_binary">Binary</string>
     <string name="clock_title_two_line_digital">Samsung</string>
     <string name="clock_title_one_line_digital">Digital (bold)</string>
+    <string name="clock_title_mnml_box" translatable="false">MNML\'s Box</string>
+    <string name="clock_title_mnml_minimal" translatable="false">MNML\'s Minimal</string>
     <string name="date_long_title_today">Today is %s</string>
 
 </resources>

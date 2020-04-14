@@ -156,6 +156,8 @@ public final class ClockManager {
         addBuiltinClock(() -> new BinaryClockController(res, layoutInflater, colorExtractor, context));
         addBuiltinClock(() -> new DividedLinesClockController(res, layoutInflater, colorExtractor, context));
         addBuiltinClock(() -> new OronosClockController(res, layoutInflater, colorExtractor, context));
+        addBuiltinClock(() -> new MNMLBoxClockController(res, layoutInflater, colorExtractor, context));
+        addBuiltinClock(() -> new MNMLMinimalClockController(res, layoutInflater, colorExtractor, context));
 
         // Store the size of the display for generation of clock preview.
         DisplayMetrics dm = res.getDisplayMetrics();
