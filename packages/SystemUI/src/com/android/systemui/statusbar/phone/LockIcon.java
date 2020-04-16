@@ -290,7 +290,7 @@ public class LockIcon extends KeyguardAffordanceView implements OnUserInfoChange
             mForceUpdate = false;
             @LockAnimIndex final int lockAnimIndex = getAnimationIndexForTransition(lastState,
                     state, mPulsing, mDozing, keyguardJustShown);
-            boolean isAnim = false; // lockAnimIndex != -1;
+            boolean isAnim = lockAnimIndex != -1;
             int iconRes = isAnim ? getThemedAnimationResId(lockAnimIndex) : getIconForState(state);
 
             Drawable icon = mContext.getDrawable(iconRes);
