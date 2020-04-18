@@ -48,6 +48,7 @@ import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.SystemUI;
 import com.android.systemui.SystemUIApplication;
 import com.android.systemui.settings.CurrentUserTracker;
+import com.android.systemui.statusbar.notification.stack.NotificationStackScrollLayout;
 import com.android.systemui.statusbar.phone.StatusBarIconController;
 import com.android.systemui.statusbar.phone.SystemUIDialog;
 import com.android.systemui.util.leak.LeakDetector;
@@ -71,6 +72,7 @@ public class TunerServiceImpl extends TunerService {
     // Things that use the tunable infrastructure but are now real user settings and
     // shouldn't be reset with tuner settings.
     private static final String[] RESET_BLACKLIST = new String[] {
+            NotificationStackScrollLayout.LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED,
             QSTileHost.TILES_SETTING,
             Settings.Secure.DOZE_ALWAYS_ON
     };

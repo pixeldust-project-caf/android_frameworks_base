@@ -5857,6 +5857,15 @@ public final class Settings {
         public static final String STATUS_BAR_BRIGHTNESS_CONTROL = "status_bar_brightness_control";
 
         /**
+         * Whether to have translucent background on lockscreen notifications
+         * @hide
+         */
+        public static final String LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED = "lockscreen_translucent_notifications_bg_enabled";
+
+        /** @hide */
+        private static final Validator LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED_VALIDATOR = BOOLEAN_VALIDATOR;
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -6234,6 +6243,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(SLIM_RECENTS_BLACKLIST_VALUES);
             PRIVATE_SETTINGS.add(SLIM_RECENT_ENTER_EXIT_ANIMATION);
             PRIVATE_SETTINGS.add(LOCK_SHOW_STATUS_BAR);
+            PRIVATE_SETTINGS.add(LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED);
         }
 
         /**
@@ -6427,6 +6437,7 @@ public final class Settings {
             VALIDATORS.put(SLIM_RECENTS_BLACKLIST_VALUES, SLIM_RECENTS_BLACKLIST_VALUES_VALIDATOR);
             VALIDATORS.put(SLIM_RECENT_ENTER_EXIT_ANIMATION, SLIM_RECENT_ENTER_EXIT_ANIMATION_VALIDATOR);
             VALIDATORS.put(LOCK_SHOW_STATUS_BAR, LOCK_SHOW_STATUS_BAR_VALIDATOR);
+            VALIDATORS.put(LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED, LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED_VALIDATOR);
         }
 
         /**

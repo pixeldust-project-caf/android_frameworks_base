@@ -164,6 +164,10 @@ public class NotificationStackScrollLayout extends ViewGroup implements ScrollAd
         NotificationListContainer, ConfigurationListener, Dumpable,
         DynamicPrivacyController.Listener {
 
+    public static final String LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED =
+            "system:" +
+            Settings.System.LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED;
+
     public static final float BACKGROUND_ALPHA_DIMMED = 0.7f;
     private static final String TAG = "StackScroller";
     private static final boolean DEBUG = false;
@@ -188,7 +192,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ScrollAd
     private final NotificationSwipeHelper mSwipeHelper;
     private int mCurrentStackHeight = Integer.MAX_VALUE;
     private final Paint mBackgroundPaint = new Paint();
-    private final boolean mShouldDrawNotificationBackground;
+    private boolean mShouldDrawNotificationBackground;
     private boolean mHighPriorityBeforeSpeedBump;
     private final boolean mAllowLongPress;
     private boolean mDismissRtl;
@@ -562,8 +566,6 @@ public class NotificationStackScrollLayout extends ViewGroup implements ScrollAd
                 getContext(), mMenuEventListener, mFalsingManager);
         mStackScrollAlgorithm = createStackScrollAlgorithm(context);
         initView(context);
-        mShouldDrawNotificationBackground =
-                res.getBoolean(R.bool.config_drawNotificationBackground);
         mFadeNotificationsOnDismiss =
                 res.getBoolean(R.bool.config_fadeNotificationsOnDismiss);
         mRoundnessManager.setAnimatedChildren(mChildrenToAddAnimated);
@@ -580,8 +582,6 @@ public class NotificationStackScrollLayout extends ViewGroup implements ScrollAd
             blockingHelperManager.setNotificationShadeExpanded(height);
         });
 
-        boolean willDraw = mShouldDrawNotificationBackground || DEBUG;
-        setWillNotDraw(!willDraw);
         mBackgroundPaint.setAntiAlias(true);
         if (DEBUG) {
             mDebugPaint = new Paint();
@@ -598,8 +598,12 @@ public class NotificationStackScrollLayout extends ViewGroup implements ScrollAd
                 mHighPriorityBeforeSpeedBump = "1".equals(newValue);
             } else if (key.equals(Settings.Secure.NOTIFICATION_DISMISS_RTL)) {
                 updateDismissRtlSetting("1".equals(newValue));
+            } else if (key.equals(LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED)) {
+                mShouldDrawNotificationBackground = !"1".equals(newValue);
+                setWillNotDraw(!mShouldDrawNotificationBackground);
             }
-        }, HIGH_PRIORITY, Settings.Secure.NOTIFICATION_DISMISS_RTL);
+        }, HIGH_PRIORITY, Settings.Secure.NOTIFICATION_DISMISS_RTL,
+                LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED);
 
         mEntryManager.addNotificationEntryListener(new NotificationEntryListener() {
             @Override
@@ -614,6 +618,9 @@ public class NotificationStackScrollLayout extends ViewGroup implements ScrollAd
         dynamicPrivacyController.addListener(this);
         mDynamicPrivacyController = dynamicPrivacyController;
         mStatusbarStateController = (SysuiStatusBarStateController) statusBarStateController;
+
+        boolean willDraw = mShouldDrawNotificationBackground || DEBUG;
+        setWillNotDraw(!willDraw);
     }
 
     private void updateDismissRtlSetting(boolean dismissRtl) {
