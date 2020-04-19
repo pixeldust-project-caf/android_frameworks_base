@@ -9974,6 +9974,7 @@ public final class Settings {
 
         /**
          * Setting to allow setting rounded corner size and content padding
+         * @hide
          */
         public static final String SYSUI_ROUNDED_SIZE = "sysui_rounded_size";
         public static final String SYSUI_ROUNDED_CONTENT_PADDING = "sysui_rounded_content_padding";
