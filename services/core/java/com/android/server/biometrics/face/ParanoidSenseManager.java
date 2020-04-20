@@ -380,7 +380,7 @@ public class ParanoidSenseManager {
     private Intent getServiceIntent() {
         Intent intent = new Intent("sense:remote");
         intent.setComponent(ComponentName.unflattenFromString(
-                "com.paranoid.facesense/com.paranoid.facesense.SenseService"));
+                "co.aospa.facesense/co.aospa.facesense.SenseService"));
         return intent;
     }
 
