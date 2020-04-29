@@ -127,6 +127,6 @@
     <bool name="config_hasInternalAudioRecordingSupport">true</bool>
 
     <!-- Screen off delay -->
-    <integer name="config_screen_off_delay">1000</integer>
+    <integer name="config_screen_off_delay">0</integer>
 
 </resources>
