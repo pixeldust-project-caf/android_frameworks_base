@@ -16,6 +16,7 @@
 
 package com.android.systemui.biometrics;
 
+import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -44,6 +45,7 @@ import android.widget.ImageView;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
 import com.android.keyguard.KeyguardSecurityModel.SecurityMode;
+import com.android.internal.widget.LockPatternUtils;
 import com.android.systemui.R;
 
 import vendor.lineage.biometrics.fingerprint.inscreen.V1_0.IFingerprintInscreen;
@@ -81,6 +83,8 @@ public class FODCircleView extends ImageView implements OnTouchListener {
     private boolean mIsViewAdded;
 
     private Handler mHandler;
+
+    private LockPatternUtils mLockPatternUtils;
 
     private Timer mBurnInProtectionTimer;
 
@@ -180,10 +184,7 @@ public class FODCircleView extends ImageView implements OnTouchListener {
         public void onKeyguardBouncerChanged(boolean isBouncer) {
             mIsBouncer = isBouncer;
             if (mUpdateMonitor.isFingerprintDetectionRunning()) {
-                final SecurityMode sec = mUpdateMonitor.getSecurityMode();
-                final boolean maybeShow = sec == SecurityMode.Pattern ||
-                        sec == SecurityMode.PIN;
-                if (maybeShow || !mIsBouncer) {
+                if (isPinOrPattern(mUpdateMonitor.getCurrentUser()) || !isBouncer) {
                     show();
                 } else {
                     hide();
@@ -264,6 +265,8 @@ public class FODCircleView extends ImageView implements OnTouchListener {
         mUpdateMonitor.registerCallback(mMonitorCallback);
 
         mDisplayManager = context.getSystemService(DisplayManager.class);
+
+        mLockPatternUtils = new LockPatternUtils(mContext);
     }
 
     @Override
@@ -516,6 +519,20 @@ public class FODCircleView extends ImageView implements OnTouchListener {
         } catch (IllegalArgumentException e) {
             // do nothing
         }
+    }
+
+    private boolean isPinOrPattern(int userId) {
+        int passwordQuality = mLockPatternUtils.getActivePasswordQuality(userId);
+        switch (passwordQuality) {
+            // PIN
+            case DevicePolicyManager.PASSWORD_QUALITY_NUMERIC:
+            case DevicePolicyManager.PASSWORD_QUALITY_NUMERIC_COMPLEX:
+            // Pattern
+            case DevicePolicyManager.PASSWORD_QUALITY_SOMETHING:
+                return true;
+        }
+
+        return false;
     }
 
     private class BurnInProtectionTask extends TimerTask {

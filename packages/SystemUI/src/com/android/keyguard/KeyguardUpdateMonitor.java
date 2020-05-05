@@ -96,7 +96,6 @@ import com.android.internal.telephony.PhoneConstants;
 import com.android.internal.telephony.TelephonyIntents;
 import com.android.internal.util.Preconditions;
 import com.android.internal.widget.LockPatternUtils;
-import com.android.keyguard.KeyguardSecurityModel.SecurityMode;
 import com.android.settingslib.WirelessUtils;
 import com.android.systemui.R;
 import com.android.systemui.shared.system.ActivityManagerWrapper;
@@ -259,7 +258,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
     private int mFingerprintRunningState = BIOMETRIC_STATE_STOPPED;
     private int mFaceRunningState = BIOMETRIC_STATE_STOPPED;
     private LockPatternUtils mLockPatternUtils;
-    private SecurityMode mCurrentSecurityMode = SecurityMode.Invalid;
     private final IDreamManager mDreamManager;
     private boolean mIsDreaming;
     private final DevicePolicyManager mDevicePolicyManager;
@@ -927,14 +925,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
                 cb.onFaceUnlockStateChanged(running, userId);
             }
         }
-    }
-
-    public SecurityMode getSecurityMode() {
-        return mCurrentSecurityMode;
-    }
-
-    public void setSecurityMode(SecurityMode securityMode) {
-        mCurrentSecurityMode = securityMode;
     }
 
     public boolean isFaceUnlockRunning(int userId) {
@@ -1831,6 +1821,11 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
                     mFaceAuthenticationCallback, null, userId);
             setFaceRunningState(BIOMETRIC_STATE_RUNNING);
         }
+    }
+
+    public boolean isUnlockWithFingerprintPossible() {
+        final int userId = getCurrentUser();
+        return isUnlockWithFingerprintPossible(userId);
     }
 
     /**
