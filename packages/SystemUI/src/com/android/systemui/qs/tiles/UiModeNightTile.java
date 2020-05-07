@@ -17,6 +17,7 @@
 package com.android.systemui.qs.tiles;
 
 import android.app.UiModeManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.provider.Settings;
@@ -122,7 +123,8 @@ public class UiModeNightTile extends QSTileImpl<QSTile.BooleanState> implements
 
     @Override
     public Intent getLongClickIntent() {
-        return new Intent(Settings.ACTION_DARK_THEME_SETTINGS);
+        return new Intent().setComponent(new ComponentName(
+                "com.dirtyunicorns.themes", "com.dirtyunicorns.themes.MainActivity"));
     }
 
     @Override
