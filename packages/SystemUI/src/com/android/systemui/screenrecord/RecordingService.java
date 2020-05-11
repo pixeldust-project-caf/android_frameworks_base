@@ -77,8 +77,8 @@ public class RecordingService extends Service {
     private static final String ACTION_DELETE = "com.android.systemui.screenrecord.DELETE";
 
     private static final int TOTAL_NUM_TRACKS = 1;
-    private static final int VIDEO_BIT_RATE = 24000000;
-    private static final int VIDEO_FRAME_RATE = 30;
+    private static int VIDEO_BIT_RATE = 24000000;
+    private static int VIDEO_FRAME_RATE = 60;
     private static final int AUDIO_BIT_RATE = 16;
     private static final int AUDIO_SAMPLE_RATE = 44100;
 
@@ -234,6 +234,12 @@ public class RecordingService extends Service {
             Log.d(TAG, "Writing video output to: " + mTempFile.getAbsolutePath());
 
             setTapsVisible(mShowTaps);
+
+            // Set recording quality
+            if (getResources().getBoolean(R.bool.config_device_needs_lower_bitrate)) {
+                VIDEO_BIT_RATE = 8000000;
+                VIDEO_FRAME_RATE = 30;
+            }
 
             // Set up media recorder
             mMediaRecorder = new MediaRecorder();
