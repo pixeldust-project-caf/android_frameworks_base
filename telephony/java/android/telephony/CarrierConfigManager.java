@@ -582,6 +582,18 @@ public class CarrierConfigManager {
             "carrier_wfc_supports_wifi_only_bool";
 
     /**
+     * Flag specifying whether WFC over IMS supports the "ims preferred" option.  If false, the wifi
+     * calling settings will not include an option for "ims preferred".  If true, the wifi calling
+     * settings will include an option for "ims preferred"
+     * <p>
+     * By default, it is assumed that WFC does not support "ims preferred".
+     * @hide
+     */
+    public static final String KEY_CARRIER_WFC_SUPPORTS_IMS_PREFERRED_BOOL =
+            "carrier_wfc_supports_ims_preferred_bool";
+
+
+    /**
      * Default mode for WFC over IMS on home network:
      * <ul>
      *   <li>0: Wi-Fi only
@@ -2793,6 +2805,54 @@ public class CarrierConfigManager {
             "ping_test_before_data_switch_bool";
 
     /**
+     * Controls whether to switch data to primary from opportunistic subscription
+     * if primary is out of service. This control only affects system or 1st party app
+     * initiated data switch, but will not override data switch initiated by privileged carrier apps
+     * This carrier config is used to disable this feature.
+     * @hide
+     */
+    public static final String KEY_SWITCH_DATA_TO_PRIMARY_IF_PRIMARY_IS_OOS_BOOL =
+            "switch_data_to_primary_if_primary_is_oos_bool";
+
+    /**
+     * Controls the ping pong determination of opportunistic network.
+     * If opportunistic network is determined as out of service or below
+     * #KEY_OPPORTUNISTIC_NETWORK_EXIT_THRESHOLD_RSRP_INT or
+     * #KEY_OPPORTUNISTIC_NETWORK_EXIT_THRESHOLD_RSSNR_INT within
+     * #KEY_OPPORTUNISTIC_NETWORK_PING_PONG_TIME_LONG of switching to opportunistic network,
+     * it will be determined as ping pong situation by system app or 1st party app.
+     * @hide
+     */
+    public static final String KEY_OPPORTUNISTIC_NETWORK_PING_PONG_TIME_LONG =
+            "opportunistic_network_ping_pong_time_long";
+    /**
+     * Controls back off time in milli seconds for switching back to
+     * opportunistic subscription. This time will be added to
+     * {@link CarrierConfigManager#KEY_OPPORTUNISTIC_NETWORK_DATA_SWITCH_HYSTERESIS_TIME_LONG} to
+     * determine hysteresis time if there is ping pong situation
+     * (determined by system app or 1st party app) between primary and opportunistic
+     * subscription. Ping ping situation is defined in
+     * #KEY_OPPORTUNISTIC_NETWORK_PING_PONG_TIME_LONG.
+     * If ping pong situation continuous #KEY_OPPORTUNISTIC_NETWORK_BACKOFF_TIME_LONG
+     * will be added to previously determined hysteresis time.
+     * @hide
+     */
+    public static final String KEY_OPPORTUNISTIC_NETWORK_BACKOFF_TIME_LONG =
+            "opportunistic_network_backoff_time_long";
+
+    /**
+     * Controls the max back off time in milli seconds for switching back to
+     * opportunistic subscription.
+     * This time will be the max hysteresis that can be determined irrespective of there is
+     * continuous ping pong situation or not as described in
+     * #KEY_OPPORTUNISTIC_NETWORK_PING_PONG_TIME_LONG and
+     * #KEY_OPPORTUNISTIC_NETWORK_BACKOFF_TIME_LONG.
+     * @hide
+     */
+    public static final String KEY_OPPORTUNISTIC_NETWORK_MAX_BACKOFF_TIME_LONG =
+            "opportunistic_network_max_backoff_time_long";
+
+    /**
      * Indicates zero or more emergency number prefix(es), because some carrier requires
      * if users dial an emergency number address with a specific prefix, the combination of the
      * prefix and the address is also a valid emergency number to dial. For example, an emergency
@@ -2832,6 +2892,32 @@ public class CarrierConfigManager {
             "always_show_primary_signal_bar_in_opportunistic_network_boolean";
 
     /**
+     * Title text to be used in the emergency notification displayed when VoWifi is available
+     *
+     * @hide
+     */
+    public static final String KEY_EMERGENCY_NOTIFICATION_TITLE_STRING =
+            "emergency_notification_title_string";
+
+    /**
+     * Summary text to be used in the emergency notification displayed when VoWifi is available
+     *
+     * @hide
+     */
+    public static final String KEY_EMERGENCY_NOTIFICATION_SUMMARY_STRING =
+            "emergency_notification_summary_string";
+
+    /**
+     * Upon data switching between subscriptions within a carrier group, if switch depends on
+     * validation result, this value defines customized value of how long we wait for validation
+     * success before we fail and revoke the switch.
+     * Time out is in milliseconds.
+     * @hide
+     */
+    public static final String KEY_DATA_SWITCH_VALIDATION_TIMEOUT_LONG =
+            "data_switch_validation_timeout_long";
+
+    /**
      * GPS configs. See android.hardware.gnss@1.0 IGnssConfiguration.
      * @hide
      */
@@ -2842,7 +2928,6 @@ public class CarrierConfigManager {
         /**
          * Location information during (and after) an emergency call is only provided over control
          * plane signaling from the network.
-         * @hide
          */
         public static final int SUPL_EMERGENCY_MODE_TYPE_CP_ONLY = 0;
 
@@ -2850,7 +2935,6 @@ public class CarrierConfigManager {
          * Location information during (and after) an emergency call is provided over the data
          * plane and serviced by the framework GNSS service, but if it fails, the carrier also
          * supports control plane backup signaling.
-         * @hide
          */
         public static final int SUPL_EMERGENCY_MODE_TYPE_CP_FALLBACK = 1;
 
@@ -2858,7 +2942,6 @@ public class CarrierConfigManager {
          * Location information during (and after) an emergency call is provided over the data plane
          * and serviced by the framework GNSS service only. There is no backup signalling over the
          * control plane if it fails.
-         * @hide
          */
         public static final int SUPL_EMERGENCY_MODE_TYPE_DP_ONLY = 2;
 
@@ -2966,10 +3049,20 @@ public class CarrierConfigManager {
          * {@link #SUPL_EMERGENCY_MODE_TYPE_CP_ONLY}.
          * <p>
          * The default value for this configuration is {@link #SUPL_EMERGENCY_MODE_TYPE_CP_ONLY}.
-         * @hide
          */
         public static final String KEY_ES_SUPL_CONTROL_PLANE_SUPPORT_INT = KEY_PREFIX
                 + "es_supl_control_plane_support_int";
+
+        /**
+         * A list of roaming PLMNs where SUPL ES mode does not support a control-plane mechanism to
+         * get a user's location in the event that data plane SUPL fails or is otherwise
+         * unavailable.
+         * <p>
+         * A string array of PLMNs that do not support a control-plane mechanism for getting a
+         * user's location for SUPL ES.
+         */
+        public static final String KEY_ES_SUPL_DATA_PLANE_ONLY_ROAMING_PLMN_STRING_ARRAY =
+                KEY_PREFIX + "es_supl_data_plane_only_roaming_plmn_string_array";
 
         private static PersistableBundle getDefaults() {
             PersistableBundle defaults = new PersistableBundle();
@@ -2987,6 +3080,7 @@ public class CarrierConfigManager {
             defaults.putString(KEY_NFW_PROXY_APPS_STRING, "");
             defaults.putInt(KEY_ES_SUPL_CONTROL_PLANE_SUPPORT_INT,
                     SUPL_EMERGENCY_MODE_TYPE_CP_ONLY);
+            defaults.putStringArray(KEY_ES_SUPL_DATA_PLANE_ONLY_ROAMING_PLMN_STRING_ARRAY, null);
             return defaults;
         }
     }
@@ -3152,6 +3246,24 @@ public class CarrierConfigManager {
     public static final String KEY_CARRIER_CERTIFICATE_STRING_ARRAY =
             "carrier_certificate_string_array";
 
+    /**
+     * Flag indicating whether carrier supports multianchor conference.
+     * In multianchor conference, a participant of a conference can add
+     * other participants to the call using merge button thereby resulting
+     * in a conference with multi anchors.
+     * @hide
+     */
+    public static final String KEY_CARRIER_SUPPORTS_MULTIANCHOR_CONFERENCE =
+            "carrier_supports_multianchor_conference";
+
+    /**
+     * Determines the default RTT mode.
+     *
+     * @hide
+     */
+    public static final String KEY_DEFAULT_RTT_MODE_INT =
+            "default_rtt_mode_int";
+
     /** The default value for every variable. */
     private final static PersistableBundle sDefaults;
 
@@ -3184,6 +3296,7 @@ public class CarrierConfigManager {
         sDefaults.putBoolean(KEY_IGNORE_RESET_UT_CAPABILITY_BOOL, false);
         sDefaults.putBoolean(KEY_CARRIER_WFC_IMS_AVAILABLE_BOOL, false);
         sDefaults.putBoolean(KEY_CARRIER_WFC_SUPPORTS_WIFI_ONLY_BOOL, false);
+        sDefaults.putBoolean(KEY_CARRIER_WFC_SUPPORTS_IMS_PREFERRED_BOOL, false);
         sDefaults.putBoolean(KEY_CARRIER_DEFAULT_WFC_IMS_ENABLED_BOOL, false);
         sDefaults.putBoolean(KEY_CARRIER_DEFAULT_WFC_IMS_ROAMING_ENABLED_BOOL, false);
         sDefaults.putBoolean(KEY_CARRIER_PROMOTE_WFC_ON_CALL_FAIL_BOOL, false);
@@ -3556,6 +3669,13 @@ public class CarrierConfigManager {
         /* Default value is 3 seconds. */
         sDefaults.putLong(KEY_OPPORTUNISTIC_NETWORK_DATA_SWITCH_EXIT_HYSTERESIS_TIME_LONG, 3000);
         sDefaults.putBoolean(KEY_PING_TEST_BEFORE_DATA_SWITCH_BOOL, true);
+        sDefaults.putBoolean(KEY_SWITCH_DATA_TO_PRIMARY_IF_PRIMARY_IS_OOS_BOOL, true);
+        /* Default value is 60 seconds. */
+        sDefaults.putLong(KEY_OPPORTUNISTIC_NETWORK_PING_PONG_TIME_LONG, 60000);
+        /* Default value is 10 seconds. */
+        sDefaults.putLong(KEY_OPPORTUNISTIC_NETWORK_BACKOFF_TIME_LONG, 10000);
+        /* Default value is 60 seconds. */
+        sDefaults.putLong(KEY_OPPORTUNISTIC_NETWORK_MAX_BACKOFF_TIME_LONG, 60000);
         sDefaults.putAll(Gps.getDefaults());
         sDefaults.putAll(Wifi.getDefaults());
         sDefaults.putIntArray(KEY_CDMA_ENHANCED_ROAMING_INDICATOR_FOR_HOME_NETWORK_INT_ARRAY,
@@ -3580,6 +3700,11 @@ public class CarrierConfigManager {
                 });
         sDefaults.putBoolean(KEY_SUPPORT_WPS_OVER_IMS_BOOL, true);
         sDefaults.putStringArray(KEY_CARRIER_CERTIFICATE_STRING_ARRAY, null);
+        sDefaults.putLong(KEY_DATA_SWITCH_VALIDATION_TIMEOUT_LONG, 2000);
+        sDefaults.putString(KEY_EMERGENCY_NOTIFICATION_SUMMARY_STRING, "");
+        sDefaults.putString(KEY_EMERGENCY_NOTIFICATION_TITLE_STRING, "");
+        sDefaults.putBoolean(KEY_CARRIER_SUPPORTS_MULTIANCHOR_CONFERENCE, false);
+        sDefaults.putInt(KEY_DEFAULT_RTT_MODE_INT, 0);
     }
 
     /**

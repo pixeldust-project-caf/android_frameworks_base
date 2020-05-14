@@ -72,6 +72,8 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.codeaurora.internal.NrConfigType;
+import org.codeaurora.internal.NrIconType;
 
 public class MobileSignalController extends SignalController<
         MobileSignalController.MobileState, MobileSignalController.MobileIconGroup> {
@@ -297,6 +299,11 @@ public class MobileSignalController extends SignalController<
                 true, mObserver);
         mContext.getContentResolver().registerContentObserver(Global.getUriFor(
                 Global.MOBILE_DATA + mSubscriptionInfo.getSubscriptionId()),
+                true, mObserver);
+        mContext.getContentResolver().registerContentObserver(Global.getUriFor(Global.DATA_ROAMING),
+                true, mObserver);
+        mContext.getContentResolver().registerContentObserver(Global.getUriFor(
+                Global.DATA_ROAMING + mSubscriptionInfo.getSubscriptionId()),
                 true, mObserver);
         mContext.registerReceiver(mVolteSwitchObserver,
                 new IntentFilter("org.codeaurora.intent.action.ACTION_ENHANCE_4G_SWITCH"));
@@ -544,7 +551,10 @@ public class MobileSignalController extends SignalController<
         showDataIcon &= mCurrentState.isDefault || dataDisabled;
         int typeIcon = (showDataIcon || mConfig.alwaysShowDataRatIcon
                 || mConfig.alwaysShowNetworkTypeIcon) ? icons.mDataType : 0;
-        int volteIcon = isVolteSwitchOn() ? getVolteResId() : 0;
+        int volteIcon = mConfig.showVolteIcon && isVolteSwitchOn() ? getVolteResId() : 0;
+        if ( mConfig.enableRatIconEnhancement ) {
+            typeIcon = getEnhancementDataRatIcon();
+        }
         if (DEBUG) {
             Log.d(mTag, "notifyListeners mConfig.alwaysShowNetworkTypeIcon="
                     + mConfig.alwaysShowNetworkTypeIcon + "  mDataNetType:" + mDataNetType +
@@ -554,6 +564,7 @@ public class MobileSignalController extends SignalController<
                     + " showDataIcon=" + showDataIcon
                     + " mConfig.alwaysShowDataRatIcon=" + mConfig.alwaysShowDataRatIcon
                     + " icons.mDataType=" + icons.mDataType
+                    + " mConfig.showVolteIcon=" + mConfig.showVolteIcon
                     + " isVolteSwitchOn=" + isVolteSwitchOn()
                     + " volteIcon=" + volteIcon);
         }
@@ -773,11 +784,22 @@ public class MobileSignalController extends SignalController<
                 }
             }
 
-        }else if ( nr5GIconGroup == null && isSideCarNsaValid() ) {
+        }
+
+        //Modem has centralized logic to display 5G icon based on carrier requirements
+        //For 5G icon display, only query NrIconType reported by modem
+        nr5GIconGroup = null;
+        if ( isSideCarValid() ) {
             nr5GIconGroup = mFiveGState.getIconGroup();
             mCurrentState.iconGroup = nr5GIconGroup;
-            if (DEBUG) {
-                Log.d(mTag,"get 5G NSA icon from side-car");
+            if ( mFiveGState.getSignalLevel() > mCurrentState.level ) {
+                mCurrentState.level = mFiveGState.getSignalLevel();
+            }
+        }else {
+            if (mNetworkToIconLookup.indexOfKey(mDataNetType) >= 0) {
+                mCurrentState.iconGroup = mNetworkToIconLookup.get(mDataNetType);
+            } else {
+                mCurrentState.iconGroup = mDefaultIcons;
             }
         }
 
@@ -832,6 +854,8 @@ public class MobileSignalController extends SignalController<
                 }
             }
         }
+        mCurrentState.mobileDataEnabled = mPhone.isDataEnabled();
+        mCurrentState.roamingDataEnabled = mPhone.isDataRoamingEnabled();
 
         notifyListenersIfNecessary();
     }
@@ -1026,6 +1050,15 @@ public class MobileSignalController extends SignalController<
         return registered;
     }
 
+    private boolean isSideCarValid() {
+        return isSideCarSaValid() || isSideCarNsaValid();
+    }
+
+    private boolean isSideCarSaValid() {
+        return mFiveGState.getNrConfigType() == NrConfigType.SA_CONFIGURATION
+                && mFiveGState.getNrIconType() != NrIconType.INVALID;
+    }
+
     private boolean isSideCarNsaValid() {
         return  mFiveGState.isNrIconTypeValid() && isDataRegisteredOnLte();
     }
@@ -1036,6 +1069,31 @@ public class MobileSignalController extends SignalController<
 
     private int getNrLevel() {
         return mCellSignalStrengthNr != null ? mCellSignalStrengthNr.getLevel() : 0;
+    }
+
+    private boolean showDataRatIcon() {
+        boolean result = false;
+        if ( mCurrentState.mobileDataEnabled ) {
+            if(mCurrentState.roamingDataEnabled || !mCurrentState.roaming) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    private int getEnhancementDataRatIcon() {
+        int ratIcon = 0;
+        if ( showDataRatIcon() ) {
+            MobileIconGroup iconGroup = mDefaultIcons;
+            int dataNetType = getDataNetworkType();
+            if ( isSideCarValid() ) {
+                iconGroup = mFiveGState.getIconGroup();
+            }else if (mNetworkToIconLookup.indexOfKey(dataNetType) >= 0) {
+                iconGroup = mNetworkToIconLookup.get(dataNetType);
+            }
+            ratIcon = iconGroup.mDataType;
+        }
+        return ratIcon;
     }
 
     @Override
@@ -1210,7 +1268,9 @@ public class MobileSignalController extends SignalController<
     private final BroadcastReceiver mVolteSwitchObserver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             Log.d(mTag, "action=" + intent.getAction());
-            notifyListeners();
+            if ( mConfig.showVolteIcon ) {
+                notifyListeners();
+            }
         }
     };
 
@@ -1247,7 +1307,8 @@ public class MobileSignalController extends SignalController<
         boolean imsRegistered;
         boolean voiceCapable;
         boolean videoCapable;
-
+        boolean mobileDataEnabled;
+        boolean roamingDataEnabled;
 
         @Override
         public void copyFrom(State s) {
@@ -1267,6 +1328,8 @@ public class MobileSignalController extends SignalController<
             imsRegistered = state.imsRegistered;
             voiceCapable = state.voiceCapable;
             videoCapable = state.videoCapable;
+            mobileDataEnabled = state.mobileDataEnabled;
+            roamingDataEnabled = state.roamingDataEnabled;
         }
 
         @Override
@@ -1287,7 +1350,9 @@ public class MobileSignalController extends SignalController<
             builder.append("defaultDataOff=").append(defaultDataOff);
             builder.append("imsRegistered=").append(imsRegistered).append(',');
             builder.append("voiceCapable=").append(voiceCapable).append(',');
-            builder.append("videoCapable=").append(videoCapable);
+            builder.append("videoCapable=").append(videoCapable).append(',');
+            builder.append("mobileDataEnabled=").append(mobileDataEnabled).append(',');
+            builder.append("roamingDataEnabled=").append(roamingDataEnabled);
         }
 
         @Override
@@ -1306,7 +1371,9 @@ public class MobileSignalController extends SignalController<
                     && ((MobileState) o).defaultDataOff == defaultDataOff
                     && ((MobileState) o).imsRegistered == imsRegistered
                     && ((MobileState) o).voiceCapable == voiceCapable
-                    && ((MobileState) o).videoCapable == videoCapable;
+                    && ((MobileState) o).videoCapable == videoCapable
+                    && ((MobileState) o).mobileDataEnabled == mobileDataEnabled
+                    && ((MobileState) o).roamingDataEnabled == roamingDataEnabled;
         }
     }
 }

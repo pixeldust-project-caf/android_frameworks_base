@@ -439,33 +439,39 @@ public class PhoneStatusBarPolicy
         int iconId = R.drawable.stat_sys_data_bluetooth_connected;
         String contentDescription =
                 mContext.getString(R.string.accessibility_quick_settings_bluetooth_on);
-        boolean bluetoothEnabled = false;
+        boolean bluetoothVisible = false;
         if (mBluetooth != null) {
-            bluetoothEnabled = mBluetooth.isBluetoothEnabled();
-            final Collection<CachedBluetoothDevice> devices = mBluetooth.getDevices();
-            if (devices != null) {
-                // get battery level for the first device with battery level support
-                for (CachedBluetoothDevice device : devices) {
-                    // don't get the level if still pairing
-                    if (mBluetooth.getBondState(device) == BluetoothDevice.BOND_NONE) continue;
-                    int state = device.getMaxConnectionState();
-                    if (state == BluetoothProfile.STATE_CONNECTED) {
-                        int batteryLevel = device.getBatteryLevel();
-                        BluetoothClass type = device.getBtClass();
-                        if (batteryLevel != BluetoothDevice.BATTERY_LEVEL_UNKNOWN && showBatteryForThis(type)) {
-                            iconId = getBtLevelIconRes(batteryLevel);
-                        } else {
-                            iconId = R.drawable.stat_sys_data_bluetooth_connected;
+            if (mBluetooth.isBluetoothConnected()
+                    && (mBluetooth.isBluetoothAudioActive()
+                    || !mBluetooth.isBluetoothAudioProfileOnly())) {
+                contentDescription = mContext.getString(
+                        R.string.accessibility_bluetooth_connected);
+                final Collection<CachedBluetoothDevice> devices = mBluetooth.getDevices();
+                if (devices != null) {
+                    // get battery level for the first device with battery level support
+                    for (CachedBluetoothDevice device : devices) {
+                        // don't get the level if still pairing
+                        if (mBluetooth.getBondState(device) == BluetoothDevice.BOND_NONE) continue;
+                        int state = device.getMaxConnectionState();
+                        if (state == BluetoothProfile.STATE_CONNECTED) {
+                            int batteryLevel = device.getBatteryLevel();
+                            BluetoothClass type = device.getBtClass();
+                            if (batteryLevel != BluetoothDevice.BATTERY_LEVEL_UNKNOWN && showBatteryForThis(type)) {
+                                iconId = getBtLevelIconRes(batteryLevel);
+                            } else {
+                                iconId = R.drawable.stat_sys_data_bluetooth_connected;
+                            }
+                            contentDescription = mContext.getString(R.string.accessibility_bluetooth_connected);
+                            break;
                         }
-                        contentDescription = mContext.getString(R.string.accessibility_bluetooth_connected);
-                        break;
                     }
                 }
+                bluetoothVisible = mBluetooth.isBluetoothEnabled();
             }
         }
 
         mIconController.setIcon(mSlotBluetooth, iconId, contentDescription);
-        mIconController.setIconVisibility(mSlotBluetooth, bluetoothEnabled);
+        mIconController.setIconVisibility(mSlotBluetooth, bluetoothVisible);
     }
 
     private int getBtLevelIconRes(int batteryLevel) {

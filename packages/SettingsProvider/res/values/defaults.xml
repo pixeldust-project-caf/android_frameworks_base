@@ -244,4 +244,7 @@
 
     <!-- Default for Settings.Global.DEVELOPMENT_SETTINGS_ENABLED -->
     <integer  name="def_development_settings">1</integer>
+
+    <!-- Default for Settings.System.TIME_12_24 -->
+    <string name="def_time_format" translatable="false">12</string>
 </resources>

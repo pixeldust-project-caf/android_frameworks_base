@@ -413,6 +413,16 @@ public final class ShutdownThread extends Thread {
             sIsStarted = true;
         }
 
+        /* If shutdown animation enabled, notify bootanimation module to play
+           shutdown animation by set prop */
+        final boolean shutdownAnimationEnabled = context.getResources()
+                .getBoolean(com.android.internal.R.bool.config_shutdownAnimationEnabled);
+        if (shutdownAnimationEnabled) {
+            SystemProperties.set("sys.powerctl", "shutdownanim");
+            SystemProperties.set("service.bootanim.exit", "0");
+            SystemProperties.set("ctl.start", "bootanim");
+        }
+
         sInstance.mProgressDialog = showShutdownDialog(context);
         sInstance.mContext = context;
         sInstance.mPowerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
@@ -759,6 +769,22 @@ public final class ShutdownThread extends Thread {
                         Log.i(TAG, "Vendor subsystem(s) shutdown successful");
                 }
         }
+        final boolean shutdownAnimEnabled = context.getResources().getBoolean(
+                com.android.internal.R.bool.config_shutdownAnimationEnabled);
+
+        if (shutdownAnimEnabled) {
+            final int shutdownAnimDuration = context.getResources().getInteger(
+                    com.android.internal.R.integer.config_shutdownAnimationDurationMs);
+            int sleepDuration = reboot ? shutdownAnimDuration
+                    : shutdownAnimDuration - SHUTDOWN_VIBRATE_MS;
+            try {
+                if (sleepDuration > 0) {
+                    Thread.sleep(sleepDuration);
+                }
+            } catch (InterruptedException unused) {
+            }
+        }
+
         if (reboot) {
             Log.i(TAG, "Rebooting, reason: " + reason);
             PowerManagerService.lowLevelReboot(reason);
@@ -780,6 +806,7 @@ public final class ShutdownThread extends Thread {
             } catch (InterruptedException unused) {
             }
         }
+
         // Shutdown power
         Log.i(TAG, "Performing low-level shutdown...");
         PowerManagerService.lowLevelShutdown(reason);
