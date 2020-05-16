@@ -57,11 +57,6 @@
     <string name="tuner_brightness_position_bottom">Brightness slider on bottom</string>
     <string name="tuner_show_secure_title">Show security footer</string>
 
-    <!-- LTE QS Tile -->
-    <string name="qs_lte_label">LTE</string>
-    <string name="lte_on">LTE ON </string>
-    <string name="lte_off">LTE OFF</string>
-
     <!-- Sound QS Tile -->
     <string name="quick_settings_sound_label">Sound</string>
     <string name="quick_settings_sound_ring">Ring</string>
