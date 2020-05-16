@@ -551,7 +551,7 @@ public class MobileSignalController extends SignalController<
         showDataIcon &= mCurrentState.isDefault || dataDisabled;
         int typeIcon = (showDataIcon || mConfig.alwaysShowDataRatIcon
                 || mConfig.alwaysShowNetworkTypeIcon) ? icons.mDataType : 0;
-        int volteIcon = mConfig.showVolteIcon && isVolteSwitchOn() ? getVolteResId() : 0;
+        int volteIcon = isVolteSwitchOn() ? getVolteResId() : 0;
         if ( mConfig.enableRatIconEnhancement ) {
             typeIcon = getEnhancementDataRatIcon();
         }
@@ -564,7 +564,6 @@ public class MobileSignalController extends SignalController<
                     + " showDataIcon=" + showDataIcon
                     + " mConfig.alwaysShowDataRatIcon=" + mConfig.alwaysShowDataRatIcon
                     + " icons.mDataType=" + icons.mDataType
-                    + " mConfig.showVolteIcon=" + mConfig.showVolteIcon
                     + " isVolteSwitchOn=" + isVolteSwitchOn()
                     + " volteIcon=" + volteIcon);
         }
@@ -1268,9 +1267,7 @@ public class MobileSignalController extends SignalController<
     private final BroadcastReceiver mVolteSwitchObserver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             Log.d(mTag, "action=" + intent.getAction());
-            if ( mConfig.showVolteIcon ) {
-                notifyListeners();
-            }
+            notifyListeners();
         }
     };
 
