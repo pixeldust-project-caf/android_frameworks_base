@@ -231,9 +231,12 @@
     <string name="quick_settings_screen_record_label">Bildschirmaufzeichnung</string>
     <string name="quick_settings_screen_record_start">Start</string>
     <string name="quick_settings_screen_record_stop">Stopp</string>
-    <string name="screenrecord_audio_label">Ton aufnehmen</string>
     <string name="screenrecord_description">Während der Aufnahme kann das Android Betriebssystem alle vertraulichen Informationen erfassen, die auf Ihrem Bildschirm sichtbar sind oder auf Ihrem Gerät abgespielt werden. Dies umfasst Passwörter, Zahlungsinformationen, Fotos, Nachrichten und Audio.</string>
-    <string name="screenrecord_mic_label">Mikrofon</string>
+    <string name="screenrecord_audio_title">Audioeingang</string>
+    <string name="screenrecord_audio_summary">Wählen aus welcher Quelle der Ton aufgezeichnet wird.</string>
+    <string name="screenrecord_audio_recording_internal">Intern</string>
+    <string name="screenrecord_audio_recording_microphone">Mikrofon</string>
+    <string name="screenrecord_audio_recording_off">Deaktiviert</string>
     <string name="screenrecord_ongoing_screen_and_audio">Bild und Ton werden aufgezeichnet</string>
     <string name="screenrecord_ongoing_screen_only">Bildschirm wird aufgezeichnet screen</string>
     <string name="screenrecord_start">Start</string>
