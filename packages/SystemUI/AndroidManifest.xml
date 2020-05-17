@@ -92,7 +92,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.MANAGE_SENSOR_PRIVACY" />
 
-    <!-- Visualizer -->
+    <!-- Pulse / Visualizer -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
