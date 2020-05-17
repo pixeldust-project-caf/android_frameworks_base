@@ -6099,6 +6099,13 @@ public final class Settings {
          */
         public static final String SCREENRECORD_AUDIO_SOURCE = "screenrecord_audio_source";
 
+
+        /**
+        * VolumePanel Themes
+        * @hide
+        */
+        public static final String AUDIO_PANEL_VIEW_THEME = "audio_panel_view_theme";
+
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
