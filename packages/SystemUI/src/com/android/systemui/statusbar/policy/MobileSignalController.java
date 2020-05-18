@@ -370,7 +370,7 @@ public class MobileSignalController extends SignalController<
         mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSPA, hGroup);
         mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSPAP, hPlusGroup);
 
-        boolean shouldShow4G = mShow4GUserConfig == -1 ? 
+        boolean shouldShow4G = mShow4GUserConfig == -1 ?
                 mConfig.show4gForLte : (mShow4GUserConfig == 1);
         if (shouldShow4G) {
             mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_LTE, TelephonyIcons.FOUR_G);
@@ -552,6 +552,15 @@ public class MobileSignalController extends SignalController<
         int typeIcon = (showDataIcon || mConfig.alwaysShowDataRatIcon
                 || mConfig.alwaysShowNetworkTypeIcon) ? icons.mDataType : 0;
         int volteIcon = isVolteSwitchOn() ? getVolteResId() : 0;
+
+        MobileIconGroup vowifiIconGroup = getVowifiIconGroup();
+        if ( mConfig.showVowifiIcon && vowifiIconGroup != null ) {
+            typeIcon = vowifiIconGroup.mDataType;
+            statusIcon = new IconState(true,
+                    mCurrentState.enabled && !mCurrentState.airplaneMode? statusIcon.icon : 0,
+                    statusIcon.contentDescription);
+        }
+
         if ( mConfig.enableRatIconEnhancement ) {
             typeIcon = getEnhancementDataRatIcon();
         }
@@ -1096,6 +1105,21 @@ public class MobileSignalController extends SignalController<
             ratIcon = iconGroup.mDataType;
         }
         return ratIcon;
+    }
+
+    private boolean isVowifiAvailable() {
+        return mCurrentState.voiceCapable &&  mCurrentState.imsRegistered
+                && mServiceState.getDataNetworkType() == TelephonyManager.NETWORK_TYPE_IWLAN;
+    }
+
+    private MobileIconGroup getVowifiIconGroup() {
+        if ( isVowifiAvailable() && !isCallIdle() ) {
+            return TelephonyIcons.VOWIFI_CALLING;
+        } else if (isVowifiAvailable()) {
+            return TelephonyIcons.VOWIFI;
+        } else {
+            return null;
+        }
     }
 
     @Override
