@@ -136,4 +136,6 @@
          vendor fingerprint HAL implementations. -->
     <bool name="config_fingerprintPostResetRunnableForAllClients">false</bool>
 
+    <bool name="config_canForceDozeNotifications">true</bool>
+
 </resources>

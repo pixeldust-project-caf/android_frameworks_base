@@ -157,6 +157,13 @@ public class DozeScrimController implements StateListener {
         mHandler.removeCallbacks(mPulseOutExtended);
     }
 
+    public void extendPulseForMusicTicker() {
+        mHandler.removeCallbacks(mPulseOut);
+        mHandler.removeCallbacks(mPulseOutExtended);
+        mHandler.postDelayed(mPulseOutExtended,
+                mDozeParameters.getPulseVisibleDurationExtended());
+    }
+
     private void cancelPulsing() {
         if (mPulseCallback != null) {
             if (DEBUG) Log.d(TAG, "Cancel pulsing");

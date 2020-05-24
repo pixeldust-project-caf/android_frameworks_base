@@ -129,6 +129,14 @@ public class DozeTriggers implements DozeMachine.Part {
         DozeLog.traceNotificationPulse(mContext);
     }
 
+    private void onNotificationForced() {
+        if (DozeMachine.DEBUG) Log.d(TAG, "requestNotificationPulse");
+        mNotificationPulseTime = SystemClock.elapsedRealtime();
+        if (!mConfig.pulseOnNotificationAvailable() && !mConfig.canForceDozeNotifications()) return;
+        requestPulse(DozeLog.PULSE_REASON_FORCED_MEDIA_NOTIFICATION, false /* performedProxCheck */, null);
+        DozeLog.traceNotificationPulse(mContext);
+    }
+
     private static void runIfNotNull(Runnable runnable) {
         if (runnable != null) {
             runnable.run();
@@ -594,6 +602,11 @@ public class DozeTriggers implements DozeMachine.Part {
         @Override
         public void onNotificationAlerted(Runnable onPulseSuppressedListener) {
             onNotification(onPulseSuppressedListener);
+        }
+
+        @Override
+        public void onNotificationMedia() {
+            onNotificationForced();
         }
 
         @Override

@@ -82,6 +82,8 @@ public interface DozeHost {
          */
         default void onNotificationAlerted(Runnable onPulseSuppressedListener) {}
 
+        default void onNotificationMedia() {}
+
         /**
          * Called when battery state or power save mode changes.
          * @param active whether power save is active or not

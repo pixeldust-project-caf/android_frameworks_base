@@ -56,7 +56,20 @@ public class AmbientDisplayConfiguration {
                 || tapGestureEnabled(user)
                 || doubleTapGestureEnabled(user)
                 || isAmbientTickerEnabled(user)
+                || pulseOnMedia(user)
                 || isAnyFlashlightActionEnabled(user);
+    }
+
+    /** {@hide} */
+    public boolean pulseOnMedia(int user) {
+        boolean enabled = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.FORCE_AMBIENT_FOR_MEDIA, 1, user) != 0;
+        return enabled && ambientDisplayAvailable();
+    }
+
+    /** {@hide} */
+    public boolean canForceDozeNotifications() {
+        return mContext.getResources().getBoolean(R.bool.config_canForceDozeNotifications);
     }
 
     /** {@hide} */

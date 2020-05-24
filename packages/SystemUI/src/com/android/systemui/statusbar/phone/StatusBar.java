@@ -504,6 +504,8 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private boolean mHeadsUpDisabled, mGamingModeActivated;
 
+    private boolean mAmbientMediaPlaying;
+
     // XXX: gesture research
     private final GestureRecorder mGestureRec = DEBUG_GESTURES
         ? new GestureRecorder("/sdcard/statusbar_gestures.dat")
@@ -830,6 +832,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.QS_BRIGHTNESS_SLIDER_FOOTER))) {
                 updateBrightnessSliderOverlay();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.FORCE_AMBIENT_FOR_MEDIA))) {
+                setForceAmbient();
             }
             update();
         }
@@ -844,6 +849,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             setMediaHeadsup();
             setAmbientVis();
             setScreenBrightnessMode();
+            setForceAmbient();
         }
     }
 
@@ -911,6 +917,16 @@ public class StatusBar extends SystemUI implements DemoMode,
         mBrightnessControl = Settings.System.getIntForUser(
             mContext.getContentResolver(), Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL, 0,
             UserHandle.USER_CURRENT) == 1;
+    }
+
+    private void setForceAmbient() {
+        mAmbientMediaPlaying = Settings.System.getIntForUser(mContext.getContentResolver(),
+                    Settings.System.FORCE_AMBIENT_FOR_MEDIA, 1,
+                    UserHandle.USER_CURRENT) != 0;
+        if (isAmbientContainerAvailable()) {
+            ((AmbientIndicationContainer)mAmbientIndicationContainer).setIndication(
+                    mMediaManager.getMediaMetadata(), null);
+        }
     }
 
     private void setPulseOnNewTracks() {
@@ -1267,7 +1283,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         mAmbientIndicationContainer = mStatusBarWindow.findViewById(
                 R.id.ambient_indication_container);
         if (mAmbientIndicationContainer != null) {
-            ((AmbientIndicationContainer) mAmbientIndicationContainer).initializeView(this);
+            ((AmbientIndicationContainer) mAmbientIndicationContainer).initializeView(this, mHandler);
         }
 
         // TODO: Find better place for this callback.
@@ -1964,6 +1980,12 @@ public class StatusBar extends SystemUI implements DemoMode,
                 && mFalsingManager.isReportingEnabled() ? View.VISIBLE : View.INVISIBLE);
     }
 
+    public void triggerAmbientForMedia() {
+        if (mAmbientMediaPlaying) {
+            mDozeServiceHost.fireNotificationMedia();
+        }
+    }
+
     /**
      * State is one or more of the DISABLE constants from StatusBarManager.
      */
@@ -2194,6 +2216,10 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     public boolean isPulsing() {
         return mPulsing;
+    }
+
+    public DozeScrimController getDozeScrimController() {
+        return mDozeScrimController;
     }
 
     public boolean hideStatusBarIconsWhenExpanded() {
@@ -4236,9 +4262,9 @@ public class StatusBar extends SystemUI implements DemoMode,
                         mStatusBarStateController.fromShadeLocked());
             }
             if (mStatusBarView != null) mStatusBarView.removePendingHideExpandedRunnables();
-            if (mAmbientIndicationContainer != null) {
+            /*if (mAmbientIndicationContainer != null) {
                 mAmbientIndicationContainer.setVisibility(View.VISIBLE);
-            }
+            }*/
         } else {
             if (mKeyguardUserSwitcher != null) {
                 mKeyguardUserSwitcher.setKeyguard(false,
@@ -4246,9 +4272,9 @@ public class StatusBar extends SystemUI implements DemoMode,
                                 mState == StatusBarState.SHADE_LOCKED ||
                                 mStatusBarStateController.fromShadeLocked());
             }
-            if (mAmbientIndicationContainer != null) {
+            /*if (mAmbientIndicationContainer != null) {
                 mAmbientIndicationContainer.setVisibility(View.INVISIBLE);
-            }
+            }*/
         }
         updateDozingState();
         checkBarModes();
@@ -4291,6 +4317,11 @@ public class StatusBar extends SystemUI implements DemoMode,
             dozing = false;
         }
         mStatusBarStateController.setIsDozing(dozing);
+
+        if (mAmbientMediaPlaying && mAmbientIndicationContainer instanceof DozeReceiver) {
+            ((AmbientIndicationContainer)mAmbientIndicationContainer).setDozing(mDozing);
+
+        }
 
         if (mAmbientVisualizer && mDozing) {
             mVisualizerView.setVisible(true);
@@ -4787,6 +4818,12 @@ public class StatusBar extends SystemUI implements DemoMode,
             }
         }
 
+        public void fireNotificationMedia() {
+            for (Callback callback : mCallbacks) {
+                callback.onNotificationMedia();
+            }
+        }
+
         @Override
         public void addCallback(@NonNull Callback callback) {
             mCallbacks.add(callback);
@@ -4804,6 +4841,10 @@ public class StatusBar extends SystemUI implements DemoMode,
                 DozeLog.traceDozing(mContext, mDozing);
                 updateDozing();
                 updateIsKeyguard();
+
+                if (isAmbientContainerAvailable()) {
+                    ((AmbientIndicationContainer)mAmbientIndicationContainer).setDozing(true);
+                }
             }else{
                 mDozingRequested = true;
             }
@@ -4838,8 +4879,11 @@ public class StatusBar extends SystemUI implements DemoMode,
                 public void onPulseStarted() {
                     callback.onPulseStarted();
                     updateNotificationPanelTouchState();
-                    setPulsing(true);
-                    KeyguardUpdateMonitor.getInstance(mContext).setPulsing(true);
+                    if (reason != DozeLog.PULSE_REASON_FORCED_MEDIA_NOTIFICATION) {
+                        setPulsing(true);
+                        KeyguardUpdateMonitor.getInstance(mContext).setPulsing(true);
+                    }
+                    setOnPulseEvent(reason, true);
                 }
 
                 @Override
@@ -4853,6 +4897,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                     }
                     setPulsing(false);
                     KeyguardUpdateMonitor.getInstance(mContext).setPulsing(false);
+                    setOnPulseEvent(-1, false);
                 }
 
                 private void setPulsing(boolean pulsing) {
@@ -4870,6 +4915,15 @@ public class StatusBar extends SystemUI implements DemoMode,
                     mPulseExpansionHandler.setPulsing(pulsing);
                     mWakeUpCoordinator.setPulsing(pulsing);
                 }
+
+                private void setOnPulseEvent(int reason, boolean pulsing) {
+                    mNotificationPanel.setCleanLayout(reason);
+                    mNotificationShelf.setCleanLayout(reason);
+                    if (isAmbientContainerAvailable()) {
+                        ((AmbientIndicationContainer)mAmbientIndicationContainer).setOnPulseEvent(
+                                reason, pulsing);
+                    }
+                }
             }, reason);
             // DozeScrimController is in pulse state, now let's ask ScrimController to start
             // pulsing and draw the black frame, if necessary.
@@ -4882,6 +4936,10 @@ public class StatusBar extends SystemUI implements DemoMode,
                 mDozingRequested = false;
                 DozeLog.traceDozing(mContext, mDozing);
                 updateDozing();
+
+                if (isAmbientContainerAvailable()) {
+                    ((AmbientIndicationContainer)mAmbientIndicationContainer).setDozing(false);
+                }
             }
         }
 
@@ -4899,7 +4957,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         @Override
         public void dozeTimeTick() {
             mNotificationPanel.dozeTimeTick();
-            if (mAmbientIndicationContainer instanceof DozeReceiver) {
+            if (mAmbientMediaPlaying && mAmbientIndicationContainer instanceof DozeReceiver) {
                 ((DozeReceiver) mAmbientIndicationContainer).dozeTimeTick();
             }
         }
@@ -5099,6 +5157,10 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     public boolean isDeviceInteractive() {
         return mDeviceInteractive;
+    }
+
+    private boolean isAmbientContainerAvailable() {
+        return mAmbientMediaPlaying && mAmbientIndicationContainer != null;
     }
 
     private final BroadcastReceiver mBannerActionBroadcastReceiver = new BroadcastReceiver() {

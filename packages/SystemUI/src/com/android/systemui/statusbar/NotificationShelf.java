@@ -38,6 +38,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.systemui.Dependency;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
+import com.android.systemui.doze.DozeLog;
 import com.android.systemui.plugins.statusbar.StatusBarStateController;
 import com.android.systemui.plugins.statusbar.StatusBarStateController.StateListener;
 import com.android.systemui.statusbar.notification.NotificationUtils;
@@ -98,6 +99,8 @@ public class NotificationShelf extends ActivatableNotificationView implements
     private Rect mClipRect = new Rect();
     private int mCutoutHeight;
     private int mGapHeight;
+
+    private boolean mForcedMediaDoze;
 
     @Inject
     public NotificationShelf(@Named(VIEW_CONTEXT) Context context,
@@ -897,6 +900,17 @@ public class NotificationShelf extends ActivatableNotificationView implements
     public void onStateChanged(int newState) {
         mStatusBarState = newState;
         updateInteractiveness();
+        updateIconVisibility();
+    }
+
+    public void setCleanLayout(int reason) {
+        mForcedMediaDoze =
+                reason == DozeLog.PULSE_REASON_FORCED_MEDIA_NOTIFICATION;
+        updateIconVisibility();
+    }
+
+    public void updateIconVisibility() {
+        mShelfIcons.setVisibility(mForcedMediaDoze ? View.INVISIBLE : View.VISIBLE);
     }
 
     private void updateInteractiveness() {
