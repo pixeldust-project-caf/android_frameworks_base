@@ -164,6 +164,7 @@ import com.android.systemui.R;
 import com.android.systemui.SystemUI;
 import com.android.systemui.SystemUIFactory;
 import com.android.systemui.UiOffloadThread;
+import com.android.systemui.ambientmusic.AmbientIndicationContainer;
 import com.android.systemui.appops.AppOpsController;
 import com.android.systemui.assist.AssistManager;
 import com.android.systemui.bubbles.BubbleController;
@@ -1265,6 +1266,9 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         mAmbientIndicationContainer = mStatusBarWindow.findViewById(
                 R.id.ambient_indication_container);
+        if (mAmbientIndicationContainer != null) {
+            ((AmbientIndicationContainer) mAmbientIndicationContainer).initializeView(this);
+        }
 
         // TODO: Find better place for this callback.
         if (mBatteryController != null) {
