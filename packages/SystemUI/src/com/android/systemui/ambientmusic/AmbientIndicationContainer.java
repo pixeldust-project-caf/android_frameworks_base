@@ -3,10 +3,12 @@ package com.android.systemui.ambientmusic;
 import android.content.Context;
 import android.graphics.Color;
 import android.media.MediaMetadata;
+import android.media.session.PlaybackState;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.text.TextUtils.TruncateAt;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -15,15 +17,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.systemui.AutoReinflateContainer;
+import com.android.systemui.Dependency;
 import com.android.systemui.R;
 import com.android.systemui.doze.DozeLog;
+import com.android.systemui.statusbar.NotificationMediaManager;
 import com.android.systemui.statusbar.phone.StatusBar;
 
 import com.android.systemui.ambientmusic.AmbientIndicationInflateListener;
 
 import java.util.concurrent.TimeUnit;
 
-public class AmbientIndicationContainer extends AutoReinflateContainer {
+public class AmbientIndicationContainer extends AutoReinflateContainer implements
+        NotificationMediaManager.MediaListener {
+
+    public static final boolean DEBUG_AMBIENTMUSIC = true;
+
     private View mAmbientIndication;
     private ImageView mIcon;
     private CharSequence mIndication;
@@ -31,7 +39,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer {
     private TextView mText;
     private TextView mTrackLength;
     private Context mContext;
-    private MediaMetadata mMediaMetaData;
+    protected MediaMetadata mMediaMetaData;
     private String mMediaText;
     private boolean mForcedMediaDoze;
     private Handler mHandler;
@@ -41,8 +49,11 @@ public class AmbientIndicationContainer extends AutoReinflateContainer {
     private boolean mDozing;
     private String mLastInfo;
 
+    protected NotificationMediaManager mMediaManager;
+
     public AmbientIndicationContainer(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
+        initDependencies();
         mContext = context;
     }
 
@@ -54,6 +65,9 @@ public class AmbientIndicationContainer extends AutoReinflateContainer {
         mStatusBar = statusBar;
         addInflateListener(new AmbientIndicationInflateListener(this));
         mHandler = handler;
+        if (DEBUG_AMBIENTMUSIC) {
+            Log.d("AmbientIndicationContainer", "initializeView");
+        }
     }
 
     public void updateAmbientIndicationView(View view) {
@@ -62,6 +76,14 @@ public class AmbientIndicationContainer extends AutoReinflateContainer {
         mTrackLength = (TextView)findViewById(R.id.ambient_indication_track_length);
         mIcon = (ImageView)findViewById(R.id.ambient_indication_icon);
         setIndication(mMediaMetaData, mMediaText);
+        if (DEBUG_AMBIENTMUSIC) {
+            Log.d("AmbientIndicationContainer", "updateAmbientIndicationView");
+        }
+    }
+
+    public void initDependencies() {
+        mMediaManager = Dependency.get(NotificationMediaManager.class);
+        mMediaManager.addCallback(this);
     }
 
     public void setDozing(boolean dozing) {
@@ -113,6 +135,9 @@ public class AmbientIndicationContainer extends AutoReinflateContainer {
         mForcedMediaDoze =
                 reason == DozeLog.PULSE_REASON_FORCED_MEDIA_NOTIFICATION;
         updatePosition();
+        if (DEBUG_AMBIENTMUSIC) {
+            Log.d("AmbientIndicationContainer", "setCleanLayout, reason=" + reason);
+        }
     }
 
     public void updatePosition() {
@@ -128,7 +153,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer {
             CharSequence album = mediaMetaData.getText(MediaMetadata.METADATA_KEY_ALBUM);
             CharSequence title = mediaMetaData.getText(MediaMetadata.METADATA_KEY_TITLE);
             long duration = mediaMetaData.getLong(MediaMetadata.METADATA_KEY_DURATION);
-            if (artist != null && album != null && title != null) {
+            if (artist != null /*&& album != null*/ && title != null) {
                 /* considering we are in Ambient mode here, it's not worth it to show
                     too many infos, so let's skip album name to keep a smaller text */
                 charSequence = artist.toString() /*+ " - " + album.toString()*/ + " - " + title.toString();
@@ -173,5 +198,24 @@ public class AmbientIndicationContainer extends AutoReinflateContainer {
 
     public View getIndication() {
         return mAmbientIndication;
+    }
+
+    @Override
+    public void onMetadataOrStateChanged(MediaMetadata metadata, @PlaybackState.State int state) {
+        synchronized (this) {
+            mMediaMetaData = metadata;
+        }
+        setIndication(mMediaMetaData, null); //2nd param must be null here
+        if (DEBUG_AMBIENTMUSIC) {
+            CharSequence artist = "artist";
+            CharSequence album = "album";
+            CharSequence title = "title";
+            if (mMediaMetaData != null) {
+                artist = mMediaMetaData.getText(MediaMetadata.METADATA_KEY_ARTIST);
+                album = mMediaMetaData.getText(MediaMetadata.METADATA_KEY_ALBUM);
+                title = mMediaMetaData.getText(MediaMetadata.METADATA_KEY_TITLE);
+                Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Music Ticker: artist=" + artist + "; album="+ album + "; title=" + title);
+            }
+        }
     }
 }
