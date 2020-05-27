@@ -824,12 +824,7 @@ public class ScreenshotController {
         }
     }
 
-    /**
-     * Save the bitmap but don't show the normal screenshot UI.. just a toast (or notification on
-     * failure).
-     */
-    private void saveScreenshotAndToast(Consumer<Uri> finisher) {
-        // Play the shutter sound to notify that we've taken a screenshot
+    private void playShutterSoundIf() {
         switch (mAudioManager.getRingerMode()) {
             case AudioManager.RINGER_MODE_SILENT:
                  // do nothing
@@ -845,6 +840,14 @@ public class ScreenshotController {
                  mCameraSound.play(MediaActionSound.SHUTTER_CLICK);
                  break;
         }
+    }
+
+    /**
+     * Save the bitmap but don't show the normal screenshot UI.. just a toast (or notification on
+     * failure).
+     */
+    private void saveScreenshotAndToast(Consumer<Uri> finisher) {
+        playShutterSoundIf();
 
         saveScreenshotInWorkerThread(
                 /* onComplete */ finisher,
@@ -877,22 +880,7 @@ public class ScreenshotController {
         mScreenshotAnimation =
                 mScreenshotView.createScreenshotDropInAnimation(screenRect, showFlash);
 
-        // Play the shutter sound to notify that we've taken a screenshot
-        switch (mAudioManager.getRingerMode()) {
-            case AudioManager.RINGER_MODE_SILENT:
-                 // do nothing
-                 break;
-            case AudioManager.RINGER_MODE_VIBRATE:
-                 if (mVibrator != null && mVibrator.hasVibrator()) {
-                     mVibrator.vibrate(VibrationEffect.createOneShot(50,
-                            VibrationEffect.DEFAULT_AMPLITUDE));
-                 }
-                 break;
-            case AudioManager.RINGER_MODE_NORMAL:
-                 // Play the shutter sound to notify that we've taken a screenshot
-                 mCameraSound.play(MediaActionSound.SHUTTER_CLICK);
-                 break;
-        }
+        playShutterSoundIf();
 
         if (DEBUG_ANIM) {
             Log.d(TAG, "starting post-screenshot animation");
