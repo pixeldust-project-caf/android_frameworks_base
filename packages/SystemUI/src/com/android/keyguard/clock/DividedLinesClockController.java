@@ -77,11 +77,6 @@ public class DividedLinesClockController implements ClockPlugin {
     private TextClock mClock;
 
     /**
-     * Text date in preview view hierarchy.
-     */
-    private TextClock mDate;
-
-    /**
      * Top and bottom dividers in preview view hierarchy.
      */
     private View mTopLine;
@@ -121,8 +116,6 @@ public class DividedLinesClockController implements ClockPlugin {
         mView = (ClockLayout) mLayoutInflater
                 .inflate(R.layout.divided_lines_clock, null);
         mClock = mView.findViewById(R.id.clock);
-        mDate = mView.findViewById(R.id.date);
-        mClock.setFormat12Hour("h:mm");
         onTimeTick();
     }
 
@@ -130,7 +123,6 @@ public class DividedLinesClockController implements ClockPlugin {
     public void onDestroyView() {
         mView = null;
         mClock = null;
-        mDate = null;
         mTopLine = null;
         mBottomLine = null;
     }
