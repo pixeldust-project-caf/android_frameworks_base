@@ -60,5 +60,8 @@
     <!-- Whether to invert the icon color for active quicksettings icons -->
     <bool name="config_useInvertedQsIconColor">false</bool>
 
+    <!-- Whether to dim the FOD icon -->
+    <bool name="config_fodIconDim">false</bool>
+
 </resources>
 
