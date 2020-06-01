@@ -87,8 +87,7 @@
 
     <color name="divider_stroke_color">#434343</color>
 
-    <color name="brightness_slider_progress">#9B9B9D</color>
-    <color name="brightness_slider_background">@android:color/black</color>
+    <color name="brightness_slider_background">#141414</color>
     <color name="brightness_slider_icons">@android:color/white</color>
 
 </resources>
