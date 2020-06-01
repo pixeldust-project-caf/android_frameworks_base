@@ -5965,6 +5965,16 @@ public final class Settings {
         public static final String GAMING_MODE_NOTIFICATIONS_FEEDBACK = "gaming_mode_notifications_feedback";
 
         /**
+         * Whether to display data activity icon for Wi-Fi and mobile data respectively in statusbar
+         * @hide
+         */
+        public static final String DATA_ACTIVITY_ARROW = "data_activity_arrow";
+
+        /** @hide */
+        private static final Validator DATA_ACTIVITY_ARROW_VALIDATOR =
+               BOOLEAN_VALIDATOR;
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -6124,6 +6134,7 @@ public final class Settings {
             SLIM_RECENTS_BLACKLIST_VALUES,
             SLIM_RECENT_ENTER_EXIT_ANIMATION,
             LOCK_SHOW_STATUS_BAR,
+            DATA_ACTIVITY_ARROW,
         };
 
         /**
@@ -6344,6 +6355,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(SLIM_RECENT_ENTER_EXIT_ANIMATION);
             PRIVATE_SETTINGS.add(LOCK_SHOW_STATUS_BAR);
             PRIVATE_SETTINGS.add(LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED);
+            PRIVATE_SETTINGS.add(DATA_ACTIVITY_ARROW);
         }
 
         /**
@@ -6542,6 +6554,7 @@ public final class Settings {
             VALIDATORS.put(LOCK_SHOW_STATUS_BAR, LOCK_SHOW_STATUS_BAR_VALIDATOR);
             VALIDATORS.put(LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED, LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED_VALIDATOR);
             VALIDATORS.put(QS_BRIGHTNESS_SLIDER_FOOTER, QS_BRIGHTNESS_SLIDER_FOOTER_VALIDATOR);
+            VALIDATORS.put(DATA_ACTIVITY_ARROW, DATA_ACTIVITY_ARROW_VALIDATOR);
         }
 
         /**
