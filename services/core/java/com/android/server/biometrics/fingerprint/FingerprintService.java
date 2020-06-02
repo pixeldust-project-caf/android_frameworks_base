@@ -108,7 +108,6 @@ public class FingerprintService extends BiometricServiceBase {
     private static final String FOD = "vendor.lineage.biometrics.fingerprint.inscreen";
     private static final String FOD_DISABLED_BY_PROP = "ro.fingerprint.inscreen_disabled";
 
-    private final boolean mFodDisabledByProp;
     private final boolean mHasFod;
     private boolean mIsKeyguard;
 
@@ -602,7 +601,7 @@ public class FingerprintService extends BiometricServiceBase {
                         new Fingerprint(getBiometricUtils().getUniqueName(getContext(), groupId),
                                 groupId, fingerId, deviceId);
                 FingerprintService.super.handleEnrollResult(fingerprint, remaining);
-                if (remaining == 0 && mHasFod && !mFodDisabledByProp) {
+                if (remaining == 0 && mHasFod) {
                     IFingerprintInscreen fodDaemon = getFingerprintInScreenDaemon();
                     if (fodDaemon != null) {
                         try {
@@ -643,7 +642,7 @@ public class FingerprintService extends BiometricServiceBase {
             mHandler.post(() -> {
                 Fingerprint fp = new Fingerprint("", groupId, fingerId, deviceId);
                 FingerprintService.super.handleAuthenticated(fp, token);
-                if (mHasFod && !mFodDisabledByProp && fp.getBiometricId() != 0) {
+                if (mHasFod && fp.getBiometricId() != 0) {
                     try {
                         mStatusBarService.hideInDisplayFingerprintView();
                     } catch (RemoteException e) {
@@ -713,7 +712,7 @@ public class FingerprintService extends BiometricServiceBase {
                 Slog.w(TAG, "authenticate(): no fingerprint HAL!");
                 return ERROR_ESRCH;
             }
-            if (mHasFod && !mFodDisabledByProp) {
+            if (mHasFod) {
                 IFingerprintInscreen fodDaemon = getFingerprintInScreenDaemon();
                 if (fodDaemon != null) {
                     try {
@@ -738,7 +737,7 @@ public class FingerprintService extends BiometricServiceBase {
                 Slog.w(TAG, "cancel(): no fingerprint HAL!");
                 return ERROR_ESRCH;
             }
-            if (mHasFod && !mFodDisabledByProp) {
+            if (mHasFod) {
                 try {
                     mStatusBarService.hideInDisplayFingerprintView();
                 } catch (RemoteException e) {
@@ -776,7 +775,7 @@ public class FingerprintService extends BiometricServiceBase {
                 Slog.w(TAG, "enroll(): no fingerprint HAL!");
                 return ERROR_ESRCH;
             }
-            if (mHasFod && !mFodDisabledByProp) {
+            if (mHasFod) {
                 IFingerprintInscreen fodDaemon = getFingerprintInScreenDaemon();
                 if (fodDaemon != null) {
                     try {
@@ -811,8 +810,7 @@ public class FingerprintService extends BiometricServiceBase {
                 getLockoutBroadcastPermission(), null /* handler */);
 
         PackageManager packageManager = context.getPackageManager();
-        mHasFod = packageManager.hasSystemFeature(FOD);
-        mFodDisabledByProp = SystemProperties.getInt(FOD_DISABLED_BY_PROP, 0) == 1;
+        mHasFod = packageManager.hasSystemFeature(FOD) && !SystemProperties.getBoolean(FOD_DISABLED_BY_PROP, false);
     }
 
     @Override
