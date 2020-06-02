@@ -71,4 +71,8 @@
 
     <!-- Whether to show activity indicators in the status bar -->
     <java-symbol type="bool" name="config_showActivity" />
+
+    <!-- SystemUI Restart -->
+    <java-symbol type="string" name="systemui_restart_title" />
+    <java-symbol type="string" name="systemui_restart_message" />
 </resources>
