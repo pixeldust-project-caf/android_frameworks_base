@@ -29,4 +29,8 @@ information to dogbin)
     <string name="reboot_message">Rebooting system</string>
     <string name="reboot_to_fastboot_title" translatable="false">Fastbootd</string>
     <string name="reboot_to_fastboot_message">Rebooting to fastbootd</string>
+
+    <!-- SystemUI Restart -->
+    <string name="systemui_restart_title">SystemUI restart required</string>
+    <string name="systemui_restart_message">For all changes to take effect, a SystemUI restart is required. Restart SystemUI now?</string>
 </resources>
