@@ -59,4 +59,8 @@
     <string name="gaming_mode_enabled_toast">Spielemodus aktiviert</string>
     <string name="gaming_mode_disabled_toast">Spielemodus deaktiviert</string>
 
+    <!-- SystemUI Restart -->
+    <string name="systemui_restart_title">SystemUI-Neustart erforderlich</string>
+    <string name="systemui_restart_message">Damit alle Änderungen wirksam werden, ist ein Neustart der SystemUI erforderlich. SystemUI jetzt neu starten?</string>
+
 </resources>
