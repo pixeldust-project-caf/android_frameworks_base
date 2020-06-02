@@ -72,7 +72,6 @@ public class FODCircleView extends ImageView {
     private boolean mIsShowing;
     private boolean mIsCircleShowing;
 
-    private float mCurrentDimAmount = 0.0f;
     private int mCurBrightness = -1;
 
     private Handler mHandler;
@@ -188,18 +187,6 @@ public class FODCircleView extends ImageView {
         mUpdateMonitor = KeyguardUpdateMonitor.getInstance(context);
         mUpdateMonitor.registerCallback(mMonitorCallback);
 
-        getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            float drawingDimAmount = mParams.dimAmount;
-            if (mCurrentDimAmount == 0.0f && drawingDimAmount > 0.0f) {
-                mDisplayManager.setTemporaryBrightness(255);
-                dispatchPress();
-                mCurrentDimAmount = drawingDimAmount;
-            } else if (mCurrentDimAmount > 0.0f && drawingDimAmount == 0.0f) {
-                mDisplayManager.setTemporaryBrightness(mCurBrightness);
-                dispatchRelease();
-                mCurrentDimAmount = drawingDimAmount;
-            }
-        });
     }
 
     @Override
@@ -295,6 +282,7 @@ public class FODCircleView extends ImageView {
 
         setDim(true);
         updateAlpha();
+        dispatchPress();
 
         setImageDrawable(null);
         invalidate();
