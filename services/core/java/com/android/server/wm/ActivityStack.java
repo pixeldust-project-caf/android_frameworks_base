@@ -4567,6 +4567,8 @@ public class ActivityStack extends ConfigurationContainer {
         }
         // Throw away any services that have been bound by this activity.
         r.mServiceConnectionsHolder.disconnectActivityFromServices();
+        // This activity record is removing, make sure not to disconnect twice.
+        r.mServiceConnectionsHolder = null;
     }
 
     final void scheduleDestroyActivities(WindowProcessController owner, String reason) {

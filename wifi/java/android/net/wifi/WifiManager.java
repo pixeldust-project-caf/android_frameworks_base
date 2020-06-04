@@ -231,10 +231,23 @@ public class WifiManager {
 
     /**
     *
+    *
+    * @hide
+    **/
+    public static final String  WIFI_DHCP_FAILURE = "com.qualcomm.qti.net.wifi.WIFI_DHCP_FAILURE";
+
+    /**
+    *
     * see data stall reason code
     * @hide
     **/
     public static final String  EXTRA_WIFI_DATA_STALL_REASON = "data_stall_reasoncode";
+    /**
+    *
+    * see dhcp failure reason code
+    * @hide
+    **/
+    public static final String  EXTRA_WIFI_DHCP_FAILURE_REASON = "dhcp_failure_reasoncode";
     /**
      * Broadcast intent action indicating that the credential of a Wi-Fi network
      * has been changed. One extra provides the ssid of the network. Another
@@ -5594,5 +5607,18 @@ public class WifiManager {
           }
       }
 
+    /**
+     * Run driver command from user space
+     * @hide
+     */
+    public String doDriverCmd(String command)
+    {
+        try {
+            return mService.doDriverCmd(command);
+        } catch (RemoteException e) {
+            throw e.rethrowFromSystemServer();
+        }
+    }
     /* QTI specific changes - END */
+
 }

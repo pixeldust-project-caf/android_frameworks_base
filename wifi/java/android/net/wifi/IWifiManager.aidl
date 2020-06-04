@@ -279,4 +279,6 @@ interface IWifiManager
     boolean isUnsavedNetworkLinkingFeatureEnabled();
 
     void enableUnsavedNetworkLinkingFeature(boolean enable);
+
+    String doDriverCmd(String command);
 }

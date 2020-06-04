@@ -2892,22 +2892,6 @@ public class CarrierConfigManager {
             "always_show_primary_signal_bar_in_opportunistic_network_boolean";
 
     /**
-     * Title text to be used in the emergency notification displayed when VoWifi is available
-     *
-     * @hide
-     */
-    public static final String KEY_EMERGENCY_NOTIFICATION_TITLE_STRING =
-            "emergency_notification_title_string";
-
-    /**
-     * Summary text to be used in the emergency notification displayed when VoWifi is available
-     *
-     * @hide
-     */
-    public static final String KEY_EMERGENCY_NOTIFICATION_SUMMARY_STRING =
-            "emergency_notification_summary_string";
-
-    /**
      * Upon data switching between subscriptions within a carrier group, if switch depends on
      * validation result, this value defines customized value of how long we wait for validation
      * success before we fail and revoke the switch.
@@ -3701,8 +3685,6 @@ public class CarrierConfigManager {
         sDefaults.putBoolean(KEY_SUPPORT_WPS_OVER_IMS_BOOL, true);
         sDefaults.putStringArray(KEY_CARRIER_CERTIFICATE_STRING_ARRAY, null);
         sDefaults.putLong(KEY_DATA_SWITCH_VALIDATION_TIMEOUT_LONG, 2000);
-        sDefaults.putString(KEY_EMERGENCY_NOTIFICATION_SUMMARY_STRING, "");
-        sDefaults.putString(KEY_EMERGENCY_NOTIFICATION_TITLE_STRING, "");
         sDefaults.putBoolean(KEY_CARRIER_SUPPORTS_MULTIANCHOR_CONFERENCE, false);
         sDefaults.putInt(KEY_DEFAULT_RTT_MODE_INT, 0);
     }

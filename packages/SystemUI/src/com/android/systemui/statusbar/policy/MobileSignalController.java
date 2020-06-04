@@ -1084,11 +1084,14 @@ public class MobileSignalController extends SignalController<
         int ratIcon = 0;
         if ( showDataRatIcon() ) {
             MobileIconGroup iconGroup = mDefaultIcons;
-            int dataNetType = getDataNetworkType();
+            int networkType = getDataNetworkType();
+            if ( networkType == TelephonyManager.NETWORK_TYPE_UNKNOWN ) {
+                networkType = getVoiceNetworkType();
+            }
             if ( isSideCarValid() ) {
                 iconGroup = mFiveGState.getIconGroup();
-            }else if (mNetworkToIconLookup.indexOfKey(dataNetType) >= 0) {
-                iconGroup = mNetworkToIconLookup.get(dataNetType);
+            }else if (mNetworkToIconLookup.indexOfKey(networkType) >= 0) {
+                iconGroup = mNetworkToIconLookup.get(networkType);
             }
             ratIcon = iconGroup.mDataType;
         }

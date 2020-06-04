@@ -625,4 +625,8 @@ public class BaseWifiService extends IWifiManager.Stub {
     public void enableUnsavedNetworkLinkingFeature(boolean enable) {
         throw new UnsupportedOperationException();
     }
+    @Override
+    public String doDriverCmd(String command) {
+        throw new UnsupportedOperationException();
+    }
 }
