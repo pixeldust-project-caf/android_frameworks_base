@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2019 The PixelDust Project
+     Copyright (C) 2019-2020 The PixelDust Project
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
      You may obtain a copy of the License at
@@ -31,5 +31,33 @@
         <item>90</item><item>450</item>
         <item>0</item><item>450</item>
     </array>
+
+    <!-- Titles for Bluetooth Audio Codec selection preference. [CHAR LIMIT=50] -->
+    <string-array name="bluetooth_a2dp_codec_titles_cm">
+        <item>Use System Selection (Default)</item>
+        <item>SBC</item>
+        <item>AAC</item>
+        <item><xliff:g id="qualcomm">Qualcomm®</xliff:g> <xliff:g id="aptx">aptX™</xliff:g> audio</item>
+        <item><xliff:g id="qualcomm">Qualcomm®</xliff:g> <xliff:g id="aptx_hd">aptX™ HD</xliff:g> audio</item>
+        <item>LDAC</item>
+        <item><xliff:g id="qualcomm">Qualcomm®</xliff:g> <xliff:g id="aptx_adaptive">aptX™ Adaptive</xliff:g> audio</item>
+        <item><xliff:g id="qualcomm">Qualcomm®</xliff:g> <xliff:g id="aptx_twsp">aptX™ TWS+</xliff:g> audio</item>
+        <item>Enable Optional Codecs</item>
+        <item>Disable Optional Codecs</item>
+    </string-array>
+
+    <!-- Summaries for Bluetooth Audio Codec selection preference. [CHAR LIMIT=50]-->
+    <string-array name="bluetooth_a2dp_codec_summaries_cm" >
+        <item>Use System Selection (Default)</item>
+        <item>SBC</item>
+        <item>AAC</item>
+        <item><xliff:g id="qualcomm">Qualcomm®</xliff:g> <xliff:g id="aptx">aptX™</xliff:g> audio</item>
+        <item><xliff:g id="qualcomm">Qualcomm®</xliff:g> <xliff:g id="aptx_hd">aptX™ HD</xliff:g> audio</item>
+        <item>LDAC</item>
+        <item><xliff:g id="qualcomm">Qualcomm®</xliff:g> <xliff:g id="aptx_adaptive">aptX™ Adaptive</xliff:g> audio</item>
+        <item><xliff:g id="qualcomm">Qualcomm®</xliff:g> <xliff:g id="aptx_twsp">aptX™ TWS+</xliff:g> audio</item>
+        <item>Enable Optional Codecs</item>
+        <item>Disable Optional Codecs</item>
+    </string-array>
 
 </resources>
