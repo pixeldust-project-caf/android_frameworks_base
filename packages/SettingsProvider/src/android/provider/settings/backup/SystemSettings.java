@@ -102,5 +102,6 @@ public class SystemSettings {
         Settings.System.GLOBAL_ACTIONS_MAX_COLUMNS,
         Settings.System.GLOBAL_ACTIONS_MAX_ROWS,
         Settings.System.RINGTONE_VIBRATION_PATTERN,
+        Settings.System.CUSTOM_RINGTONE_VIBRATION_PATTERN,
     };
 }
