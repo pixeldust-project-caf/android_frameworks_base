@@ -20,6 +20,7 @@ import com.android.systemui.AutoReinflateContainer;
 import com.android.systemui.Dependency;
 import com.android.systemui.R;
 import com.android.systemui.doze.DozeLog;
+import com.android.systemui.statusbar.phone.DozeParameters;
 import com.android.systemui.statusbar.NotificationMediaManager;
 import com.android.systemui.statusbar.phone.StatusBar;
 
@@ -49,6 +50,8 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
     private boolean mDozing;
     private String mLastInfo;
 
+    private boolean mNpInfoAvailable;
+
     protected NotificationMediaManager mMediaManager;
 
     public AmbientIndicationContainer(Context context, AttributeSet attributeSet) {
@@ -58,7 +61,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
     }
 
     public void hideIndication() {
-        setIndication(null, null);
+        setIndication(null, null, false);
     }
 
     public void initializeView(StatusBar statusBar, Handler handler) {
@@ -75,7 +78,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         mText = (TextView)findViewById(R.id.ambient_indication_text);
         mTrackLength = (TextView)findViewById(R.id.ambient_indication_track_length);
         mIcon = (ImageView)findViewById(R.id.ambient_indication_icon);
-        setIndication(mMediaMetaData, mMediaText);
+        setIndication(mMediaMetaData, mMediaText, false);
         if (DEBUG_AMBIENTMUSIC) {
             Log.d("AmbientIndicationContainer", "updateAmbientIndicationView");
         }
@@ -91,7 +94,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
 
         mDozing = dozing;
         setTickerMarquee(dozing, false);
-        if (dozing && mInfoAvailable) {
+        if (dozing && (mInfoAvailable || mNpInfoAvailable)) {
             mText.setText(mInfoToSet);
             mLastInfo = mInfoToSet;
             mTrackLength.setText(mLengthInfo);
@@ -146,17 +149,26 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         this.setLayoutParams(lp);
     }
 
-    public void setIndication(MediaMetadata mediaMetaData, String notificationText) {
+    private void setNowPlayingIndication(String trackInfo) {
+        // don't trigger this if we are already showing local/remote session track info
+        setIndication(null, trackInfo, true);
+    }
+
+    public void setIndication(MediaMetadata mediaMetaData, String notificationText, boolean nowPlaying) {
+        // never override local music ticker
+        if (nowPlaying && mInfoAvailable || mAmbientIndication == null) return;
         CharSequence charSequence = null;
+        mLengthInfo = null;
+        mInfoToSet = null;
         if (mediaMetaData != null) {
             CharSequence artist = mediaMetaData.getText(MediaMetadata.METADATA_KEY_ARTIST);
             CharSequence album = mediaMetaData.getText(MediaMetadata.METADATA_KEY_ALBUM);
             CharSequence title = mediaMetaData.getText(MediaMetadata.METADATA_KEY_TITLE);
             long duration = mediaMetaData.getLong(MediaMetadata.METADATA_KEY_DURATION);
-            if (artist != null /*&& album != null*/ && title != null) {
+            if (artist != null && title != null) {
                 /* considering we are in Ambient mode here, it's not worth it to show
                     too many infos, so let's skip album name to keep a smaller text */
-                charSequence = artist.toString() /*+ " - " + album.toString()*/ + " - " + title.toString();
+                charSequence = artist.toString() + " - " + title.toString();
                 if (duration != 0) {
                     mLengthInfo = String.format("%02d:%02d",
                             TimeUnit.MILLISECONDS.toMinutes(duration),
@@ -171,7 +183,6 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
             setTickerMarquee(true, true);
         }
 
-        mInfoToSet = null;
         if (!TextUtils.isEmpty(charSequence)) {
             mInfoToSet = charSequence.toString();
         } else if (!TextUtils.isEmpty(notificationText)) {
@@ -179,21 +190,27 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
             mLengthInfo = null;
         }
 
-        mInfoAvailable = mInfoToSet != null;
-        if (mInfoAvailable) {
-            mText.setText(mInfoToSet);
-            mTrackLength.setText(mLengthInfo);
+        if (nowPlaying) {
+            mNpInfoAvailable = mInfoToSet != null;
+        } else {
+            mInfoAvailable = mInfoToSet != null;
+        }
+
+        if (mInfoAvailable || mNpInfoAvailable) {
             mMediaMetaData = mediaMetaData;
             mMediaText = notificationText;
-            if (mDozing) {
-                mAmbientIndication.setVisibility(View.VISIBLE);
-            }
-            boolean isAnotherTrack = mInfoAvailable
+            boolean isAnotherTrack = (mInfoAvailable || mNpInfoAvailable)
                     && (TextUtils.isEmpty(mLastInfo) || (!TextUtils.isEmpty(mLastInfo) && !mLastInfo.equals(mInfoToSet)));
+            if (!DozeParameters.getInstance(mContext).getAlwaysOn() && mStatusBar != null && isAnotherTrack) {
+                mStatusBar.triggerAmbientForMedia();
+            }
             if (mDozing) {
                 mLastInfo = mInfoToSet;
             }
         }
+        if (mInfoToSet != null) mText.setText(mInfoToSet);
+        if (mLengthInfo != null) mTrackLength.setText(mLengthInfo);
+        mAmbientIndication.setVisibility(mDozing && (mInfoAvailable || mNpInfoAvailable) ? View.VISIBLE : View.INVISIBLE);
     }
 
     public View getIndication() {
@@ -205,7 +222,14 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         synchronized (this) {
             mMediaMetaData = metadata;
         }
-        setIndication(mMediaMetaData, null); //2nd param must be null here
+        if (mMediaManager.getNowPlayingTrack() != null) {
+            setNowPlayingIndication(mMediaManager.getNowPlayingTrack());
+            if (DEBUG_AMBIENTMUSIC) {
+                Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Now Playing: track=" + mMediaManager.getNowPlayingTrack());
+            }
+        } else {
+            setIndication(mMediaMetaData, null, false); //2nd param must be null here
+        }
         if (DEBUG_AMBIENTMUSIC) {
             CharSequence artist = "artist";
             CharSequence album = "album";
