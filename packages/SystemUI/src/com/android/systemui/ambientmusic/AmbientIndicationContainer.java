@@ -47,7 +47,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
     private boolean mInfoAvailable;
     private String mInfoToSet;
     private String mLengthInfo;
-    private boolean mDozing;
+    private boolean mKeyguard;
     private String mLastInfo;
 
     private boolean mNpInfoAvailable;
@@ -89,12 +89,10 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         mMediaManager.addCallback(this);
     }
 
-    public void setDozing(boolean dozing) {
-        if (dozing == mDozing) return;
-
-        mDozing = dozing;
-        setTickerMarquee(dozing, false);
-        if (dozing && (mInfoAvailable || mNpInfoAvailable)) {
+    public void updateKeyguardState(boolean keyguard) {
+        mKeyguard = keyguard;
+        setTickerMarquee(keyguard, false);
+        if (keyguard && (mInfoAvailable || mNpInfoAvailable)) {
             mText.setText(mInfoToSet);
             mLastInfo = mInfoToSet;
             mTrackLength.setText(mLengthInfo);
@@ -177,7 +175,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
                 }
             }
         }
-        if (mDozing) {
+        if (mKeyguard) {
             // if we are already showing an Ambient Notification with track info,
             // stop the current scrolling and start it delayed again for the next song
             setTickerMarquee(true, true);
@@ -204,13 +202,13 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
             if (!DozeParameters.getInstance(mContext).getAlwaysOn() && mStatusBar != null && isAnotherTrack) {
                 mStatusBar.triggerAmbientForMedia();
             }
-            if (mDozing) {
+            if (mKeyguard) {
                 mLastInfo = mInfoToSet;
             }
         }
         if (mInfoToSet != null) mText.setText(mInfoToSet);
         if (mLengthInfo != null) mTrackLength.setText(mLengthInfo);
-        mAmbientIndication.setVisibility(mDozing && (mInfoAvailable || mNpInfoAvailable) ? View.VISIBLE : View.INVISIBLE);
+        mAmbientIndication.setVisibility(mKeyguard && (mInfoAvailable || mNpInfoAvailable) ? View.VISIBLE : View.INVISIBLE);
     }
 
     public View getIndication() {

@@ -4262,9 +4262,6 @@ public class StatusBar extends SystemUI implements DemoMode,
                         mStatusBarStateController.fromShadeLocked());
             }
             if (mStatusBarView != null) mStatusBarView.removePendingHideExpandedRunnables();
-            /*if (mAmbientIndicationContainer != null) {
-                mAmbientIndicationContainer.setVisibility(View.VISIBLE);
-            }*/
         } else {
             if (mKeyguardUserSwitcher != null) {
                 mKeyguardUserSwitcher.setKeyguard(false,
@@ -4272,10 +4269,13 @@ public class StatusBar extends SystemUI implements DemoMode,
                                 mState == StatusBarState.SHADE_LOCKED ||
                                 mStatusBarStateController.fromShadeLocked());
             }
-            /*if (mAmbientIndicationContainer != null) {
-                mAmbientIndicationContainer.setVisibility(View.INVISIBLE);
-            }*/
         }
+
+        if (isAmbientContainerAvailable()) {
+            ((AmbientIndicationContainer)mAmbientIndicationContainer)
+                    .updateKeyguardState(mState == StatusBarState.KEYGUARD);
+        }
+
         updateDozingState();
         checkBarModes();
         updateScrimController();
@@ -4317,11 +4317,6 @@ public class StatusBar extends SystemUI implements DemoMode,
             dozing = false;
         }
         mStatusBarStateController.setIsDozing(dozing);
-
-        if (mAmbientMediaPlaying && mAmbientIndicationContainer instanceof DozeReceiver) {
-            ((AmbientIndicationContainer)mAmbientIndicationContainer).setDozing(mDozing);
-
-        }
 
         if (mAmbientVisualizer && mDozing) {
             mVisualizerView.setVisible(true);
@@ -4841,10 +4836,6 @@ public class StatusBar extends SystemUI implements DemoMode,
                 DozeLog.traceDozing(mContext, mDozing);
                 updateDozing();
                 updateIsKeyguard();
-
-                if (isAmbientContainerAvailable()) {
-                    ((AmbientIndicationContainer)mAmbientIndicationContainer).setDozing(true);
-                }
             }else{
                 mDozingRequested = true;
             }
@@ -4936,10 +4927,6 @@ public class StatusBar extends SystemUI implements DemoMode,
                 mDozingRequested = false;
                 DozeLog.traceDozing(mContext, mDozing);
                 updateDozing();
-
-                if (isAmbientContainerAvailable()) {
-                    ((AmbientIndicationContainer)mAmbientIndicationContainer).setDozing(false);
-                }
             }
         }
 
