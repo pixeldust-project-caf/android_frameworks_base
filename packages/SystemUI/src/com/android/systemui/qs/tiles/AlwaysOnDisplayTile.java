@@ -47,7 +47,7 @@ public class AlwaysOnDisplayTile extends QSTileImpl<BooleanState> implements
         super(host);
 
         mSetting = new SecureSetting(mContext, mHandler,
-                   Secure.DOZE_ALWAYS_ON) {
+                   Settings.Secure.DOZE_ALWAYS_ON) {
             @Override
             protected void handleValueChanged(int value,
                    boolean observedChange) {
@@ -77,7 +77,7 @@ public class AlwaysOnDisplayTile extends QSTileImpl<BooleanState> implements
 
     @Override
     public void handleClick() {
-        mSetting.setValue(mState.value ? 0 : 1);
+        setEnabled(!mState.value);
         refreshState();
     }
 
@@ -85,6 +85,12 @@ public class AlwaysOnDisplayTile extends QSTileImpl<BooleanState> implements
     public Intent getLongClickIntent() {
         return new Intent().setComponent(new ComponentName(
             "com.android.settings", "com.android.settings.Settings$LockscreenDisplayActivity"));
+    }
+
+    private void setEnabled(boolean enabled) {
+        Settings.Secure.putInt(mContext.getContentResolver(),
+                Settings.Secure.DOZE_ALWAYS_ON,
+                enabled ? 1 : 0);
     }
 
     @Override
