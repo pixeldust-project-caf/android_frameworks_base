@@ -922,7 +922,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     private void setForceAmbient() {
         mAmbientMediaPlaying = Settings.System.getIntForUser(mContext.getContentResolver(),
                     Settings.System.FORCE_AMBIENT_FOR_MEDIA, 1,
-                    UserHandle.USER_CURRENT) != 0;
+                    UserHandle.USER_CURRENT) == 1;
         if (isAmbientContainerAvailable()) {
             ((AmbientIndicationContainer)mAmbientIndicationContainer).setIndication(
                     mMediaManager.getMediaMetadata(), null, false);

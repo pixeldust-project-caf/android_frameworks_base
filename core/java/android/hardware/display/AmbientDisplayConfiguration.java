@@ -63,7 +63,7 @@ public class AmbientDisplayConfiguration {
     /** {@hide} */
     public boolean pulseOnMedia(int user) {
         boolean enabled = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.FORCE_AMBIENT_FOR_MEDIA, 1, user) != 0;
+                Settings.System.FORCE_AMBIENT_FOR_MEDIA, 1, user) == 1;
         return enabled && ambientDisplayAvailable();
     }
 

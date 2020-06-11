@@ -5977,7 +5977,8 @@ public final class Settings {
         /**
          * Force an Ambient notification when a new media track is being played
          * 0 - disabled
-         * 1 - show track info within normal Ambient Display and force a new Ambient clean layout when skipping tracks
+         * 1 - show track info on bottom of Ambient Display and force a new Ambient clean layout when skipping tracks (default)
+         * 2 - show track info within cLock widget (Q style)
          * @hide
          */
         public static final String FORCE_AMBIENT_FOR_MEDIA = "force_ambient_for_media";
