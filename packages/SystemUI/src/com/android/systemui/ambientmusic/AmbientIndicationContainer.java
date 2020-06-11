@@ -259,19 +259,42 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
             if (DEBUG_AMBIENTMUSIC) {
                 Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Now Playing: track=" + mMediaManager.getNowPlayingTrack());
             }
-        } else {
+        } else if (mMediaMetaData != null && state == 3) {
             setIndication(mMediaMetaData, null, false); //2nd param must be null here
-        }
-        if (DEBUG_AMBIENTMUSIC) {
-            CharSequence artist = "artist";
-            CharSequence album = "album";
-            CharSequence title = "title";
-            if (mMediaMetaData != null) {
-                artist = mMediaMetaData.getText(MediaMetadata.METADATA_KEY_ARTIST);
-                album = mMediaMetaData.getText(MediaMetadata.METADATA_KEY_ALBUM);
-                title = mMediaMetaData.getText(MediaMetadata.METADATA_KEY_TITLE);
-                Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Music Ticker: artist=" + artist + "; album="+ album + "; title=" + title);
+            if (DEBUG_AMBIENTMUSIC) {
+                CharSequence artist = mMediaMetaData.getText(MediaMetadata.METADATA_KEY_ARTIST);
+                CharSequence title = mMediaMetaData.getText(MediaMetadata.METADATA_KEY_TITLE);
+                Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Music Ticker: artist=" + artist + "; title=" + title);
             }
+        } else {
+            // Make sure that track info is hidden when playback is paused or stopped
+            if (mAnimatedIcon != null) {            
+                hideIndication();
+                if (DEBUG_AMBIENTMUSIC) {
+                    Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: hideIndication()");
+                }           
+            }
+
+            if (DEBUG_AMBIENTMUSIC) {
+                switch(state) {
+                case 0:
+                    Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: PlaybackState.State = STATE_NONE");
+                    break;
+                case 1:
+                    Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: PlaybackState.State = STATE_STOPPED");
+                    break;
+                case 2:
+                    Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: PlaybackState.State = STATE_PAUSED");
+                    break;
+                case 3:
+                    Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: PlaybackState.State = STATE_PLAYING");
+                    break;
+                default:
+                    Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: PlaybackState.State = UNKNoWN " + state);
+                    break;
+                }
+            }
+ 
         }
     }
 }
