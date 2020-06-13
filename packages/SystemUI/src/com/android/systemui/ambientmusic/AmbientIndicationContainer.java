@@ -241,8 +241,12 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
                 mLastInfo = mInfoToSet;
             }
         }
-        if (mInfoToSet != null) mText.setText(mInfoToSet);
-        mAmbientIndication.setVisibility(shouldShow() ? View.VISIBLE : View.INVISIBLE);
+        if (mInfoToSet != null) {
+            mText.setText(mInfoToSet);
+            mAmbientIndication.setVisibility(shouldShow() ? View.VISIBLE : View.INVISIBLE);
+        } else {
+            mAmbientIndication.setVisibility(View.INVISIBLE);
+        }
     }
 
     public View getIndication() {
