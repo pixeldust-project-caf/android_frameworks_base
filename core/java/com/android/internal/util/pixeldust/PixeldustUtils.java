@@ -56,6 +56,7 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.DisplayInfo;
 import android.view.IWindowManager;
 import android.view.WindowManager;
@@ -541,6 +542,12 @@ public class PixeldustUtils {
         int state = enabled ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
         pm.setComponentEnabledSetting(componentName, state, PackageManager.DONT_KILL_APP);
+    }
+
+    public static int getThemeAccentColor (final Context context) {
+        final TypedValue value = new TypedValue ();
+        context.getTheme ().resolveAttribute (android.R.attr.colorAccent, value, true);
+        return value.data;
     }
 
     /**
