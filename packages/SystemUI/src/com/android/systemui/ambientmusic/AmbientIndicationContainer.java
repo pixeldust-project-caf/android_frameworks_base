@@ -57,6 +57,8 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
 
     protected NotificationMediaManager mMediaManager;
 
+    private boolean mMediaIsVisible;
+
     private String mTrackInfoSeparator;
 
     private boolean mShowMusicTicker;
@@ -300,29 +302,6 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
     @Override
     public void onMetadataOrStateChanged(MediaMetadata metadata, @PlaybackState.State int state) {
         synchronized (this) {
-            mMediaMetaData = metadata;
-        }
-        if (mShowMusicTicker && mMediaManager.getNowPlayingTrack() != null) {
-            setNowPlayingIndication(mMediaManager.getNowPlayingTrack());
-            if (DEBUG_AMBIENTMUSIC) {
-                Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Now Playing: track=" + mMediaManager.getNowPlayingTrack());
-            }
-        } else if (mShowMusicTicker && mMediaMetaData != null && state == 3) {
-            setIndication(mMediaMetaData, null, false); //2nd param must be null here
-            if (DEBUG_AMBIENTMUSIC) {
-                CharSequence artist = mMediaMetaData.getText(MediaMetadata.METADATA_KEY_ARTIST);
-                CharSequence title = mMediaMetaData.getText(MediaMetadata.METADATA_KEY_TITLE);
-                Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Music Ticker: artist=" + artist + "; title=" + title);
-            }
-        } else {
-            // Make sure that track info is hidden when playback is paused or stopped
-            if (mAnimatedIcon != null) {            
-                hideIndication();
-                if (DEBUG_AMBIENTMUSIC) {
-                    Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: hideIndication(); mShowMusicTicker = " + mShowMusicTicker);
-                }           
-            }
-
             if (DEBUG_AMBIENTMUSIC) {
                 switch(state) {
                 case 0:
@@ -338,11 +317,37 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
                     Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: PlaybackState.State = STATE_PLAYING");
                     break;
                 default:
-                    Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: PlaybackState.State = UNKNoWN " + state);
+                    Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: PlaybackState.State = UNKNOWN " + state);
                     break;
                 }
             }
- 
+            boolean nextVisible = state == 3;
+            if (nextVisible == mMediaIsVisible && metadata == mMediaMetaData) {
+                return;
+            }
+            mMediaMetaData = metadata;
+            mMediaIsVisible = nextVisible;
+        }
+        if (mShowMusicTicker && mMediaManager.getNowPlayingTrack() != null) {
+            setNowPlayingIndication(mMediaManager.getNowPlayingTrack());
+            if (DEBUG_AMBIENTMUSIC) {
+                Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Now Playing: track=" + mMediaManager.getNowPlayingTrack());
+            }
+        } else if (mShowMusicTicker && mMediaMetaData != null) {
+            setIndication(mMediaMetaData, null, false); //2nd param must be null here
+            if (DEBUG_AMBIENTMUSIC) {
+                CharSequence artist = mMediaMetaData.getText(MediaMetadata.METADATA_KEY_ARTIST);
+                CharSequence title = mMediaMetaData.getText(MediaMetadata.METADATA_KEY_TITLE);
+                Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Music Ticker: artist=" + artist + "; title=" + title);
+            }
+        } else {
+            // Make sure that track info is hidden when playback is paused or stopped
+            if (mAnimatedIcon != null) {            
+                hideIndication();
+                if (DEBUG_AMBIENTMUSIC) {
+                    Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: hideIndication(); mShowMusicTicker = " + mShowMusicTicker);
+                }           
+            } 
         }
     }
 }
