@@ -5913,7 +5913,6 @@ public final class Settings {
          */
         public static final String GAMING_MODE_ACTIVE = "gaming_mode_active";
 
-
         /**
          * Package name of apps for enabling Gaming mode
          * @hide
@@ -5982,6 +5981,9 @@ public final class Settings {
          * @hide
          */
         public static final String FORCE_AMBIENT_FOR_MEDIA = "force_ambient_for_media";
+
+        /** @hide */
+        private static final Validator FORCE_AMBIENT_FOR_MEDIA_VALIDATOR = ANY_INTEGER_VALIDATOR;
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -6144,6 +6146,7 @@ public final class Settings {
             SLIM_RECENT_ENTER_EXIT_ANIMATION,
             LOCK_SHOW_STATUS_BAR,
             DATA_ACTIVITY_ARROW,
+            FORCE_AMBIENT_FOR_MEDIA,
         };
 
         /**
@@ -6564,6 +6567,7 @@ public final class Settings {
             VALIDATORS.put(LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED, LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED_VALIDATOR);
             VALIDATORS.put(QS_BRIGHTNESS_SLIDER_FOOTER, QS_BRIGHTNESS_SLIDER_FOOTER_VALIDATOR);
             VALIDATORS.put(DATA_ACTIVITY_ARROW, DATA_ACTIVITY_ARROW_VALIDATOR);
+            VALIDATORS.put(FORCE_AMBIENT_FOR_MEDIA, FORCE_AMBIENT_FOR_MEDIA_VALIDATOR);
         }
 
         /**

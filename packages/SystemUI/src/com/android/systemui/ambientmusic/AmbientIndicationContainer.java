@@ -1,10 +1,15 @@
 package com.android.systemui.ambientmusic;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.ContentObserver;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.media.MediaMetadata;
 import android.media.session.PlaybackState;
+import android.net.Uri;
 import android.os.Handler;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.text.TextUtils.TruncateAt;
 import android.util.AttributeSet;
@@ -54,6 +59,9 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
 
     private String mTrackInfoSeparator;
 
+    private boolean mShowMusicTicker;
+    private CustomSettingsObserver mCustomSettingsObserver;
+
     public AmbientIndicationContainer(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         initDependencies();
@@ -66,7 +74,36 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         mAnimatedIcon.setBounds(0, 0, iconSize, iconSize);
     }
 
-    public void hideIndication() {
+    private class CustomSettingsObserver extends ContentObserver {
+        CustomSettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.FORCE_AMBIENT_FOR_MEDIA),
+                    false, this, UserHandle.USER_ALL);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.FORCE_AMBIENT_FOR_MEDIA))) {
+                mShowMusicTicker =
+                        Settings.System.getIntForUser(mContext.getContentResolver(),
+                        Settings.System.FORCE_AMBIENT_FOR_MEDIA, 1,
+                        UserHandle.USER_CURRENT) == 1;
+            }
+            update();
+        }
+
+        private void update() {
+            updateAmbientIndicationView(AmbientIndicationContainer.this);
+        }
+    }
+
+    private void hideIndication() {
         setIndication(null, null, false);
         mAnimatedIcon.stop();
     }
@@ -75,6 +112,9 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         mStatusBar = statusBar;
         addInflateListener(new AmbientIndicationInflateListener(this));
         mHandler = handler;
+        mCustomSettingsObserver = new CustomSettingsObserver(mHandler);
+        mCustomSettingsObserver.observe();
+        mCustomSettingsObserver.update();
         if (DEBUG_AMBIENTMUSIC) {
             Log.d("AmbientIndicationContainer", "initializeView");
         }
@@ -83,9 +123,13 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
     public void updateAmbientIndicationView(View view) {
         mAmbientIndication = findViewById(R.id.ambient_indication);
         mText = (TextView)findViewById(R.id.ambient_indication_text);
-        setIndication(mMediaMetaData, mMediaText, false);
+        if (mShowMusicTicker) {
+            setIndication(mMediaMetaData, mMediaText, false);
+        } else {
+            hideIndication();
+        }
         if (DEBUG_AMBIENTMUSIC) {
-            Log.d("AmbientIndicationContainer", "updateAmbientIndicationView");
+            Log.d("AmbientIndicationContainer", "updateAmbientIndicationView; mShowMusicTicker = " + mShowMusicTicker);
         }
     }
 
@@ -258,12 +302,12 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         synchronized (this) {
             mMediaMetaData = metadata;
         }
-        if (mMediaManager.getNowPlayingTrack() != null) {
+        if (mShowMusicTicker && mMediaManager.getNowPlayingTrack() != null) {
             setNowPlayingIndication(mMediaManager.getNowPlayingTrack());
             if (DEBUG_AMBIENTMUSIC) {
                 Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Now Playing: track=" + mMediaManager.getNowPlayingTrack());
             }
-        } else if (mMediaMetaData != null && state == 3) {
+        } else if (mShowMusicTicker && mMediaMetaData != null && state == 3) {
             setIndication(mMediaMetaData, null, false); //2nd param must be null here
             if (DEBUG_AMBIENTMUSIC) {
                 CharSequence artist = mMediaMetaData.getText(MediaMetadata.METADATA_KEY_ARTIST);
@@ -275,7 +319,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
             if (mAnimatedIcon != null) {            
                 hideIndication();
                 if (DEBUG_AMBIENTMUSIC) {
-                    Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: hideIndication()");
+                    Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: hideIndication(); mShowMusicTicker = " + mShowMusicTicker);
                 }           
             }
 
