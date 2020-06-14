@@ -27,6 +27,8 @@ import com.android.systemui.statusbar.phone.DozeParameters;
 import com.android.systemui.statusbar.NotificationLockscreenUserManager;
 import com.android.systemui.statusbar.NotificationMediaManager;
 import com.android.systemui.statusbar.phone.StatusBar;
+import com.android.systemui.util.wakelock.SettableWakeLock;
+import com.android.systemui.util.wakelock.WakeLock;
 
 import com.android.systemui.ambientmusic.AmbientIndicationInflateListener;
 
@@ -43,10 +45,13 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
     private AnimatedVectorDrawable mAnimatedIcon;
     private TextView mText;
     private Context mContext;
+    private CharSequence mMediaTitle;
+    private CharSequence mMediaArtist;
     protected MediaMetadata mMediaMetaData;
     private String mMediaText;
     private boolean mForcedMediaDoze;
     private Handler mHandler;
+    private Handler mMediaHandler;
     private boolean mInfoAvailable;
     private String mInfoToSet;
     private boolean mKeyguard;
@@ -58,6 +63,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
     protected NotificationMediaManager mMediaManager;
 
     private boolean mMediaIsVisible;
+    private SettableWakeLock mMediaWakeLock;
 
     private String mTrackInfoSeparator;
 
@@ -68,6 +74,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         super(context, attributeSet);
         initDependencies();
         mContext = context;
+        initializeMedia();
         mTrackInfoSeparator = getResources().getString(R.string.ambientmusic_songinfo);
         final int iconSize = mContext.getResources().getDimensionPixelSize(
                 R.dimen.notification_menu_icon_padding);
@@ -119,6 +126,15 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         mCustomSettingsObserver.update();
         if (DEBUG_AMBIENTMUSIC) {
             Log.d("AmbientIndicationContainer", "initializeView");
+        }
+    }
+
+    private void initializeMedia() {
+        mMediaHandler = new Handler();
+        mMediaWakeLock = new SettableWakeLock(WakeLock.createPartial(mContext, "media"),
+                "media");
+        if (DEBUG_AMBIENTMUSIC) {
+            Log.d("AmbientIndicationContainer", "initializeMedia");
         }
     }
 
@@ -322,22 +338,54 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
                 }
             }
             boolean nextVisible = state == 3;
-            if (nextVisible == mMediaIsVisible && metadata == mMediaMetaData) {
-                return;
+            if (mMediaHandler != null) {
+                mMediaHandler.removeCallbacksAndMessages(null);
+                if (mMediaIsVisible && !nextVisible) {
+                    // We need to delay this event for a few millis when stopping to avoid jank in the
+                    // animation. The media app might not send its update when buffering, and the slice
+                    // would end up without a header for 0.5 second.
+                    mMediaHandler.postDelayed(() -> {
+                        synchronized (this) {
+                            updateMediaStateLocked(metadata, state);
+                            mMediaWakeLock.setAcquired(false);
+                        }
+                    }, 2000);;
+                } else {
+                    mMediaWakeLock.setAcquired(false);
+                    updateMediaStateLocked(metadata, state);
+                }
             }
-            mMediaMetaData = metadata;
-            mMediaIsVisible = nextVisible;
         }
+    }
+
+    private void updateMediaStateLocked(MediaMetadata metadata, @PlaybackState.State int state) {
+        boolean nextVisible = state == 3;
+        CharSequence title = null;
+        if (metadata != null) {
+            title = metadata.getText(MediaMetadata.METADATA_KEY_TITLE);
+            if (TextUtils.isEmpty(title)) {
+                title = getContext().getResources().getString(R.string.music_controls_no_title);
+            }
+        }
+        CharSequence artist = metadata == null ? null : metadata.getText(
+                MediaMetadata.METADATA_KEY_ARTIST);
+
+        if (nextVisible == mMediaIsVisible && TextUtils.equals(title, mMediaTitle)
+                && TextUtils.equals(artist, mMediaArtist)) {
+            return;
+        }
+        mMediaTitle = title;
+        mMediaArtist = artist;
+        mMediaIsVisible = nextVisible;
+
         if (mShowMusicTicker && mMediaManager.getNowPlayingTrack() != null) {
             setNowPlayingIndication(mMediaManager.getNowPlayingTrack());
             if (DEBUG_AMBIENTMUSIC) {
                 Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Now Playing: track=" + mMediaManager.getNowPlayingTrack());
             }
-        } else if (mShowMusicTicker && mMediaMetaData != null) {
-            setIndication(mMediaMetaData, null, false); //2nd param must be null here
+        } else if (mShowMusicTicker && !TextUtils.isEmpty(mMediaTitle)) {
+            setIndication(metadata, null, false); //2nd param must be null here
             if (DEBUG_AMBIENTMUSIC) {
-                CharSequence artist = mMediaMetaData.getText(MediaMetadata.METADATA_KEY_ARTIST);
-                CharSequence title = mMediaMetaData.getText(MediaMetadata.METADATA_KEY_TITLE);
                 Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Music Ticker: artist=" + artist + "; title=" + title);
             }
         } else {
