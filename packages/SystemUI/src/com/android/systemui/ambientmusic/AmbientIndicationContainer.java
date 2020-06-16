@@ -67,7 +67,6 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
 
     private String mTrackInfoSeparator;
 
-    private boolean mShowMusicTicker;
     private CustomSettingsObserver mCustomSettingsObserver;
 
     public AmbientIndicationContainer(Context context, AttributeSet attributeSet) {
@@ -99,10 +98,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         public void onChange(boolean selfChange, Uri uri) {
             if (uri.equals(Settings.System.getUriFor(
                     Settings.System.FORCE_AMBIENT_FOR_MEDIA))) {
-                mShowMusicTicker =
-                        Settings.System.getIntForUser(mContext.getContentResolver(),
-                        Settings.System.FORCE_AMBIENT_FOR_MEDIA, 1,
-                        UserHandle.USER_CURRENT) == 1;
+                //do nothing
             }
             update();
         }
@@ -110,6 +106,12 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         private void update() {
             updateAmbientIndicationView(AmbientIndicationContainer.this);
         }
+    }
+
+    private boolean isMusicTickerEnabled() {
+        return Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.FORCE_AMBIENT_FOR_MEDIA, 1,
+                UserHandle.USER_CURRENT) == 1;
     }
 
     private void hideIndication() {
@@ -141,6 +143,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
     public void updateAmbientIndicationView(View view) {
         mAmbientIndication = findViewById(R.id.ambient_indication);
         mText = (TextView)findViewById(R.id.ambient_indication_text);
+        boolean mShowMusicTicker = isMusicTickerEnabled();
         if (mShowMusicTicker) {
             setIndication(mMediaMetaData, mMediaText, false);
         } else {
@@ -384,7 +387,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
             mMediaIsVisible = true;
             mMediaArtist = null;
         }
-
+        boolean mShowMusicTicker = isMusicTickerEnabled();
         if (mShowMusicTicker && nowPlayingAvailable) {
             setNowPlayingIndication(mMediaManager.getNowPlayingTrack());
             if (DEBUG_AMBIENTMUSIC) {
