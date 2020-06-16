@@ -337,7 +337,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
                     break;
                 }
             }
-            boolean nextVisible = state == 3;
+            boolean nextVisible = state == 3 || mMediaManager.getNowPlayingTrack() != null;
             if (mMediaHandler != null) {
                 mMediaHandler.removeCallbacksAndMessages(null);
                 if (mMediaIsVisible && !nextVisible) {
@@ -359,7 +359,8 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
     }
 
     private void updateMediaStateLocked(MediaMetadata metadata, @PlaybackState.State int state) {
-        boolean nextVisible = state == 3;
+        boolean nowPlayingAvailable = mMediaManager.getNowPlayingTrack() != null;
+        boolean nextVisible = state == 3 || nowPlayingAvailable;
         CharSequence title = null;
         if (metadata != null) {
             title = metadata.getText(MediaMetadata.METADATA_KEY_TITLE);
@@ -378,7 +379,13 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         mMediaArtist = artist;
         mMediaIsVisible = nextVisible;
 
-        if (mShowMusicTicker && mMediaManager.getNowPlayingTrack() != null) {
+        if (mMediaTitle == null && nowPlayingAvailable) {
+            mMediaTitle = mMediaManager.getNowPlayingTrack();
+            mMediaIsVisible = true;
+            mMediaArtist = null;
+        }
+
+        if (mShowMusicTicker && nowPlayingAvailable) {
             setNowPlayingIndication(mMediaManager.getNowPlayingTrack());
             if (DEBUG_AMBIENTMUSIC) {
                 Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Now Playing: track=" + mMediaManager.getNowPlayingTrack());
