@@ -393,7 +393,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
             if (DEBUG_AMBIENTMUSIC) {
                 Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Now Playing: track=" + mMediaManager.getNowPlayingTrack());
             }
-        } else if (mShowMusicTicker && !TextUtils.isEmpty(mMediaTitle)) {
+        } else if (mShowMusicTicker && !TextUtils.isEmpty(mMediaTitle) && state == 3) {
             setIndication(metadata, null, false); //2nd param must be null here
             if (DEBUG_AMBIENTMUSIC) {
                 Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Music Ticker: artist=" + artist + "; title=" + title);
