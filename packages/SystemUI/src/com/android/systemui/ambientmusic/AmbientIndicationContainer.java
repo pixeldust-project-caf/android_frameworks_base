@@ -79,6 +79,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
 
     protected NotificationMediaManager mMediaManager;
 
+    private int mMediaState;
     private boolean mMediaIsVisible;
     private SettableWakeLock mMediaWakeLock;
 
@@ -132,6 +133,9 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
     }
 
     private void hideIndication() {
+        mInfoAvailable = false;
+        mNpInfoAvailable = false;
+        mText.setText(null);
         mAmbientIndication.setVisibility(View.INVISIBLE);
         if (DEBUG_AMBIENTMUSIC) {
             Log.d("AmbientIndicationContainer", "hideIndication");
@@ -274,8 +278,13 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
 
     public void setTrackInfo(boolean nowPlaying) {
         // never override local music ticker but be sure to delete Now Playing info when needed
-        mNpInfoAvailable = !(nowPlaying && mMediaArtist == null);
+        mNpInfoAvailable = !(nowPlaying && (mMediaArtist == null || mMediaArtist != null && mMediaState != 3));
         if (nowPlaying && mInfoAvailable || mAmbientIndication == null) return;
+        // make sure to show Now Playing info while local music state is paused
+        if (nowPlaying && mMediaArtist != null && mMediaState != 3) {
+            mMediaArtist = null;
+            mMediaTitle = mMediaManager.getNowPlayingTrack();
+        }
 
         mInfoToSet = null;
 
@@ -344,7 +353,8 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
                     break;
                 }
             }
-            boolean nextVisible = state == 3 || mMediaManager.getNowPlayingTrack() != null;
+            mMediaState = state;
+            boolean nextVisible = mMediaState == 3 || mMediaManager.getNowPlayingTrack() != null;
             if (mMediaHandler != null) {
                 mMediaHandler.removeCallbacksAndMessages(null);
                 if (mMediaIsVisible && !nextVisible) {
@@ -353,13 +363,13 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
                     // would end up without a header for 0.5 second.
                     mMediaHandler.postDelayed(() -> {
                         synchronized (this) {
-                            updateMediaStateLocked(metadata, state);
+                            updateMediaStateLocked(metadata, mMediaState);
                             mMediaWakeLock.setAcquired(false);
                         }
                     }, 2000);;
                 } else {
                     mMediaWakeLock.setAcquired(false);
-                    updateMediaStateLocked(metadata, state);
+                    updateMediaStateLocked(metadata, mMediaState);
                 }
             }
         }
@@ -367,7 +377,8 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
 
     private void updateMediaStateLocked(MediaMetadata metadata, @PlaybackState.State int state) {
         boolean nowPlayingAvailable = mMediaManager.getNowPlayingTrack() != null;
-        boolean nextVisible = state == 3 || nowPlayingAvailable;
+        mMediaState = state;
+        boolean nextVisible = mMediaState == 3 || nowPlayingAvailable;
         CharSequence title = null;
         if (metadata != null) {
             title = metadata.getText(MediaMetadata.METADATA_KEY_TITLE);
@@ -397,7 +408,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
             if (DEBUG_AMBIENTMUSIC) {
                 Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Now Playing: track=" + mMediaTitle);
             }
-        } else if (mShowMusicTicker && !TextUtils.isEmpty(mMediaTitle) && state == 3) {
+        } else if (mShowMusicTicker && !TextUtils.isEmpty(mMediaTitle) && mMediaState == 3) {
             setTrackInfo(false);
             if (DEBUG_AMBIENTMUSIC) {
                 Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Music Ticker: artist=" + mMediaArtist + "; title=" + mMediaTitle);
