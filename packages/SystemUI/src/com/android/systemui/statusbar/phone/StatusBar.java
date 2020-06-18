@@ -924,8 +924,9 @@ public class StatusBar extends SystemUI implements DemoMode,
                     Settings.System.FORCE_AMBIENT_FOR_MEDIA, 1,
                     UserHandle.USER_CURRENT) == 1;
         if (isAmbientContainerAvailable()) {
-            ((AmbientIndicationContainer)mAmbientIndicationContainer).setIndication(
-                    mMediaManager.getMediaMetadata(), null, false);
+            ((AmbientIndicationContainer)mAmbientIndicationContainer).updateAmbientIndicationView();
+            //((AmbientIndicationContainer)mAmbientIndicationContainer).setIndication(
+                    //mMediaManager.getMediaMetadata(), null, false);
         }
     }
 

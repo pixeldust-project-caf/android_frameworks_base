@@ -9,7 +9,7 @@ implements AutoReinflateContainer.InflateListener {
     private Object mContainer;
 
     private void setAmbientIndicationView(View view) {
-        ((AmbientIndicationContainer)mContainer).updateAmbientIndicationView(view);
+        ((AmbientIndicationContainer)mContainer).updateAmbientIndicationView();
     }
 
     public AmbientIndicationInflateListener(Object object) {

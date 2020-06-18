@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2019 abcduwhatever
+ * Copyright (C) 2020 The PixelDust Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.android.systemui.ambientmusic;
 
 import android.content.ContentResolver;
@@ -104,7 +121,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         }
 
         private void update() {
-            updateAmbientIndicationView(AmbientIndicationContainer.this);
+            updateAmbientIndicationView();
         }
     }
 
@@ -115,7 +132,10 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
     }
 
     private void hideIndication() {
-        setIndication(null, null, false);
+        mAmbientIndication.setVisibility(View.INVISIBLE);
+        if (DEBUG_AMBIENTMUSIC) {
+            Log.d("AmbientIndicationContainer", "hideIndication");
+        }
         mAnimatedIcon.stop();
     }
 
@@ -140,12 +160,13 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         }
     }
 
-    public void updateAmbientIndicationView(View view) {
+    public void updateAmbientIndicationView() {
         mAmbientIndication = findViewById(R.id.ambient_indication);
         mText = (TextView)findViewById(R.id.ambient_indication_text);
         boolean mShowMusicTicker = isMusicTickerEnabled();
         if (mShowMusicTicker) {
-            setIndication(mMediaMetaData, mMediaText, false);
+            boolean nowPlayingAvailable = mMediaManager.getNowPlayingTrack() != null;
+            setTrackInfo(nowPlayingAvailable);
         } else {
             hideIndication();
         }
@@ -251,39 +272,21 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         this.setLayoutParams(lp);
     }
 
-    private void setNowPlayingIndication(String trackInfo) {
-        setIndication(null, trackInfo, true);
-    }
-
-    public void setIndication(MediaMetadata mediaMetaData, String notificationText, boolean nowPlaying) {
+    public void setTrackInfo(boolean nowPlaying) {
         // never override local music ticker but be sure to delete Now Playing info when needed
-        if (nowPlaying && notificationText == null) {
-            mMediaText = null;
-            mNpInfoAvailable = false;
-        }
+        mNpInfoAvailable = !(nowPlaying && mMediaArtist == null);
         if (nowPlaying && mInfoAvailable || mAmbientIndication == null) return;
 
-        CharSequence charSequence = null;
         mInfoToSet = null;
-        if (mediaMetaData != null) {
-            CharSequence artist = mediaMetaData.getText(MediaMetadata.METADATA_KEY_ARTIST);
-            CharSequence album = mediaMetaData.getText(MediaMetadata.METADATA_KEY_ALBUM);
-            CharSequence title = mediaMetaData.getText(MediaMetadata.METADATA_KEY_TITLE);
-            if (artist != null && title != null) {
-                /* considering we are in Ambient mode here, it's not worth it to show
-                    too many infos, so let's skip album name to keep a smaller text */
-                charSequence = String.format(mTrackInfoSeparator, title.toString(), artist.toString());
-            }
-        }
 
         // if we are already showing an Ambient Notification with track info,
         // stop the current scrolling and start it delayed again for the next song
         setTickerMarquee(true, true);
 
-        if (!TextUtils.isEmpty(charSequence)) {
-            mInfoToSet = charSequence.toString();
-        } else if (!TextUtils.isEmpty(notificationText)) {
-            mInfoToSet = notificationText;
+        if (!TextUtils.isEmpty(mMediaArtist)) {
+            mInfoToSet = String.format(mTrackInfoSeparator, mMediaTitle.toString(), mMediaArtist.toString());
+        } else if (!TextUtils.isEmpty(mMediaTitle)) {
+            mInfoToSet = mMediaTitle.toString();
         }
 
         if (nowPlaying) {
@@ -293,8 +296,6 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         }
 
         if (mInfoAvailable || mNpInfoAvailable) {
-            mMediaMetaData = mediaMetaData;
-            mMediaText = notificationText;
             boolean isAnotherTrack = (mInfoAvailable || mNpInfoAvailable)
                     && (TextUtils.isEmpty(mLastInfo) || (!TextUtils.isEmpty(mLastInfo)
                     && !mLastInfo.equals(mInfoToSet)));
@@ -311,6 +312,9 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
             mAmbientIndication.setVisibility(shouldShow() ? View.VISIBLE : View.INVISIBLE);
         } else {
             mAmbientIndication.setVisibility(View.INVISIBLE);
+        }
+        if (DEBUG_AMBIENTMUSIC) {
+            Log.d("AmbientIndicationContainer", "setTrackInfo: nowPlaying=" + nowPlaying);
         }
     }
 
@@ -389,14 +393,14 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         }
         boolean mShowMusicTicker = isMusicTickerEnabled();
         if (mShowMusicTicker && nowPlayingAvailable) {
-            setNowPlayingIndication(mMediaManager.getNowPlayingTrack());
+            setTrackInfo(true);
             if (DEBUG_AMBIENTMUSIC) {
-                Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Now Playing: track=" + mMediaManager.getNowPlayingTrack());
+                Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Now Playing: track=" + mMediaTitle);
             }
         } else if (mShowMusicTicker && !TextUtils.isEmpty(mMediaTitle) && state == 3) {
-            setIndication(metadata, null, false); //2nd param must be null here
+            setTrackInfo(false);
             if (DEBUG_AMBIENTMUSIC) {
-                Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Music Ticker: artist=" + artist + "; title=" + title);
+                Log.d("AmbientIndicationContainer", "onMetadataOrStateChanged: Music Ticker: artist=" + mMediaArtist + "; title=" + mMediaTitle);
             }
         } else {
             // Make sure that track info is hidden when playback is paused or stopped
