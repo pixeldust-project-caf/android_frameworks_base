@@ -54,7 +54,7 @@ import java.util.Locale;
 public class AmbientIndicationContainer extends AutoReinflateContainer implements
         NotificationMediaManager.MediaListener {
 
-    public static final boolean DEBUG_AMBIENTMUSIC = true;
+    public static final boolean DEBUG_AMBIENTMUSIC = false;
 
     private View mAmbientIndication;
     private CharSequence mIndication;
