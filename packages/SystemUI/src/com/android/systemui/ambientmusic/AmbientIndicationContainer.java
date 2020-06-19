@@ -288,10 +288,6 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
 
         mInfoToSet = null;
 
-        // if we are already showing an Ambient Notification with track info,
-        // stop the current scrolling and start it delayed again for the next song
-        setTickerMarquee(true, true);
-
         if (!TextUtils.isEmpty(mMediaArtist)) {
             mInfoToSet = String.format(mTrackInfoSeparator, mMediaTitle.toString(), mMediaArtist.toString());
         } else if (!TextUtils.isEmpty(mMediaTitle)) {
@@ -319,9 +315,14 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         if (mInfoToSet != null) {
             mText.setText(mInfoToSet);
             mAmbientIndication.setVisibility(shouldShow() ? View.VISIBLE : View.INVISIBLE);
+
+            // if we are already showing an Ambient Notification with track info,
+            // stop the current scrolling and start it delayed again for the next song
+            setTickerMarquee(true, true);
         } else {
-            mAmbientIndication.setVisibility(View.INVISIBLE);
+            hideIndication();
         }
+
         if (DEBUG_AMBIENTMUSIC) {
             Log.d("AmbientIndicationContainer", "setTrackInfo: nowPlaying=" + nowPlaying);
         }
