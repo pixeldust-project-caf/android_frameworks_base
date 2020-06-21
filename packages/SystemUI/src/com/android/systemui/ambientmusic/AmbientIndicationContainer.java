@@ -110,14 +110,13 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.FORCE_AMBIENT_FOR_MEDIA),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.AMBIENT_INDICATION_TRANSPARENT_BGCOLOR),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.FORCE_AMBIENT_FOR_MEDIA))) {
-                //do nothing
-            }
             update();
         }
 
@@ -129,6 +128,12 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
     private boolean isMusicTickerEnabled() {
         return Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.FORCE_AMBIENT_FOR_MEDIA, 1,
+                UserHandle.USER_CURRENT) == 1;
+    }
+
+    private boolean usesTransparentBackground() {
+        return Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.AMBIENT_INDICATION_TRANSPARENT_BGCOLOR, 0,
                 UserHandle.USER_CURRENT) == 1;
     }
 
@@ -164,9 +169,19 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         }
     }
 
+    private void setAmbientIndicationBackground() {
+        if (mText == null) return;
+        if (usesTransparentBackground()) {
+            mText.setBackgroundResource(R.color.transparent);
+        } else {
+            mText.setBackgroundResource(R.drawable.ambient_indication_pill_background);
+        }
+    }
+
     public void updateAmbientIndicationView() {
         mAmbientIndication = findViewById(R.id.ambient_indication);
         mText = (TextView)findViewById(R.id.ambient_indication_text);
+        setAmbientIndicationBackground();
         boolean mShowMusicTicker = isMusicTickerEnabled();
         if (mShowMusicTicker) {
             boolean nowPlayingAvailable = mMediaManager.getNowPlayingTrack() != null;
