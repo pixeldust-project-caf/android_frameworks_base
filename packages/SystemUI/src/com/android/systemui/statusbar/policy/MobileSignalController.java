@@ -147,6 +147,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     private boolean mVolteIcon;
     // Vowifi Icon
     private boolean mVoWifiIcon;
+    private boolean mVoWifiIconShowing = false;
 
     private int mCallState = TelephonyManager.CALL_STATE_IDLE;
 
@@ -508,7 +509,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         int resId = 0;
         int voiceNetTye = getVoiceNetworkType();
         if ( (mCurrentState.voiceCapable || mCurrentState.videoCapable)
-                &&  mCurrentState.imsRegistered && mVolteIcon) {
+                && mCurrentState.imsRegistered && mVolteIcon && !mVoWifiIconShowing ) {
             resId = R.drawable.ic_volte;
         }else if ( (mTelephonyDisplayInfo.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE
                         || mTelephonyDisplayInfo.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE_CA)
@@ -660,6 +661,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 statusIcon = new IconState(true,
                         mCurrentState.enabled && !mCurrentState.airplaneMode? statusIcon.icon : -1,
                         statusIcon.contentDescription);
+                mVoWifiIconShowing = true;
+            } else {
+                mVoWifiIconShowing = false;
             }
             int volteIcon = isVolteSwitchOn() ? getVolteResId() : 0;
             if (DEBUG) {
