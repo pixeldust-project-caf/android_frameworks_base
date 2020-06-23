@@ -5025,6 +5025,15 @@ public final class Settings {
         public static final Validator SHOW_VOLTE_ICON_VALIDATOR = BOOLEAN_VALIDATOR;
 
         /**
+         * Whether to show VoWiFi icon or not
+         * @hide
+         */
+        public static final String SHOW_VOWIFI_ICON = "show_vowifi_icon";
+
+        /** @hide */
+        public static final Validator SHOW_VOWIFI_ICON_VALIDATOR = BOOLEAN_VALIDATOR;
+
+        /**
          * Show 4G instead of LTE
          * @hide
          */
@@ -6158,6 +6167,7 @@ public final class Settings {
             DATA_ACTIVITY_ARROW,
             FORCE_AMBIENT_FOR_MEDIA,
             AMBIENT_INDICATION_TRANSPARENT_BGCOLOR,
+            SHOW_VOWIFI_ICON,
         };
 
         /**
@@ -6379,6 +6389,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(LOCK_SHOW_STATUS_BAR);
             PRIVATE_SETTINGS.add(LOCKSCREEN_TRANSLUCENT_NOTIFICATIONS_BG_ENABLED);
             PRIVATE_SETTINGS.add(DATA_ACTIVITY_ARROW);
+            PRIVATE_SETTINGS.add(SHOW_VOWIFI_ICON);
         }
 
         /**
@@ -6580,6 +6591,7 @@ public final class Settings {
             VALIDATORS.put(DATA_ACTIVITY_ARROW, DATA_ACTIVITY_ARROW_VALIDATOR);
             VALIDATORS.put(FORCE_AMBIENT_FOR_MEDIA, FORCE_AMBIENT_FOR_MEDIA_VALIDATOR);
             VALIDATORS.put(AMBIENT_INDICATION_TRANSPARENT_BGCOLOR, AMBIENT_INDICATION_TRANSPARENT_BGCOLOR_VALIDATOR);
+            VALIDATORS.put(SHOW_VOWIFI_ICON, SHOW_VOWIFI_ICON_VALIDATOR);
         }
 
         /**

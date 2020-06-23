@@ -131,6 +131,8 @@ public class MobileSignalController extends SignalController<
 
     // Volte Icon
     private boolean mVoLTEicon;
+    // Vowifi Icon
+    private boolean mVoWiFiIcon;
 
     // Data disabled icon
     private boolean mDataDisabledIcon;
@@ -223,7 +225,10 @@ public class MobileSignalController extends SignalController<
            resolver.registerContentObserver(
                   Settings.System.getUriFor(Settings.System.DATA_DISABLED_ICON),
                   false, this, UserHandle.USER_ALL);
-           updateSettings();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                  Settings.System.SHOW_VOWIFI_ICON),
+                  false, this, UserHandle.USER_ALL);
+            updateSettings();
         }
 
         /*
@@ -243,7 +248,9 @@ public class MobileSignalController extends SignalController<
         mVoLTEicon = Settings.System.getIntForUser(resolver,
                 Settings.System.SHOW_VOLTE_ICON, 0,
                 UserHandle.USER_CURRENT) == 1;
-
+        mVoWiFiIcon = Settings.System.getIntForUser(resolver,
+                Settings.System.SHOW_VOWIFI_ICON, 0,
+                UserHandle.USER_CURRENT) == 1;
         mDataDisabledIcon = Settings.System.getIntForUser(resolver,
                 Settings.System.DATA_DISABLED_ICON, 1,
                 UserHandle.USER_CURRENT) == 1;
@@ -554,7 +561,7 @@ public class MobileSignalController extends SignalController<
         int volteIcon = isVolteSwitchOn() ? getVolteResId() : 0;
 
         MobileIconGroup vowifiIconGroup = getVowifiIconGroup();
-        if ( mConfig.showVowifiIcon && vowifiIconGroup != null ) {
+        if (mConfig.showVowifiIcon && mVoWiFiIcon && vowifiIconGroup != null) {
             typeIcon = vowifiIconGroup.mDataType;
             statusIcon = new IconState(true,
                     mCurrentState.enabled && !mCurrentState.airplaneMode? statusIcon.icon : 0,
