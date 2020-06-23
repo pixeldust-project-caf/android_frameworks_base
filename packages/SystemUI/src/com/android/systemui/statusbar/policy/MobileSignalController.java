@@ -133,6 +133,7 @@ public class MobileSignalController extends SignalController<
     private boolean mVoLTEicon;
     // Vowifi Icon
     private boolean mVoWiFiIcon;
+    private boolean mVoWiFiIconShowing = false;
 
     // Data disabled icon
     private boolean mDataDisabledIcon;
@@ -454,8 +455,8 @@ public class MobileSignalController extends SignalController<
     private int getVolteResId() {
         int resId = 0;
         int voiceNetTye = getVoiceNetworkType();
-        if ( (mCurrentState.voiceCapable || mCurrentState.videoCapable)
-                &&  mCurrentState.imsRegistered && mVoLTEicon ) {
+        if ((mCurrentState.voiceCapable || mCurrentState.videoCapable)
+                && mCurrentState.imsRegistered && mVoLTEicon && !mVoWiFiIconShowing) {
             resId = R.drawable.ic_volte;
         }else if ( (mDataNetType == TelephonyManager.NETWORK_TYPE_LTE
                         || mDataNetType == TelephonyManager.NETWORK_TYPE_LTE_CA)
@@ -558,7 +559,6 @@ public class MobileSignalController extends SignalController<
         showDataIcon &= mCurrentState.isDefault || dataDisabled;
         int typeIcon = (showDataIcon || mConfig.alwaysShowDataRatIcon
                 || mConfig.alwaysShowNetworkTypeIcon) ? icons.mDataType : 0;
-        int volteIcon = isVolteSwitchOn() ? getVolteResId() : 0;
 
         MobileIconGroup vowifiIconGroup = getVowifiIconGroup();
         if (mConfig.showVowifiIcon && mVoWiFiIcon && vowifiIconGroup != null) {
@@ -566,7 +566,11 @@ public class MobileSignalController extends SignalController<
             statusIcon = new IconState(true,
                     mCurrentState.enabled && !mCurrentState.airplaneMode? statusIcon.icon : 0,
                     statusIcon.contentDescription);
+            mVoWiFiIconShowing = true;
+        } else {
+            mVoWiFiIconShowing = false;
         }
+        int volteIcon = isVolteSwitchOn() ? getVolteResId() : 0;
 
         if ( mConfig.enableRatIconEnhancement ) {
             typeIcon = getEnhancementDataRatIcon();
