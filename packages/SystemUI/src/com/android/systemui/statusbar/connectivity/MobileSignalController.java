@@ -140,6 +140,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     private FeatureConnector<ImsManager> mFeatureConnector;
 
     private int mVoLTEicon = 0;
+    private int mVoWIFIicon = 0;
 
     private final MobileStatusTracker.Callback mMobileCallback =
             new MobileStatusTracker.Callback() {
@@ -301,6 +302,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         SettingsObserver(Handler handler) {
             super(handler);
         }
+
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(
@@ -314,6 +316,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                     this, UserHandle.USER_ALL);
             resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.VOLTE_ICON_STYLE), false,
+                    this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.VOWIFI_ICON_STYLE), false,
                     this, UserHandle.USER_ALL);
             updateSettings();
         }
@@ -337,6 +342,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 UserHandle.USER_CURRENT) == 1;
         mVoLTEicon = Settings.System.getIntForUser(resolver,
                 Settings.System.VOLTE_ICON_STYLE, 0,
+                UserHandle.USER_CURRENT);
+        mVoWIFIicon = Settings.System.getIntForUser(resolver,
+                Settings.System.VOWIFI_ICON_STYLE, 0,
                 UserHandle.USER_CURRENT);
         mConfig = Config.readConfig(mContext);
         setConfiguration(mConfig);
@@ -1230,10 +1238,37 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     }
 
     private MobileIconGroup getVowifiIconGroup() {
+        if (mVoWIFIicon == 0) return null;
+
         if ( isVowifiAvailable() && !isCallIdle() ) {
             return TelephonyIcons.VOWIFI_CALLING;
         }else if (isVowifiAvailable()) {
-            return TelephonyIcons.VOWIFI;
+            switch (mVoWIFIicon) {
+                case 1:
+                default:
+                    return TelephonyIcons.VOWIFI;
+                // OOS
+                case 2:
+                    return TelephonyIcons.VOWIFI_ONEPLUS;
+                // Motorola
+                case 3:
+                    return TelephonyIcons.VOWIFI_MOTO;
+                // ASUS
+                case 4:
+                    return TelephonyIcons.VOWIFI_ASUS;
+                // EMUI (Huawei P10)
+                case 5:
+                    return TelephonyIcons.VOWIFI_EMUI;
+                // Oneplus Compact
+                case 6:
+                    return TelephonyIcons.VOWIFI_ONEPLUS_COMPACT;
+                // Vivo
+                case 7:
+                    return TelephonyIcons.VOWIFI_VIVO;
+                // Margaritov
+                case 8:
+                    return TelephonyIcons.VOWIFI_Margaritov;
+            }
         }else {
             return null;
         }
