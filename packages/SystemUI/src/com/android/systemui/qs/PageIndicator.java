@@ -4,11 +4,14 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.AnimatedVectorDrawable;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import androidx.core.content.ContextCompat;
 
 import com.android.systemui.R;
 
@@ -46,6 +49,8 @@ public class PageIndicator extends ViewGroup {
 
     public void setNumPages(int numPages) {
         setVisibility(numPages > 1 ? View.VISIBLE : View.GONE);
+        boolean usesFooterBrightnessSlider = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QS_BRIGHTNESS_SLIDER_FOOTER, 0) != 0;
         if (mAnimating) {
             Log.w(TAG, "setNumPages during animation");
         }
@@ -54,7 +59,12 @@ public class PageIndicator extends ViewGroup {
         }
         TypedArray array = getContext().obtainStyledAttributes(
                 new int[]{android.R.attr.colorControlActivated});
-        int color = array.getColor(0, 0);
+        int color;
+        if (usesFooterBrightnessSlider) {
+            color = ContextCompat.getColor(mContext, R.color.brightness_slider_icons);
+        } else {
+            color = array.getColor(0, 0);
+        }
         array.recycle();
         while (numPages > getChildCount()) {
             ImageView v = new ImageView(mContext);

@@ -60,6 +60,14 @@
             android:tint="@color/brightness_slider_icons"
             android:scaleType="centerInside"/>
 
+        <com.android.systemui.qs.PageIndicator
+            android:id="@+id/footer_page_indicator_mod"
+            android:layout_width="20dp"
+            android:layout_height="16dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:tint="@color/brightness_slider_icons"
+            android:visibility="gone" />
+
         <ImageView
             android:layout_width="20dp"
             android:layout_height="16dp"
