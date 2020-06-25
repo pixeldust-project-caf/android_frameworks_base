@@ -247,7 +247,7 @@ public class QSPanel extends LinearLayout implements Callback, BrightnessMirrorL
             if (uri.equals(Settings.System.getUriFor(
                     Settings.System.QS_SHOW_BRIGHTNESS)) ||
                     uri.equals(Settings.System.getUriFor(
-                        Settings.System.QS_SHOW_BRIGHTNESS))) {
+                        Settings.System.QS_BRIGHTNESS_SLIDER_FOOTER))) {
                 updateViewVisibilityForTuningValue(
                         Settings.System.getIntForUser(mContext.getContentResolver(),
                         Settings.System.QS_BRIGHTNESS_SLIDER_FOOTER, 1,
