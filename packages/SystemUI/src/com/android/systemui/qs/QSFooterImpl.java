@@ -319,7 +319,9 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
     }
 
     private boolean showUserSwitcher() {
-        return mExpanded && mMultiUserSwitch.isMultiUserEnabled();
+        boolean usesFooterBrightnessSlider = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QS_BRIGHTNESS_SLIDER_FOOTER, 0) != 0;
+        return mExpanded && mMultiUserSwitch.isMultiUserEnabled() && !usesFooterBrightnessSlider;
     }
 
     private void updateListeners() {
