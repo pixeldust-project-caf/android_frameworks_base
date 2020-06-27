@@ -561,7 +561,7 @@ public class MobileSignalController extends SignalController<
                 || mConfig.alwaysShowNetworkTypeIcon) ? icons.mDataType : 0;
 
         MobileIconGroup vowifiIconGroup = getVowifiIconGroup();
-        if (mConfig.showVowifiIcon && mVoWiFiIcon && vowifiIconGroup != null) {
+        if ( mConfig.showVowifiIcon && mVoWiFiIcon && vowifiIconGroup != null ) {
             typeIcon = vowifiIconGroup.mDataType;
             statusIcon = new IconState(true,
                     mCurrentState.enabled && !mCurrentState.airplaneMode? statusIcon.icon : 0,
@@ -585,7 +585,8 @@ public class MobileSignalController extends SignalController<
                     + " mConfig.alwaysShowDataRatIcon=" + mConfig.alwaysShowDataRatIcon
                     + " icons.mDataType=" + icons.mDataType
                     + " isVolteSwitchOn=" + isVolteSwitchOn()
-                    + " volteIcon=" + volteIcon);
+                    + " volteIcon=" + volteIcon
+                    + " mConfig.showVowifiIcon=" + mConfig.showVowifiIcon);
         }
         callback.setMobileDataIndicators(statusIcon, qsIcon, typeIcon, qsTypeIcon,
                 activityIn, activityOut, volteIcon, dataContentDescription, dataContentDescriptionHtml,
@@ -1120,7 +1121,7 @@ public class MobileSignalController extends SignalController<
 
     private boolean isVowifiAvailable() {
         return mCurrentState.voiceCapable &&  mCurrentState.imsRegistered
-                && mServiceState.getDataNetworkType() == TelephonyManager.NETWORK_TYPE_IWLAN;
+                && getDataNetworkType() == TelephonyManager.NETWORK_TYPE_IWLAN;
     }
 
     private MobileIconGroup getVowifiIconGroup() {
