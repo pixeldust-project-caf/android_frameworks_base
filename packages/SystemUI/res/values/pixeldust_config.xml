@@ -57,5 +57,8 @@
     <!-- Allow devices to use a lower screenrecording bitrate because of old hardware -->
     <bool name="config_device_needs_lower_bitrate">false</bool>
 
+    <!-- Whether to invert the icon color for active quicksettings icons -->
+    <bool name="config_useInvertedQsIconColor">false</bool>
+
 </resources>
 

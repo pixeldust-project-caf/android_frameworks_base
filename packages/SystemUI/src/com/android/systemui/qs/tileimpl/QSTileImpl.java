@@ -58,6 +58,7 @@ import com.android.settingslib.Utils;
 import com.android.systemui.Dependency;
 import com.android.systemui.Dumpable;
 import com.android.systemui.Prefs;
+import com.android.systemui.R;
 import com.android.systemui.plugins.ActivityStarter;
 import com.android.systemui.plugins.qs.DetailAdapter;
 import com.android.systemui.plugins.qs.QSIconView;
@@ -441,14 +442,16 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
     public abstract CharSequence getTileLabel();
 
     public static int getColorForState(Context context, int state) {
+        boolean useInvertedQsIconColor = context.getResources().getBoolean(R.bool.config_useInvertedQsIconColor);
+        int primaryColor = Utils.getColorAttrDefaultColor(context, android.R.attr.colorPrimary);
+        int secondaryColor = Utils.getColorAttrDefaultColor(context, android.R.attr.textColorSecondary);
         switch (state) {
             case Tile.STATE_UNAVAILABLE:
-                return Utils.getDisabled(context,
-                        Utils.getColorAttrDefaultColor(context, android.R.attr.textColorSecondary));
+                return Utils.getDisabled(context, secondaryColor);
             case Tile.STATE_INACTIVE:
-                return Utils.getColorAttrDefaultColor(context, android.R.attr.textColorSecondary);
+                return secondaryColor;
             case Tile.STATE_ACTIVE:
-                return Utils.getColorAttrDefaultColor(context, android.R.attr.colorPrimary);
+                return useInvertedQsIconColor ? secondaryColor : primaryColor;
             default:
                 Log.e("QSTile", "Invalid state " + state);
                 return 0;
