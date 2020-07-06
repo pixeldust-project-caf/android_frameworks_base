@@ -6079,6 +6079,11 @@ public final class Settings {
         public static final String QS_PANEL_BG_ALPHA = "qs_panel_bg_alpha";
 
         /**
+         * @hide
+         */
+        public static final String QS_HEADER_BACKGROUND = "qs_header_background";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *

@@ -57,7 +57,8 @@ public class QSContainerImpl extends FrameLayout {
     private int mSideMargins;
     private boolean mQsDisabled;
 
-    private Drawable mQsBackGround;
+    private boolean mQsBackgroundAlpha;
+    private boolean mHideQSBlackGradient;
 
     public QSContainerImpl(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -78,7 +79,6 @@ public class QSContainerImpl extends FrameLayout {
         mStatusBarBackground = findViewById(R.id.quick_settings_status_bar_background);
         mBackgroundGradient = findViewById(R.id.quick_settings_gradient_view);
         mSideMargins = getResources().getDimensionPixelSize(R.dimen.notification_side_paddings);
-        mQsBackGround = getContext().getDrawable(R.drawable.qs_background_primary);
         updateSettings();
 
         setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
@@ -103,6 +103,9 @@ public class QSContainerImpl extends FrameLayout {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_PANEL_BG_ALPHA),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_HEADER_BACKGROUND),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -113,19 +116,24 @@ public class QSContainerImpl extends FrameLayout {
 
     private void updateSettings() {
         ContentResolver resolver = getContext().getContentResolver();
-        int mQsBackGroundAlpha = Settings.System.getIntForUser(resolver,
+        int bgAlpha = Settings.System.getIntForUser(resolver,
                 Settings.System.QS_PANEL_BG_ALPHA, 255,
                 UserHandle.USER_CURRENT);
+        mHideQSBlackGradient = Settings.System.getIntForUser(resolver,
+                Settings.System.QS_HEADER_BACKGROUND, 0,
+                UserHandle.USER_CURRENT) == 1;
 
-        if (mQsBackGroundAlpha < 255 ) {
-            mBackground.setVisibility(View.INVISIBLE);
-            mBackgroundGradient.setVisibility(View.INVISIBLE);
-            mQsBackGround.setAlpha(mQsBackGroundAlpha);
-            setBackground(mQsBackGround);
+        Drawable bg = mBackground.getBackground();
+        if (bgAlpha < 255) {
+            mQsBackgroundAlpha = true;
+            bg.setAlpha(bgAlpha);
+            mBackground.setBackground(bg);
         } else {
-            mBackground.setVisibility(View.VISIBLE);
-            mBackgroundGradient.setVisibility(View.VISIBLE);
+            mQsBackgroundAlpha = false;
+            bg.setAlpha(255);
+            mBackground.setBackground(bg);
         }
+        updateResources();
     }
 
     @Override
@@ -198,6 +206,7 @@ public class QSContainerImpl extends FrameLayout {
                 com.android.internal.R.dimen.quick_qs_offset_height);
 
         mQSPanel.setLayoutParams(layoutParams);
+        setBackgroundGradientVisibility(getResources().getConfiguration());
     }
 
     /**
@@ -229,14 +238,12 @@ public class QSContainerImpl extends FrameLayout {
     }
 
     private void setBackgroundGradientVisibility(Configuration newConfig) {
-        boolean hideQSBlackGradient = mContext.getResources().getBoolean(R.bool.config_hideQSBlackGradient);
-        if (newConfig.orientation == ORIENTATION_LANDSCAPE || hideQSBlackGradient) {
+        if (mHideQSBlackGradient) {
             mBackgroundGradient.setVisibility(View.INVISIBLE);
-            mStatusBarBackground.setVisibility(View.INVISIBLE);
         } else {
-            mBackgroundGradient.setVisibility(mQsDisabled ? View.INVISIBLE : View.VISIBLE);
-            mStatusBarBackground.setVisibility(View.VISIBLE);
+            mBackgroundGradient.setVisibility((mQsDisabled || mQsBackgroundAlpha) ? View.INVISIBLE : View.VISIBLE);
         }
+        mStatusBarBackground.setVisibility(mHideQSBlackGradient ? View.INVISIBLE : View.VISIBLE);
     }
 
     public void setExpansion(float expansion) {
