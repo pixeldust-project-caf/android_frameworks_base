@@ -1076,7 +1076,7 @@ public class MobileSignalController extends SignalController<
 
     private boolean isSideCarSaValid() {
         return mFiveGState.getNrConfigType() == NrConfigType.SA_CONFIGURATION
-                && mFiveGState.getNrIconType() != NrIconType.INVALID;
+                && mFiveGState.isNrIconTypeValid();
     }
 
     private boolean isSideCarNsaValid() {
