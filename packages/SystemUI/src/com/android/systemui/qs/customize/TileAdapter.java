@@ -533,6 +533,13 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileSta
             mColumns = columns;
         }
         public void setRowsCount(int rows) {
+            if (mCurrentSpecs == null)
+                return;
+            // Avoid showing empty rows for user set row count
+            int tilesCount = mCurrentSpecs.size();
+            if (rows > (tilesCount + mColumns - 1) / mColumns) {
+                rows = (tilesCount + mColumns - 1) / mColumns;
+            }
             mRows = rows;
         }
     }
