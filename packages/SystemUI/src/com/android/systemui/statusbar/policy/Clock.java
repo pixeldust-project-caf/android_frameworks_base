@@ -96,6 +96,7 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
     protected SimpleDateFormat mClockFormat;
     private SimpleDateFormat mContentDescriptionFormat;
     protected Locale mLocale;
+    private boolean mScreenOn = true;
     private Handler autoHideHandler = new Handler();
 
     private static final int HIDE_DURATION = 60; // 1 minute
@@ -328,6 +329,8 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
             filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
             filter.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
             filter.addAction(Intent.ACTION_USER_SWITCHED);
+            filter.addAction(Intent.ACTION_SCREEN_ON);
+            filter.addAction(Intent.ACTION_SCREEN_OFF);
 
             getContext().registerReceiverAsUser(mIntentReceiver, UserHandle.ALL, filter,
                     null, Dependency.get(Dependency.TIME_TICK_HANDLER));
@@ -397,8 +400,15 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
                     updateStatus();
                     return;
                 });
+            } else if (action.equals(Intent.ACTION_SCREEN_ON)) {
+                mScreenOn = true;
+            } else if (action.equals(Intent.ACTION_SCREEN_OFF)) {
+                mScreenOn = false;
             }
-            handler.post(() -> updateClock());
+            if (mScreenOn) {
+                handler.post(() -> updateClock());
+                if (mClockAutoHide) autoHideHandler.post(() -> updateClockVisibility());
+            }
         }
     };
 
@@ -436,8 +446,8 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
         } catch (NullPointerException e) {
             // Do nothing
         }
-        super.setVisibility(visibility);
-        if (mClockAutoHide && visible) {
+        setVisibility(visibility);
+        if (mClockAutoHide && visible && mScreenOn) {
             autoHideHandler.postDelayed(()->autoHideClock(), mShowDuration * 1000);
         }
     }
