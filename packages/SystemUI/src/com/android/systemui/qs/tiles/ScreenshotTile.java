@@ -15,25 +15,25 @@
 
 package com.android.systemui.qs.tiles;
 
+import android.content.Context;
 import android.content.Intent;
-import android.os.RemoteException;
-import android.text.format.DateUtils;
-import android.view.WindowManager;
-import android.view.WindowManagerGlobal;
+import android.os.UserHandle;
+import android.provider.Settings;
+import android.service.quicksettings.Tile;
 
+import com.android.internal.util.pixeldust.PixeldustUtils;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
+import com.android.systemui.qs.QSHost;
 import com.android.systemui.plugins.qs.QSTile.BooleanState;
-import com.android.systemui.qs.QSHost;
-import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.R;
-
-import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
 
 import javax.inject.Inject;
 
 /** Quick settings tile: Screenshot **/
 public class ScreenshotTile extends QSTileImpl<BooleanState> {
+
+    private boolean mRegion = false;
 
     @Inject
     public ScreenshotTile(QSHost host) {
@@ -55,15 +55,20 @@ public class ScreenshotTile extends QSTileImpl<BooleanState> {
     }
 
     @Override
-    protected void handleClick() {
-        mHost.collapsePanels();
-        mHandler.postDelayed(() -> takeScreenshot(false), DateUtils.SECOND_IN_MILLIS);
+    public void handleClick() {
+        mRegion = !mRegion;
+        refreshState();
     }
 
     @Override
     public void handleLongClick() {
         mHost.collapsePanels();
-        mHandler.postDelayed(() -> takeScreenshot(true), DateUtils.SECOND_IN_MILLIS);
+
+        //finish collapsing the panel
+        try {
+             Thread.sleep(1000); //1s
+        } catch (InterruptedException ie) {}
+        PixeldustUtils.takeScreenshot(mRegion ? false : true);
     }
 
     @Override
@@ -78,19 +83,16 @@ public class ScreenshotTile extends QSTileImpl<BooleanState> {
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
-        state.icon = ResourceIcon.get(R.drawable.ic_qs_screenshot);
-        state.label = mContext.getString(R.string.quick_settings_screenshot_label);
-    }
-
-    private void takeScreenshot(final boolean partial) {
-        final int type = partial
-                ? WindowManager.TAKE_SCREENSHOT_SELECTED_REGION
-                : WindowManager.TAKE_SCREENSHOT_FULLSCREEN;
-
-        try {
-            WindowManagerGlobal.getWindowManagerService().takeLongshot(type);
-        } catch (RemoteException e) {
-            // Do nothing
+        if (mRegion) {
+            state.label = mContext.getString(R.string.quick_settings_region_screenshot_label);
+            state.icon = ResourceIcon.get(R.drawable.ic_qs_region_screenshot);
+            state.contentDescription =  mContext.getString(
+                    R.string.quick_settings_region_screenshot_label);
+        } else {
+            state.label = mContext.getString(R.string.quick_settings_screenshot_label);
+            state.icon = ResourceIcon.get(R.drawable.ic_qs_screenshot);
+            state.contentDescription =  mContext.getString(
+                    R.string.quick_settings_screenshot_label);
         }
     }
 }
