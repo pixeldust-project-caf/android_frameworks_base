@@ -1268,9 +1268,7 @@ public class GlobalActionsDialog implements DialogInterface.OnDismissListener,
             if (mScreenrecordConnection != null) {
                 return;
             }
-            final Intent intent = new Intent("org.omnirom.omnirecord.ACTION_START");
-            intent.setPackage("org.omnirom.omnirecord");
-            mContext.sendBroadcastAsUser(intent, UserHandle.CURRENT);
+            mScreenRecordHelper.launchRecordPrompt();
         }
     }
 
