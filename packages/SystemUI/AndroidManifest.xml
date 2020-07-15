@@ -354,7 +354,7 @@
         </receiver>
 
         <activity android:name=".screenrecord.ScreenRecordDialog"
-            android:theme="@style/ScreenRecord" 
+            android:theme="@style/ScreenRecordStyle" 
             android:excludeFromRecents="true" />
         <service android:name=".screenrecord.RecordingService" />
 
