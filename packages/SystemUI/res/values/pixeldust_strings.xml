@@ -77,8 +77,7 @@
     <string name="accessibility_quick_settings_hwkeys_off">HW keys off</string>
     <string name="quick_settings_hwkeys_label">HW keys</string>
 
-    <!-- Screenrecord Powermenu / QS tile -->
-    <string name="quick_settings_screenrecord_label">Screenrecord</string>
+    <!-- Screenrecord Powermenu -->
     <string name="global_action_screenrecord">Screenrecord</string>
 
     <!-- 4G LTE switch -->
