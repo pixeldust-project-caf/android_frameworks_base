@@ -10976,6 +10976,14 @@ public final class Settings {
         private static final Validator NAVIGATION_MODE_VALIDATOR =
                 new SettingsValidators.DiscreteValueValidator(new String[] {"0", "1", "2"});
 
+         /**
+         * Whether to show or hide the arrow for back gesture
+         * @hide
+         */
+        public static final String HIDE_BACK_ARROW_GESTURE = "hide_back_arrow_gesture";
+
+        private static final Validator HIDE_BACK_ARROW_GESTURE_VALIDATOR = BOOLEAN_VALIDATOR;
+
         /**
          * Current provider of proximity-based sharing services.
          * Default value in @string/config_defaultNearbySharingComponent.
@@ -11495,6 +11503,7 @@ public final class Settings {
             VALIDATORS.put(THEME_CUSTOMIZATION_OVERLAY_PACKAGES,
                     THEME_CUSTOMIZATION_OVERLAY_PACKAGES_VALIDATOR);
             VALIDATORS.put(NAVIGATION_MODE, NAVIGATION_MODE_VALIDATOR);
+            VALIDATORS.put(HIDE_BACK_ARROW_GESTURE, HIDE_BACK_ARROW_GESTURE_VALIDATOR);
             VALIDATORS.put(AWARE_ENABLED, AWARE_ENABLED_VALIDATOR);
             VALIDATORS.put(SKIP_GESTURE_COUNT, SKIP_GESTURE_COUNT_VALIDATOR);
             VALIDATORS.put(SKIP_TOUCH_COUNT, SKIP_GESTURE_COUNT_VALIDATOR);

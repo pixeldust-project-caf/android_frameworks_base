@@ -795,6 +795,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_TILE_STYLE),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.Secure.HIDE_BACK_ARROW_GESTURE),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -832,6 +835,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.FORCE_AMBIENT_FOR_MEDIA))) {
                 setForceAmbient();
+            } else if (uri.equals(Settings.Secure.getUriFor(
+                    Settings.Secure.HIDE_BACK_ARROW_GESTURE))) {
+                setHideArrowForBackGesture();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.QS_TILE_STYLE))) {
                 stockTileStyle();
@@ -846,6 +852,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                 mStatusBarWindow.updateSettings();
             }
             setFpToDismissNotifications();
+            setHideArrowForBackGesture();
             setPulseOnNewTracks();
             setGestureNavOptions();
             setMediaHeadsup();
@@ -957,6 +964,12 @@ public class StatusBar extends SystemUI implements DemoMode,
                 UserHandle.USER_CURRENT) == 1;
     }
 
+    private void setHideArrowForBackGesture() {
+        if (getNavigationBarView() != null) {
+            getNavigationBarView().updateBackArrowForGesture();
+        }
+    }
+    
     private CustomSettingsObserver mCustomSettingsObserver;
 
     @Override

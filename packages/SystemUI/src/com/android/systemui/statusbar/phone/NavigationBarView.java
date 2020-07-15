@@ -344,6 +344,10 @@ public class NavigationBarView extends FrameLayout implements
         updatePanelSystemUiStateFlags();
     }
 
+    public void updateBackArrowForGesture() {
+        mEdgeBackGestureHandler.setStateForBackArrowGesture();
+    }
+
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
