@@ -26,4 +26,7 @@
     <string name="clock_title_mnml_minimal" translatable="false">MNML\'s Minimal</string>
     <string name="date_long_title_today">Today is %s</string>
 
+    <!-- Space Analog Clock -->
+    <string name="clock_title_space_clock" translatable="false">Space Analog Clock</string>
+
 </resources>
