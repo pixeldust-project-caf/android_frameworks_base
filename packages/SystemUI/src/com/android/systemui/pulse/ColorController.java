@@ -30,11 +30,12 @@ import android.database.ContentObserver;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.provider.Settings;
-import android.util.TypedValue;
 
 import com.android.internal.util.ContrastColorUtil;
+import com.android.internal.util.pixeldust.PixeldustUtils;
 
 public class ColorController extends ContentObserver
         implements ColorAnimator.ColorAnimationListener,
@@ -44,6 +45,8 @@ public class ColorController extends ContentObserver
     public static final int COLOR_TYPE_LAVALAMP = 2;
     public static final int COLOR_TYPE_AUTO = 3;
     public static final int LAVA_LAMP_SPEED_DEF = 10000;
+
+    private static final String ACCENT_COLOR_PROP = "persist.sys.theme.accentcolor";
 
     private Context mContext;
     private Renderer mRenderer;
@@ -127,9 +130,12 @@ public class ColorController extends ContentObserver
     }
 
     int getAccentColor() {
-        final TypedValue value = new TypedValue();
-        mContext.getTheme().resolveAttribute(android.R.attr.colorAccent, value, true);
-        return value.data;
+        String colorVal = SystemProperties.get(ACCENT_COLOR_PROP, "-1");
+        if ("-1".equals(colorVal)) {
+            return PixeldustUtils.getThemeAccentColor(mContext);
+        } else {
+            return Color.parseColor("#" + colorVal);
+        }
     }
 
     @Override
