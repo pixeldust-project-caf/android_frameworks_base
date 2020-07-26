@@ -2649,6 +2649,7 @@
   <java-symbol type="bool" name="config_device_wfc_ims_available" />
   <java-symbol type="bool" name="config_carrier_wfc_ims_available" />
   <java-symbol type="bool" name="config_use_voip_mode_for_ims" />
+  <java-symbol type="bool" name="config_allow_ussd_over_ims" />
   <java-symbol type="attr" name="touchscreenBlocksFocus" />
   <java-symbol type="layout" name="resolver_list_with_default" />
   <java-symbol type="string" name="activity_resolver_set_always" />
@@ -3717,6 +3718,9 @@
 
   <!-- For WPA3 SoftaAp -->
   <java-symbol type="bool" name="config_wifi_wap3_sap_mode_enabled" />
+
+  <!-- For WPA3 SoftAp OWE AKM -->
+  <java-symbol type="bool" name="config_wifi_wap3_sap_owe_akm_enabled" />
 
   <java-symbol type="integer" name="config_defaultHapticFeedbackIntensity" />
   <java-symbol type="integer" name="config_defaultNotificationVibrationIntensity" />
