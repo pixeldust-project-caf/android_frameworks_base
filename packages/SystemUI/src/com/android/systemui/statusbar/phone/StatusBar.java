@@ -934,18 +934,23 @@ public class StatusBar extends SystemUI implements DemoMode,
                     UserHandle.USER_CURRENT) == 1;
         if (isAmbientContainerAvailable()) {
             ((AmbientIndicationContainer)mAmbientIndicationContainer).updateAmbientIndicationView();
-            //((AmbientIndicationContainer)mAmbientIndicationContainer).setIndication(
-                    //mMediaManager.getMediaMetadata(), null, false);
         }
     }
 
     private void setPulseOnNewTracks() {
         final KeyguardSliceProvider sliceProvider = KeyguardSliceProviderGoogle.getAttachedInstance();
         if (sliceProvider != null) {
-            sliceProvider.setPulseOnNewTracks(Settings.System.getIntForUser(mContext.getContentResolver(),
-                    Settings.System.PULSE_ON_NEW_TRACKS, 1,
-                    UserHandle.USER_CURRENT) == 1);
+            sliceProvider.setPulseOnNewTracks(pulseOnNewTracks());
         }
+        if (isAmbientContainerAvailable()) {
+            setForceAmbient();
+        }
+    }
+
+    private boolean pulseOnNewTracks() {
+        return Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.PULSE_ON_NEW_TRACKS, 1,
+                UserHandle.USER_CURRENT) == 1;
     }
 
     // Switches qs tile style from stock to custom
@@ -2006,7 +2011,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     public void triggerAmbientForMedia() {
-        if (mAmbientMediaPlaying) {
+        if (mAmbientMediaPlaying && pulseOnNewTracks()) {
             mDozeServiceHost.fireNotificationMedia();
         }
     }
