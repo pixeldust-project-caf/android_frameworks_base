@@ -11072,6 +11072,14 @@ public final class Settings {
                 BOOLEAN_VALIDATOR;
 
         /**
+         * Pulse ambient music visualizer
+         * @hide
+         */
+        public static final String AMBIENT_PULSE_ENABLED = "ambient_pulse_enabled";
+        private static final Validator AMBIENT_PULSE_ENABLED_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
          * Pulse lockscreen music visualizer
          * @hide
          */
@@ -11301,6 +11309,7 @@ public final class Settings {
             VOLUME_LINK_NOTIFICATION,
             NAVBAR_PULSE_ENABLED,
             LOCKSCREEN_PULSE_ENABLED,
+            AMBIENT_PULSE_ENABLED,
         };
 
         /**
@@ -11508,6 +11517,7 @@ public final class Settings {
             VALIDATORS.put(VOLUME_LINK_NOTIFICATION, VOLUME_LINK_NOTIFICATION_VALIDATOR);
             VALIDATORS.put(NAVBAR_PULSE_ENABLED, NAVBAR_PULSE_ENABLED_VALIDATOR);
             VALIDATORS.put(LOCKSCREEN_PULSE_ENABLED, LOCKSCREEN_PULSE_ENABLED_VALIDATOR);
+            VALIDATORS.put(AMBIENT_PULSE_ENABLED, AMBIENT_PULSE_ENABLED_VALIDATOR);
         }
 
         /**
