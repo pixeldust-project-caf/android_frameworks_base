@@ -5676,13 +5676,6 @@ public final class Settings {
         private static final Validator PULSE_AMBIENT_LIGHT_LAYOUT_VALIDATOR = ANY_INTEGER_VALIDATOR;
 
         /**
-         * Ambient Display Visualizer
-         *
-         * @hide
-         */
-        public static final String AMBIENT_VISUALIZER_ENABLED = "ambient_visualizer_enabled";
-
-        /**
          * Whether to use slim recents
          * @hide
          */

@@ -571,8 +571,6 @@ public class StatusBar extends SystemUI implements DemoMode,
     private boolean mWallpaperSupported;
 
     private VisualizerView mVisualizerView;
-    // LS visualizer on Ambient Display
-    private boolean mAmbientVisualizer;
 
     private boolean mWallpaperSupportsAmbientMode;
     private final BroadcastReceiver mWallpaperChangedReceiver = new BroadcastReceiver() {
@@ -791,9 +789,6 @@ public class StatusBar extends SystemUI implements DemoMode,
                     Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.AMBIENT_VISUALIZER_ENABLED),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_BRIGHTNESS_SLIDER_FOOTER),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -828,9 +823,6 @@ public class StatusBar extends SystemUI implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.SHOW_MEDIA_HEADS_UP))) {
                 setMediaHeadsup();
             } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.AMBIENT_VISUALIZER_ENABLED))) {
-                setAmbientVis();
-            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL))) {
                 setScreenBrightnessMode();
             } else if (uri.equals(Settings.System.getUriFor(
@@ -856,16 +848,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             setPulseOnNewTracks();
             setGestureNavOptions();
             setMediaHeadsup();
-            setAmbientVis();
             setScreenBrightnessMode();
             setForceAmbient();
         }
-    }
-
-    private void setAmbientVis() {
-        mAmbientVisualizer = Settings.System.getIntForUser(
-                mContext.getContentResolver(), Settings.System.AMBIENT_VISUALIZER_ENABLED, 0,
-                UserHandle.USER_CURRENT) == 1;
     }
 
     private RegisterStatusBarResult getRegisterStatusBarResult() {
@@ -4356,11 +4341,8 @@ public class StatusBar extends SystemUI implements DemoMode,
                 BiometricUnlockController.MODE_WAKE_AND_UNLOCK) {
             dozing = false;
         }
-        mStatusBarStateController.setIsDozing(dozing);
 
-        if (mAmbientVisualizer && mDozing) {
-            mVisualizerView.setVisible(true);
-        }
+        mStatusBarStateController.setIsDozing(dozing);
     }
 
     private void updateKeyguardState() {
