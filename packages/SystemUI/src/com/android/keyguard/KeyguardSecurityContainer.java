@@ -54,7 +54,7 @@ import com.android.systemui.util.InjectionInflationController;
 public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSecurityView {
     private static final boolean DEBUG = KeyguardConstants.DEBUG;
     private static final String TAG = "KeyguardSecurityView";
-    private static final String FOD = "vendor.pa.biometrics.fingerprint.inscreen";
+    private static final String FOD = "vendor.lineage.biometrics.fingerprint.inscreen";
 
     private static final int USER_TYPE_PRIMARY = 1;
     private static final int USER_TYPE_WORK_PROFILE = 2;
