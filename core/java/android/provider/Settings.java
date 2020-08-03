@@ -11067,12 +11067,18 @@ public final class Settings {
          * @hide
          */
         public static final String NAVBAR_PULSE_ENABLED = "navbar_pulse_enabled";
+        /** @hide */
+        private static final Validator NAVBAR_PULSE_ENABLED_VALIDATOR =
+                BOOLEAN_VALIDATOR;
 
         /**
          * Pulse lockscreen music visualizer
          * @hide
          */
         public static final String LOCKSCREEN_PULSE_ENABLED = "lockscreen_pulse_enabled";
+        /** @hide */
+        private static final Validator LOCKSCREEN_PULSE_ENABLED_VALIDATOR =
+                BOOLEAN_VALIDATOR;
 
         /**
          * Pulse music visualizer color type
@@ -11293,6 +11299,8 @@ public final class Settings {
             AWARE_TAP_PAUSE_GESTURE_COUNT,
             AWARE_TAP_PAUSE_TOUCH_COUNT,
             VOLUME_LINK_NOTIFICATION,
+            NAVBAR_PULSE_ENABLED,
+            LOCKSCREEN_PULSE_ENABLED,
         };
 
         /**
@@ -11498,6 +11506,8 @@ public final class Settings {
             VALIDATORS.put(TAP_GESTURE, TAP_GESTURE_VALIDATOR);
             VALIDATORS.put(TETHERING_ALLOW_VPN_UPSTREAMS, TETHERING_ALLOW_VPN_UPSTREAMS_VALIDATOR);
             VALIDATORS.put(VOLUME_LINK_NOTIFICATION, VOLUME_LINK_NOTIFICATION_VALIDATOR);
+            VALIDATORS.put(NAVBAR_PULSE_ENABLED, NAVBAR_PULSE_ENABLED_VALIDATOR);
+            VALIDATORS.put(LOCKSCREEN_PULSE_ENABLED, LOCKSCREEN_PULSE_ENABLED_VALIDATOR);
         }
 
         /**
