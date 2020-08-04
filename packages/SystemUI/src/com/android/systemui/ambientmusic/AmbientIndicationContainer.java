@@ -36,6 +36,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.android.internal.util.pixeldust.PixeldustConstants;
 import com.android.systemui.AutoReinflateContainer;
 import com.android.systemui.Dependency;
 import com.android.systemui.R;
@@ -56,6 +57,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
 
     public static final boolean DEBUG_AMBIENTMUSIC = false;
 
+    private final int mFODmargin;
     private View mAmbientIndication;
     private CharSequence mIndication;
     private StatusBar mStatusBar;
@@ -98,6 +100,8 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         mAnimatedIcon = (AnimatedVectorDrawable) mContext.getDrawable(
                 R.drawable.audioanim_animation).getConstantState().newDrawable();
         mAnimatedIcon.setBounds(0, 0, iconSize, iconSize);
+        mFODmargin = mContext.getResources().getDimensionPixelSize(
+                R.dimen.keyguard_security_fod_view_margin);
     }
 
     private class CustomSettingsObserver extends ContentObserver {
@@ -288,7 +292,18 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
     public void updatePosition() {
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) this.getLayoutParams();
         lp.gravity = mForcedMediaDoze ? Gravity.CENTER : Gravity.BOTTOM;
+        if (hasInDisplayFingerprint()) {
+            if (mForcedMediaDoze) {
+                lp.setMargins(0, 0, 0, 0);
+            } else {
+                lp.setMargins(0, 0, 0, mFODmargin);
+            }
+        }
         this.setLayoutParams(lp);
+    }
+
+    private boolean hasInDisplayFingerprint() {
+        return mContext.getPackageManager().hasSystemFeature(PixeldustConstants.Features.FOD);
     }
 
     public void setTrackInfo(boolean nowPlaying) {
