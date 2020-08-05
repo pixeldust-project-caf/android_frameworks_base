@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.os.UserHandle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.util.Log;
 
 import java.util.List;
@@ -86,7 +87,9 @@ public class StitchImageUtility {
                 break;
             case AudioManager.RINGER_MODE_NORMAL:
                 // Play the shutter sound to notify that we've taken a screenshot
-                mCameraSound.play(MediaActionSound.SHUTTER_CLICK);
+                if (Settings.System.getInt(mContext.getContentResolver(), Settings.System.SCREENSHOT_SOUND, 1) == 1) {
+                    mCameraSound.play(MediaActionSound.SHUTTER_CLICK);
+                }
                 break;
         }
     }
