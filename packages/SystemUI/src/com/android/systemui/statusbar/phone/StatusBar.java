@@ -187,6 +187,7 @@ import com.android.systemui.plugins.PluginDependencyProvider;
 import com.android.systemui.plugins.qs.QS;
 import com.android.systemui.plugins.statusbar.NotificationSwipeActionHelper.SnoozeOption;
 import com.android.systemui.plugins.statusbar.StatusBarStateController;
+import com.android.systemui.pulse.VisualizerView;
 import com.android.systemui.qs.QSFragment;
 import com.android.systemui.qs.QSPanel;
 import com.android.systemui.qs.QuickQSPanel;
@@ -218,7 +219,6 @@ import com.android.systemui.statusbar.ScrimView;
 import com.android.systemui.statusbar.StatusBarState;
 import com.android.systemui.statusbar.SysuiStatusBarStateController;
 import com.android.systemui.statusbar.VibratorHelper;
-import com.android.systemui.statusbar.VisualizerView;
 import com.android.systemui.statusbar.notification.ActivityLaunchAnimator;
 import com.android.systemui.statusbar.notification.BypassHeadsUpNotifier;
 import com.android.systemui.statusbar.notification.DynamicPrivacyController;
@@ -4040,6 +4040,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         mKeyguardIndicationController.setVisible(false);
         mKeyguardMonitor.notifyKeyguardGoingAway(true);
         mCommandQueue.appTransitionPending(mDisplayId, true /* forced */);
+        Dependency.get(PulseController.class).notifyKeyguardGoingAway();
     }
 
     /**
@@ -4136,7 +4137,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                 || (mDozing && mDozeServiceHost.shouldAnimateScreenOff() && sleepingFromKeyguard);
 
         mNotificationPanel.setDozing(mDozing, animate, mWakeUpTouchLocation);
-        mVisualizerView.setDozing(mDozing);
+        Dependency.get(PulseController.class).setDozing(mDozing);
         updateQsExpansionEnabled();
 
         if (isAmbientContainerAvailable()) {
@@ -4319,7 +4320,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         checkBarModes();
         updateScrimController();
         mPresenter.updateMediaMetaData(false, mState != StatusBarState.KEYGUARD);
-        mVisualizerView.setStatusBarState(newState);
+        Dependency.get(PulseController.class).setKeyguardShowing(mState == StatusBarState.KEYGUARD);
         updateKeyguardState();
         Trace.endSection();
     }
@@ -4424,6 +4425,10 @@ public class StatusBar extends SystemUI implements DemoMode,
     // TODO: Figure out way to remove these.
     public NavigationBarView getNavigationBarView() {
         return mNavigationBarController.getNavigationBarView(mDisplayId);
+    }
+
+    public VisualizerView getLsVisualizer() {
+        return mVisualizerView;
     }
 
     /**
