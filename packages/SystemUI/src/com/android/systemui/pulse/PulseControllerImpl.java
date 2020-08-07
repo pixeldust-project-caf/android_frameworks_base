@@ -90,7 +90,6 @@ public class PulseControllerImpl
     private SettingsObserver mSettingsObserver;
     private PulseView mPulseView;
     private int mPulseStyle;
-    private boolean mAmbientPulseEnabled;
 
     // Pulse state
     private boolean mLinked;
@@ -165,19 +164,14 @@ public class PulseControllerImpl
         }
 
         void register() {
-            ContentResolver resolver = mContext.getContentResolver();
-            resolver.registerContentObserver(
+            mContext.getContentResolver().registerContentObserver(
                     Settings.Secure.getUriFor(Settings.Secure.PULSE_RENDER_STYLE), false, this,
-                    UserHandle.USER_ALL);
-            resolver.registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.AMBIENT_PULSE_ENABLED), false, this,
                     UserHandle.USER_ALL);
         }
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            if (uri.equals(Settings.Secure.getUriFor(Settings.Secure.PULSE_RENDER_STYLE))
-                    || uri.equals(Settings.Secure.getUriFor(Settings.Secure.AMBIENT_PULSE_ENABLED))) {
+            if (uri.equals(Settings.Secure.getUriFor(Settings.Secure.PULSE_RENDER_STYLE))) {
                 updateRenderMode();
                 loadRenderer();
             }
@@ -188,11 +182,8 @@ public class PulseControllerImpl
         }
 
         void updateRenderMode() {
-            ContentResolver resolver = mContext.getContentResolver();
-            mPulseStyle = Settings.Secure.getIntForUser(resolver,
+            mPulseStyle = Settings.Secure.getIntForUser(mContext.getContentResolver(),
                     Settings.Secure.PULSE_RENDER_STYLE, RENDER_STYLE_CM, UserHandle.USER_CURRENT);
-            mAmbientPulseEnabled = Settings.Secure.getIntForUser(resolver,
-                    Settings.Secure.AMBIENT_PULSE_ENABLED, 1, UserHandle.USER_CURRENT) == 1;
         }
     };
 
@@ -361,14 +352,11 @@ public class PulseControllerImpl
      * @return true if unlink is required, false if unlinking is not mandatory
      */
     private boolean isUnlinkRequired() {
-        boolean result = mPowerSaveModeEnabled
+        return !mScreenOn
+                || mPowerSaveModeEnabled
                 || mMusicStreamMuted
                 || mScreenPinningEnabled
                 || !mAttached;
-        if (!mAmbientPulseEnabled) {
-            result = result || !mScreenOn;
-        }
-        return result;
     }
 
     /**
@@ -377,15 +365,12 @@ public class PulseControllerImpl
      * @return true if all conditions are met to allow link, false if and conditions are not met
      */
     private boolean isAbleToLink() {
-        boolean result = mIsMediaPlaying
+        return mScreenOn
+                && mIsMediaPlaying
                 && !mPowerSaveModeEnabled
                 && !mMusicStreamMuted
                 && !mScreenPinningEnabled
                 && mAttached;
-        if (!mAmbientPulseEnabled) {
-            result = result || mScreenOn;
-        }
-        return result;
     }
 
     private void doUnlinkVisualizer() {

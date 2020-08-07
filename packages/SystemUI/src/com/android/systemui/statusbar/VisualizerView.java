@@ -30,13 +30,10 @@ public class VisualizerView extends FrameLayout implements TunerService.Tunable 
 
     private static final String LOCKSCREEN_PULSE_ENABLED =
             Settings.Secure.LOCKSCREEN_PULSE_ENABLED;
-    private static final String AMBIENT_PULSE_ENABLED =
-            Settings.Secure.AMBIENT_PULSE_ENABLED;
 
     private boolean mVisible;
     private boolean mAttached;
     private boolean mPulseEnabled;
-    private boolean mAmbientPulseEnabled;
     private boolean mDozing;
     private int mStatusBarState;
 
@@ -52,7 +49,6 @@ public class VisualizerView extends FrameLayout implements TunerService.Tunable 
             @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         Dependency.get(TunerService.class).addTunable(this, LOCKSCREEN_PULSE_ENABLED);
-        Dependency.get(TunerService.class).addTunable(this, AMBIENT_PULSE_ENABLED);
     }
 
     @Override
@@ -60,11 +56,6 @@ public class VisualizerView extends FrameLayout implements TunerService.Tunable 
         switch (key) {
             case LOCKSCREEN_PULSE_ENABLED:
                 mPulseEnabled =
-                        TunerService.parseIntegerSwitch(newValue, true);
-                updatePulseVisibility();
-                break;
-            case AMBIENT_PULSE_ENABLED:
-                mAmbientPulseEnabled =
                         TunerService.parseIntegerSwitch(newValue, true);
                 updatePulseVisibility();
                 break;
@@ -102,9 +93,8 @@ public class VisualizerView extends FrameLayout implements TunerService.Tunable 
     }
 
     private void updatePulseVisibility() {
-        boolean visible = (mPulseEnabled && mStatusBarState != StatusBarState.SHADE
-            && mAttached && !mDozing)
-            || (mAmbientPulseEnabled && mAttached && mDozing);
+        boolean visible = mPulseEnabled && mStatusBarState != StatusBarState.SHADE
+            && mAttached && !mDozing;
         if (visible != mVisible) {
             mVisible = visible;
             if (mVisible) {
