@@ -106,7 +106,7 @@
     <string name="data_disabled_icon_summary">Ein Kreuzzeichen neben der Signalleiste anzeigen, wenn Daten deaktiviert sind</string>
 
     <!-- Caffeine tile -->
-    <string name="caffeine_info_title">Wussten Sie schon?</string>
+    <string name="caffeine_info_title">Wusstest Du schon?</string>
     <string name="caffeine_info_message">Die Koffein-Kachel bewirkt, dass der Bildschirm sich nicht ausschaltet.\n\nBitte beachte, dass sich diese Einstellung automatisch wieder deaktiviert, wenn du den Bildschirm ausschaltest.</string>
 
     <!-- Always on Display Tile -->
