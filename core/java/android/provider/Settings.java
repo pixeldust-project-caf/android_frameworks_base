@@ -5410,6 +5410,24 @@ public final class Settings {
         public static final String LOCKSCREEN_BATTERY_INFO = "lockscreen_battery_info";
 
         /**
+         * Whether to show the QS drag handle
+         * @hide
+         */
+        public static final String QS_DRAG_HANDLE = "qs_drag_handle";
+        /** @hide */
+        private static final Validator QS_DRAG_HANDLE_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
+         * Whether to persistently show the settings icon on qs panel
+         * @hide
+         */
+        public static final String QS_PERSISTENT_SETTINGS_ICON = "qs_persistent_settings_icon";
+        /** @hide */
+        private static final Validator QS_PERSISTENT_SETTINGS_ICON_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
          * Whether to display QS brightness slider
          * @hide
          */
@@ -6206,6 +6224,8 @@ public final class Settings {
             PULSE_AMBIENT_LIGHT_DURATION,
             PULSE_AMBIENT_LIGHT_PULSE_FOR_ALL,
             CLOCK_SHOW_STATUS_AREA,
+            QS_DRAG_HANDLE,
+            QS_PERSISTENT_SETTINGS_ICON,
             QS_SHOW_BRIGHTNESS,
             QS_BRIGHTNESS_POSITION_BOTTOM,
             QS_SHOW_SECURITY,
@@ -6628,6 +6648,8 @@ public final class Settings {
             VALIDATORS.put(PULSE_AMBIENT_LIGHT_DURATION, PULSE_AMBIENT_LIGHT_DURATION_VALIDATOR);
             VALIDATORS.put(PULSE_AMBIENT_LIGHT_PULSE_FOR_ALL, PULSE_AMBIENT_LIGHT_PULSE_FOR_ALL_VALIDATOR);
             VALIDATORS.put(CLOCK_SHOW_STATUS_AREA, CLOCK_SHOW_STATUS_AREA_VALIDATOR);
+            VALIDATORS.put(QS_DRAG_HANDLE, QS_DRAG_HANDLE_VALIDATOR);
+            VALIDATORS.put(QS_PERSISTENT_SETTINGS_ICON, QS_PERSISTENT_SETTINGS_ICON_VALIDATOR);
             VALIDATORS.put(QS_SHOW_BRIGHTNESS, QS_SHOW_BRIGHTNESS_VALIDATOR);
             VALIDATORS.put(QS_BRIGHTNESS_POSITION_BOTTOM, QS_BRIGHTNESS_POSITION_BOTTOM_VALIDATOR);
             VALIDATORS.put(QS_SHOW_SECURITY, QS_SHOW_SECURITY_VALIDATOR);

@@ -117,6 +117,8 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     private boolean mExpanded;
     private boolean mListening;
     private boolean mQsDisabled;
+    private boolean mFooterBrightnessSlider;
+    private boolean mShowSettingsIcon;
 
     private QSCarrierGroup mCarrierGroup;
     protected QuickQSPanel mHeaderQsPanel;
@@ -169,6 +171,9 @@ public class QuickStatusBarHeader extends RelativeLayout implements
                     this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.SHOW_QS_CLOCK), false,
+                    this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.QS_PERSISTENT_SETTINGS_ICON), false,
                     this, UserHandle.USER_ALL);
             }
 
@@ -434,6 +439,10 @@ public class QuickStatusBarHeader extends RelativeLayout implements
                     resources.getDimensionPixelSize(
                             com.android.internal.R.dimen.quick_qs_total_height));
         }
+        // Lower the height if none of our custom options require the display space
+        if (!mShowSettingsIcon && !mFooterBrightnessSlider) {
+            lp.height -= 60;
+        }
 
         setLayoutParams(lp);
 
@@ -447,6 +456,8 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         updateQSBatteryEstimate();
         updateSBBatteryStyle();
         updateQSClock();
+        updateQSSettingsIcon();
+        updateQSFooterBrightnessSlider();
         updateResources();
     }
 
@@ -476,6 +487,16 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         int show = Settings.System.getInt(mContext.getContentResolver(),
         Settings.System.SHOW_QS_CLOCK, 1);
         mClockView.setClockVisibleByUser(show == 1);
+    }
+
+    private void updateQSSettingsIcon() {
+        mShowSettingsIcon = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.QS_PERSISTENT_SETTINGS_ICON, 1, UserHandle.USER_CURRENT) == 1;
+    }
+
+    private void updateQSFooterBrightnessSlider() {
+        mFooterBrightnessSlider = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.QS_BRIGHTNESS_SLIDER_FOOTER, 0, UserHandle.USER_CURRENT) == 1;
     }
 
     private void updateStatusIconAlphaAnimator() {
