@@ -76,5 +76,7 @@
     <dimen name="screenrecord_dialog_padding">18dp</dimen>
     <dimen name="screenrecord_logo_size">24dp</dimen>
 
+    <dimen name="qs_drag_handle_margin_normal">16dp</dimen>
+
 </resources>
 

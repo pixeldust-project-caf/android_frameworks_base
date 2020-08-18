@@ -450,8 +450,19 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
         mShowDragHandle = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.QS_DRAG_HANDLE, 1,
                 UserHandle.USER_CURRENT);
+        updateQSDragHandle();
+    }
+
+    private void updateQSDragHandle() {
         if (mDragHandle != null) {
             mDragHandle.setVisibility(mShowDragHandle != 0 ? View.VISIBLE : View.GONE);
+            if ((mShowSettingsIcon != 1) && !showFooterBrightnessSlider()) {
+                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) getLayoutParams();
+                final int mBottomMargin = mContext.getResources().getDimensionPixelSize(
+                    R.dimen.qs_drag_handle_margin_normal);
+                lp = (LayoutParams) mDragHandle.getLayoutParams();
+                lp.setMargins(0, 0, 0, mBottomMargin);
+            }
         }
     }
 
