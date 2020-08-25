@@ -224,6 +224,9 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
 
     private AppOpsManager mAppOps;
 
+    // Delayed BT turn off
+    private boolean mDelayedTurnOff;
+
     // Save a ProfileServiceConnections object for each of the bound
     // bluetooth profile services
     private final Map<Integer, ProfileServiceConnections> mProfileServices = new HashMap<>();
@@ -336,6 +339,7 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
                     "Airplane Mode change - current state:  " + BluetoothAdapter.nameForState(
                             st) + ", isAirplaneModeOn()=" + isAirplaneModeOn());
 
+            mDelayedTurnOff = false;
             if (isAirplaneModeOn()) {
                 // Clear registered LE apps to force shut-off
                 clearBleApps();
@@ -359,6 +363,11 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
                     } else if (st == BluetoothAdapter.STATE_ON) {
                         sendDisableMsg(BluetoothProtoEnums.ENABLE_DISABLE_REASON_AIRPLANE_MODE,
                                 mContext.getPackageName());
+                    } else if (st == BluetoothAdapter.STATE_BLE_TURNING_ON ||
+                                st == BluetoothAdapter.STATE_TURNING_ON ||
+                                  (st == BluetoothAdapter.STATE_OFF && mEnable)) {
+                        Slog.d(TAG, "Airplane mode on, delayed turn off BT");
+                        mDelayedTurnOff = true;
                     }
             } else if (mEnableExternal) {
                 if (st!= BluetoothAdapter.STATE_ON && isBluetoothPersistedStateOn()) {
@@ -442,6 +451,7 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
         mAddress = null;
         mName = null;
         mErrorRecoveryRetryCounter = 0;
+        mDelayedTurnOff = false;
         mContentResolver = context.getContentResolver();
         // Observe BLE scan only mode settings change.
         registerForBleScanModeChange();
@@ -904,7 +914,8 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
      */
     private void continueFromBleOnState() {
         if (DBG) {
-            Slog.d(TAG, "continueFromBleOnState()");
+            Slog.d(TAG, "continueFromBleOnState(): mEnableExternal=" + mEnableExternal +
+                ", mDelayedTurnOff=" + mDelayedTurnOff);
         }
         try {
             mBluetoothLock.readLock().lock();
@@ -918,7 +929,16 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
                          BluetoothAdapter.nameForState(st));
                 return;
             }
-           if (isAirplaneModeOn() && !mEnableExternal) {
+           if (mDelayedTurnOff || (!isBleAppPresent() && !mEnableExternal)) {
+                int reason = BluetoothProtoEnums.ENABLE_DISABLE_REASON_APPLICATION_REQUEST;
+
+                if (DBG) {
+                    Slog.d(TAG, "onBrEdrDown: BLE_ON to OFF");
+                }
+                if(mDelayedTurnOff) {
+                    mDelayedTurnOff = false;
+                    reason = BluetoothProtoEnums.ENABLE_DISABLE_REASON_AIRPLANE_MODE;
+                }
                 addActiveLog(BluetoothProtoEnums.ENABLE_DISABLE_REASON_AIRPLANE_MODE,
                     mContext.getPackageName(), false);
 
@@ -1709,23 +1729,46 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
                    BLUETOOTH_PRIVILEGED_PERM, "Need BLUETOOTH PRIVILEGED permission");
         }
         persistBluetoothSetting(BLUETOOTH_ON_BLUETOOTH);
+        // Wait for stable state if bluetooth is temporary state.
+        int state = getState();
+        if (state == BluetoothAdapter.STATE_BLE_TURNING_ON
+                || state == BluetoothAdapter.STATE_TURNING_ON
+                || state == BluetoothAdapter.STATE_TURNING_OFF) {
+            if (!waitForState(new HashSet<Integer>(Arrays.asList(BluetoothAdapter.STATE_BLE_ON,
+                      BluetoothAdapter.STATE_ON)))) {
+                return false;
+            }
+        }
         // Clear registered LE apps to force shut-off
         clearBleApps();
+        state = getState();
         try {
+            mBluetoothLock.writeLock().lock();
             if (mBluetooth == null) {
                 mEnable = true;
                 handleEnable(mQuietEnable);
-            } else if (mBluetooth != null &&
-                       (mBluetooth.getState() == BluetoothAdapter.STATE_OFF)) {
+            } else if (state == BluetoothAdapter.STATE_OFF) {
                 mEnable = true;
                 mBluetooth.factoryReset();
                 handleEnable(mQuietEnable);
-            } else if (mBluetooth != null){
+            } else if (state == BluetoothAdapter.STATE_BLE_ON) {
+                addActiveLog(
+                BluetoothProtoEnums.ENABLE_DISABLE_REASON_FACTORY_RESET,
+                mContext.getPackageName(), false);
+                mBluetooth.onBrEdrDown();
+                return mBluetooth.factoryReset();
+            } else if (state == BluetoothAdapter.STATE_ON) {
+                addActiveLog(
+                BluetoothProtoEnums.ENABLE_DISABLE_REASON_FACTORY_RESET,
+                mContext.getPackageName(), false);
+                mBluetooth.disable();
                 return mBluetooth.factoryReset();
             }
         } catch (RemoteException e) {
             Slog.e(TAG, "factoryReset(): Unable to do factoryReset.", e);
             return false;
+        } finally {
+            mBluetoothLock.writeLock().unlock();
         }
         return true;
     }
@@ -2480,9 +2523,18 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
                 sendBrEdrDownCallback();
             }
         } else if (newState == BluetoothAdapter.STATE_ON) {
-            boolean isUp = (newState == BluetoothAdapter.STATE_ON);
-            sendBluetoothStateCallback(isUp);
-            sendBleStateChanged(prevState, newState);
+            if (mDelayedTurnOff) {
+                if (DBG) {
+                    Slog.d(TAG, "Delayed turn off BT, ON -> OFF");
+                }
+                sendDisableMsg(BluetoothProtoEnums.ENABLE_DISABLE_REASON_AIRPLANE_MODE,
+                    mContext.getPackageName());
+                mDelayedTurnOff = false;
+            } else {
+                boolean isUp = (newState == BluetoothAdapter.STATE_ON);
+                sendBluetoothStateCallback(isUp);
+                sendBleStateChanged(prevState, newState);
+            }
 
         } else if (newState == BluetoothAdapter.STATE_BLE_TURNING_ON
                 || newState == BluetoothAdapter.STATE_BLE_TURNING_OFF) {

@@ -1201,12 +1201,15 @@ public final class BluetoothAdapter {
     public boolean factoryReset() {
         try {
             mServiceLock.readLock().lock();
-            if (mService != null && mService.factoryReset()
-                    && mManagerService != null && mManagerService.onFactoryReset()) {
-                return true;
+            if (mManagerService != null) {
+                Log.w(TAG, "factoryReset():Setting persist.bluetooth.factoryreset"
+                            + " to reset bt config");
+                SystemProperties.set("persist.bluetooth.factoryreset", "true");
+                /* factoryReset handles both bluetooth reset and config remove
+                 * functionality, hence remove onFactoryReset call to avoid redundant code
+                 */
+                return mManagerService.factoryReset();
             }
-            Log.e(TAG, "factoryReset(): Setting persist.bluetooth.factoryreset to retry later");
-            SystemProperties.set("persist.bluetooth.factoryreset", "true");
         } catch (RemoteException e) {
             Log.e(TAG, "", e);
         } finally {

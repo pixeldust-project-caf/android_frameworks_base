@@ -370,6 +370,8 @@
   <java-symbol type="integer" name="config_activeTaskDurationHours" />
   <java-symbol type="bool" name="config_windowShowCircularMask" />
   <java-symbol type="bool" name="config_windowEnableCircularEmulatorDisplayOverlay" />
+  <java-symbol type="string" name="config_wifi_softap_acs_supported_frequency_list" />
+  <java-symbol type="bool" name="config_wifi_softap_acs_exclude_6ghz_non_psc" />
   <java-symbol type="bool" name="config_wifi_framework_enable_associated_network_selection" />
   <java-symbol type="bool" name="config_wifi_framework_use_single_radio_chain_scan_results_network_selection" />
   <java-symbol type="bool" name="config_wifi_only_link_same_credential_configurations" />
