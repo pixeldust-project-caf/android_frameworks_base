@@ -67,9 +67,6 @@
     <!-- Padding after battery level text in status bar, QS, and Keyguard -->
     <dimen name="battery_level_padding_end">2dp</dimen>
 
-    <!-- Bottom margin size when fingerprint in display is active -->
-    <dimen name="keyguard_indication_margin_bottom_fingerprint_in_display">30dp</dimen>
-
     <dimen name="qs_brightness_slider_height">28dp</dimen>
 
     <!-- Screen record -->

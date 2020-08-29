@@ -54,8 +54,8 @@ java_library_static {
         "dnsresolver_aidl_interface-V2-java",
         "netd_aidl_interface-V2-java",
         "netd_event_listener_interface-java",
-        "vendor.lineage.biometrics.fingerprint.inscreen-V1.0-java",
         "faceunlock_utils",
+        "vendor.qti.hardware.servicetracker-V1.0-java",
     ],
 }
 

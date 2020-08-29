@@ -54,7 +54,6 @@ import com.android.systemui.util.InjectionInflationController;
 public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSecurityView {
     private static final boolean DEBUG = KeyguardConstants.DEBUG;
     private static final String TAG = "KeyguardSecurityView";
-    private static final String FOD = "vendor.lineage.biometrics.fingerprint.inscreen";
 
     private static final int USER_TYPE_PRIMARY = 1;
     private static final int USER_TYPE_WORK_PROFILE = 2;
@@ -298,15 +297,6 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
             if (DEBUG) Log.v(TAG, "inflating id = " + layoutId);
             View v = mInjectionInflationController.injectable(inflater)
                     .inflate(layoutId, mSecurityViewFlipper, false);
-            View fod_view = v.findViewById(R.id.fod_view);
-            if (fod_view != null) {
-                if (hasInDisplayFingerprint() &&
-                        mUpdateMonitor.isUnlockWithFingerprintPossible()) {
-                    fod_view.setVisibility(View.VISIBLE);
-                } else {
-                    fod_view.setVisibility(View.GONE);
-                }
-            }
             mSecurityViewFlipper.addView(v);
             updateSecurityView(v);
             view = (KeyguardSecurityView)v;
@@ -471,10 +461,6 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
             mLockPatternUtils.reportPasswordLockout(timeoutMs, userId);
             showTimeoutDialog(userId, timeoutMs);
         }
-    }
-
-    private boolean hasInDisplayFingerprint() {
-        return mContext.getPackageManager().hasSystemFeature(FOD);
     }
 
     /**
