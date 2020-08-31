@@ -114,6 +114,7 @@ public class ThemesUtils {
             "com.android.theme.font.samsungone",
             "com.android.theme.font.sanfrancisco",
             "com.android.theme.font.sonysketchsource",
+            "com.android.theme.font.summerdream",
             "com.android.theme.font.surfersource",
     };
 
