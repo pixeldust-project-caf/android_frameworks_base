@@ -5879,6 +5879,12 @@ public final class Settings {
                 "high_touch_sensitivity_enable";
 
         /**
+         * Whether or not to vibrate when back gesture is used
+         * @hide
+         */
+        public static final String BACK_GESTURE_HAPTIC = "back_gesture_haptic";
+
+        /**
          * These are all public system settings
          *
          * @hide
@@ -6020,6 +6026,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(CAMERA_LAUNCH);
             PRIVATE_SETTINGS.add(TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK);
             PRIVATE_SETTINGS.add(HIGH_TOUCH_SENSITIVITY_ENABLE);
+            PRIVATE_SETTINGS.add(BACK_GESTURE_HAPTIC);
         }
 
         /**
