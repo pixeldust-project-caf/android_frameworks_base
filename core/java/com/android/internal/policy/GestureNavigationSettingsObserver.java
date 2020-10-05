@@ -154,6 +154,9 @@ public class GestureNavigationSettingsObserver extends ContentObserver {
         r.registerContentObserver(
                 Settings.Secure.getUriFor(Settings.Secure.BACK_GESTURE_HEIGHT_RIGHT),
                 false, this, UserHandle.USER_ALL);
+        r.registerContentObserver(Settings.System.getUriFor(
+                Settings.System.BACK_GESTURE_HAPTIC),
+                false, this, UserHandle.USER_ALL);
         DeviceConfig.addOnPropertiesChangedListener(
                 DeviceConfig.NAMESPACE_SYSTEMUI,
                 runnable -> mMainHandler.post(runnable),
@@ -267,5 +270,11 @@ public class GestureNavigationSettingsObserver extends ContentObserver {
         return Settings.System.getIntForUser(mContext.getContentResolver(),
             Settings.System.RIGHT_VERTICAL_BACK_SWIPE_ACTION, 0,
             UserHandle.USER_CURRENT);
+    }
+
+    public boolean getEdgeHaptic() {
+        return Settings.System.getIntForUser(
+               mContext.getContentResolver(), Settings.System.BACK_GESTURE_HAPTIC, 0,
+               UserHandle.USER_CURRENT) == 1;
     }
 }
