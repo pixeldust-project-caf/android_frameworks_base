@@ -19,4 +19,10 @@
     <string name="aerr_copy">URL für das Absturzprotokoll kopieren</string>
     <string name="url_copy_success">URL erfolgreich kopiert</string>
     <string name="url_copy_failed">Beim Hochladen des Protokolls zu hastebin ist ein Fehler aufgetreten</string>
+
+    <!-- Advanced reboot -->
+    <string name="reboot_to_recovery_message">Neustart in Recovery Modus\u2026</string>
+    <string name="reboot_to_bootloader_message">Neustart in Bootloader Modus\u2026</string>
+    <string name="reboot_title">Neustart\u2026</string>
+    <string name="reboot_message">System Neustart</string>
 </resources>
