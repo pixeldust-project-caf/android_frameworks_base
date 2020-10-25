@@ -120,6 +120,7 @@ import com.android.systemui.statusbar.policy.HotspotController;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
 import com.android.systemui.statusbar.policy.LocationController;
 import com.android.systemui.statusbar.policy.NextAlarmController;
+import com.android.systemui.statusbar.policy.PulseController;
 import com.android.systemui.statusbar.policy.RemoteInputQuickSettingsDisabler;
 import com.android.systemui.statusbar.policy.RotationLockController;
 import com.android.systemui.statusbar.policy.SecurityController;
@@ -372,6 +373,7 @@ public class Dependency {
     @Inject Lazy<GroupMembershipManager> mGroupMembershipManagerLazy;
     @Inject Lazy<GroupExpansionManager> mGroupExpansionManagerLazy;
     @Inject Lazy<TaskHelper> mTaskHelper;
+    @Inject Lazy<PulseController> mPulseController;
 
     @Inject
     public Dependency() {
@@ -587,6 +589,7 @@ public class Dependency {
         mProviders.put(UiEventLogger.class, mUiEventLogger::get);
         mProviders.put(FeatureFlags.class, mFeatureFlagsLazy::get);
         mProviders.put(StatusBarContentInsetsProvider.class, mContentInsetsProviderLazy::get);
+        mProviders.put(PulseController.class, mPulseController::get);
         mProviders.put(NotificationSectionsManager.class, mNotificationSectionsManagerLazy::get);
         mProviders.put(UnlockedScreenOffAnimationController.class,
                 mUnlockedScreenOffAnimationControllerLazy::get);
