@@ -234,4 +234,6 @@ interface IStatusBarService
      * Custom extensions
      */
     void toggleCameraFlash();
+
+    void screenPinningStateChanged(boolean enabled);
 }
