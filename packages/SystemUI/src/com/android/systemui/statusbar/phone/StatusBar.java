@@ -3854,14 +3854,30 @@ public class StatusBar extends SystemUI implements
 
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.Secure.PULSE_ON_NEW_TRACKS),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             super.onChange(selfChange, uri);
+            if (uri.equals(Settings.Secure.getUriFor(
+                    Settings.Secure.PULSE_ON_NEW_TRACKS))) {
+                setPulseOnNewTracks();
+            }
         }
 
         public void update() {
+            setPulseOnNewTracks();
+        }
+    }
+
+    private void setPulseOnNewTracks() {
+        if (KeyguardSliceProvider.getAttachedInstance() != null) {
+            KeyguardSliceProvider.getAttachedInstance().setPulseOnNewTracks(Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                    Settings.Secure.PULSE_ON_NEW_TRACKS, 0,
+                    UserHandle.USER_CURRENT) == 1);
         }
     }
 
