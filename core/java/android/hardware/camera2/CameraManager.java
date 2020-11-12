@@ -1757,7 +1757,8 @@ public final class CameraManager {
 
         private String[] extractCameraIdListLocked() {
             String[] cameraIds = null;
-            boolean exposeAuxCamera = false;
+            boolean exposeAuxCamera = Camera.shouldExposeAuxCamera();
+            int size = exposeAuxCamera ? mDeviceStatus.size() : 2;
             String packageName = ActivityThread.currentOpPackageName();
             String packageList = SystemProperties.get("vendor.camera.aux.packagelist");
             if (packageList.length() > 0) {
@@ -1771,7 +1772,7 @@ public final class CameraManager {
                 }
             }
             int idCount = 0;
-            for (int i = 0; i < mDeviceStatus.size(); i++) {
+            for (int i = 0; i < size; i++) {
                 if(!exposeAuxCamera && (i == 2)) break;
                 int status = mDeviceStatus.valueAt(i);
                 if (status == ICameraServiceListener.STATUS_NOT_PRESENT
@@ -1780,7 +1781,7 @@ public final class CameraManager {
             }
             cameraIds = new String[idCount];
             idCount = 0;
-            for (int i = 0; i < mDeviceStatus.size(); i++) {
+            for (int i = 0; i < size; i++) {
                 if(!exposeAuxCamera && (i == 2)) break;
                 int status = mDeviceStatus.valueAt(i);
                 if (status == ICameraServiceListener.STATUS_NOT_PRESENT
