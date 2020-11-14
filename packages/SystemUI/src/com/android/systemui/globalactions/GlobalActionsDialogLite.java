@@ -207,6 +207,8 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
     private static final String GLOBAL_ACTION_KEY_FLASHLIGHT = "flashlight";
     private static final String GLOBAL_ACTION_KEY_RESTART_SYSTEMUI = "restart_systemui";
 
+    private static final String SYSPROP_FASTBOOTD_AVAILABLE = "ro.fastbootd.available";
+
     // See NotificationManagerService#scheduleDurationReachedLocked
     private static final long TOAST_FADE_TIME = 333;
     // See NotificationManagerService.LONG_DELAY
@@ -638,7 +640,11 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                 Settings.System.GLOBAL_ACTIONS_MAX_ROWS, 4);
         if (mIsRebootMenu) {
             // To show reboot to bootloader, recovery, fastbootd, system.
-            return 5;
+            if (SystemProperties.getBoolean(SYSPROP_FASTBOOTD_AVAILABLE, false)) {
+                return 5;
+            } else {
+                return 4;
+            }
         } else if (globalactionMaxColumns != 0 &&
                       globalactionMaxRows != 0) {
             return globalactionMaxColumns * globalactionMaxRows;
@@ -761,7 +767,8 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                     isAdvancedRebootPossible(mContext)) {
                 addIfShouldShowAction(tempActions, new RebootBootloaderAction());
             } else if (GLOBAL_ACTION_KEY_REBOOT_FASTBOOT.equals(actionKey) &&
-                    isAdvancedRebootPossible(mContext)) {
+                    isAdvancedRebootPossible(mContext) &&
+                    SystemProperties.getBoolean(SYSPROP_FASTBOOTD_AVAILABLE, false)) {
                 addIfShouldShowAction(tempActions, new RebootFastbootAction());
             } else if (GLOBAL_ACTION_KEY_SCREENSHOT.equals(actionKey)) {
                 if (mSystemSettings.getInt(
