@@ -69,4 +69,8 @@
 
     <!-- Allow hiding call strength icons -->
     <string name="quick_settings_call_strength">Anrufstärke-Symbol</string>
+
+    <!-- Screen record -->
+    <string name="screenrecord_stopdot_label">Stopp-Punkt. Lang drücken zum Verschieben</string>
+    <string name="screenrecord_lowquality_label">Qualität/Dateigröße reduzieren</string>
 </resources>
