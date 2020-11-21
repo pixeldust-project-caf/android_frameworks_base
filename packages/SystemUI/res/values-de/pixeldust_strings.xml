@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2021 The PixelDust Project
+     Copyright (C) 2021-2022 The PixelDust Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -57,4 +57,9 @@
     <string name="screenrecord_delete_label">Löschen</string>
     <!-- A toast message shown after successfully deleting a screen recording [CHAR LIMIT=NONE] -->
     <string name="screenrecord_delete_description">Bildschirmaufnahme gelöscht</string>
+
+    <!-- Extended/"L" back swipe to trigger actions/app/activities -->
+    <string name="app_picker_dialog_title">Eine App auswählen</string>
+    <string name="active_edge_app_select_title">App auswählen</string>
+    <string name="active_edge_activity_select_title">Aktivität auswählen</string>
 </resources>
