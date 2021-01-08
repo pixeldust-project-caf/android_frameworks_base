@@ -57,4 +57,7 @@
     <!-- Language toggle tile -->
     <string name="quick_settings_locale_label">Sprache</string>
     <string name="quick_settings_locale_more_locales_toast">Um die Kachel zu nutzen, müssen erst weitere Sprachen hinzugefügt werden.</string>
+
+    <!-- Battery saver extreme [CHAR LIMIT=NONE]-->
+    <string name="extreme_battery_saver_text">Extrem</string>
 </resources>
