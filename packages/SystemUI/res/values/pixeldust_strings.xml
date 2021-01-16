@@ -20,4 +20,7 @@
          values/config.xml) and must be truncated.
          [CHAR LIMIT=4] -->
     <string name="status_bar_notification_info_overflow" translatable="false">\u221E</string>
+
+    <!-- Now playing lockscreen / ambient music ticker -->
+    <string name="ambientmusic_songinfo" formatted="false" translatable="false">%s • %s</string>
 </resources>
