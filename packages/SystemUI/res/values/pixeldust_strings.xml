@@ -75,4 +75,7 @@
     <!-- kill foreground app -->
     <string name="task_helper_app_killed">%1$s force stopped</string>
     <string name="empty_app_killed">App</string>
+
+    <!-- Now playing lockscreen / ambient music ticker -->
+    <string name="ambientmusic_songinfo" formatted="false" translatable="false">%s • %s</string>
 </resources>
