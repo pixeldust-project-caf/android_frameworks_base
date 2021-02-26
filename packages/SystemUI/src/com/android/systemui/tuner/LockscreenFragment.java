@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.LauncherActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -33,6 +34,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -357,7 +359,7 @@ public class LockscreenFragment extends PreferenceFragment {
 
     private static class ShortcutButton implements IntentButton {
         private Shortcut mShortcut;
-        private IconState mIconState;
+        private final IconState mIconState;
         private Context mContext;
         private boolean mInitDone;
         private String mShortcutString;
@@ -413,7 +415,7 @@ public class LockscreenFragment extends PreferenceFragment {
 
     private static class ActivityButton implements IntentButton {
         private Intent mIntent;
-        private IconState mIconState;
+        private final IconState mIconState;
         private ComponentName mComponentName;
         private Context mContext;
         private boolean mInitDone;
