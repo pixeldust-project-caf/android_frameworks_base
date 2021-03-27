@@ -672,7 +672,7 @@ public class KeyguardIndicationController {
                     } else {
                         mTopIndicationView.switchIndication(indication, null);
                     }
-                    if (showBatteryBar) {
+                    if (showBatteryBar || showBatteryBarAlways) {
                         mBatteryBar.setVisibility(View.VISIBLE);
                         mBatteryBar.setBatteryPercent(mBatteryLevel);
                         mBatteryBar.setBarColor(Color.WHITE);
@@ -681,6 +681,11 @@ public class KeyguardIndicationController {
                     String percentage = NumberFormat.getPercentInstance()
                             .format(mBatteryLevel / 100f);
                     mTopIndicationView.switchIndication(percentage, null);
+                    if (showBatteryBarAlways) {
+                        mBatteryBar.setVisibility(View.VISIBLE);
+                        mBatteryBar.setBatteryPercent(mBatteryLevel);
+                        mBatteryBar.setBarColor(Color.WHITE);
+                    }
                 }
                 return;
             }
