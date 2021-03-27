@@ -5,5 +5,5 @@
 -->
 <resources>
     <!-- AoD battery bar -->
-    <dimen name="battery_bar_view_height">6dp</dimen>
+    <dimen name="battery_bar_view_height">4dp</dimen>
 </resources>
