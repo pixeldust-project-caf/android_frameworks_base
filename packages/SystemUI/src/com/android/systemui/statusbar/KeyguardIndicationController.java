@@ -920,7 +920,11 @@ public class KeyguardIndicationController {
                     if (showBatteryBarAlways) {
                         mBatteryBar.setVisibility(View.VISIBLE);
                         mBatteryBar.setBatteryPercent(mBatteryLevel);
-                        mBatteryBar.setBarColor(Color.WHITE);
+                        if (mBatteryLevel > 15) {
+                            mBatteryBar.setBarColor(Color.WHITE);
+                        } else {
+                            mBatteryBar.setBarColor(Color.RED);
+                        }
                     }
                 }
 
