@@ -5597,6 +5597,11 @@ public final class Settings {
         public static final String OMNI_NAVIGATION_BAR_ARROW_KEYS = "navigation_bar_menu_arrow_keys";
 
         /**
+         * @hide
+         */
+        public static final String OMNI_GESTURE_HANDLE_HIDE = "navbar_gesture_handle_hide";
+
+        /**
          * Whether to show battery percent on ambient bottom
          * @hide
          */
@@ -5764,6 +5769,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(OMNI_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS);
             PRIVATE_SETTINGS.add(OMNI_NAVIGATION_BAR_SHOW);
             PRIVATE_SETTINGS.add(OMNI_NAVIGATION_BAR_ARROW_KEYS);
+            PRIVATE_SETTINGS.add(OMNI_GESTURE_HANDLE_HIDE);
             PRIVATE_SETTINGS.add(AMBIENT_BATTERY_PERCENT);
             PRIVATE_SETTINGS.add(DATA_ACTIVITY_ARROW);
         }
