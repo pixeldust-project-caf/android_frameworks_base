@@ -62,6 +62,8 @@ public class NavigationBarInflaterView extends FrameLayout
     public static final String NAV_BAR_INVERSE = "sysui_nav_bar_inverse";
     public static final String NAVIGATION_BAR_ARROW_KEYS = "system:"
             + Settings.System.OMNI_NAVIGATION_BAR_ARROW_KEYS;
+    public static final String GESTURE_HANDLE_HIDE = "system:"
+            + Settings.System.OMNI_GESTURE_HANDLE_HIDE;
 
     public static final String MENU_IME_ROTATE = "menu_ime";
     public static final String BACK = "back";
@@ -152,12 +154,21 @@ public class NavigationBarInflaterView extends FrameLayout
     }
 
     protected String getDefaultLayout() {
-        final int defaultResource = QuickStepContract.isGesturalMode(mNavBarMode)
-                ? R.string.config_navBarLayoutHandle
-                : mOverviewProxyService.shouldShowSwipeUpUI()
-                        ? R.string.config_navBarLayoutQuickstep
-                        : R.string.config_navBarLayout;
-        return getContext().getString(defaultResource);
+        if (QuickStepContract.isGesturalMode(mNavBarMode)) {
+            String navbarLayout = getContext().getString(showDpadArrowKeys()
+                    ? R.string.config_navBarLayoutHandleArrows
+                    : R.string.config_navBarLayoutHandle);
+            if (hideGestureHandle()) {
+                return navbarLayout.replace(HOME_HANDLE, NAVSPACE);
+            } else {
+                return navbarLayout;
+            }
+        } else {
+            final int defaultResource = mOverviewProxyService.shouldShowSwipeUpUI()
+                            ? R.string.config_navBarLayoutQuickstep
+                            : R.string.config_navBarLayout;
+            return getContext().getString(defaultResource);
+        }
     }
 
     @Override
@@ -171,6 +182,7 @@ public class NavigationBarInflaterView extends FrameLayout
         Dependency.get(TunerService.class).addTunable(this, NAV_BAR_VIEWS);
         Dependency.get(TunerService.class).addTunable(this, NAV_BAR_INVERSE);
         Dependency.get(TunerService.class).addTunable(this, NAVIGATION_BAR_ARROW_KEYS);
+        Dependency.get(TunerService.class).addTunable(this, GESTURE_HANDLE_HIDE);
     }
 
     @Override
@@ -195,6 +207,9 @@ public class NavigationBarInflaterView extends FrameLayout
         if (QuickStepContract.isGesturalMode(mNavBarMode)) {
             setNavigationBarLayout(newValue);
         }
+        if (GESTURE_HANDLE_HIDE.equals(key)) {
+            hideGestureHandle();
+        }
     }
 
     @Override
@@ -210,7 +225,6 @@ public class NavigationBarInflaterView extends FrameLayout
             inflateLayout(layoutValue);
         }
     }
-
 
     public void onLikelyDefaultLayoutChange() {
         // Don't override custom layouts
@@ -560,5 +574,10 @@ public class NavigationBarInflaterView extends FrameLayout
     private boolean showDpadArrowKeys() {
         return Settings.System.getIntForUser(getContext().getContentResolver(),
                 Settings.System.OMNI_NAVIGATION_BAR_ARROW_KEYS, 0, UserHandle.USER_CURRENT) != 0;
+    }
+
+    private boolean hideGestureHandle() {
+        return Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.OMNI_GESTURE_HANDLE_HIDE, 0, UserHandle.USER_CURRENT) != 0;
     }
 }
