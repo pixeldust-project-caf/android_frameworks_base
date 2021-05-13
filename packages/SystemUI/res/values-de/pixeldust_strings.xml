@@ -73,4 +73,5 @@
     <!-- Screen record -->
     <string name="screenrecord_stopdot_label">Stopp-Punkt. Lang drücken zum Verschieben</string>
     <string name="screenrecord_lowquality_label">Qualität/Dateigröße reduzieren</string>
+    <string name="screenrecord_longer_timeout_switch_label">Aufzeichnungslimit erhöhen auf 15GiB</string>
 </resources>
