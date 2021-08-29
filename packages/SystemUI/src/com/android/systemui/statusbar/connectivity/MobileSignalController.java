@@ -225,7 +225,8 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         mSettingsObserver = new ContentObserver(new Handler(receiverLooper)) {
             @Override
             public void onChange(boolean selfChange, Uri uri) {
-                if (Settings.System.SHOW_FOURG_ICON.equals(uri.getLastPathSegment())) {
+                if (Settings.System.SHOW_FOURG_ICON.equals(uri.getLastPathSegment())
+                    || Settings.System.VOLTE_ICON_STYLE.equals(uri.getLastPathSegment())) {
                     updateSettings();
                 } else {
                     updateTelephony();
@@ -312,6 +313,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         resolver.registerContentObserver(
             Settings.System.getUriFor(Settings.System.SHOW_FOURG_ICON),
             false, mSettingsObserver, UserHandle.USER_ALL);
+        resolver.registerContentObserver(
+            Settings.System.getUriFor(Settings.System.VOLTE_ICON_STYLE),
+            false, mSettingsObserver, UserHandle.USER_ALL);
         mUserTracker.addCallback(this, (r) -> { r.run(); });
         mContext.registerReceiver(mVolteSwitchObserver,
                 new IntentFilter("org.codeaurora.intent.action.ACTION_ENHANCE_4G_SWITCH"));
@@ -382,16 +386,6 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         return getCurrentIconId();
     }
 
-    private int getVolteResId() {
-        int resId = 0;
-
-        if ((mCurrentState.voiceCapable || mCurrentState.videoCapable)
-                && mCurrentState.imsRegistered) {
-            resId = R.drawable.ic_volte;
-        }
-        return resId;
-    }
-
     private void setListeners() {
         try {
             Log.d(mTag, "setListeners: register CapabilitiesCallback and RegistrationCallback");
@@ -458,7 +452,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         final QsInfo qsInfo = getQsInfo(contentDescription, iconId);
         final SbInfo sbInfo = getSbInfo(contentDescription, iconId);
 
-        int volteIcon = mConfig.showVolteIcon ? getVolteResId() : 0;
+        int volteIcon = 0;
         MobileDataIndicators mobileDataIndicators = new MobileDataIndicators(
                 sbInfo.icon,
                 qsInfo.icon,
