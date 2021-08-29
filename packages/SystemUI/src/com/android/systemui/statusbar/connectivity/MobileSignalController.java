@@ -186,7 +186,8 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         mSettingsObserver = new ContentObserver(new Handler(receiverLooper)) {
             @Override
             public void onChange(boolean selfChange, Uri uri) {
-                if (Settings.System.SHOW_FOURG_ICON.equals(uri.getLastPathSegment())) {
+                if (Settings.System.SHOW_FOURG_ICON.equals(uri.getLastPathSegment())
+                    || Settings.System.VOLTE_ICON_STYLE.equals(uri.getLastPathSegment())) {
                     updateSettings();
                 } else {
                     updateTelephony();
@@ -265,10 +266,13 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         final ContentResolver resolver = mContext.getContentResolver();
         resolver.registerContentObserver(Global.getUriFor(Global.MOBILE_DATA), true, mSettingsObserver);
         resolver.registerContentObserver(Global.getUriFor(
-                Global.MOBILE_DATA + mSubscriptionInfo.getSubscriptionId()),
-                true, mSettingsObserver);
+            Global.MOBILE_DATA + mSubscriptionInfo.getSubscriptionId()),
+            true, mSettingsObserver);
         resolver.registerContentObserver(
             Settings.System.getUriFor(Settings.System.SHOW_FOURG_ICON),
+            false, mSettingsObserver, UserHandle.USER_ALL);
+        resolver.registerContentObserver(
+            Settings.System.getUriFor(Settings.System.VOLTE_ICON_STYLE),
             false, mSettingsObserver, UserHandle.USER_ALL);
         mUserTracker.addCallback(this, (r) -> { r.run(); });
         mReceiverHandler.post(mTryRegisterIms);
@@ -356,16 +360,6 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     @Override
     public int getQsCurrentIconId() {
         return getCurrentIconId();
-    }
-
-    private int getVolteResId() {
-        int resId = 0;
-
-        if ((mCurrentState.voiceCapable || mCurrentState.videoCapable)
-                && mCurrentState.imsRegistered) {
-            resId = R.drawable.ic_volte;
-        }
-        return resId;
     }
 
     private void setListeners() {
