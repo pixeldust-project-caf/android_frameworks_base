@@ -226,7 +226,8 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             @Override
             public void onChange(boolean selfChange, Uri uri) {
                 if (Settings.System.SHOW_FOURG_ICON.equals(uri.getLastPathSegment())
-                    || Settings.System.VOLTE_ICON_STYLE.equals(uri.getLastPathSegment())) {
+                    || Settings.System.VOLTE_ICON_STYLE.equals(uri.getLastPathSegment())
+                    || Settings.System.VOWIFI_ICON_STYLE.equals(uri.getLastPathSegment())) {
                     updateSettings();
                 } else {
                     updateTelephony();
@@ -315,6 +316,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             false, mSettingsObserver, UserHandle.USER_ALL);
         resolver.registerContentObserver(
             Settings.System.getUriFor(Settings.System.VOLTE_ICON_STYLE),
+            false, mSettingsObserver, UserHandle.USER_ALL);
+        resolver.registerContentObserver(
+            Settings.System.getUriFor(Settings.System.VOWIFI_ICON_STYLE),
             false, mSettingsObserver, UserHandle.USER_ALL);
         mUserTracker.addCallback(this, (r) -> { r.run(); });
         mContext.registerReceiver(mVolteSwitchObserver,
