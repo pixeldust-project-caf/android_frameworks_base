@@ -48,11 +48,12 @@ import com.android.systemui.qs.logging.QSLogger;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.statusbar.policy.DataSaverController;
 import com.android.systemui.statusbar.policy.HotspotController;
+import com.android.systemui.statusbar.policy.KeyguardStateController;
 
 import javax.inject.Inject;
 
 /** Quick settings tile: Hotspot **/
-public class HotspotTile extends QSTileImpl<BooleanState> {
+public class HotspotTile extends SecureQSTile<BooleanState> {
 
     private final Icon mWifi4EnabledStatic = ResourceIcon.get(R.drawable.ic_wifi_4_hotspot);
     private final Icon mWifi5EnabledStatic = ResourceIcon.get(R.drawable.ic_wifi_5_hotspot);
@@ -77,10 +78,11 @@ public class HotspotTile extends QSTileImpl<BooleanState> {
             ActivityStarter activityStarter,
             QSLogger qsLogger,
             HotspotController hotspotController,
-            DataSaverController dataSaverController
+            DataSaverController dataSaverController,
+            KeyguardStateController keyguardStateController
     ) {
         super(host, backgroundLooper, mainHandler, falsingManager, metricsLogger,
-                statusBarStateController, activityStarter, qsLogger);
+                statusBarStateController, activityStarter, qsLogger, keyguardStateController);
         mHotspotController = hotspotController;
         mDataSaverController = dataSaverController;
         mHotspotController.observe(this, mCallbacks);
@@ -119,7 +121,11 @@ public class HotspotTile extends QSTileImpl<BooleanState> {
     }
 
     @Override
-    protected void handleClick(@Nullable View view) {
+    protected void handleClick(@Nullable View view, boolean keyguardShowing) {
+        if (checkKeyguard(view, keyguardShowing)) {
+            return;
+        }
+
         final boolean isEnabled = mState.value;
         if (!isEnabled && mDataSaverController.isDataSaverEnabled()) {
             return;
