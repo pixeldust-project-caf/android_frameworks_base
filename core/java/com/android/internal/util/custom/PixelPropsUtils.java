@@ -36,7 +36,8 @@ public class PixelPropsUtils {
     private static final Map<String, ArrayList<String>> propsToKeep;
     private static final String[] extraPackagesToChange = {
         "com.android.vending",
-        "com.breel.wallpapers20"
+        "com.breel.wallpapers20",
+        "com.google.android.apps.googleassistant"
     };
 
     static {
