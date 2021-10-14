@@ -2030,7 +2030,8 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
         }
 
         // Take a guess at initial SIM state, battery status and PLMN until we get an update
-        mBatteryStatus = new BatteryStatus(BATTERY_STATUS_UNKNOWN, 100, 0, 0, 0, true);
+        // wait for initial state fetched below
+        //mBatteryStatus = new BatteryStatus(BATTERY_STATUS_UNKNOWN, 100, 0, 0, 0, true);
 
         // Watch for interesting updates
         final IntentFilter filter = new IntentFilter();
@@ -3328,6 +3329,9 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
     }
 
     private boolean isBatteryUpdateInteresting(BatteryStatus old, BatteryStatus current) {
+        if (old == null) {
+            return true;
+        }
         final boolean nowPluggedIn = current.isPluggedIn();
         final boolean wasPluggedIn = old.isPluggedIn();
         final boolean stateChangedWhilePluggedIn = wasPluggedIn && nowPluggedIn
@@ -3425,7 +3429,9 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
 
     private void sendUpdates(KeyguardUpdateMonitorCallback callback) {
         // Notify listener of the current state
-        callback.onRefreshBatteryInfo(mBatteryStatus);
+        if (mBatteryStatus != null) {
+            callback.onRefreshBatteryInfo(mBatteryStatus);
+        }
         callback.onTimeChanged();
         callback.onPhoneStateChanged(mPhoneState);
         callback.onRefreshCarrierInfo();
