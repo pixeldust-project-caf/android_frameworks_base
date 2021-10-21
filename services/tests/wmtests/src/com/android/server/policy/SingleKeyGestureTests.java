@@ -69,7 +69,7 @@ public class SingleKeyGestureTests {
 
     @Before
     public void setUp() {
-        mDetector = new SingleKeyGestureDetector();
+        mDetector = new SingleKeyGestureDetector(mContext);
         initSingleKeyGestureRules();
         mWaitTimeout = ViewConfiguration.getMultiPressTimeout() + 50;
         mLongPressTime = ViewConfiguration.get(mContext).getDeviceGlobalActionKeyTimeout() + 50;
