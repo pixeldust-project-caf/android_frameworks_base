@@ -67,8 +67,7 @@ public class NetworkTrafficSB extends NetworkTraffic implements StatusIconDispla
 
     @Override
     public void onDarkChanged(Rect area, float darkIntensity, int tint) {
-        mTintColor = DarkIconDispatcher.getTint(area, this, tint);
-        setTextColor(mTintColor);
+        setTextColor(DarkIconDispatcher.getTint(area, this, tint));
         updateTrafficDrawable();
     }
 
