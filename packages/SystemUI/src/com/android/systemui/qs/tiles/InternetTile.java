@@ -340,7 +340,7 @@ public class InternetTile extends SecureQSTile<SignalState> {
                     mWifiInfo.mWifiSignalContentDescription = null;
                 }
             }
-            if (indicators.qsIcon != null) {
+            if (indicators.qsIcon != null || !indicators.isDefault) {
                 refreshState(mWifiInfo);
             }
         }
@@ -350,7 +350,7 @@ public class InternetTile extends SecureQSTile<SignalState> {
             if (DEBUG) {
                 Log.d(TAG, "setMobileDataIndicators: " + indicators);
             }
-            if (indicators.qsIcon == null) {
+            if (indicators.qsIcon == null || !indicators.isDefault) {
                 // Not data sim, don't display.
                 return;
             }
