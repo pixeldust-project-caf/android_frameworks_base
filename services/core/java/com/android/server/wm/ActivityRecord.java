@@ -6478,7 +6478,8 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
         }
 
         if (windowFromSameProcessAsActivity) {
-            return mAtmService.mAmInternal.inputDispatchingTimedOut(anrApp.mOwner,
+            return mAtmService.mAmInternal.inputDispatchingTimedOut(
+                    anrApp != null? anrApp.mOwner : null,
                     anrActivity.shortComponentName, anrActivity.info.applicationInfo,
                     shortComponentName, app, false, reason);
         } else {
