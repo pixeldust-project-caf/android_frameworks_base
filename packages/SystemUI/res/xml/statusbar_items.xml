@@ -74,6 +74,11 @@
         android:key="vpn"
         android:title="@string/status_bar_vpn" />
 
+    <SwitchPreference
+        android:key="hide_qs_call_strength"
+        android:title="@string/quick_settings_call_strength"
+        android:defaultValue="true" />>
+
     <!--<com.android.systemui.tuner.BatteryPreference
         android:title="@string/battery"
         android:summary="%s"
