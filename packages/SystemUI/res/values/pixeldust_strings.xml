@@ -78,4 +78,7 @@
 
     <!-- Now playing lockscreen / ambient music ticker -->
     <string name="ambientmusic_songinfo" formatted="false" translatable="false">%s • %s</string>
+
+    <!-- Allow hiding call strength icons -->
+    <string name="quick_settings_call_strength">Call strength icons</string>
 </resources>
