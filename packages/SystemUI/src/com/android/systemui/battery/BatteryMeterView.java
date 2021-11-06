@@ -96,6 +96,7 @@ public class BatteryMeterView extends LinearLayout implements DarkReceiver {
     private boolean mBatteryStateUnknown;
     // Lazily-loaded since this is expected to be a rare-if-ever state
     private Drawable mUnknownStateDrawable;
+    private boolean mShowBatteryEstimate;
 
     private boolean mCharging;
     public int mBatteryStyle = BATTERY_STYLE_PORTRAIT;
@@ -209,6 +210,14 @@ public class BatteryMeterView extends LinearLayout implements DarkReceiver {
     public void updateSettings() {
         updateSbBatteryStyle();
         updateSbShowBatteryPercent();
+        updateQsBatteryEstimate();
+    }
+
+    private void updateQsBatteryEstimate() {
+        mShowBatteryEstimate = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.QS_SHOW_BATTERY_ESTIMATE, 1,
+                UserHandle.USER_CURRENT) == 1;
+        updatePercentView();
     }
 
     private void updateSbBatteryStyle() {
@@ -295,7 +304,7 @@ public class BatteryMeterView extends LinearLayout implements DarkReceiver {
         }
 
         if (mBatteryPercentView != null) {
-            if (mShowPercentMode == MODE_ESTIMATE && !mCharging) {
+            if (mShowPercentMode == MODE_ESTIMATE && !mCharging && mShowBatteryEstimate) {
                 mBatteryEstimateFetcher.fetchBatteryTimeRemainingEstimate(
                         (String estimate) -> {
                     if (mBatteryPercentView == null) {
@@ -478,6 +487,7 @@ public class BatteryMeterView extends LinearLayout implements DarkReceiver {
     @Override
     public void onDarkChanged(Rect area, float darkIntensity, int tint) {
         float intensity = DarkIconDispatcher.isInArea(area, this) ? darkIntensity : 0;
+        updateSettings();
         mNonAdaptedSingleToneColor = mDualToneHandler.getSingleColor(intensity);
         mNonAdaptedForegroundColor = mDualToneHandler.getFillColor(intensity);
         mNonAdaptedBackgroundColor = mDualToneHandler.getBackgroundColor(intensity);
