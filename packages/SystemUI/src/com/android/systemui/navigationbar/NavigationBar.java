@@ -243,6 +243,8 @@ public class NavigationBar implements View.OnAttachStateChangeListener,
     private boolean mIsOnDefaultDisplay;
     public boolean mHomeBlockedThisTouch;
 
+    private int mLongPressOnHomeBehavior;
+
     @com.android.internal.annotations.VisibleForTesting
     public enum NavBarActionEvent implements UiEventLogger.UiEventEnum {
 
@@ -544,6 +546,8 @@ public class NavigationBar implements View.OnAttachStateChangeListener,
                 HOME_BUTTON_LONG_PRESS_DURATION_MS,
                 /* defaultValue = */ 0
         )).filter(duration -> duration != 0);
+        mLongPressOnHomeBehavior = mContext.getResources().getInteger(
+                com.android.internal.R.integer.config_longPressOnHomeBehavior);
         DeviceConfig.addOnPropertiesChangedListener(
                 DeviceConfig.NAMESPACE_SYSTEMUI, mHandler::post, mOnPropertiesChangedListener);
 
@@ -1068,15 +1072,21 @@ public class NavigationBar implements View.OnAttachStateChangeListener,
         if (shouldDisableNavbarGestures()) {
             return false;
         }
-        mMetricsLogger.action(MetricsEvent.ACTION_ASSIST_LONG_PRESS);
-        mUiEventLogger.log(NavBarActionEvent.NAVBAR_ASSIST_LONGPRESS);
-        Bundle args = new Bundle();
-        args.putInt(
-                AssistManager.INVOCATION_TYPE_KEY,
-                AssistManager.INVOCATION_TYPE_HOME_BUTTON_LONG_PRESS);
-        mAssistManagerLazy.get().startAssist(args);
-        mStatusBarOptionalLazy.get().ifPresent(StatusBar::awakenDreams);
-        mNavigationBarView.abortCurrentGesture();
+        if (mLongPressOnHomeBehavior != 0) {
+            KeyButtonView keyButtonView = (KeyButtonView) v;
+            keyButtonView.sendEvent(KeyEvent.ACTION_DOWN, KeyEvent.FLAG_LONG_PRESS);
+            keyButtonView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_LONG_CLICKED);
+        } else {
+            mMetricsLogger.action(MetricsEvent.ACTION_ASSIST_LONG_PRESS);
+            mUiEventLogger.log(NavBarActionEvent.NAVBAR_ASSIST_LONGPRESS);
+            Bundle args = new Bundle();
+            args.putInt(
+                    AssistManager.INVOCATION_TYPE_KEY,
+                    AssistManager.INVOCATION_TYPE_HOME_BUTTON_LONG_PRESS);
+            mAssistManagerLazy.get().startAssist(args);
+            mStatusBarOptionalLazy.get().ifPresent(StatusBar::awakenDreams);
+            mNavigationBarView.abortCurrentGesture();
+        }
         return true;
     }
 
