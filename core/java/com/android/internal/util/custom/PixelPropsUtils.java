@@ -15,6 +15,7 @@
  */
 package com.android.internal.util.custom;
 
+import android.app.Application;
 import android.os.Build;
 import android.os.SystemProperties;
 import android.util.Log;
@@ -63,6 +64,7 @@ public class PixelPropsUtils {
         propsToKeep.put("com.google.android.settings.intelligence", new ArrayList<>(Collections.singletonList("FINGERPRINT")));
         propsToKeep.put("com.google.android.GoogleCamera", allProps);
         propsToKeep.put("com.google.android.dialer", allProps);
+        propsToKeep.put("com.google.android.gms", new ArrayList<String>(Arrays.asList("MODEL")));
         propsToChangePixel6 = new HashMap<>();
         propsToChangePixel6.put("BRAND", "google");
         propsToChangePixel6.put("MANUFACTURER", "Google");
@@ -86,11 +88,14 @@ public class PixelPropsUtils {
         propsToChangePixelXL.put("FINGERPRINT", "google/marlin/marlin:10/QP1A.191005.007.A3/5972272:user/release-keys");
     }
 
-    public static void setProps(String packageName) {
+    public static void setProps(Application app) {
+        String packageName = app.getPackageName();
         if (packageName == null){
             return;
         }
-        if (packageName.equals("com.google.android.gms")) {
+        if (packageName.equals("com.google.android.gms") &&
+                    app.getProcessName().equals("com.google.android.gms.unstable")) {
+            setPropValue("MODEL", "Pixel 5" + " ");
             sIsGms = true;
             setPropValue("TYPE", "userdebug");
         }
