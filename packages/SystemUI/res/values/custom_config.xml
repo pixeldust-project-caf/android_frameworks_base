@@ -1,0 +1,6 @@
+<resources>
+
+    <!-- SystemUI Google -->
+    <bool name="flag_smartspace">true</bool>
+
+</resources>
