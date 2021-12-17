@@ -11665,6 +11665,22 @@ public final class Settings {
         public static final String LOCK_SCREEN_WEATHER_ENABLED = "lockscreen_weather_enabled";
 
         /**
+         * Whether the double tap power button to toggle flashlight when the screen is off
+         * is enabled.
+         *
+         * @hide
+         */
+        public static final String TORCH_DOUBLE_TAP_POWER_GESTURE_ENABLED =
+                "torch_double_tap_power_gesture_enabled";
+
+        /**
+         * Whether to toggle flashlight on long pressing power button when the screen is off.
+         *
+         * @hide
+         */
+        public static final String TORCH_LONG_PRESS_POWER = "torch_long_press_power";
+
+        /**
          * These entries are considered common between the personal and the managed profile,
          * since the managed profile doesn't get to change them.
          */

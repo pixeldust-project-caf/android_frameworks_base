@@ -381,5 +381,7 @@ public class SecureSettingsValidators {
         VALIDATORS.put(Secure.HEARING_AID_SYSTEM_SOUNDS_ROUTING,
                 new DiscreteValueValidator(new String[] {"0", "1", "2"}));
         VALIDATORS.put(Secure.ACCESSIBILITY_FONT_SCALING_HAS_BEEN_CHANGED, BOOLEAN_VALIDATOR);
+        VALIDATORS.put(Secure.TORCH_DOUBLE_TAP_POWER_GESTURE_ENABLED, BOOLEAN_VALIDATOR);
+        VALIDATORS.put(Secure.TORCH_LONG_PRESS_POWER, BOOLEAN_VALIDATOR);
     }
 }
