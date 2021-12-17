@@ -4148,7 +4148,7 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
         // The activity now gets access to the data associated with this Intent.
         mAtmService.mUgmInternal.grantUriPermissionUncheckedFromIntent(intentGrants,
                 getUriPermissionsLocked());
-        final ReferrerIntent rintent = new ReferrerIntent(intent, referrer);
+        final ReferrerIntent rintent = new ReferrerIntent(intent, getFilteredReferrer(referrer));
         boolean unsent = true;
         final boolean isTopActivityWhileSleeping = isTopRunningActivity() && isSleeping();
 
@@ -8525,6 +8525,19 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
 
     int getLaunchedFromUid() {
         return launchedFromUid;
+    }
+
+    /**
+     * Gets the referrer package name with respect to package visibility. This method returns null
+     * if the given package is not visible to this activity.
+     */
+    String getFilteredReferrer(String referrerPackage) {
+        if (referrerPackage == null || (!referrerPackage.equals(packageName)
+                && mWmService.mPmInternal.filterAppAccess(
+                        referrerPackage, info.applicationInfo.uid, mUserId))) {
+            return null;
+        }
+        return referrerPackage;
     }
 
     /**

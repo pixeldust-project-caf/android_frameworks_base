@@ -3452,10 +3452,8 @@ public final class BluetoothAdapter {
                     synchronized (mBluetoothConnectionCallbackExecutorMap) {
                         if (!mBluetoothConnectionCallbackExecutorMap.isEmpty()) {
                             try {
-                                if (mService != null) {
-                                    mService.registerBluetoothConnectionCallback
-                                            (mConnectionCallback, mAttributionSource);
-                                }
+                                mService.registerBluetoothConnectionCallback(mConnectionCallback,
+                                        mAttributionSource);
                             } catch (RemoteException e) {
                                 Log.e(TAG, "onBluetoothServiceUp: Failed to register bluetooth"
                                         + "connection callback", e);
@@ -3477,7 +3475,6 @@ public final class BluetoothAdapter {
                             mBluetoothLeScanner.cleanup();
                         }
                     }
-                    Log.d(TAG, "onBluetoothServiceDown: Finished sending callbacks to registered clients");
                 }
 
                 public void onBrEdrDown() {
