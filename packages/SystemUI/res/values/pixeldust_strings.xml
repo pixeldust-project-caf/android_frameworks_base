@@ -64,9 +64,6 @@
     <string name="quick_settings_locale_label">Language</string>
     <string name="quick_settings_locale_more_locales_toast">Please configure multiple languages to enable toggle functionality</string>
 
-    <!-- Battery saver extreme [CHAR LIMIT=NONE]-->
-    <string name="extreme_battery_saver_text">Extreme</string>
-
     <!-- SystemUI Tuner -->
     <string name="statusbar_items_title">Statusbar icon</string>
     <string name="lockscreen_default">Default</string>

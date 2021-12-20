@@ -44,7 +44,6 @@ import com.android.systemui.qs.dagger.QSModule;
 import com.android.systemui.qs.tileimpl.QSFactoryImpl;
 import com.android.systemui.recents.Recents;
 import com.android.systemui.recents.RecentsImplementation;
-import com.android.systemui.settings.UserContentResolverProvider;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.NotificationListener;
 import com.android.systemui.statusbar.NotificationLockscreenUserManager;
@@ -110,11 +109,9 @@ public abstract class TvSystemUIModule {
     static BatteryController provideBatteryController(Context context,
             EnhancedEstimates enhancedEstimates, PowerManager powerManager,
             BroadcastDispatcher broadcastDispatcher, DemoModeController demoModeController,
-            @Main Handler mainHandler, @Background Handler bgHandler,
-            UserContentResolverProvider userContentResolverProvider) {
+            @Main Handler mainHandler, @Background Handler bgHandler) {
         BatteryController bC = new BatteryControllerImpl(context, enhancedEstimates, powerManager,
-                broadcastDispatcher, demoModeController, mainHandler, bgHandler,
-                userContentResolverProvider);
+                broadcastDispatcher, demoModeController, mainHandler, bgHandler);
         bC.init();
         return bC;
     }

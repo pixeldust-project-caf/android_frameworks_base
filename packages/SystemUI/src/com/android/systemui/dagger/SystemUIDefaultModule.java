@@ -44,7 +44,6 @@ import com.android.systemui.qs.dagger.QSModule;
 import com.android.systemui.qs.tileimpl.QSFactoryImpl;
 import com.android.systemui.recents.Recents;
 import com.android.systemui.recents.RecentsImplementation;
-import com.android.systemui.settings.UserContentResolverProvider;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.NotificationLockscreenUserManager;
 import com.android.systemui.statusbar.NotificationLockscreenUserManagerImpl;
@@ -111,8 +110,7 @@ public abstract class SystemUIDefaultModule {
             BroadcastDispatcher broadcastDispatcher,
             DemoModeController demoModeController,
             @Main Handler mainHandler,
-            @Background Handler bgHandler,
-            UserContentResolverProvider userContentResolverProvider) {
+            @Background Handler bgHandler) {
         BatteryController bC = new BatteryControllerImpl(
                 context,
                 enhancedEstimates,
@@ -120,8 +118,7 @@ public abstract class SystemUIDefaultModule {
                 broadcastDispatcher,
                 demoModeController,
                 mainHandler,
-                bgHandler,
-                userContentResolverProvider);
+                bgHandler);
         bC.init();
         return bC;
     }
