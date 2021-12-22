@@ -86,5 +86,8 @@ public class SystemSettings {
         Settings.System.NOTIFICATION_LIGHT_PULSE,
         Settings.System.FULLSCREEN_GESTURES,
         Settings.System.LOCKSCREEN_SMALL_CLOCK,
+        Settings.System.OMNI_QS_TILE_VERTICAL_LAYOUT,
+        Settings.System.OMNI_QS_LAYOUT_COLUMNS_LANDSCAPE,
+        Settings.System.OMNI_QS_LAYOUT_COLUMNS,
     };
 }

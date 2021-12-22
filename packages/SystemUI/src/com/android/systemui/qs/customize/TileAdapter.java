@@ -42,6 +42,7 @@ import androidx.recyclerview.widget.RecyclerView.State;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import com.android.internal.logging.UiEventLogger;
+import com.android.internal.util.pixeldust.PixeldustUtils;
 import com.android.systemui.R;
 import com.android.systemui.qs.QSEditEvent;
 import com.android.systemui.qs.QSTileHost;
@@ -120,6 +121,7 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileSta
         mMarginDecoration = new MarginTileDecoration();
         mMinNumTiles = context.getResources().getInteger(R.integer.quick_settings_min_num_tiles);
         mNumColumns = context.getResources().getInteger(NUM_COLUMNS_ID);
+        mNumColumns = PixeldustUtils.getQSColumnsCount(mContext, mNumColumns);
         //mAccessibilityDelegate = new TileAdapterDelegate();
         mSizeLookup.setSpanIndexCacheEnabled(true);
     }
@@ -141,6 +143,7 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileSta
      */
     public boolean updateNumColumns() {
         int numColumns = mContext.getResources().getInteger(NUM_COLUMNS_ID);
+        numColumns = PixeldustUtils.getQSColumnsCount(mContext, numColumns);
         if (numColumns != mNumColumns) {
             mNumColumns = numColumns;
             return true;
