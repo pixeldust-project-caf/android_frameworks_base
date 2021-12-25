@@ -19,6 +19,7 @@ package com.android.systemui.statusbar.phone;
 import android.annotation.NonNull;
 import android.content.Context;
 import android.os.Handler;
+import android.provider.Settings;
 import android.telephony.SubscriptionInfo;
 import android.util.ArraySet;
 import android.util.Log;
@@ -51,6 +52,7 @@ public class StatusBarSignalPolicy implements SignalCallback,
     private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
 
     private static final String HIDE_QS_CALL_STRENGTH = "hide_qs_call_strength";
+    private static final String DATA_ACTIVITY_ARROW = "data_activity_arrow";
 
     private final String mSlotAirplane;
     private final String mSlotMobile;
@@ -112,7 +114,9 @@ public class StatusBarSignalPolicy implements SignalCallback,
         mSlotNoCalling = mContext.getString(com.android.internal.R.string.status_bar_no_calling);
         mSlotCallStrength =
                 mContext.getString(com.android.internal.R.string.status_bar_call_strength);
-        mActivityEnabled = mContext.getResources().getBoolean(R.bool.config_showActivity);
+        mActivityEnabled = mContext.getResources().getBoolean(com.android.internal.R.bool.config_showActivity) &&
+                Settings.System.getInt(mContext.getContentResolver(),
+                DATA_ACTIVITY_ARROW, 1) != 0;
     }
 
     /** Call to initilaize and register this classw with the system. */
