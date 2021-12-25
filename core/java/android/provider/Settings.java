@@ -5586,6 +5586,12 @@ public final class Settings {
         public static final String AMBIENT_BATTERY_PERCENT = "ambient_battery_percent";
 
         /**
+         * Whether to display data activity icon for Wi-Fi and mobile data respectively in statusbar
+         * @hide
+         */
+        public static final String DATA_ACTIVITY_ARROW = "data_activity_arrow";
+
+        /**
          * Keys we no longer back up under the current schema, but want to continue to
          * process when restoring historical backup datasets.
          *
@@ -5740,6 +5746,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(OMNI_KEYGUARD_SHOW_BATTERY_BAR);
             PRIVATE_SETTINGS.add(OMNI_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS);
             PRIVATE_SETTINGS.add(AMBIENT_BATTERY_PERCENT);
+            PRIVATE_SETTINGS.add(DATA_ACTIVITY_ARROW);
         }
 
         /**
