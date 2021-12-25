@@ -63,6 +63,7 @@ android_library {
         "res-smartspace",
         "res",
         "res-hwkeys",
+        "res-gamedashboard",
     ],
     static_libs: [
         "WindowManager-Shell",
@@ -102,6 +103,7 @@ android_library {
         "backgesture-google",
         "smartspace-google",
         "tensorflowlite_java",
+        "gamedashboard-sysui-google",
     ],
     manifest: "AndroidManifest.xml",
     defaults: [

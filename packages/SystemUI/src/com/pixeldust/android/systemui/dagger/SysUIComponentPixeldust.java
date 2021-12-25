@@ -23,6 +23,7 @@ import com.android.systemui.dagger.SystemUIBinder;
 import com.android.systemui.dagger.SysUIComponent;
 import com.android.systemui.dagger.SystemUIModule;
 
+import com.pixeldust.android.systemui.gamedashboard.GameDashboardModule;
 import com.pixeldust.android.systemui.keyguard.KeyguardSliceProviderPixeldust;
 import com.pixeldust.android.systemui.smartspace.KeyguardSmartspaceController;
 
@@ -32,8 +33,9 @@ import dagger.Subcomponent;
 @Subcomponent(modules = {
         DefaultComponentBinder.class,
         DependencyProvider.class,
-        SystemUIBinder.class,
+        GameDashboardModule.class,
         SystemUIModule.class,
+        SystemUIPixeldustBinder.class,
         SystemUIPixeldustModule.class})
 public interface SysUIComponentPixeldust extends SysUIComponent {
     @SysUISingleton
