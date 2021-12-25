@@ -5776,6 +5776,12 @@ public final class Settings {
         public static final String LOCKSCREEN_SMALL_CLOCK = "lockscreen_small_clock";
 
         /**
+         * Whether to display data activity icon for Wi-Fi and mobile data respectively in statusbar
+         * @hide
+         */
+        public static final String DATA_ACTIVITY_ARROW = "data_activity_arrow";
+
+        /**
          * Keys we no longer back up under the current schema, but want to continue to
          * process when restoring historical backup datasets.
          *
@@ -6103,6 +6109,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(HIGH_TOUCH_SENSITIVITY_ENABLE);
             PRIVATE_SETTINGS.add(BACK_GESTURE_HAPTIC);
             PRIVATE_SETTINGS.add(AMBIENT_BATTERY_PERCENT);
+            PRIVATE_SETTINGS.add(DATA_ACTIVITY_ARROW);
         }
 
         /**

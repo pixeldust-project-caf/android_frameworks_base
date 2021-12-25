@@ -97,4 +97,7 @@
     <!-- App lock -->
     <java-symbol type="string" name="unlock_application" />
     <java-symbol type="array" name="config_appLockAllowedSystemApps" />
+
+    <!-- Whether to show activity indicators in the status bar -->
+    <java-symbol type="bool" name="config_showActivity" />
 </resources>
