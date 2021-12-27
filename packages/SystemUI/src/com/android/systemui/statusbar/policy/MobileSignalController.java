@@ -143,6 +143,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     // Where to copy the next state into.
     private int mMobileStatusHistoryIndex;
 
+    // Volte Icon
+    private boolean mVolteIcon;
+
     private int mCallState = TelephonyManager.CALL_STATE_IDLE;
 
     /****************************SideCar****************************/
@@ -320,6 +323,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                     Settings.System.getUriFor(Settings.System.SHOW_FOURG_ICON), false,
                     this, UserHandle.USER_ALL);
             resolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.SHOW_VOLTE_ICON), false,
+                    this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.DATA_DISABLED_ICON), false,
                     this, UserHandle.USER_ALL);
             resolver.registerContentObserver(
@@ -339,6 +345,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
 
     private void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
+        mVolteIcon = Settings.System.getIntForUser(resolver,
+                Settings.System.SHOW_VOLTE_ICON, 1,
+                UserHandle.USER_CURRENT) == 1;
         mDataDisabledIcon = Settings.System.getIntForUser(resolver,
                 Settings.System.DATA_DISABLED_ICON, 1,
                 UserHandle.USER_CURRENT) == 1;
@@ -491,7 +500,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         int resId = 0;
         int voiceNetTye = getVoiceNetworkType();
         if ( (mCurrentState.voiceCapable || mCurrentState.videoCapable)
-                &&  mCurrentState.imsRegistered ) {
+                &&  mCurrentState.imsRegistered && mVolteIcon) {
             resId = R.drawable.ic_volte;
         }else if ( (mTelephonyDisplayInfo.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE
                         || mTelephonyDisplayInfo.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE_CA)
@@ -598,7 +607,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             showDataIcon |= mCurrentState.roaming;
             IconState statusIcon = new IconState(showDataIcon && !mCurrentState.airplaneMode,
                     getCurrentIconId(), contentDescription);
-            int volteIcon = mConfig.showVolteIcon && isVolteSwitchOn() ? getVolteResId() : 0;
+            int volteIcon = isVolteSwitchOn() ? getVolteResId() : 0;
             MobileDataIndicators mobileDataIndicators = new MobileDataIndicators(
                     statusIcon, qsIcon, typeIcon, qsTypeIcon,
                     activityIn, activityOut, volteIcon, dataContentDescription, dataContentDescriptionHtml,
@@ -644,7 +653,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                         mCurrentState.enabled && !mCurrentState.airplaneMode? statusIcon.icon : -1,
                         statusIcon.contentDescription);
             }
-            int volteIcon = mConfig.showVolteIcon && isVolteSwitchOn() ? getVolteResId() : 0;
+            int volteIcon = isVolteSwitchOn() ? getVolteResId() : 0;
             if (DEBUG) {
                 Log.d(mTag, "notifyListeners mConfig.alwaysShowNetworkTypeIcon="
                         + mConfig.alwaysShowNetworkTypeIcon + "  getNetworkType:" + mTelephonyDisplayInfo.getNetworkType() +
@@ -654,7 +663,6 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                         + " showDataIcon=" + showDataIcon
                         + " mConfig.alwaysShowDataRatIcon=" + mConfig.alwaysShowDataRatIcon
                         + " icons.dataType=" + icons.dataType
-                        + " mConfig.showVolteIcon=" + mConfig.showVolteIcon
                         + " isVolteSwitchOn=" + isVolteSwitchOn()
                         + " volteIcon=" + volteIcon
                         + " mConfig.showVowifiIcon=" + mConfig.showVowifiIcon);
@@ -1318,9 +1326,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     private final BroadcastReceiver mVolteSwitchObserver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             Log.d(mTag, "action=" + intent.getAction());
-            if ( mConfig.showVolteIcon ) {
-                notifyListeners();
-            }
+            notifyListeners();
         }
     };
 }
