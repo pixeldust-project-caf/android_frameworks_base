@@ -145,6 +145,8 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
 
     // Volte Icon
     private boolean mVolteIcon;
+    // Vowifi Icon
+    private boolean mVoWifiIcon;
 
     private int mCallState = TelephonyManager.CALL_STATE_IDLE;
 
@@ -331,6 +333,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.ROAMING_INDICATOR_ICON), false,
                     this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.SHOW_VOWIFI_ICON), false,
+                    this, UserHandle.USER_ALL);
             updateSettings();
         }
 
@@ -353,6 +358,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 UserHandle.USER_CURRENT) == 1;
         mRoamingIconAllowed = Settings.System.getIntForUser(resolver,
                 Settings.System.ROAMING_INDICATOR_ICON, 1,
+                UserHandle.USER_CURRENT) == 1;
+        mVoWifiIcon = Settings.System.getIntForUser(resolver,
+                Settings.System.SHOW_VOWIFI_ICON, 1,
                 UserHandle.USER_CURRENT) == 1;
         mConfig = Config.readConfig(mContext);
         setConfiguration(mConfig);
@@ -647,7 +655,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 typeIcon = getEnhancementDdsRatIcon();
             }
             MobileIconGroup vowifiIconGroup = getVowifiIconGroup();
-            if ( mConfig.showVowifiIcon && vowifiIconGroup != null ) {
+            if ( mVoWifiIcon && vowifiIconGroup != null ) {
                 typeIcon = vowifiIconGroup.dataType;
                 statusIcon = new IconState(true,
                         mCurrentState.enabled && !mCurrentState.airplaneMode? statusIcon.icon : -1,
@@ -664,8 +672,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                         + " mConfig.alwaysShowDataRatIcon=" + mConfig.alwaysShowDataRatIcon
                         + " icons.dataType=" + icons.dataType
                         + " isVolteSwitchOn=" + isVolteSwitchOn()
-                        + " volteIcon=" + volteIcon
-                        + " mConfig.showVowifiIcon=" + mConfig.showVowifiIcon);
+                        + " volteIcon=" + volteIcon);
             }
             boolean showTriangle = mCurrentState.enabled && !mCurrentState.airplaneMode;
             MobileDataIndicators mobileDataIndicators = new MobileDataIndicators(

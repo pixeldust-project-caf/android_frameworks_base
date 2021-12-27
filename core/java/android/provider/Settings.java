@@ -5425,6 +5425,12 @@ public final class Settings {
         public static final String SHOW_VOLTE_ICON = "volte_icon";
 
         /**
+         * Whether to show VoWiFi icon or not
+         * @hide
+         */
+        public static final String SHOW_VOWIFI_ICON = "vowifi_icon";
+
+        /**
          * Disable power menu on secure lock screens
          *
          * @hide
