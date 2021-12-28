@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 The Proton AOSP Project
+ * Copyright (C) 2019 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pixeldust.systemui.theme
+package com.pixeldust.android.systemui.theme
 
 import android.annotation.ColorInt
 import android.app.WallpaperColors
@@ -26,6 +26,7 @@ import android.os.UserManager
 import android.provider.Settings
 import android.util.Log
 import android.util.TypedValue
+
 import com.android.systemui.broadcast.BroadcastDispatcher
 import com.android.systemui.dagger.SysUISingleton
 import com.android.systemui.dagger.qualifiers.Background
@@ -40,6 +41,7 @@ import com.android.systemui.theme.ThemeOverlayController
 import com.android.systemui.tuner.TunerService
 import com.android.systemui.tuner.TunerService.Tunable
 import com.android.systemui.util.settings.SecureSettings
+
 import dev.kdrag0n.colorkt.Color
 import dev.kdrag0n.colorkt.cam.Zcam
 import dev.kdrag0n.colorkt.conversion.ConversionGraph.convert
@@ -49,13 +51,15 @@ import dev.kdrag0n.colorkt.tristimulus.CieXyzAbs.Companion.toAbs
 import dev.kdrag0n.colorkt.ucs.lab.CieLab
 import dev.kdrag0n.monet.theme.DynamicColorScheme
 import dev.kdrag0n.monet.theme.MaterialYouTargets
+
 import java.util.concurrent.Executor
 import javax.inject.Inject
+
 import kotlin.math.log10
 import kotlin.math.pow
 
 @SysUISingleton
-class CustomThemeOverlayController @Inject constructor(
+class ThemeOverlayControllerPixeldust @Inject constructor(
     private val context: Context,
     broadcastDispatcher: BroadcastDispatcher,
     @Background bgHandler: Handler,
@@ -190,7 +194,8 @@ class CustomThemeOverlayController @Inject constructor(
     }
 
     companion object {
-        private const val TAG = "CustomThemeOverlayController"
+        private const val TAG = "ThemeOverlayControllerPixeldust"
+        private const val DEBUG = false
 
         private const val PREF_PREFIX = "monet_engine"
         private const val PREF_CUSTOM_COLOR = "${PREF_PREFIX}_custom_color"
