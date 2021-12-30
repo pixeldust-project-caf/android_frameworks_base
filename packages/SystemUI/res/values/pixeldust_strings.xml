@@ -113,6 +113,9 @@
     <!-- A toast message shown after successfully deleting a screen recording [CHAR LIMIT=NONE] -->
     <string name="screenrecord_delete_description">Screen recording deleted</string>
 
+    <!-- VoLTE/VoWIFI switch -->
+    <string name="ims_switch_title">VoLTE/VoWiFi</string>
+
     <!-- Extended/"L" back swipe to trigger actions/app/activities -->
     <string name="app_picker_dialog_title">Select an app</string>
     <string name="active_edge_app_select_title">Select app</string>

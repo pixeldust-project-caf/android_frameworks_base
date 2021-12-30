@@ -74,6 +74,11 @@
         android:key="vpn"
         android:title="@string/status_bar_vpn" />
 
+    <com.android.systemui.tuner.TunerSwitch
+        android:key="ims"
+        android:title="@string/ims_switch_title"
+        sysui:defValue="true" />
+
     <!--<com.android.systemui.tuner.BatteryPreference
         android:title="@string/battery"
         android:summary="%s"
