@@ -5713,6 +5713,12 @@ public final class Settings {
 
         /**
          * Battery style
+         * 0: portrait (default)
+         * 1: circle
+         * 2: dotted circle
+         * 3: full circle
+         * 4: text
+         * 5: hidden
          * @hide
          */
         public static final String STATUS_BAR_BATTERY_STYLE = "status_bar_battery_style";
