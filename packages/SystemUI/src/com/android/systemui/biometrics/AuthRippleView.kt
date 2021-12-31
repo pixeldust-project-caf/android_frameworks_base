@@ -28,6 +28,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.animation.PathInterpolator
 import com.android.internal.graphics.ColorUtils
+import com.android.settingslib.Utils
 import com.android.systemui.animation.Interpolators
 import com.android.systemui.surfaceeffects.ripple.RippleShader
 
