@@ -2340,10 +2340,9 @@ public class RootWindowContainer extends WindowContainer<DisplayContent>
         }
 
         /* Acquire perf lock *only* during new app launch */
-        if (r != null && !r.isProcessRunning()) {
+        if ((mTmpFindTaskResult.mIdealRecord == null) ||
+            (mTmpFindTaskResult.mIdealRecord.getState() == DESTROYED)) {
             acquireAppLaunchPerfLock(r);
-        } else if (r == null) {
-            Slog.w(TAG, "Should not happen! Didn't apply launch boost");
         }
 
         final ActivityRecord idealMatchActivity = getItemFromTaskDisplayAreas(taskDisplayArea -> {
