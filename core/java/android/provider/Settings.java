@@ -11696,6 +11696,13 @@ public final class Settings {
         public static final String SPOOF_STORAGE_ENCRYPTION_STATUS = "spoof_storage_encryption_status";
 
         /**
+         * Whether to disable qs on secure lockscreen.
+         * Default 0
+         * @hide
+         */
+        public static final String SECURE_LOCKSCREEN_QS_DISABLED = "secure_lockscreen_qs_disabled";
+
+        /**
          * These entries are considered common between the personal and the managed profile,
          * since the managed profile doesn't get to change them.
          */
