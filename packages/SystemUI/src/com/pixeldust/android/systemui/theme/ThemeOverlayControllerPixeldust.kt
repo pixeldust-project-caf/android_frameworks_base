@@ -172,7 +172,7 @@ class ThemeOverlayControllerPixeldust @Inject constructor(
 
                 listEntry.value.forEach { (shade, color) ->
                     val colorSrgb = color.convert<Srgb>()
-                    Log.d(TAG, "Color $group $shade = ${colorSrgb.toHex()}")
+                    //Log.d(TAG, "Color $group $shade = ${colorSrgb.toHex()}")
                     setColor("system_${group}_$shade", colorSrgb)
                 }
             }
