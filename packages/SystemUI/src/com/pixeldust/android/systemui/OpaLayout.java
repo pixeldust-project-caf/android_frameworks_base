@@ -44,10 +44,10 @@ import android.view.animation.PathInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.android.systemui.Interpolators;
 import com.android.systemui.R;
-import com.android.systemui.statusbar.phone.ButtonInterface;
-import com.android.systemui.statusbar.policy.KeyButtonView;
+import com.android.systemui.animation.Interpolators;
+import com.android.systemui.navigationbar.buttons.ButtonInterface;
+import com.android.systemui.navigationbar.buttons.KeyButtonView;
 import com.android.systemui.tuner.TunerService.Tunable;
 
 import com.android.systemui.Dependency;
