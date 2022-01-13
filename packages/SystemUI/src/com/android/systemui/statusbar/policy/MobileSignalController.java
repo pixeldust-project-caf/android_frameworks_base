@@ -143,9 +143,6 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     // Where to copy the next state into.
     private int mMobileStatusHistoryIndex;
 
-
-    private String SHOW_IMS_STATUSBAR_ICON = "ims";
-
     // Volte/Vowifi Icon
     private boolean mIMSIcon;
     private boolean mVoWifiIconShowing = false;
@@ -333,7 +330,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                     Settings.System.getUriFor(Settings.System.ROAMING_INDICATOR_ICON), false,
                     this, UserHandle.USER_ALL);
             resolver.registerContentObserver(
-                    Settings.System.getUriFor(SHOW_IMS_STATUSBAR_ICON), false,
+                    Settings.System.getUriFor(Settings.System.SHOW_VOLTE_VOWIFI_ICON), false,
                     this, UserHandle.USER_ALL);
             updateSettings();
         }
@@ -356,7 +353,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 Settings.System.ROAMING_INDICATOR_ICON, 1,
                 UserHandle.USER_CURRENT) == 1;
         mIMSIcon = Settings.System.getIntForUser(resolver,
-                SHOW_IMS_STATUSBAR_ICON, 1,
+                Settings.System.SHOW_VOLTE_VOWIFI_ICON, 1,
                 UserHandle.USER_CURRENT) == 1;
         mConfig = Config.readConfig(mContext);
         setConfiguration(mConfig);
