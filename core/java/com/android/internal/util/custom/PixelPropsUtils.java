@@ -39,7 +39,8 @@ public class PixelPropsUtils {
     private static final String[] packagesToChangePixel5 = {
             "com.google.android.tts",
             "com.google.android.googlequicksearchbox",
-            "com.google.android.apps.recorder"
+            "com.google.android.apps.recorder",
+            "com.google.android.apps.inputmethod.latin"
     };
     
     private static final Map<String, Object> propsToChangePixelXL;
