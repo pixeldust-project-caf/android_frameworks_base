@@ -50,8 +50,7 @@ public class PixelPropsUtils {
     private static final String[] extraPackagesToChange = {
         "com.android.chrome",
         "com.android.vending",
-        "com.breel.wallpapers20",
-        "com.google.android.apps.googleassistant"
+        "com.breel.wallpapers20"
     };
 
     private static ArrayList<String> allProps = new ArrayList<>(Arrays.asList("BRAND", "MANUFACTURER", "DEVICE", "PRODUCT", "MODEL", "FINGERPRINT"));
