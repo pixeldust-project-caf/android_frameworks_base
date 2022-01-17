@@ -117,7 +117,7 @@ class PrivacyItemController @Inject constructor(
     }
 
     var micCameraAvailable = isMicCameraEnabled()
-        private set
+
     var locationAvailable = isLocationEnabled()
 
     var allIndicatorsAvailable = micCameraAvailable && locationAvailable
