@@ -33,7 +33,6 @@ public class PixelPropsUtils {
     private static volatile boolean sIsGms = false;
     public static final String PACKAGE_GMS = "com.google.android.gms";
 
-    private static final Map<String, Object> propsToChangePixel2;
     private static final Map<String, Object> propsToChangePixel6;
     private static final Map<String, Object> propsToChangePixel5;
     private static final String[] packagesToChangePixel5 = {
@@ -82,18 +81,15 @@ public class PixelPropsUtils {
         propsToChangePixelXL.put("PRODUCT", "marlin");
         propsToChangePixelXL.put("MODEL", "Pixel XL");
         propsToChangePixelXL.put("FINGERPRINT", "google/marlin/marlin:10/QP1A.191005.007.A3/5972272:user/release-keys");
-        propsToChangePixel2 = new HashMap<>();
-        propsToChangePixel2.put("BRAND", "google");
-        propsToChangePixel2.put("MANUFACTURER", "Google");
-        propsToChangePixel2.put("DEVICE", "walleye");
-        propsToChangePixel2.put("PRODUCT", "walleye");
-        propsToChangePixel2.put("MODEL", "Pixel 2");
-        propsToChangePixel2.put("FINGERPRINT", "google/walleye/walleye:8.1.0/OPM1.171019.011/4448085:user/release-keys");
     }
 
     public static void setProps(String packageName) {
         if (packageName == null){
             return;
+        }
+        if (packageName.equals(PACKAGE_GMS)) {
+            sIsGms = true;
+            setPropValue("TYPE", "userdebug");
         }
         if (packageName.startsWith("com.google.") || Arrays.asList(extraPackagesToChange).contains(packageName)){
             Map<String, Object> propsToChange = propsToChangePixel6;
@@ -104,11 +100,6 @@ public class PixelPropsUtils {
   
             if (Arrays.asList(packagesToChangePixelXL).contains(packageName)) {
                 propsToChange = propsToChangePixelXL;
-            }
-
-            if (packageName.equals(PACKAGE_GMS)) {
-                sIsGms = true;
-                propsToChange = propsToChangePixel2;
             }
 
             if (DEBUG) Log.d(TAG, "Defining props for: " + packageName);
