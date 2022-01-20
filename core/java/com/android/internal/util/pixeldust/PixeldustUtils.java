@@ -338,7 +338,7 @@ public class PixeldustUtils {
                 com.android.internal.R.bool.config_showNavigationBar);
         final int hasNavigationBar = Settings.System.getIntForUser(
                 context.getContentResolver(),
-                Settings.System.OMNI_NAVIGATION_BAR_SHOW, -1, userId);
+                Settings.System.NAVIGATION_BAR_SHOW, -1, userId);
 
         if (hasNavigationBar == -1) {
             String navBarOverride = SystemProperties.get("qemu.hw.mainkeys");
