@@ -5586,11 +5586,6 @@ public final class Settings {
         public static final String OMNI_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS = "sysui_keyguard_show_battery_bar_always";
 
         /**
-         * @hide
-         */
-        public static final String OMNI_NAVIGATION_BAR_SHOW = "navbar_visibility";
-
-        /**
          * Whether to show arrow keys in navigation bar
          * @hide
          */
@@ -5909,7 +5904,6 @@ public final class Settings {
             PRIVATE_SETTINGS.add(NETWORK_TRAFFIC_VIEW_LOCATION);
             PRIVATE_SETTINGS.add(OMNI_KEYGUARD_SHOW_BATTERY_BAR);
             PRIVATE_SETTINGS.add(OMNI_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS);
-            PRIVATE_SETTINGS.add(OMNI_NAVIGATION_BAR_SHOW);
             PRIVATE_SETTINGS.add(OMNI_NAVIGATION_BAR_ARROW_KEYS);
             PRIVATE_SETTINGS.add(OMNI_GESTURE_HANDLE_HIDE);
             PRIVATE_SETTINGS.add(AMBIENT_BATTERY_PERCENT);

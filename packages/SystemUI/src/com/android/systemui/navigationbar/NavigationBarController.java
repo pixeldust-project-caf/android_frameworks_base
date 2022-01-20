@@ -392,10 +392,7 @@ public class NavigationBarController implements Callbacks,
         });
     }
 
-    /**
-     * @hide
-     */
-    public void removeNavigationBar(int displayId) {
+    void removeNavigationBar(int displayId) {
         NavigationBar navBar = mNavigationBars.get(displayId);
         if (navBar != null) {
             navBar.destroyView();
