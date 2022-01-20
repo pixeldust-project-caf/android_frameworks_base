@@ -4735,7 +4735,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SHOW_LOCKSCREEN_MEDIA_ART),
                     false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
                     Settings.Secure.PULSE_ON_NEW_TRACKS),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -4761,7 +4761,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             }  else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.SHOW_LOCKSCREEN_MEDIA_ART))) {
                 setLockScreenMediaArt();
-            } else if (uri.equals(Settings.System.getUriFor(
+            } else if (uri.equals(Settings.Secure.getUriFor(
                     Settings.Secure.PULSE_ON_NEW_TRACKS))) {
                 setPulseOnNewTracks();
             } else if (uri.equals(Settings.System.getUriFor(
@@ -4824,7 +4824,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private void setPulseOnNewTracks() {
         if (KeyguardSliceProvider.getAttachedInstance() != null) {
-            KeyguardSliceProvider.getAttachedInstance().setPulseOnNewTracks(Settings.System.getIntForUser(mContext.getContentResolver(),
+            KeyguardSliceProvider.getAttachedInstance().setPulseOnNewTracks(Settings.Secure.getIntForUser(mContext.getContentResolver(),
                     Settings.Secure.PULSE_ON_NEW_TRACKS, 0,
                     UserHandle.USER_CURRENT) == 1);
         }
