@@ -5750,7 +5750,7 @@ public final class Settings {
          * Force show navigation bar setting.
          * @hide
          */
-        public static final String NAVIGATION_BAR_SHOW = "navigation_bar_show";
+        public static final String NAVIGATION_BAR_SHOW = "navbar_visibility";
 
         /**
          * Force show navigation bar setting.
