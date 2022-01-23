@@ -64,6 +64,8 @@ android_library {
         "res",
         "res-hwkeys",
         "res-gamedashboard",
+        "res-assist",
+        "res-columbus",
     ],
     static_libs: [
         "WindowManager-Shell",
@@ -104,6 +106,9 @@ android_library {
         "smartspace-google",
         "tensorflowlite_java",
         "gamedashboard-sysui-google",
+        "assistmanager-google",
+        "columbus-sysui-google",
+        "vendor-pixelatoms-java",
     ],
     manifest: "AndroidManifest.xml",
     defaults: [
@@ -227,6 +232,11 @@ android_app {
     jni_libs: [
         "libtensorflowlite_jni",
     ],
+    aaptflags: [
+        "-0 .tflite",
+        "-0 .vocab",
+    ],
+    asset_dirs: ["assets"],
     use_embedded_native_libs: true,
     resource_dirs: [],
 

@@ -18,6 +18,7 @@ package com.pixeldust.android.systemui.dagger;
 
 import android.app.Activity;
 import android.app.Service;
+
 import com.android.systemui.LatencyTester;
 import com.android.systemui.ScreenDecorations;
 import com.android.systemui.SliceBroadcastRelayHandler;
@@ -25,6 +26,7 @@ import com.android.systemui.SystemUI;
 import com.android.systemui.accessibility.SystemActions;
 import com.android.systemui.accessibility.WindowMagnification;
 import com.android.systemui.biometrics.AuthController;
+import com.android.systemui.dagger.SysUISingleton;
 import com.android.systemui.globalactions.GlobalActionsComponent;
 import com.android.systemui.keyguard.KeyguardViewMediator;
 import com.android.systemui.keyguard.dagger.KeyguardModule;
@@ -44,10 +46,11 @@ import com.android.systemui.toast.ToastUI;
 import com.android.systemui.util.leak.GarbageMonitor;
 import com.android.systemui.volume.VolumeUI;
 import com.android.systemui.wmshell.WMShell;
-import com.android.systemui.dagger.SysUISingleton;
 
+import com.google.android.systemui.columbus.ColumbusTargetRequestService;
 import com.google.android.systemui.gamedashboard.GameMenuActivity;
 
+import com.pixeldust.android.systemui.PixeldustServices;
 import com.pixeldust.android.systemui.theme.ThemeOverlayControllerPixeldust;
 
 import dagger.Binds;
@@ -240,4 +243,20 @@ public abstract class SystemUIPixeldustBinder {
     @IntoMap
     @ClassKey(GameMenuActivity.class)
     public abstract Activity bindGameMenuActivity(GameMenuActivity activity);
+
+    /**
+     * Inject into PixeldustServices.
+     */
+    @Binds
+    @IntoMap
+    @ClassKey(PixeldustServices.class)
+    public abstract SystemUI bindPixeldustServices(PixeldustServices sysui);
+
+    /**
+     * Inject into ColumbusTargetRequestService.
+     */
+    @Binds
+    @IntoMap
+    @ClassKey(ColumbusTargetRequestService.class)
+    public abstract Service bindColumbusTargetRequestService(ColumbusTargetRequestService activity);
 }
