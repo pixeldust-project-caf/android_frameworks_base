@@ -1987,7 +1987,8 @@ public class RootWindowContainer extends WindowContainer<DisplayContent>
 
         try {
             if (mTaskSupervisor.realStartActivityLocked(r, app,
-                    top == r && r.isFocusable() /*andResume*/, true /*checkConfig*/)) {
+                    top == r && r.getTask().canBeResumed(r) /*andResume*/,
+                    true /*checkConfig*/)) {
                 mTmpBoolean = true;
             }
         } catch (RemoteException e) {
