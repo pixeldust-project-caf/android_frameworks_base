@@ -135,9 +135,11 @@ public class UdfpsEnrollHelper {
     }
 
     void onEnrollmentProgress(int remaining) {
-        if (mTotalSteps == -1) {
-            mTotalSteps = remaining;
-        }
+        Log.d(TAG, "onEnrollmentProgress: remaining = " + remaining
+                + ", mRemainingSteps = " + mRemainingSteps
+                + ", mTotalSteps = " + mTotalSteps
+                + ", mLocationsEnrolled = " + mLocationsEnrolled
+                + ", mCenterTouchCount = " + mCenterTouchCount);
 
         if (remaining != mRemainingSteps) {
             mLocationsEnrolled++;
@@ -221,6 +223,7 @@ public class UdfpsEnrollHelper {
     }
 
     void animateIfLastStep() {
+        Log.d(TAG, "animateIfLastStep: mRemainingSteps = " + mRemainingSteps);
         if (mListener == null) {
             Log.e(TAG, "animateIfLastStep, null listener");
             return;

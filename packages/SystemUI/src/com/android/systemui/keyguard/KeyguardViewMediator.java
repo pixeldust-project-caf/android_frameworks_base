@@ -2821,7 +2821,7 @@ public class KeyguardViewMediator extends SystemUI implements Dumpable,
         }
     }
 
-    private void setShowingLocked(boolean showing) {
+    void setShowingLocked(boolean showing) {
         setShowingLocked(showing, false /* forceCallbacks */);
     }
 

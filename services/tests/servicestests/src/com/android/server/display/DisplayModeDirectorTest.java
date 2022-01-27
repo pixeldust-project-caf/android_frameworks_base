@@ -1668,6 +1668,63 @@ public class DisplayModeDirectorTest {
         assertNull(vote);
     }
 
+    private void setHbmAndAssertRefreshRate(
+            DisplayModeDirector director, DisplayListener listener, int mode, float rr) {
+        when(mInjector.getBrightnessInfo(DISPLAY_ID))
+                .thenReturn(new BrightnessInfo(1.0f, 0.0f, 1.0f, mode, TRANSITION_POINT));
+        listener.onDisplayChanged(DISPLAY_ID);
+
+        final Vote vote = director.getVote(DISPLAY_ID, Vote.PRIORITY_HIGH_BRIGHTNESS_MODE);
+        if (Float.isNaN(rr)) {
+            assertNull(vote);
+        } else {
+            assertVoteForRefreshRate(vote, rr);
+        }
+    }
+
+    @Test
+    public void testHbmVoting_forSunlightAndHdr() {
+        DisplayModeDirector director =
+                createDirectorFromRefreshRateArray(new float[] {60.0f, 90.0f}, 0);
+
+        // Specify HDR limitation before starting DisplayModeDirector to avoid waiting on property
+        // propagation
+        final int hdrRr = 60;
+        mInjector.getDeviceConfig().setRefreshRateInHbmHdr(hdrRr);
+        director.start(createMockSensorManager());
+
+        ArgumentCaptor<DisplayListener> captor = ArgumentCaptor.forClass(DisplayListener.class);
+        verify(mInjector).registerDisplayListener(captor.capture(), any(Handler.class),
+                eq(DisplayManager.EVENT_FLAG_DISPLAY_BRIGHTNESS
+                        | DisplayManager.EVENT_FLAG_DISPLAY_REMOVED));
+        DisplayListener listener = captor.getValue();
+
+        // Specify Sunlight limitations
+        final float sunlightRr = 90.0f;
+        when(mDisplayManagerInternalMock.getRefreshRateLimitations(DISPLAY_ID))
+                .thenReturn(List.of(new RefreshRateLimitation(
+                        DisplayManagerInternal.REFRESH_RATE_LIMIT_HIGH_BRIGHTNESS_MODE, sunlightRr,
+                        sunlightRr)));
+
+        // Verify that there is no HBM vote initially
+        Vote vote = director.getVote(DISPLAY_ID, Vote.PRIORITY_HIGH_BRIGHTNESS_MODE);
+        assertNull(vote);
+
+        // Verify all state transitions
+        setHbmAndAssertRefreshRate(
+                director, listener, BrightnessInfo.HIGH_BRIGHTNESS_MODE_SUNLIGHT, sunlightRr);
+        setHbmAndAssertRefreshRate(
+                director, listener, BrightnessInfo.HIGH_BRIGHTNESS_MODE_HDR, hdrRr);
+        setHbmAndAssertRefreshRate(
+                director, listener, BrightnessInfo.HIGH_BRIGHTNESS_MODE_OFF, Float.NaN);
+        setHbmAndAssertRefreshRate(
+                director, listener, BrightnessInfo.HIGH_BRIGHTNESS_MODE_HDR, hdrRr);
+        setHbmAndAssertRefreshRate(
+                director, listener, BrightnessInfo.HIGH_BRIGHTNESS_MODE_SUNLIGHT, sunlightRr);
+        setHbmAndAssertRefreshRate(
+                director, listener, BrightnessInfo.HIGH_BRIGHTNESS_MODE_OFF, Float.NaN);
+    }
+
     @Test
     public void testHbmVoting_HbmUnsupported() {
         DisplayModeDirector director =
@@ -1732,63 +1789,6 @@ public class DisplayModeDirectorTest {
         listener.onDisplayChanged(DISPLAY_ID);
         vote = director.getVote(DISPLAY_ID, Vote.PRIORITY_HIGH_BRIGHTNESS_MODE);
         assertNull(vote);
-    }
-
-    private void setHbmAndAssertRefreshRate(
-            DisplayModeDirector director, DisplayListener listener, int mode, float rr) {
-        when(mInjector.getBrightnessInfo(DISPLAY_ID))
-                .thenReturn(new BrightnessInfo(1.0f, 0.0f, 1.0f, mode, TRANSITION_POINT));
-        listener.onDisplayChanged(DISPLAY_ID);
-
-        final Vote vote = director.getVote(DISPLAY_ID, Vote.PRIORITY_HIGH_BRIGHTNESS_MODE);
-        if (Float.isNaN(rr)) {
-            assertNull(vote);
-        } else {
-            assertVoteForRefreshRate(vote, rr);
-        }
-    }
-
-    @Test
-    public void testHbmVoting_forSunlightAndHdr() {
-        DisplayModeDirector director =
-                createDirectorFromRefreshRateArray(new float[] {60.0f, 90.0f}, 0);
-
-        // Specify HDR limitation before starting DisplayModeDirector to avoid waiting on property
-        // propagation
-        final int hdrRr = 60;
-        mInjector.getDeviceConfig().setRefreshRateInHbmHdr(hdrRr);
-        director.start(createMockSensorManager());
-
-        ArgumentCaptor<DisplayListener> captor = ArgumentCaptor.forClass(DisplayListener.class);
-        verify(mInjector).registerDisplayListener(captor.capture(), any(Handler.class),
-                eq(DisplayManager.EVENT_FLAG_DISPLAY_BRIGHTNESS
-                        | DisplayManager.EVENT_FLAG_DISPLAY_REMOVED));
-        DisplayListener listener = captor.getValue();
-
-        // Specify Sunlight limitations
-        final float sunlightRr = 90.0f;
-        when(mDisplayManagerInternalMock.getRefreshRateLimitations(DISPLAY_ID))
-                .thenReturn(List.of(new RefreshRateLimitation(
-                        DisplayManagerInternal.REFRESH_RATE_LIMIT_HIGH_BRIGHTNESS_MODE, sunlightRr,
-                        sunlightRr)));
-
-        // Verify that there is no HBM vote initially
-        Vote vote = director.getVote(DISPLAY_ID, Vote.PRIORITY_HIGH_BRIGHTNESS_MODE);
-        assertNull(vote);
-
-        // Verify all state transitions
-        setHbmAndAssertRefreshRate(
-                director, listener, BrightnessInfo.HIGH_BRIGHTNESS_MODE_SUNLIGHT, sunlightRr);
-        setHbmAndAssertRefreshRate(
-                director, listener, BrightnessInfo.HIGH_BRIGHTNESS_MODE_HDR, hdrRr);
-        setHbmAndAssertRefreshRate(
-                director, listener, BrightnessInfo.HIGH_BRIGHTNESS_MODE_OFF, Float.NaN);
-        setHbmAndAssertRefreshRate(
-                director, listener, BrightnessInfo.HIGH_BRIGHTNESS_MODE_HDR, hdrRr);
-        setHbmAndAssertRefreshRate(
-                director, listener, BrightnessInfo.HIGH_BRIGHTNESS_MODE_SUNLIGHT, sunlightRr);
-        setHbmAndAssertRefreshRate(
-                director, listener, BrightnessInfo.HIGH_BRIGHTNESS_MODE_OFF, Float.NaN);
     }
 
     @Test

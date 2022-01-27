@@ -1043,12 +1043,12 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
      */
     protected boolean getLastNavBarVisible() {
         boolean keyguardShowing = mLastShowing && !mLastOccluded;
-        boolean hideWhileDozing = mLastDozing && mLastBiometricMode != MODE_WAKE_AND_UNLOCK_PULSING;
-        boolean keyguardWithGestureNav = (keyguardShowing && !mLastDozing
-                || mLastPulsing && !mLastIsDocked) && mLastGesturalNav;
-        return (!keyguardShowing && !hideWhileDozing || mLastBouncerShowing
-                || mLastRemoteInputActive || keyguardWithGestureNav
-                || mLastGlobalActionsVisible);
+            boolean hideWhileDozing = mLastDozing && mLastBiometricMode != MODE_WAKE_AND_UNLOCK_PULSING;
+            boolean keyguardWithGestureNav = (keyguardShowing && !mLastDozing
+                    || mLastPulsing && !mLastIsDocked) && mLastGesturalNav;
+            return (!keyguardShowing && !hideWhileDozing || mLastBouncerShowing
+                    || mLastRemoteInputActive || keyguardWithGestureNav
+                    || mLastGlobalActionsVisible);
     }
 
     public boolean shouldDismissOnMenuPressed() {

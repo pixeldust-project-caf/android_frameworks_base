@@ -22927,7 +22927,7 @@ public class PackageManagerService extends IPackageManager.Stub
 
         UserManagerInternal umInternal = mInjector.getUserManagerInternal();
         StorageManagerInternal smInternal = mInjector.getLocalService(StorageManagerInternal.class);
-        int flags;
+        final int flags;
         if (StorageManager.isUserKeyUnlocked(userId) && smInternal.isCeStoragePrepared(userId)) {
             flags = StorageManager.FLAG_STORAGE_DE | StorageManager.FLAG_STORAGE_CE;
         } else if (umInternal.isUserRunning(userId)) {
@@ -26146,7 +26146,7 @@ public class PackageManagerService extends IPackageManager.Stub
         UserManagerInternal umInternal = mInjector.getUserManagerInternal();
         StorageManagerInternal smInternal = mInjector.getLocalService(StorageManagerInternal.class);
         for (UserInfo user : mUserManager.getUsers(false /*excludeDying*/)) {
-            int flags;
+            final int flags;
             if (StorageManager.isUserKeyUnlocked(user.id)
                     && smInternal.isCeStoragePrepared(user.id)) {
                 flags = StorageManager.FLAG_STORAGE_DE | StorageManager.FLAG_STORAGE_CE;
