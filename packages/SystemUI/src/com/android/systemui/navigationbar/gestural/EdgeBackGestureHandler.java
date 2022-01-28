@@ -1032,6 +1032,9 @@ public class EdgeBackGestureHandler extends CurrentUserTracker
             case 15: // Previous song
                 PixeldustUtils.sendSystemKeyToStatusBar(KeyEvent.KEYCODE_MEDIA_PREVIOUS);
                 break;
+            case 16: // Powermenu
+                PixeldustUtils.showPowerMenu();
+                break;
         }
     }
 
