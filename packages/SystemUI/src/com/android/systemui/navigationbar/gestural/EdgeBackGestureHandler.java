@@ -1026,6 +1026,12 @@ public class EdgeBackGestureHandler extends CurrentUserTracker
             case 13: // Kill app
                 PixeldustUtils.killForegroundApp();
                 break;
+            case 14: // Skip song
+                PixeldustUtils.sendSystemKeyToStatusBar(KeyEvent.KEYCODE_MEDIA_NEXT);
+                break;
+            case 15: // Previous song
+                PixeldustUtils.sendSystemKeyToStatusBar(KeyEvent.KEYCODE_MEDIA_PREVIOUS);
+                break;
         }
     }
 
