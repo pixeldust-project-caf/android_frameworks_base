@@ -81,7 +81,11 @@ public class KeyguardIndicationTextView extends TextView {
      * Changes the text with an animation.
      */
     public void switchIndication(int textResId) {
-        switchIndication(getResources().getText(textResId), null);
+        switchIndication(getResources().getText(textResId), null, true /* animate */);
+    }
+
+    public void switchIndication(int textResId, boolean animate) {
+        switchIndication(getResources().getText(textResId), null, animate);
     }
 
     /**
@@ -90,7 +94,11 @@ public class KeyguardIndicationTextView extends TextView {
      * @param indication The text to show.
      */
     public void switchIndication(KeyguardIndication indication) {
-        switchIndication(indication == null ? null : indication.getMessage(), indication);
+        switchIndication(indication == null ? null : indication.getMessage(), indication,  true /* animate */);
+    }
+
+    public void switchIndication(KeyguardIndication indication, boolean animate) {
+        switchIndication(indication == null ? null : indication.getMessage(), indication,  animate);
     }
 
     /**
@@ -106,13 +114,24 @@ public class KeyguardIndicationTextView extends TextView {
      * @param text The text to show.
      * @param indication optional display information for the text
      * @param animate whether to animate this indication in - we may not want this on AOD
+     */
+    public void switchIndication(CharSequence text, KeyguardIndication indication, boolean animate) {
+        if (text == null) text = "";
+        switchIndication(text, indication, animate, null);
+    }
+
+    /**
+     * Updates the text with an optional animation.
+     *
+     * @param text The text to show.
+     * @param indication optional display information for the text
+     * @param animate whether to animate this indication in - we may not want this on AOD
      * @param onAnimationEndCallback runnable called after this indication is animated in
      */
     public void switchIndication(CharSequence text, KeyguardIndication indication,
             boolean animate, Runnable onAnimationEndCallback) {
         mMessage = text;
         mKeyguardIndicationInfo = indication;
-
         if (animate) {
             final boolean hasIcon = indication != null && indication.getIcon() != null;
             AnimatorSet animator = new AnimatorSet();
@@ -160,6 +179,10 @@ public class KeyguardIndicationTextView extends TextView {
                 mLastAnimator.cancel();
                 mLastAnimator = null;
             }
+        }
+        if (!animate) {
+            setText(text);
+            return;
         }
     }
 
