@@ -684,9 +684,9 @@ public class KeyguardIndicationController {
                     if (showAmbientBattery) {
                         String percentage = NumberFormat.getPercentInstance()
                                 .format(mBatteryLevel / 100f);
-                        mTopIndicationView.switchIndication(percentage, null);
+                        mTopIndicationView.switchIndication(percentage, null, animate);
                     } else {
-                        mTopIndicationView.switchIndication(null);
+                        mTopIndicationView.switchIndication(null, animate);
                     }
                     if (showBatteryBarAlways) {
                         mBatteryBar.setVisibility(View.VISIBLE);
