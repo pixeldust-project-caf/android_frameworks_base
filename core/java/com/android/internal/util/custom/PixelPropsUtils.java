@@ -16,12 +16,13 @@
 package com.android.internal.util.custom;
 
 import android.os.Build;
+import android.os.SystemProperties;
 import android.util.Log;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,7 +87,7 @@ public class PixelPropsUtils {
     }
 
     public static void setProps(String packageName) {
-        if (packageName == null){
+        if (packageName == null) {
             return;
         }
         if (packageName.equals("com.google.android.gms")) {
@@ -102,7 +103,13 @@ public class PixelPropsUtils {
             }
   
             if (Arrays.asList(packagesToChangePixelXL).contains(packageName)) {
-                propsToChange = propsToChangePixelXL;
+                final String useSpoof = SystemProperties.get("persist.sys.photo", "1");
+                boolean enable = ("1".equals(useSpoof)) ? true : false;
+                if (packageName.equals("com.google.android.apps.photos")) {
+                    if (enable) propsToChange = propsToChangePixelXL;
+                } else {
+                    propsToChange = propsToChangePixelXL;
+                }
             }
 
             if (DEBUG) Log.d(TAG, "Defining props for: " + packageName);
