@@ -31,14 +31,13 @@ public class PixelPropsUtils {
     private static final boolean DEBUG = false;
 
     private static volatile boolean sIsGms = false;
-    public static final String PACKAGE_GMS = "com.google.android.gms";
 
     private static final Map<String, Object> propsToChangePixel6;
     private static final Map<String, Object> propsToChangePixel5;
     private static final String[] packagesToChangePixel5 = {
-            "com.google.android.tts",
+            "com.google.android.apps.recorder",
             "com.google.android.googlequicksearchbox",
-            "com.google.android.apps.recorder"
+            "com.google.android.tts"
     };
     
     private static final Map<String, Object> propsToChangePixelXL;
@@ -48,9 +47,11 @@ public class PixelPropsUtils {
     
     private static final Map<String, ArrayList<String>> propsToKeep;
     private static final String[] extraPackagesToChange = {
-        "com.android.chrome",
-        "com.android.vending",
-        "com.breel.wallpapers20"
+            "com.android.chrome",
+            "com.android.vending",
+            "com.breel.wallpapers20"
+    };
+    private static final String[] packagesToKeep = {
     };
 
     private static ArrayList<String> allProps = new ArrayList<>(Arrays.asList("BRAND", "MANUFACTURER", "DEVICE", "PRODUCT", "MODEL", "FINGERPRINT"));
@@ -87,11 +88,12 @@ public class PixelPropsUtils {
         if (packageName == null){
             return;
         }
-        if (packageName.equals(PACKAGE_GMS)) {
+        if (packageName.equals("com.google.android.gms")) {
             sIsGms = true;
             setPropValue("TYPE", "userdebug");
         }
-        if (packageName.startsWith("com.google.") || Arrays.asList(extraPackagesToChange).contains(packageName)){
+        if ((packageName.startsWith("com.google.") && !Arrays.asList(packagesToKeep).contains(packageName))
+                || Arrays.asList(extraPackagesToChange).contains(packageName)) {
             Map<String, Object> propsToChange = propsToChangePixel6;
 
             if (Arrays.asList(packagesToChangePixel5).contains(packageName)) {
