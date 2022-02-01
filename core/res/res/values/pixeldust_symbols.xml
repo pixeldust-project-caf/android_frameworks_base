@@ -93,4 +93,8 @@
 
     <!-- Camera key type -->
     <java-symbol type="bool" name="config_singleStageCameraKey" />
+
+    <!-- App lock -->
+    <java-symbol type="string" name="unlock_application" />
+    <java-symbol type="array" name="config_appLockAllowedSystemApps" />
 </resources>
