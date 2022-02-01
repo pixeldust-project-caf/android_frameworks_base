@@ -29,4 +29,7 @@
     <!-- SystemUI Restart -->
     <string name="systemui_restart_title">SystemUI-Neustart erforderlich</string>
     <string name="systemui_restart_message">Der SystemUI-Prozess muss neu gestartet werden, damit die Änderung wirksam wird. SystemUI jetzt neu starten?</string>
+
+    <!-- App lock -->
+    <string name="unlock_application">Entsperre <xliff:g id="label" example="Telegram">%1$s</xliff:g></string>
 </resources>

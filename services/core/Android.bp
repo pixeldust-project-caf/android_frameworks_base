@@ -19,7 +19,10 @@ filegroup {
 
 filegroup {
     name: "services.core-sources",
-    srcs: ["java/**/*.java"],
+    srcs: [
+        "java/**/*.java",
+        "java/**/*.kt",
+    ],
     exclude_srcs: [
         ":services.core-sources-am-wm",
     ],
@@ -166,6 +169,9 @@ java_library_static {
         "com.android.sysprop.watchdog",
         "vendor.qti.hardware.servicetracker-V1.0-java",
         "vendor.qti.hardware.servicetracker-V1.2-java",
+        "kotlin-stdlib",
+        "kotlinx-coroutines-android",
+        "kotlinx-coroutines-core",
     ],
     javac_shard_size: 50,
 }
