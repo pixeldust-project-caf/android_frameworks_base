@@ -146,7 +146,6 @@ import java.util.function.Consumer;
 public class ApplicationPackageManager extends PackageManager {
     private static final String TAG = "ApplicationPackageManager";
     private static final boolean DEBUG_ICONS = false;
-    private static final boolean DEBUG = true;
 
     private static final int DEFAULT_EPHEMERAL_COOKIE_MAX_SIZE_BYTES = 16384; // 16KB
 
@@ -736,15 +735,6 @@ public class ApplicationPackageManager extends PackageManager {
 
     @Override
     public boolean hasSystemFeature(String name, int version) {
-        String packageName = ActivityThread.currentPackageName();
-        if (packageName != null && DEBUG) Log.d(TAG, "hasSystemFeature."
-                        + " useSpoofingForPhotos -> " + useSpoofingForPhotos()
-                        + " package: " + packageName
-                        + " feature : " + name
-                        + " isInBlacklist: " + Arrays.asList(featuresBlacklist).contains(name)
-                        + " feature : " + name
-                        + " isInWhitelist: " + Arrays.asList(featuresWhitelist).contains(name));
-
         if (useSpoofingForPhotos()) {
             if (Arrays.asList(featuresWhitelist).contains(name)) return true;
             if (Arrays.asList(featuresBlacklist).contains(name)) return false;
