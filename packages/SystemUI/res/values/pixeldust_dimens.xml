@@ -42,4 +42,7 @@
     <dimen name="opa_overshoot_translation">8.0dip</dimen>
     <dimen name="opa_return_translation">-1.0dip</dimen>
     <dimen name="opa_rest_to_collapse">7.0dip</dimen>
+
+    <!-- Network traffic font size -->
+    <dimen name="net_traffic_multi_text_size">18dp</dimen>
 </resources>
