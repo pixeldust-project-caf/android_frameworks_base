@@ -72,6 +72,10 @@ custom_platform_bootclasspath {
             module: "art-bootclasspath-fragment",
         },
         {
+            apex: "com.android.bluetooth",
+            module: "com.android.bluetooth-bootclasspath-fragment",
+        },
+        {
             apex: "com.android.configinfrastructure",
             module: "com.android.configinfrastructure-bootclasspath-fragment",
         },

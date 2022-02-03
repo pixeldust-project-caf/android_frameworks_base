@@ -107,7 +107,6 @@ java_library_static {
         ":android.hardware.tv.hdmi.earc-V1-java-source",
         ":statslog-art-java-gen",
         ":statslog-contexthub-java-gen",
-        ":services.bluetooth-sources", // TODO(b/214988855) : Remove once apex is ready
         ":services.core-sources",
         ":services.core.protologsrc",
         ":dumpstate_aidl",
