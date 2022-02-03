@@ -58,7 +58,9 @@ import com.android.systemui.R;
 import com.android.systemui.tuner.TunerService;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class NetworkTraffic extends TextView implements TunerService.Tunable {
     private static final String TAG = "NetworkTraffic";
@@ -92,6 +94,8 @@ public class NetworkTraffic extends TextView implements TunerService.Tunable {
             Settings.Secure.NETWORK_TRAFFIC_REFRESH_INTERVAL;
     private static final String NETWORK_TRAFFIC_HIDEARROW =
             Settings.Secure.NETWORK_TRAFFIC_HIDEARROW;
+    private static final String NETWORK_TRAFFIC_FONT_SIZE =
+            Settings.Secure.NETWORK_TRAFFIC_FONT_SIZE;
 
     protected int mLocation = LOCATION_DISABLED;
     private int mMode = MODE_UPSTREAM_AND_DOWNSTREAM;
@@ -106,6 +110,7 @@ public class NetworkTraffic extends TextView implements TunerService.Tunable {
     private int mUnits;
     protected int mIconTint = 0;
     protected int newTint = Color.WHITE;
+    private int mFontSize;
 
     private Drawable mDrawable;
 
@@ -156,6 +161,7 @@ public class NetworkTraffic extends TextView implements TunerService.Tunable {
             tunerService.addTunable(this, NETWORK_TRAFFIC_UNITS);
             tunerService.addTunable(this, NETWORK_TRAFFIC_REFRESH_INTERVAL);
             tunerService.addTunable(this, NETWORK_TRAFFIC_HIDEARROW);
+            tunerService.addTunable(this, NETWORK_TRAFFIC_FONT_SIZE);
 
             mConnectionAvailable = mConnectivityManager.getActiveNetworkInfo() != null;
 
@@ -257,6 +263,8 @@ public class NetworkTraffic extends TextView implements TunerService.Tunable {
 
         private CharSequence formatOutput(long speed) {
             DecimalFormat decimalFormat;
+            DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+            otherSymbols.setDecimalSeparator('.');
             String unit;
             String formatSpeed;
             SpannableString spanUnitString;
@@ -277,30 +285,30 @@ public class NetworkTraffic extends TextView implements TunerService.Tunable {
 
             if (speed >= Giga) {
                 unit = gunit;
-                decimalFormat = new DecimalFormat("0.##");
+                decimalFormat = new DecimalFormat("0.##", otherSymbols);
                 formatSpeed = decimalFormat.format(speed / (float)Giga);
             } else if (speed >= 100 * Mega) {
-                decimalFormat = new DecimalFormat("##0");
+                decimalFormat = new DecimalFormat("##0", otherSymbols);
                 unit = munit;
                 formatSpeed = decimalFormat.format(speed / (float)Mega);
             } else if (speed >= 10 * Mega) {
-                decimalFormat = new DecimalFormat("#0.#");
+                decimalFormat = new DecimalFormat("#0.#", otherSymbols);
                 unit = munit;
                 formatSpeed = decimalFormat.format(speed / (float)Mega);
             } else if (speed >= Mega) {
-                decimalFormat = new DecimalFormat("0.##");
+                decimalFormat = new DecimalFormat("0.##", otherSymbols);
                 unit = munit;
                 formatSpeed = decimalFormat.format(speed / (float)Mega);
             } else if (speed >= 100 * Kilo) {
-                decimalFormat = new DecimalFormat("##0");
+                decimalFormat = new DecimalFormat("##0", otherSymbols);
                 unit = kunit;
                 formatSpeed = decimalFormat.format(speed / (float)Kilo);
             } else if (speed >= 10 * Kilo) {
-                decimalFormat = new DecimalFormat("#0.#");
+                decimalFormat = new DecimalFormat("#0.#", otherSymbols);
                 unit = kunit;
                 formatSpeed = decimalFormat.format(speed / (float)Kilo);
             } else {
-                decimalFormat = new DecimalFormat("0.##");
+                decimalFormat = new DecimalFormat("0.##", otherSymbols);
                 unit = kunit;
                 formatSpeed = decimalFormat.format(speed / (float)Kilo);
             }
@@ -311,7 +319,8 @@ public class NetworkTraffic extends TextView implements TunerService.Tunable {
             spanUnitString = new SpannableString(unit);
             spanUnitString.setSpan(mUnitRelativeSizeSpan, 0, (unit).length(),
                     Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-            return TextUtils.concat(spanSpeedString, "\n", spanUnitString);
+
+            return TextUtils.concat(spanSpeedString, " ", spanUnitString);
         }
 
         private long[] getTotalRxTxBytes() {
@@ -371,10 +380,10 @@ public class NetworkTraffic extends TextView implements TunerService.Tunable {
                         TunerService.parseInteger(newValue, 0);
                 setEnabled();
                 if (mEnabled) {
-                    setLines(2);
+                    setLines(1);
                     String txtFont = getResources().getString(com.android.internal.R.string.config_bodyFontFamily);
-                    setTypeface(Typeface.create(txtFont, Typeface.BOLD));
-                    setLineSpacing(0.80f, 0.80f);
+                    setTypeface(Typeface.create(txtFont, Typeface.NORMAL));
+                    setLineSpacing(0.85f, 0.85f);
                 }
                 updateViews();
                 break;
@@ -414,6 +423,11 @@ public class NetworkTraffic extends TextView implements TunerService.Tunable {
                     setGravity(Gravity.CENTER);
                 }
                 setTrafficDrawable();
+                break;
+            case NETWORK_TRAFFIC_FONT_SIZE:
+                mFontSize =
+                        TunerService.parseInteger(newValue, 18);
+                updateTextSize();
                 break;
             default:
                 break;
@@ -476,5 +490,10 @@ public class NetworkTraffic extends TextView implements TunerService.Tunable {
             mDrawable.setColorFilter(mIconTint, PorterDuff.Mode.MULTIPLY);
         }
         setTextColor(mIconTint);
+        updateTextSize();
+    }
+
+    private void updateTextSize() {
+        setTextSize(TypedValue.COMPLEX_UNIT_DIP, (float)mFontSize);
     }
 }
