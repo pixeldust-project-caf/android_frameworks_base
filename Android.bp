@@ -120,7 +120,6 @@ filegroup {
         ":installd_aidl",
         ":libaudioclient_aidl",
         ":libbinder_aidl",
-	":libbluetooth-binder-aidl",
         ":libcamera_client_aidl",
         ":libcamera_client_framework_aidl",
         ":libupdate_engine_aidl",
@@ -283,7 +282,6 @@ java_defaults {
     defaults: ["framework-aidl-export-defaults", "btadva_fwk_java_defaults"],
     srcs: [
         ":framework-non-updatable-sources",
-        ":framework-bluetooth-sources", // TODO(b/214988855) : Remove once framework-bluetooth jar is ready
         "core/java/**/*.logtags",
         ":apex-info-list",
     ],
@@ -295,6 +293,7 @@ java_defaults {
         include_dirs: [
             "frameworks/av/aidl",
             "frameworks/native/libs/permission/aidl",
+            "packages/modules/Bluetooth/system/binder",
             "packages/modules/Connectivity/framework/aidl-export",
             "packages/modules/Media/apex/aidl/stable",
             "hardware/interfaces/graphics/common/aidl",
@@ -552,6 +551,7 @@ stubs_defaults {
         include_dirs: [
             "frameworks/av/aidl",
             "frameworks/native/libs/permission/aidl",
+            "packages/modules/Bluetooth/system/binder",
             "packages/modules/Connectivity/framework/aidl-export",
             "packages/modules/Media/apex/aidl/stable",
             "hardware/interfaces/graphics/common/aidl",
@@ -591,6 +591,7 @@ stubs_defaults {
     name: "module-classpath-stubs-defaults",
     aidl: {
         include_dirs: [
+            "packages/modules/Bluetooth/system/binder",
             "packages/modules/Connectivity/framework/aidl-export",
             "packages/modules/Media/apex/aidl/stable",
         ],
