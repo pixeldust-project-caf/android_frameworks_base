@@ -61,6 +61,7 @@
 
 # Custom rules
 -keep class com.pixeldust.** { *; }
+-keep class org.pixelexperience.** { *; }
 
 # Google rules
 -keep class android.hardware.** { *; }
