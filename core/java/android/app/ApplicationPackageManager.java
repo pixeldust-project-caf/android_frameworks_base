@@ -736,8 +736,12 @@ public class ApplicationPackageManager extends PackageManager {
     @Override
     public boolean hasSystemFeature(String name, int version) {
         if (useSpoofingForPhotos()) {
+            String packageName = ActivityThread.currentPackageName();
+            if (packageName != null) {
+                if (packageName.contains("com.google.android.apps.photos") &&
+                        Arrays.asList(featuresBlacklist).contains(name)) return false;
+            }
             if (Arrays.asList(featuresWhitelist).contains(name)) return true;
-            if (Arrays.asList(featuresBlacklist).contains(name)) return false;
         } else {
             if (Arrays.asList(featuresBlacklist).contains(name)) return true;
         }
