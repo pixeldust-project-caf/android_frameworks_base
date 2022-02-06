@@ -103,13 +103,10 @@ public class PixelPropsUtils {
             }
   
             if (Arrays.asList(packagesToChangePixelXL).contains(packageName)) {
-                final String useSpoof = SystemProperties.get("persist.sys.photo", "1");
-                boolean enable = ("1".equals(useSpoof)) ? true : false;
-                if (packageName.equals("com.google.android.apps.photos")) {
-                    if (enable) propsToChange = propsToChangePixelXL;
-                } else {
-                    propsToChange = propsToChangePixelXL;
-                }
+                final String sysPropSpoof = SystemProperties.get("persist.sys.photo", "1");
+                boolean dontSpoof = ("0".equals(sysPropSpoof)) ? true : false;
+                if (dontSpoof && packageName.equals("com.google.android.apps.photos")) return;
+                propsToChange = propsToChangePixelXL;
             }
 
             if (DEBUG) Log.d(TAG, "Defining props for: " + packageName);
