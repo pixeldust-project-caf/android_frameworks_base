@@ -252,7 +252,7 @@ class AuthRippleView(context: Context?, attrs: AttributeSet?) : View(context, at
     fun startUnlockedRipple(onAnimationEnd: Runnable?) {
         val enableRipple = Settings.System.getIntForUser(
             context.contentResolver,
-            Settings.System.ENABLE_RIPPLE_EFFECT, 1,
+            Settings.System.ENABLE_RIPPLE_EFFECT, 0,
             UserHandle.USER_CURRENT) == 1
 
         if (unlockedRippleInProgress || !enableRipple) {
