@@ -60,12 +60,8 @@ android_library {
     resource_dirs: [
         "res-product",
         "res-keyguard",
-        "res-smartspace",
         "res",
         "res-hwkeys",
-        "res-gamedashboard",
-        "res-assist",
-        "res-columbus",
     ],
     static_libs: [
         "WindowManager-Shell",
@@ -102,13 +98,6 @@ android_library {
         "lottie",
         "colorkt",
         "themelib",
-        "backgesture-google",
-        "smartspace-google",
-        "tensorflowlite_java",
-        "gamedashboard-sysui-google",
-        "assistmanager-google",
-        "columbus-sysui-google",
-        "vendor-pixelatoms-java",
     ],
     manifest: "AndroidManifest.xml",
     defaults: [
@@ -229,15 +218,6 @@ android_app {
     static_libs: [
         "SystemUI-core",
     ],
-    jni_libs: [
-        "libtensorflowlite_jni",
-    ],
-    aaptflags: [
-        "-0 .tflite",
-        "-0 .vocab",
-    ],
-    asset_dirs: ["assets"],
-    use_embedded_native_libs: true,
     resource_dirs: [],
 
     platform_apis: true,
