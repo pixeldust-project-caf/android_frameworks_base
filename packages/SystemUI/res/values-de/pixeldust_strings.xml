@@ -77,4 +77,6 @@
     <string name="screenrecord_lowquality_summary">Für kleinere Dateigröße</string>
     <string name="screenrecord_longer_timeout_switch_label">Aufnahmegröße erhöhen</string>
     <string name="screenrecord_longer_timeout_switch_summary">Auf 15GB hochsetzen</string>
+    <string name="screenrecord_skip_time_label">Timer überspringen</string>
+    <string name="screenrecord_skip_time_summary">3 Sekunden Wartezeit entfernen</string>
 </resources>
