@@ -49,6 +49,8 @@ public class BoostFramework {
 
     private static final String UXPERFORMANCE_JAR = "/system/framework/UxPerformance.jar";
     private static final String UXPERFORMANCE_CLASS = "com.qualcomm.qti.UxPerformance";
+    public  static final float PERF_HAL_V22 = 2.2f;
+    public  static final float PERF_HAL_V23 = 2.3f;
 
 /** @hide */
     private static boolean sIsLoaded = false;
@@ -64,6 +66,7 @@ public class BoostFramework {
     private static Method sperfHintAcqRelFunc = null;
     private static Method sperfHintRenewFunc = null;
     private static Method sPerfEventFunc = null;
+    private static Method sPerfGetPerfHalVerFunc = null;
 
     private static Method sIOPStart = null;
     private static Method sIOPStop  = null;
@@ -129,6 +132,9 @@ public class BoostFramework {
         public static final int BOOST_GAME = 4;
         public static final int RESERVED_1 = 5;
         public static final int RESERVED_2 = 6;
+        public static final int RESERVED_3 = 7;
+        public static final int RESERVED_4 = 8;
+        public static final int RESERVED_5 = 9;
         public static final int TYPE_SERVICE_START = 100;
         public static final int TYPE_START_PROC = 101;
         public static final int TYPE_START_APP_FROM_BG = 102;
@@ -261,6 +267,15 @@ public class BoostFramework {
                     sperfHintRenewFunc = sPerfClass.getMethod("perfHintRenew", argClasses);
 
                     try {
+                        argClasses = new Class[] {};
+                        sPerfGetPerfHalVerFunc = sPerfClass.getMethod("perfGetHalVer", argClasses);
+
+                    } catch (Exception e) {
+                        Log.i(TAG, "BoostFramework() : Exception_1 = perfGetHalVer not supported");
+                        sPerfGetPerfHalVerFunc = null;
+                    }
+
+                    try {
                         argClasses = new Class[] {int.class, int.class, String.class, int.class, String.class};
                         sUXEngineEvents =  sPerfClass.getDeclaredMethod("perfUXEngine_events",
                                                                           argClasses);
@@ -358,6 +373,20 @@ public class BoostFramework {
             if (DEBUG) Log.e(TAG,"Exception " + e);
         }
         return ret;
+    }
+
+/** @hide */
+    public double getPerfHalVersion() {
+        double retVal = PERF_HAL_V22;
+        try {
+            if (sPerfGetPerfHalVerFunc != null) {
+                Object ret = sPerfGetPerfHalVerFunc.invoke(mPerf);
+                retVal = (double)ret;
+            }
+        } catch(Exception e) {
+            Log.e(TAG,"Exception " + e);
+        }
+        return retVal;
     }
 
 /** @hide */

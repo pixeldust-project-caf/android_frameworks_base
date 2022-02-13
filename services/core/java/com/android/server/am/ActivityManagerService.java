@@ -4450,7 +4450,16 @@ public class ActivityManagerService extends IActivityManager.Stub
         EventLogTags.writeAmProcBound(app.userId, pid, app.processName);
 
         if (mUxPerf != null && app.getHostingRecord() != null && app.getHostingRecord().isTopApp()) {
-            mUxPerf.perfHint(BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST, app.processName, pid, BoostFramework.Launch.TYPE_ATTACH_APPLICATION);
+            if (mUxPerf.getPerfHalVersion() >= BoostFramework.PERF_HAL_V23) {
+                int pkgType = mUxPerf.perfGetFeedback(
+                                    BoostFramework.VENDOR_FEEDBACK_WORKLOAD_TYPE, app.processName);
+                mUxPerf.perfHintAcqRel(-1,
+                    BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST, app.processName,
+                    pid, BoostFramework.Launch.TYPE_ATTACH_APPLICATION, 1, pkgType);
+            } else {
+                mUxPerf.perfHint(BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST, app.processName,
+                    pid, BoostFramework.Launch.TYPE_ATTACH_APPLICATION);
+            }
         }
 
         synchronized (mProcLock) {

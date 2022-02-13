@@ -50,6 +50,8 @@ import com.android.systemui.qs.logging.QSLogger;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
 
+import com.qti.extphone.ExtTelephonyManager;
+
 import javax.inject.Inject;
 
 import dagger.Lazy;
@@ -107,6 +109,10 @@ public class AirplaneModeTile extends SecureQSTile<BooleanState> {
         if (!airplaneModeEnabled && TelephonyProperties.in_ecm_mode().orElse(false)) {
             mActivityStarter.postStartActivityDismissingKeyguard(
                     new Intent(TelephonyManager.ACTION_SHOW_NOTICE_ECM_BLOCK_OTHERS), 0);
+            return;
+        } else if(!airplaneModeEnabled && TelephonyProperties.in_scbm().orElse(false)) {
+            mActivityStarter.postStartActivityDismissingKeyguard(
+                    new Intent(ExtTelephonyManager.ACTION_SHOW_NOTICE_SCM_BLOCK_OTHERS), 0);
             return;
         }
         setEnabled(!airplaneModeEnabled);

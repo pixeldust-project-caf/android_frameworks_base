@@ -1738,9 +1738,19 @@ class ActivityStarter {
                     ? mSourceRecord.getTask() : null;
             String packageName= mService.mContext.getPackageName();
             if (mPerf != null) {
-                mStartActivity.perfActivityBoostHandler =
-                    mPerf.perfHint(BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST,
+                if (mPerf.getPerfHalVersion() >= BoostFramework.PERF_HAL_V23) {
+                    int pkgType =
+                        mPerf.perfGetFeedback(BoostFramework.VENDOR_FEEDBACK_WORKLOAD_TYPE,
+                                                    packageName);
+                    mStartActivity.perfActivityBoostHandler =
+                        mPerf.perfHintAcqRel(mStartActivity.perfActivityBoostHandler,
+                                        BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST, packageName,
+                                        -1, BoostFramework.Launch.BOOST_V1, 1, pkgType);
+                } else {
+                    mStartActivity.perfActivityBoostHandler =
+                        mPerf.perfHint(BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST,
                                         packageName, -1, BoostFramework.Launch.BOOST_V1);
+                }
             }
             setNewTask(taskToAffiliate);
         } else if (mAddingToTask) {
@@ -2713,9 +2723,19 @@ class ActivityStarter {
     private void addOrReparentStartingActivity(Task parent, String reason) {
         String packageName= mService.mContext.getPackageName();
         if (mPerf != null) {
-            mStartActivity.perfActivityBoostHandler =
-                mPerf.perfHint(BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST,
+            if (mPerf.getPerfHalVersion() >= BoostFramework.PERF_HAL_V23) {
+                    int pkgType =
+                        mPerf.perfGetFeedback(BoostFramework.VENDOR_FEEDBACK_WORKLOAD_TYPE,
+                                                    packageName);
+                    mStartActivity.perfActivityBoostHandler =
+                        mPerf.perfHintAcqRel(mStartActivity.perfActivityBoostHandler,
+                                        BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST, packageName,
+                                        -1, BoostFramework.Launch.BOOST_V1, 1, pkgType);
+            } else {
+                mStartActivity.perfActivityBoostHandler =
+                    mPerf.perfHint(BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST,
                                     packageName, -1, BoostFramework.Launch.BOOST_V1);
+            }
         }
         if (mStartActivity.getTask() == null || mStartActivity.getTask() == parent) {
             parent.addChild(mStartActivity);

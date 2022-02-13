@@ -1841,30 +1841,68 @@ public class ActivityTaskSupervisor implements RecentTasks.Callbacks {
     void acquireAppLaunchPerfLock(ActivityRecord r) {
         /* Acquire perf lock during new app launch */
         if (mPerfBoost != null) {
-            mPerfBoost.perfHint(BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST, r.packageName, -1, BoostFramework.Launch.BOOST_V1);
-            mPerfSendTapHint = true;
-            mPerfBoost.perfHint(BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST, r.packageName, -1, BoostFramework.Launch.BOOST_V2);
+
+            int pkgType = mPerfBoost.perfGetFeedback(BoostFramework.VENDOR_FEEDBACK_WORKLOAD_TYPE,
+                                                     r.packageName);
+            int wpcPid = -1;
             if (mService != null && r != null && r.info != null && r.info.applicationInfo !=null) {
                 final WindowProcessController wpc =
                         mService.getProcessController(r.processName, r.info.applicationInfo.uid);
                 if (wpc != null && wpc.hasThread()) {
                    //If target process didn't start yet, this operation will be done when app call attach
-                   mPerfBoost.perfHint(BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST, r.packageName, wpc.getPid(), BoostFramework.Launch.TYPE_ATTACH_APPLICATION);
+                   wpcPid = wpc.getPid();
                 }
             }
+            if (mPerfBoost.getPerfHalVersion() >= BoostFramework.PERF_HAL_V23) {
+                mPerfBoost.perfHintAcqRel(-1, BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST,
+                        r.packageName, -1, BoostFramework.Launch.BOOST_V1, 2, pkgType, wpcPid);
+                mPerfSendTapHint = true;
+                mPerfBoost.perfHintAcqRel(-1, BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST,
+                        r.packageName, -1, BoostFramework.Launch.BOOST_V2, 2, pkgType, wpcPid);
+                if (wpcPid != -1) {
+                   mPerfBoost.perfHintAcqRel(-1, BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST,
+                        r.packageName, wpcPid, BoostFramework.Launch.TYPE_ATTACH_APPLICATION,
+                        2, pkgType, wpcPid);
+                }
 
-            if(mPerfBoost.perfGetFeedback(BoostFramework.VENDOR_FEEDBACK_WORKLOAD_TYPE, r.packageName) == BoostFramework.WorkloadType.GAME)
-            {
-                mPerfHandle = mPerfBoost.perfHint(BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST, r.packageName, -1, BoostFramework.Launch.BOOST_GAME);
+                if (pkgType == BoostFramework.WorkloadType.GAME)
+                {
+                    mPerfHandle =
+                        mPerfBoost.perfHintAcqRel(-1, BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST,
+                           r.packageName, -1, BoostFramework.Launch.BOOST_GAME, 2, pkgType, wpcPid);
+                } else {
+                    mPerfHandle =
+                        mPerfBoost.perfHintAcqRel(-1, BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST,
+                            r.packageName, -1, BoostFramework.Launch.BOOST_V3, 2, pkgType, wpcPid);
+                }
+
             } else {
-                mPerfHandle = mPerfBoost.perfHint(BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST, r.packageName, -1, BoostFramework.Launch.BOOST_V3);
+                mPerfBoost.perfHint(BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST, r.packageName,
+                                    -1, BoostFramework.Launch.BOOST_V1);
+                mPerfSendTapHint = true;
+                mPerfBoost.perfHint(BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST, r.packageName,
+                    -1, BoostFramework.Launch.BOOST_V2);
+                if (wpcPid != -1) {
+                    mPerfBoost.perfHint(BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST,
+                        r.packageName, wpcPid, BoostFramework.Launch.TYPE_ATTACH_APPLICATION);
+                }
+
+                if (pkgType == BoostFramework.WorkloadType.GAME)
+                {
+                    mPerfHandle = mPerfBoost.perfHint(BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST,
+                                    r.packageName, -1, BoostFramework.Launch.BOOST_GAME);
+                } else {
+                    mPerfHandle = mPerfBoost.perfHint(BoostFramework.VENDOR_HINT_FIRST_LAUNCH_BOOST,
+                        r.packageName, -1, BoostFramework.Launch.BOOST_V3);
+                }
             }
             if (mPerfHandle > 0)
                 mIsPerfBoostAcquired = true;
             // Start IOP
             if (r.info.applicationInfo != null && r.info.applicationInfo.sourceDir != null) {
                 mPerfBoost.perfIOPrefetchStart(-1,r.packageName,
-                       r.info.applicationInfo.sourceDir.substring(0, r.info.applicationInfo.sourceDir.lastIndexOf('/')));
+                       r.info.applicationInfo.sourceDir.substring(0,
+                        r.info.applicationInfo.sourceDir.lastIndexOf('/')));
             }
         }
     }

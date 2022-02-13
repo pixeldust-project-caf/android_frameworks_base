@@ -4463,6 +4463,8 @@
 
   <java-symbol type="color" name="overview_background"/>
 
+  <java-symbol type="integer" name="config_maximumDelayTimeToDeactivateDataCall" />
+
   <!-- For dynamic default font styles -->
   <java-symbol type="string" name="config_bodyFontFamily" />
 </resources>

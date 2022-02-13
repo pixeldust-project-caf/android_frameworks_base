@@ -5084,4 +5084,8 @@
 
     <!-- the number of the max cached processes in the system. -->
     <integer name="config_customizedMaxCachedProcesses">32</integer>
+
+    <!-- Maximum time in millisecs for telephony should wait to deactivate data call
+         when user turned off mobile data or data roaming during CIWLAN -->
+    <integer name="config_maximumDelayTimeToDeactivateDataCall">7000</integer>
 </resources>
