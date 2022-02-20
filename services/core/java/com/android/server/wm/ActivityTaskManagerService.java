@@ -6719,6 +6719,14 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
         }
 
         @Override
+        public boolean isVisibleActivity(IBinder activityToken) {
+            synchronized (mGlobalLock) {
+                final ActivityRecord r = ActivityRecord.isInRootTaskLocked(activityToken);
+                return r != null && r.isInterestingToUserLocked();
+            }
+        }
+
+        @Override
         public void notifyWakingUp() {
             // Start a transition for waking. This is needed for showWhenLocked activities.
             getTransitionController().requestTransitionIfNeeded(TRANSIT_WAKE, 0 /* flags */,
