@@ -676,6 +676,8 @@ public abstract class ActivityTaskManagerInternal {
     public abstract boolean hasSystemAlertWindowPermission(int callingUid, int callingPid,
             String callingPackage);
 
+    public abstract boolean isVisibleActivity(IBinder activityToken);
+
     /** Called when the device is waking up */
     public abstract void notifyWakingUp();
 
