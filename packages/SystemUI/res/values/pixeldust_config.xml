@@ -13,4 +13,7 @@
 
     <!-- Allow devices override show 4G instead of LTE -->
     <bool name="config_showFourG">true</bool>
+
+    <!-- Udfps display mode provider class name -->
+    <string name="config_udfpsDisplayModeProviderComponent">com.android.systemui.biometrics.DummyUdfpsDisplayModeProvider</string>
 </resources>
