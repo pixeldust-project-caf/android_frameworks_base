@@ -53,6 +53,8 @@ import com.android.systemui.animation.Interpolators;
 import com.android.systemui.battery.BatteryMeterView;
 import com.android.systemui.plugins.DarkIconDispatcher.DarkReceiver;
 
+import com.android.systemui.pixeldust.carrierlabel.CarrierLabel;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 
@@ -232,9 +234,11 @@ public class KeyguardStatusBarView extends RelativeLayout {
         mBatteryView.setForceShowPercent(mBatteryCharging && mShowPercentAvailable);
         if (mCarrierLabel != null) {
             if (mShowCarrierLabel == 1 || mShowCarrierLabel == 3) {
+                ((CarrierLabel)mCarrierLabel).updateKeyguardState(true);
                 mCarrierLabel.setVisibility(View.VISIBLE);
                 mCarrierLabel.setSelected(true);
             } else {
+                ((CarrierLabel)mCarrierLabel).updateKeyguardState(false);
                 mCarrierLabel.setVisibility(View.GONE);
                 mCarrierLabel.setSelected(false);
             }
@@ -465,7 +469,7 @@ public class KeyguardStatusBarView extends RelativeLayout {
                 Color.luminance(textColor) < 0.5 ? R.color.dark_mode_icon_color_single_tone :
                 R.color.light_mode_icon_color_single_tone);
         float intensity = textColor == Color.WHITE ? 0 : 1;
-        mCarrierLabel.setTextColor(iconColor);
+        //mCarrierLabel.setTextColor(iconColor);
         if (iconManager != null) {
             iconManager.setTint(iconColor);
         }
