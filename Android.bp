@@ -293,7 +293,7 @@ java_defaults {
         include_dirs: [
             "frameworks/av/aidl",
             "frameworks/native/libs/permission/aidl",
-            "packages/modules/Bluetooth/system/binder",
+            "packages/modules/Bluetooth/framework/aidl-export",
             "packages/modules/Connectivity/framework/aidl-export",
             "packages/modules/Media/apex/aidl/stable",
             "hardware/interfaces/graphics/common/aidl",
@@ -551,7 +551,7 @@ stubs_defaults {
         include_dirs: [
             "frameworks/av/aidl",
             "frameworks/native/libs/permission/aidl",
-            "packages/modules/Bluetooth/system/binder",
+            "packages/modules/Bluetooth/framework/aidl-export",
             "packages/modules/Connectivity/framework/aidl-export",
             "packages/modules/Media/apex/aidl/stable",
             "hardware/interfaces/graphics/common/aidl",
@@ -591,7 +591,7 @@ stubs_defaults {
     name: "module-classpath-stubs-defaults",
     aidl: {
         include_dirs: [
-            "packages/modules/Bluetooth/system/binder",
+            "packages/modules/Bluetooth/framework/aidl-export",
             "packages/modules/Connectivity/framework/aidl-export",
             "packages/modules/Media/apex/aidl/stable",
         ],
