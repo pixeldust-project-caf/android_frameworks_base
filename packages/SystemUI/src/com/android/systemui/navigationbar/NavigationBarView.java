@@ -774,7 +774,7 @@ public class NavigationBarView extends FrameLayout implements
     public void updateStates() {
         if (mNavigationInflaterView != null) {
             // Reinflate the navbar if needed, no-op unless the swipe up state changes
-            mNavigationInflaterView.onLikelyDefaultLayoutChange();
+            mNavigationInflaterView.onLikelyDefaultLayoutChange(false);
         }
 
         updateSlippery();
