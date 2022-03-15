@@ -2225,7 +2225,7 @@ public class StatusBar extends SystemUI implements
         }
     }
 
-    protected void showWirelessChargingAnimation(int batteryLevel) {
+    public void showWirelessChargingAnimation(int batteryLevel) {
         showChargingAnimation(batteryLevel, UNKNOWN_BATTERY_LEVEL, 0);
     }
 
