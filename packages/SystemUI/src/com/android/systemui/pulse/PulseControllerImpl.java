@@ -66,11 +66,14 @@ import com.android.systemui.statusbar.policy.ConfigurationController;
 import com.android.systemui.statusbar.policy.PulseController;
 import com.android.systemui.statusbar.policy.PulseController.PulseStateListener;
 
+import java.util.Optional;
 import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
+import dagger.Lazy;
 
 @Singleton
 public class PulseControllerImpl
@@ -93,7 +96,7 @@ public class PulseControllerImpl
     private SettingsObserver mSettingsObserver;
     private PulseView mPulseView;
     private int mPulseStyle;
-    private StatusBar mStatusbar;
+    private Lazy<Optional<StatusBar>> mStatusBarOptionalLazy;
     private final PowerManager mPowerManager;
 
     // Pulse state
@@ -230,12 +233,16 @@ public class PulseControllerImpl
         }
     }
 
-    private void updatePulseVisibility() {
-        if (mStatusbar == null) return;
+    private StatusBar getStatusBar() {
+        return mStatusBarOptionalLazy.get().get();
+    }
 
-        NavigationBarFrame nv = mStatusbar.getNavigationBarView() != null ?
-                mStatusbar.getNavigationBarView().getNavbarFrame() : null;
-        VisualizerView vv = mStatusbar.getLsVisualizer();
+    private void updatePulseVisibility() {
+        if (getStatusBar() == null) return;
+
+        NavigationBarFrame nv = getStatusBar().getNavigationBarView() != null ?
+                getStatusBar().getNavigationBarView().getNavbarFrame() : null;
+        VisualizerView vv = getStatusBar().getLsVisualizer();
         boolean allowAmbPulse = vv != null && vv.isAttached()
                 && mAmbPulseEnabled && mKeyguardShowing && mDozing;
         boolean allowLsPulse = vv != null && vv.isAttached()
@@ -279,9 +286,12 @@ public class PulseControllerImpl
     }
 
     @Inject
-    public PulseControllerImpl(Context context, @Main Handler mainHandler, @Background Executor backgroundExecutor) {
+    public PulseControllerImpl(Context context,
+        @Main Handler mainHandler,
+        @Background Executor backgroundExecutor,
+        Lazy<Optional<StatusBar>> statusBarOptionalLazy) {
         mContext = context;
-        mStatusbar = Dependency.get(StatusBar.class);
+        mStatusBarOptionalLazy = statusBarOptionalLazy;
         mHandler = mainHandler;
         mSettingsObserver = new SettingsObserver(mainHandler);
         mSettingsObserver.updateSettings();
