@@ -64,6 +64,7 @@ import com.android.systemui.shared.system.WindowManagerWrapper;
 import com.android.systemui.statusbar.connectivity.NetworkController;
 import com.android.systemui.statusbar.phone.AutoHideController;
 import com.android.systemui.statusbar.phone.ConfigurationControllerImpl;
+import com.android.systemui.statusbar.phone.StatusBar;
 import com.android.systemui.statusbar.policy.ConfigurationController;
 import com.android.systemui.statusbar.policy.DataSaverController;
 import com.android.systemui.statusbar.policy.PulseController;
@@ -72,10 +73,12 @@ import com.android.systemui.statusbar.policy.TaskHelper;
 import com.android.systemui.util.leak.LeakDetector;
 import com.android.systemui.util.settings.SecureSettings;
 
+import java.util.Optional;
 import java.util.concurrent.Executor;
 
 import javax.inject.Named;
 
+import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
 
@@ -305,7 +308,13 @@ public class DependencyProvider {
     /** */
     @Provides
     @SysUISingleton
-    public PulseController providePulseController(Context context, @Main Handler mainHandler, @Background Executor backgroundExecutor) {
-        return new PulseControllerImpl(context, mainHandler, backgroundExecutor);
+    public PulseController providePulseController(Context context,
+            @Main Handler mainHandler,
+            @Background Executor backgroundExecutor,
+            Lazy<Optional<StatusBar>> statusBarOptionalLazy) {
+        return new PulseControllerImpl(context,
+            mainHandler,
+            backgroundExecutor,
+            statusBarOptionalLazy);
     }
 }
