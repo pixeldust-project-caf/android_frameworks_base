@@ -34,4 +34,7 @@
     <!-- Allow using 4G icon instead of LTE -->
     <string name="status_bar_show_fourg_title">4G-Icon</string>
     <string name="status_bar_show_fourg_summary">4G am Signalsymbol anstelle von LTE anzeigen</string>
+
+    <!-- WiFi standard numbering on statusbar -->
+    <string name="status_bar_wifi_standard">WLAN-Standard</string>
 </resources>

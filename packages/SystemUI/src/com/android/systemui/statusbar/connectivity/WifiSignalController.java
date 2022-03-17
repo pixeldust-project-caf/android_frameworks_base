@@ -40,8 +40,10 @@ import com.android.settingslib.SignalIcon.MobileIconGroup;
 import com.android.settingslib.graph.SignalDrawable;
 import com.android.settingslib.mobile.TelephonyIcons;
 import com.android.settingslib.wifi.WifiStatusTracker;
+import com.android.systemui.Dependency;
 import com.android.systemui.R;
 import com.android.systemui.dagger.qualifiers.Background;
+import com.android.systemui.tuner.TunerService;
 
 import java.io.PrintWriter;
 
@@ -60,6 +62,9 @@ public class WifiSignalController extends SignalController<WifiState, IconGroup>
     private final IconGroup mWifi5IconGroup;
     private final IconGroup mWifi6IconGroup;
     private final IconGroup mWifi7IconGroup;
+
+    private static final String KEY_WIFI_STANDARD = "wifi_standard";
+    private boolean mShowWifiStandard = true;
 
     public WifiSignalController(
             Context context,
@@ -140,6 +145,13 @@ public class WifiSignalController extends SignalController<WifiState, IconGroup>
                 WifiIcons.QS_WIFI_NO_NETWORK,
                 AccessibilityContentDescriptions.WIFI_NO_CONNECTION
                 );
+
+        Dependency.get(TunerService.class).addTunable((key, newValue) -> {
+            mShowWifiStandard = TunerService.parseIntegerSwitch(newValue,
+                    context.getResources().getBoolean(
+                    com.android.internal.R.bool.config_show_network_standard));
+            handleStatusUpdated();
+        }, KEY_WIFI_STANDARD);
 
         mCurrentState.iconGroup = mLastState.iconGroup = mDefaultWifiIconGroup;
     }
@@ -303,7 +315,7 @@ public class WifiSignalController extends SignalController<WifiState, IconGroup>
         mCurrentState.statusLabel = mWifiTracker.statusLabel;
         mCurrentState.isCarrierMerged = mWifiTracker.isCarrierMerged;
         mCurrentState.subId = mWifiTracker.subId;
-        mCurrentState.wifiStandard = mWifiTracker.wifiStandard;
+        mCurrentState.wifiStandard = mShowWifiStandard ? mWifiTracker.wifiStandard : -1;
         mCurrentState.iconGroup = mDefaultWifiIconGroup;
 
     }

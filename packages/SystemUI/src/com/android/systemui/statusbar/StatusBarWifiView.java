@@ -198,7 +198,7 @@ public class StatusBarWifiView extends BaseStatusBarFrameLayout implements DarkR
         if (mState.resId != state.resId && state.resId >= 0) {
             mWifiIcon.setImageDrawable(mContext.getDrawable(state.resId));
         }
-        setWifiStandard();
+        setWifiStandard(state);
         mIn.setVisibility(state.activityIn ? View.VISIBLE : View.GONE);
         mOut.setVisibility(state.activityOut ? View.VISIBLE : View.GONE);
         mInoutContainer.setVisibility(
@@ -207,7 +207,8 @@ public class StatusBarWifiView extends BaseStatusBarFrameLayout implements DarkR
         mSignalSpacer.setVisibility(state.signalSpacerVisible ? View.VISIBLE : View.GONE);
 
         boolean needsLayout = state.activityIn != mState.activityIn
-                ||state.activityOut != mState.activityOut;
+                || state.activityOut != mState.activityOut
+                || state.wifiStandard != mState.wifiStandard;
 
         if (mState.visible != state.visible) {
             needsLayout |= true;
@@ -223,7 +224,7 @@ public class StatusBarWifiView extends BaseStatusBarFrameLayout implements DarkR
         if (mState.resId >= 0) {
             mWifiIcon.setImageDrawable(mContext.getDrawable(mState.resId));
         }
-        setWifiStandard();
+        setWifiStandard(mState);
         mIn.setVisibility(mState.activityIn ? View.VISIBLE : View.GONE);
         mOut.setVisibility(mState.activityOut ? View.VISIBLE : View.GONE);
         mInoutContainer.setVisibility(
@@ -233,21 +234,24 @@ public class StatusBarWifiView extends BaseStatusBarFrameLayout implements DarkR
         setVisibility(mState.visible ? View.VISIBLE : View.GONE);
     }
 
-    private void setWifiStandard() {
-        final boolean showNetworkStandard = mContext.getResources().getBoolean(
-                com.android.internal.R.bool.config_show_network_standard);
-        if (!showNetworkStandard) {
-            mWifiStandard.setVisibility(View.GONE);
-            return;
+    private void setWifiStandard(WifiIconState state) {
+        int resid = 0;
+        switch (state.wifiStandard) {
+            case 4:
+                resid = R.drawable.ic_wifi_standard_4;
+                break;
+            case 5:
+                resid = R.drawable.ic_wifi_standard_5;
+                break;
+            case 6:
+                resid = R.drawable.ic_wifi_standard_6;
+                break;
         }
-        int wifiStandard = mState.wifiStandard;
-        if (wifiStandard >= 4) {
-            int identifier = getResources().getIdentifier("ic_wifi_standard_" + wifiStandard,
-                    "drawable", getContext().getPackageName());
-            if (identifier > 0) {
-                mWifiStandard.setVisibility(View.VISIBLE);
-                mWifiStandard.setImageDrawable(mContext.getDrawable(identifier));
-            }
+        if (resid > 0) {
+            mWifiStandard.setVisibility(View.VISIBLE);
+            mWifiStandard.setImageDrawable(mContext.getDrawable(resid));
+        } else {
+            mWifiStandard.setVisibility(View.GONE);
         }
     }
 
