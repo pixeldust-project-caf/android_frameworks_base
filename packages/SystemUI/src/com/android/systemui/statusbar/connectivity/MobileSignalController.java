@@ -50,6 +50,7 @@ import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyDisplayInfo;
 import android.telephony.TelephonyManager;
+import android.telephony.ims.ImsException;
 import android.telephony.ims.ImsMmTelManager;
 import android.telephony.ims.ImsReasonInfo;
 import android.telephony.ims.ImsRegistrationAttributes;
@@ -61,9 +62,6 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.android.ims.ImsException;
-import com.android.ims.ImsManager;
-import com.android.ims.FeatureConnector;
 import com.android.internal.util.ConcurrentUtils;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.telephony.TelephonyIntents;
@@ -134,8 +132,6 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     // Where to copy the next state into.
     private int mMobileStatusHistoryIndex;
 
-    private ImsManager mImsManager;
-    private FeatureConnector<ImsManager> mFeatureConnector;
     private boolean mIsVowifiAvailable;
 
     private int mCallState = TelephonyManager.CALL_STATE_IDLE;
@@ -306,31 +302,6 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         mLastState.enabled = mCurrentState.enabled = hasMobileData;
         mLastState.iconGroup = mCurrentState.iconGroup = mDefaultIcons;
 
-        int phoneId = mSubscriptionInfo.getSimSlotIndex();
-        mFeatureConnector = new FeatureConnector(mContext, phoneId,
-                new FeatureConnector.ManagerFactory<ImsManager> () {
-                    @Override
-                    public ImsManager createManager(Context context, int phoneId) {
-                        return ImsManager.getInstance(context, phoneId);
-                    }
-                }, "Ims",
-                new ArrayList<Integer>(ImsFeature.STATE_LOG_MAP.keySet()),
-                new FeatureConnector.Listener<ImsManager> () {
-                    @Override
-                    public void connectionReady(ImsManager manager, int subId)
-                            throws ImsException {
-                        Log.d(mTag, "ImsManager: connection ready.");
-                        mImsManager = manager;
-                        setListeners();
-                    }
-
-                    @Override
-                    public void connectionUnavailable(int reason) {
-                        Log.d(mTag, "ImsManager: connection unavailable. reason: " + reason);
-                        removeListeners();
-                    }
-                }, ConcurrentUtils.DIRECT_EXECUTOR);
-
         mImsMmTelManager = ImsMmTelManager.createForSubscriptionId(info.getSubscriptionId());
         mMobileStatusTracker = new MobileStatusTracker(mPhone, receiverLooper,
                 info, mDefaults, mMobileCallback);
@@ -413,7 +384,12 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
 
         mContext.registerReceiver(mVolteSwitchObserver,
                 new IntentFilter("org.codeaurora.intent.action.ACTION_ENHANCE_4G_SWITCH"));
-        mFeatureConnector.connect();
+        try {
+            mImsMmTelManager.registerImsStateCallback(mContext.getMainExecutor(),
+                    mImsStateCallback);
+        } catch (ImsException exception) {
+            Log.e(mTag, "failed to call registerImsStateCallback ", exception);
+        }
     }
 
     // There is no listener to monitor whether the IMS service is ready, so we have to retry the
@@ -429,7 +405,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 mImsMmTelManager.registerImsRegistrationCallback(
                         mReceiverHandler::post, mRegistrationCallback);
                 Log.d(mTag, "registerImsRegistrationCallback succeeded");
-            } catch (RuntimeException | android.telephony.ims.ImsException e) {
+            } catch (RuntimeException | ImsException e) {
                 if (mRetryCount < MAX_RETRY) {
                     Log.e(mTag, mRetryCount + " registerImsRegistrationCallback failed", e);
                     // Wait for 5 seconds to retry
@@ -447,14 +423,11 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         mContext.getContentResolver().unregisterContentObserver(mSettingsObserver);
         try {
             mImsMmTelManager.unregisterImsRegistrationCallback(mRegistrationCallback);
-        }catch (Exception e){
+        } catch (Exception e){
             Log.e(mTag, "unregisterListener: fail to call unregisterImsRegistrationCallback", e);
         }
         mContext.unregisterReceiver(mVolteSwitchObserver);
-        mFeatureConnector.disconnect();
-        if (mConfig.showVolteIcon || mConfig.showVowifiIcon) {
-            mImsMmTelManager.unregisterImsStateCallback(mImsStateCallback);
-        }
+        mImsMmTelManager.unregisterImsStateCallback(mImsStateCallback);
     }
 
     private void updateInflateSignalStrength() {
@@ -501,10 +474,6 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         return getCurrentIconId();
     }
 
-    private boolean isVolteSwitchOn() {
-        return mImsManager != null && mImsManager.isEnhanced4gLteModeSettingEnabledByUser();
-    }
-
     private int getVolteResId() {
         int resId = 0;
 
@@ -516,21 +485,14 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     }
 
     private void setListeners() {
-        if (mImsManager == null) {
-            Log.e(mTag, "setListeners mImsManager is null");
-            return;
-        }
-
         try {
-            mImsManager.addCapabilitiesCallback(mCapabilityCallback,
-                    ConcurrentUtils.DIRECT_EXECUTOR);
-            mImsManager.addRegistrationCallback(mRegistrationCallback,
-                    ConcurrentUtils.DIRECT_EXECUTOR);
-            Log.d(mTag, "addCapabilitiesCallback " + mCapabilityCallback + " into " + mImsManager);
-            Log.d(mTag, "addRegistrationCallback " + mRegistrationCallback
-                    + " into " + mImsManager);
+            Log.d(mTag, "setListeners: register CapabilitiesCallback and RegistrationCallback");
+            mImsMmTelManager.registerMmTelCapabilityCallback(mContext.getMainExecutor(),
+                    mCapabilityCallback);
+            mImsMmTelManager.registerImsRegistrationCallback (mContext.getMainExecutor(),
+                    mRegistrationCallback);
         } catch (ImsException e) {
-            Log.d(mTag, "unable to addCapabilitiesCallback callback.");
+            Log.e(mTag, "unable to register listeners.", e);
         }
         queryImsState();
     }
@@ -552,17 +514,14 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     }
 
     private void removeListeners() {
-        if (mImsManager == null) {
-            Log.e(mTag, "removeListeners mImsManager is null");
-            return;
+        try {
+            Log.d(mTag,
+                    "removeListeners: unregister CapabilitiesCallback and RegistrationCallback");
+            mImsMmTelManager.unregisterMmTelCapabilityCallback(mCapabilityCallback);
+            mImsMmTelManager.unregisterImsRegistrationCallback(mRegistrationCallback);
+        } catch (Exception e) {
+            Log.e(mTag, "removeListeners", e);
         }
-
-        mImsManager.removeCapabilitiesCallback(mCapabilityCallback);
-        mImsManager.removeRegistrationListener(mRegistrationCallback);
-        Log.d(mTag, "removeCapabilitiesCallback " + mCapabilityCallback
-                + " from " + mImsManager);
-        Log.d(mTag, "removeRegistrationCallback " + mRegistrationCallback
-                + " from " + mImsManager);
     }
 
     @Override
@@ -682,7 +641,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     }
 
     public boolean isVolteAvailable() {
-        return isVolteSwitchOn() && mCurrentState.imsRegistered
+        return mCurrentState.imsRegistered
                    && (mCurrentState.voiceCapable || mCurrentState.videoCapable);
     }
 
