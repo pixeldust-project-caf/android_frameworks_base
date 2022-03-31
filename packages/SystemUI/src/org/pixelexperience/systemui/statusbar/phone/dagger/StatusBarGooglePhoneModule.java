@@ -111,6 +111,7 @@ import com.android.systemui.statusbar.policy.ConfigurationController;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
 import com.android.systemui.statusbar.policy.ExtensionController;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
+import com.android.systemui.statusbar.policy.TaskHelper;
 import com.android.systemui.statusbar.policy.UserInfoControllerImpl;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
 import com.android.systemui.statusbar.window.StatusBarWindowController;
@@ -246,11 +247,11 @@ public interface StatusBarGooglePhoneModule {
             TunerService tunerService,
             DumpManager dumpManager,
             ActivityLaunchAnimator activityLaunchAnimator,
-            BurnInProtectionController burnInProtectionController,
             SmartSpaceController smartSpaceController,
             WallpaperNotifier wallpaperNotifier,
             Optional<ReverseChargingViewController> reverseChargingViewController,
-            Lazy<Optional<NotificationVoiceReplyClient>> notificationVoiceReplyClient) {
+            Lazy<Optional<NotificationVoiceReplyClient>> notificationVoiceReplyClient,
+            TaskHelper taskHelper) {
         return new StatusBarGoogle(
                 context, notificationsController, fragmentService, lightBarController, autoHideController,
                 statusBarWindowController, keyguardUpdateMonitor, statusBarSignalPolicy, pulseExpansionHandler,
@@ -275,7 +276,7 @@ public interface StatusBarGooglePhoneModule {
                 statusBarHideIconsForBouncerManager, lockscreenShadeTransitionController, featureFlags,
                 keyguardUnlockAnimationController, mainHandler, delayableExecutor, messageRouter, wallpaperManager,
                 unlockedScreenOffAnimationController, startingSurfaceOptional, tunerService, dumpManager, activityLaunchAnimator,
-                burnInProtectionController, smartSpaceController, wallpaperNotifier, reverseChargingViewController,
-                notificationVoiceReplyClient);
+                smartSpaceController, wallpaperNotifier, reverseChargingViewController,
+                notificationVoiceReplyClient, taskHelper);
     }
 }
