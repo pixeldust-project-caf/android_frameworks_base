@@ -26,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * This class provides both interface for validation and common validators
@@ -260,6 +261,18 @@ public class SettingsValidators {
             } catch (NumberFormatException e) {
                 return false;
             }
+        }
+    };
+
+    static final Validator APP_LIST_VALIDATOR = new ListValidator(";") {
+        @Override
+        protected boolean isEntryValid(String entry) {
+            return true;
+        }
+
+        @Override
+        protected boolean isItemValid(String item) {
+            return PACKAGE_NAME_VALIDATOR.validate(item);
         }
     };
 }
