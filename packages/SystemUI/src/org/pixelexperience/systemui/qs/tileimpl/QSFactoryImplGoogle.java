@@ -49,6 +49,15 @@ import com.android.systemui.qs.tiles.WifiTile;
 import com.android.systemui.qs.tiles.WorkModeTile;
 import com.android.systemui.util.leak.GarbageMonitor;
 
+// Custom tiles
+import com.pixeldust.android.systemui.qs.tiles.AODTile;
+import com.pixeldust.android.systemui.qs.tiles.CaffeineTile;
+import com.pixeldust.android.systemui.qs.tiles.DataSwitchTile;
+import com.pixeldust.android.systemui.qs.tiles.LocaleTile;
+import com.pixeldust.android.systemui.qs.tiles.PDSettingsTile;
+import com.pixeldust.android.systemui.qs.tiles.SyncTile;
+import com.pixeldust.android.systemui.qs.tiles.VpnTile;
+
 import org.pixelexperience.systemui.qs.tiles.BatterySaverTileGoogle;
 import org.pixelexperience.systemui.qs.tiles.ReverseChargingTile;
 
@@ -59,6 +68,14 @@ import dagger.Lazy;
 
 @SysUISingleton
 public class QSFactoryImplGoogle extends QSFactoryImpl {
+
+    private final Provider<CaffeineTile> mCaffeineTileProvider;
+    private final Provider<SyncTile> mSyncTileProvider;
+    private final Provider<VpnTile> mVpnTileProvider;
+    private final Provider<AODTile> mAODTileProvider;
+    private final Provider<DataSwitchTile> mDataSwitchTileProvider;
+    private final Provider<PDSettingsTile> mPDSettingsTileProvider;
+    private final Provider<LocaleTile> mLocaleTileProvider;
     private final Provider<BatterySaverTileGoogle> mBatterySaverTileGoogleProvider;
     private final Provider<ReverseChargingTile> mReverseChargingTileProvider;
 
@@ -93,6 +110,13 @@ public class QSFactoryImplGoogle extends QSFactoryImpl {
             Provider<DeviceControlsTile> deviceControlsTileProvider,
             Provider<AlarmTile> alarmTileProvider,
             Provider<QuickAccessWalletTile> quickAccessWalletTileProvider,
+            Provider<CaffeineTile> caffeineTileProvider,
+            Provider<SyncTile> syncTileProvider,
+            Provider<VpnTile> vpnTileProvider,
+            Provider<AODTile> aodTileProvider,
+            Provider<DataSwitchTile> dataSwitchTileProvider,
+            Provider<PDSettingsTile> pdSettingsTileProvider,
+            Provider<LocaleTile> localeTileProvider,
             Provider<ReverseChargingTile> reverseChargingTileProvider) {
         super(qsHostLazy,
                 customTileBuilderProvider,
@@ -123,6 +147,14 @@ public class QSFactoryImplGoogle extends QSFactoryImpl {
                 deviceControlsTileProvider,
                 alarmTileProvider,
                 quickAccessWalletTileProvider);
+        // custom tiles
+        mCaffeineTileProvider = caffeineTileProvider;
+        mSyncTileProvider = syncTileProvider;
+        mVpnTileProvider = vpnTileProvider;
+        mAODTileProvider = aodTileProvider;
+        mDataSwitchTileProvider = dataSwitchTileProvider;
+        mPDSettingsTileProvider = pdSettingsTileProvider;
+        mLocaleTileProvider = localeTileProvider;
         mReverseChargingTileProvider = reverseChargingTileProvider;
         mBatterySaverTileGoogleProvider = batterySaverTileGoogleProvider;
     }
@@ -137,11 +169,27 @@ public class QSFactoryImplGoogle extends QSFactoryImpl {
     }
 
     private QSTileImpl createTileInternal(String str) {
-        if (str.equals("reverse")) {
-            return mReverseChargingTileProvider.get();
-        } else if (str.equals("battery")) {
-            return mBatterySaverTileGoogleProvider.get();
+        switch(str) {
+            case "caffeine":
+                return mCaffeineTileProvider.get();
+            case "sync":
+                return mSyncTileProvider.get();
+            case "vpn":
+                return mVpnTileProvider.get();
+            case "aod":
+                return mAODTileProvider.get();
+            case "dataswitch":
+                return mDataSwitchTileProvider.get();
+            case "pixeldust_settings":
+                return mPDSettingsTileProvider.get();
+            case "locale":
+                return mLocaleTileProvider.get();
+            case "reverse":
+                return mReverseChargingTileProvider.get();
+            case "battery":
+                return mBatterySaverTileGoogleProvider.get();
+            default:
+                return null;
         }
-        return null;
     }
 }

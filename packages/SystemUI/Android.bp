@@ -86,6 +86,7 @@ android_library {
         "res",
         "res-hwkeys",
         "res-pixel",
+        "res-pixeldust",
     ],
     static_libs: [
         "WindowManager-Shell",
