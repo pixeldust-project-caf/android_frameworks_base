@@ -3767,6 +3767,9 @@ public class StatusBar extends SystemUI implements
             mDozeServiceHost.updateDozing();
             mFalsingCollector.onScreenOff();
             mScrimController.onScreenTurnedOff();
+            if (mNotificationPanelViewController.isQsExpanded()) {
+                mNotificationPanelViewController.closeQs();
+            }
             updateIsKeyguard();
         }
     };
