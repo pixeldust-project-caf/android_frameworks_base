@@ -259,7 +259,6 @@ public class TaskHelper implements CommandQueue.Callbacks, KeyguardStateControll
         mHandler.sendEmptyMessage(MSG_UPDATE_FOREGROUND_APP);
     }
 
-    @Override
     public void onOverlayChanged() {
         // refresh callback states on theme change. Allow a slight delay
         // so statusbar can reinflate and settle down
