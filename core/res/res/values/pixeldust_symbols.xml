@@ -100,4 +100,8 @@
 
     <!-- Whether to show activity indicators in the status bar -->
     <java-symbol type="bool" name="config_showActivity" />
+
+    <!-- Light / Regular style fonts -->
+    <java-symbol type="string" name="config_lightFontFamily" />
+    <java-symbol type="string" name="config_regularFontFamily" />
 </resources>
