@@ -4522,4 +4522,5 @@
 
   <!-- For dynamic default font styles -->
   <java-symbol type="string" name="config_bodyFontFamily" />
+  <java-symbol type="string" name="config_bodyFontFamilyMedium" />
 </resources>
