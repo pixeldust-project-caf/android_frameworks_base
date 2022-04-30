@@ -5845,6 +5845,11 @@ public final class Settings {
         public static final String QS_SHOW_BATTERY_ESTIMATE = "qs_show_battery_estimate";
 
         /**
+         * @hide
+         */
+        public static final String QS_TRANSPARENCY = "qs_transparency";
+
+        /**
          * Whether to hide navbar pill and keyboard space.
          * Default 0.
          * @hide
