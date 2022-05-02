@@ -922,6 +922,48 @@ public class NetworkControllerImpl extends BroadcastReceiver
             case 11:
                 resourceId = R.drawable.ic_volte_margaritov2;
                 break;
+            case 12:
+                resourceId = R.drawable.ic_volte_aris;
+                break;
+            case 13:
+                resourceId = R.drawable.ic_volte_beast;
+                break;
+            case 14:
+                resourceId = R.drawable.ic_volte_ios;
+                break;
+            case 15:
+                resourceId = R.drawable.ic_volte_lr;
+                break;
+            case 16:
+                resourceId = R.drawable.ic_volte_realme;
+                break;
+            case 17:
+                resourceId = R.drawable.ic_volte_typeA;
+                break;
+            case 18:
+                resourceId = R.drawable.ic_volte_typeB;
+                break;
+            case 19:
+                resourceId = R.drawable.ic_volte_typeC;
+                break;
+            case 20:
+                resourceId = R.drawable.ic_volte_typeD;
+                break;
+            case 21:
+                resourceId = R.drawable.ic_volte_typeE;
+                break;
+            case 22:
+                resourceId = R.drawable.ic_volte_vcircle;
+                break;
+            case 23:
+                resourceId = R.drawable.ic_volte_vimeo;
+                break;
+            case 24:
+                resourceId = R.drawable.ic_volte_volit;
+                break;
+            case 25:
+                resourceId = R.drawable.ic_volte_zirco;
+                break;
             default:
                 resourceId = 0;
                 break;
