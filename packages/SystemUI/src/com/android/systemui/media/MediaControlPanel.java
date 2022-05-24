@@ -134,8 +134,6 @@ public class MediaControlPanel {
     private final MediaArtworkProcessor mMediaArtworkProcessor;
     private int mAlbumArtRadius;
     private boolean mBackgroundArtwork;
-    private boolean mBackgroundBlur;
-    private float mBlurRadius;
     private int mBackgroundAlpha;
 
     /**
@@ -231,11 +229,8 @@ public class MediaControlPanel {
         mSeekBarViewModel.setListening(listening);
     }
 
-    public void updateBgArtworkParams(boolean backgroundArtwork, boolean backgroundBlur,
-            float blurRadius, int backgroundAlpha) {
+    public void updateBgArtworkParams(boolean backgroundArtwork, int backgroundAlpha) {
         mBackgroundArtwork = backgroundArtwork;
-        mBackgroundBlur = backgroundBlur;
-        mBlurRadius = blurRadius;
         mBackgroundAlpha = backgroundAlpha;
     }
 
@@ -364,11 +359,6 @@ public class MediaControlPanel {
         if (hasArtwork) {
             if (mBackgroundArtwork) {
                 BitmapDrawable drawable = (BitmapDrawable) data.getArtwork().loadDrawable(mContext);
-                if (mBackgroundBlur) {
-                    drawable = new BitmapDrawable(mContext.getResources(),
-                        mMediaArtworkProcessor.processArtwork(mContext,
-                            drawable.getBitmap(), mBlurRadius, false));
-                }
                 final ImageView backgroundImage = mPlayerViewHolder.getPlayer()
                     .findViewById(R.id.bg_album_art);
                 backgroundImage.setImageDrawable(drawable);
