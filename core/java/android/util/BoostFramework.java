@@ -323,7 +323,7 @@ public class BoostFramework {
                     sUxIsLoaded = true;
                 }
                 catch(Exception e) {
-                    Log.e(TAG,"BoostFramework() Ux Perf: Exception = " + e);
+                    //Log.e(TAG,"BoostFramework() Ux Perf: Exception = " + e);
                 }
             }
         }
