@@ -90,6 +90,7 @@ public class SystemSettings {
         Settings.System.OMNI_QS_LAYOUT_COLUMNS_LANDSCAPE,
         Settings.System.OMNI_QS_LAYOUT_COLUMNS,
         Settings.System.OMNI_QS_TILE_LABEL_HIDE,
+        Settings.System.ARTWORK_MEDIA_BACKGROUND,
         Settings.System.ARTWORK_MEDIA_BACKGROUND_ALPHA,
     };
 }
