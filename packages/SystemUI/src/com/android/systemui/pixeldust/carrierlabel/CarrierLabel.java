@@ -125,6 +125,7 @@ public class CarrierLabel extends TextView implements DarkReceiver {
     private boolean supportsDarkText() {
         final SysuiColorExtractor mColorExtractor = Dependency.get(SysuiColorExtractor.class);
         final WallpaperColors systemColors = mColorExtractor.getWallpaperColors(WallpaperManager.FLAG_SYSTEM);
+        if (systemColors == null) return false; // catch a potential NPE
         final int hints = systemColors.getColorHints();
         return (hints & WallpaperColors.HINT_SUPPORTS_DARK_TEXT) != 0;
     }
