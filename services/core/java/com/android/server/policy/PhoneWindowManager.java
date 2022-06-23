@@ -741,7 +741,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     handleRingerChordGesture();
                     break;
                 case MSG_SCREENSHOT_CHORD:
-                    handleScreenShot(msg.arg1);
+                    handleScreenShot(msg.arg1, msg.arg2);
                     break;
                 case MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK:
                     KeyEvent event = (KeyEvent) msg.obj;
@@ -1581,17 +1581,13 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 || mShortPressOnStemPrimaryBehavior != SHORT_PRESS_PRIMARY_NOTHING;
     }
 
-    private void interceptScreenshotChord(int type, int source, long pressDelay) {
-        mHandler.removeMessages(MSG_SCREENSHOT_CHORD);
-        mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_SCREENSHOT_CHORD, type, source),
-                pressDelay);
+    private void interceptScreenshotChord(int source, long pressDelay) {
+        interceptScreenshotChord(TAKE_SCREENSHOT_FULLSCREEN, source, pressDelay);
     }
 
-    private void interceptScreenshotChord(int source, long pressDelay) {
+    private void interceptScreenshotChord(int type, int source, long pressDelay) {
         mHandler.removeMessages(MSG_SCREENSHOT_CHORD);
-        // arg2 is unused, but necessary to insure we call the correct method signature
-        // since the screenshot source is read from message.arg1
-        mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_SCREENSHOT_CHORD, source, 0),
+        mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_SCREENSHOT_CHORD, source, type),
                 pressDelay);
     }
 
@@ -1661,8 +1657,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         }
     };
 
-    private void handleScreenShot(@WindowManager.ScreenshotSource int source) {
-        mDefaultDisplayPolicy.takeScreenshot(TAKE_SCREENSHOT_FULLSCREEN, source);
+    private void handleScreenShot(@WindowManager.ScreenshotSource int source,
+            @WindowManager.ScreenshotType int type) {
+        mDefaultDisplayPolicy.takeScreenshot(type, source);
     }
 
     @Override
