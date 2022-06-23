@@ -33,6 +33,7 @@ import com.android.systemui.qs.dagger.QSScope;
 import com.android.systemui.qs.logging.QSLogger;
 import com.android.systemui.settings.brightness.BrightnessMirrorHandler;
 import com.android.systemui.statusbar.policy.BrightnessMirrorController;
+import android.content.res.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,13 @@ public class QuickQSPanelController extends QSPanelControllerBase<QuickQSPanel> 
     private final QSPanel.OnConfigurationChangedListener mOnConfigurationChangedListener =
             newConfig -> {
                 int newMaxTiles = getResources().getInteger(R.integer.quick_qs_panel_max_tiles);
-                newMaxTiles = PixeldustUtils.getQuickQSColumnsCount(getContext(), newMaxTiles);
+                boolean isPortrait = getResources().getConfiguration().orientation
+                	== Configuration.ORIENTATION_PORTRAIT;
+                if (isPortrait) {
+                    newMaxTiles = PixeldustUtils.getQuickQSColumnsPortrait(getContext(), newMaxTiles);
+                } else {
+                    newMaxTiles = PixeldustUtils.getQuickQSColumnsLandscape(getContext(), newMaxTiles);
+                }
                 if (newMaxTiles != mView.getNumQuickTiles()) {
                     setMaxTiles(newMaxTiles);
                 }
