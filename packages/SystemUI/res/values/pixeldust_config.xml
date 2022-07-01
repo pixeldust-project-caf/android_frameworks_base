@@ -19,4 +19,7 @@
 
     <!-- Udfps vendor code -->
     <integer name="config_udfps_vendor_code">0</integer>
+
+    <!-- Charging info current divider, if needed -->
+    <integer name="config_currentInfoDivider" translatable="false">1000</integer>
 </resources>
