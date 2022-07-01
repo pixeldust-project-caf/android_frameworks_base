@@ -35,4 +35,7 @@
 
     <!-- Allow devices override show 4G instead of LTE -->
     <bool name="config_showFourG">true</bool>
+
+    <!-- Charging info current divider, if needed -->
+    <integer name="config_currentInfoDivider" translatable="false">1000</integer>
 </resources>
