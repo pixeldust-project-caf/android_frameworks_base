@@ -5425,18 +5425,6 @@ public final class Settings {
         public static final String WAKE_WHEN_PLUGGED_OR_UNPLUGGED = "wake_when_plugged_or_unplugged";
 
         /**
-         * media artwork wallpaper blur level on lockscreen
-         * @hide
-         */
-        public static final String LOCKSCREEN_MEDIA_BLUR = "lockscreen_media_blur";
-
-        /**
-         * media artwork wallpaper blur level on lockscreen
-         * @hide
-         */
-        public static final String SHOW_LOCKSCREEN_MEDIA_ART = "show_lockscreen_media_art";
-
-        /**
          * whether to enable or disable vibration on succesful fingerprint auth
          *
          * @hide

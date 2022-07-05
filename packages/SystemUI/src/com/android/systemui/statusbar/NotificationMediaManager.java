@@ -36,8 +36,6 @@ import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.os.AsyncTask;
 import android.os.Trace;
-import android.os.UserHandle;
-import android.provider.Settings;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.NotificationStats;
 import android.service.notification.StatusBarNotification;
@@ -131,9 +129,6 @@ public class NotificationMediaManager implements Dumpable {
     private LockscreenWallpaper mLockscreenWallpaper;
 
     private final DelayableExecutor mMainExecutor;
-
-    private float mLockscreenMediaBlur;
-    private boolean mShowLockscreenMediaArt;
 
     private final Context mContext;
     private final ArrayList<MediaListener> mMediaListeners;
@@ -647,7 +642,7 @@ public class NotificationMediaManager implements Dumpable {
         }
 
         Bitmap artworkBitmap = null;
-        if (mShowLockscreenMediaArt && mediaMetadata != null && !mKeyguardBypassController.getBypassEnabled()) {
+        if (mediaMetadata != null && !mKeyguardBypassController.getBypassEnabled()) {
             artworkBitmap = mediaMetadata.getBitmap(MediaMetadata.METADATA_KEY_ART);
             if (artworkBitmap == null) {
                 artworkBitmap = mediaMetadata.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART);
@@ -841,19 +836,7 @@ public class NotificationMediaManager implements Dumpable {
     };
 
     private Bitmap processArtwork(Bitmap artwork) {
-        return mMediaArtworkProcessor.processArtwork(mContext, artwork, mLockscreenMediaBlur);
-    }
-
-    public void setLockScreenMediaBlurLevel() {
-        mLockscreenMediaBlur = (float) Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.LOCKSCREEN_MEDIA_BLUR, 25,
-                UserHandle.USER_CURRENT);
-    }
-
-    public void setLockScreenMediaArt() {
-        mShowLockscreenMediaArt = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.SHOW_LOCKSCREEN_MEDIA_ART, 1,
-                UserHandle.USER_CURRENT) == 1;
+        return mMediaArtworkProcessor.processArtwork(mContext, artwork);
     }
 
     @MainThread
