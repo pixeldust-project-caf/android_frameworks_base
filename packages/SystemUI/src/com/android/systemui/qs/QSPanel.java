@@ -119,7 +119,7 @@ public class QSPanel extends LinearLayout implements Tunable {
                 R.dimen.qs_tile_margin_vertical);
         mMaxColumnsPortrait = Math.max(2, getResources().getInteger(R.integer.quick_qs_panel_num_columns));
         mMaxColumnsPortrait = PixeldustUtils.getQuickQSColumnsPortrait(context, mMaxColumnsPortrait);
-        mMaxColumnsLandscape = Math.max(5, getResources().getInteger(R.integer.quick_qs_panel_num_columns_landscape));
+        mMaxColumnsLandscape = Math.max(3, getResources().getInteger(R.integer.quick_qs_panel_num_columns_landscape));
         mMaxColumnsLandscape = PixeldustUtils.getQuickQSColumnsLandscape(context, mMaxColumnsLandscape);
         mContext = context;
 
@@ -748,7 +748,7 @@ public class QSPanel extends LinearLayout implements Tunable {
                 } else {
                    mTileLayout.setMinRows(horizontal ? 1 : 1);
                 }
-                mTileLayout.setMaxColumns(horizontal ? mTileLayout.getResourceColumnsPortrait() : mTileLayout.getResourceColumnsLand());
+                mTileLayout.setMaxColumns(horizontal ? 3 : mMaxColumnsPortrait);
             }
             updateMargins(mediaHostView);
             if (mHorizontalLinearLayout == null) return;
