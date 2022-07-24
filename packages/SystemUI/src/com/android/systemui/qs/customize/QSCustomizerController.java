@@ -295,9 +295,6 @@ public class QSCustomizerController extends ViewController<QSCustomizer> {
             getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
                     Settings.System.OMNI_QS_LAYOUT_COLUMNS),
                     false, this, UserHandle.USER_ALL);
-            getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.OMNI_QS_LAYOUT_COLUMNS_LANDSCAPE),
-                    false, this, UserHandle.USER_ALL);
             update();
         }
 

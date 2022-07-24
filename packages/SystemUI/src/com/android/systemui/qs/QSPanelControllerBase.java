@@ -441,9 +441,6 @@ public abstract class QSPanelControllerBase<T extends QSPanel> extends ViewContr
                     Settings.System.OMNI_QS_LAYOUT_COLUMNS),
                     false, this, UserHandle.USER_ALL);
             getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.OMNI_QS_LAYOUT_COLUMNS_LANDSCAPE),
-                    false, this, UserHandle.USER_ALL);
-            getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
                     Settings.System.OMNI_QS_TILE_LABEL_HIDE),
                     false, this, UserHandle.USER_ALL);
             update();

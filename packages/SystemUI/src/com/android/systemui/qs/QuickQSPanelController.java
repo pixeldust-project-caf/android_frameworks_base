@@ -53,7 +53,7 @@ public class QuickQSPanelController extends QSPanelControllerBase<QuickQSPanel> 
                 if (isPortrait) {
                     newMaxTiles = PixeldustUtils.getQuickQSColumnsPortrait(getContext(), newMaxTiles);
                 } else {
-                    newMaxTiles = PixeldustUtils.getQuickQSColumnsLandscape(getContext(), newMaxTiles);
+                    newMaxTiles = 5;
                 }
                 if (newMaxTiles != mView.getNumQuickTiles()) {
                     setMaxTiles(newMaxTiles);

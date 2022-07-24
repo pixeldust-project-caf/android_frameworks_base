@@ -6038,11 +6038,6 @@ public final class Settings {
         /**
          * @hide
          */
-        public static final String OMNI_QS_LAYOUT_COLUMNS_LANDSCAPE = "qs_layout_columns_landscape";
-
-        /**
-         * @hide
-         */
         public static final String OMNI_QS_LAYOUT_COLUMNS = "qs_layout_columns";
 
         /**

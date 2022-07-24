@@ -145,7 +145,7 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
 	if (isPortrait) {
             mColumns = Math.min(getResourceColumnsPortrait(), mMaxColumns);
         } else {
-            mColumns = Math.min(getResourceColumnsLand(), mMaxColumns);
+            mColumns = Math.min(5, mMaxColumns);
         }
         return oldColumns != mColumns;
     }
@@ -313,11 +313,6 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
         return PixeldustUtils.getQSColumnsPortrait(mContext, resourceColumns);
     }
     
-    public int getResourceColumnsLand() {
-        int resourceColumnsLand = Math.max(3, getResources().getInteger(R.integer.quick_settings_num_columns_landscape));
-        return PixeldustUtils.getQSColumnsLandscape(mContext, resourceColumnsLand);
-    }
-
     @Override
     public void updateSettings() {
     	boolean isPortrait = getResources().getConfiguration().orientation
@@ -325,7 +320,7 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
         if (isPortrait) {
             setMaxColumns(getResourceColumnsPortrait());
         } else {
-            setMaxColumns(getResourceColumnsLand());
+            setMaxColumns(5);
         }
         requestLayout();
     }

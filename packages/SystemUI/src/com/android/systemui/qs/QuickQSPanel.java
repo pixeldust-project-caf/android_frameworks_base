@@ -63,8 +63,7 @@ public class QuickQSPanel extends QSPanel {
         }
         mMaxColumnsPortrait = Math.max(2, getResources().getInteger(R.integer.quick_qs_panel_num_columns));
         mMaxColumnsPortrait = PixeldustUtils.getQuickQSColumnsPortrait(mContext, mMaxColumnsPortrait);
-        mMaxColumnsLandscape = Math.max(3, getResources().getInteger(R.integer.quick_qs_panel_num_columns_landscape));
-        mMaxColumnsLandscape = PixeldustUtils.getQuickQSColumnsLandscape(mContext, mMaxColumnsLandscape);
+        mMaxColumnsLandscape = getResources().getInteger(R.integer.quick_qs_panel_num_columns_landscape);
         mMaxColumnsMediaPlayer = getResources().getInteger(R.integer.quick_qs_panel_num_columns_media);
     }
 
@@ -226,13 +225,7 @@ public class QuickQSPanel extends QSPanel {
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
                     LayoutParams.WRAP_CONTENT);
             setLayoutParams(lp);
-            boolean isLandscape = getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_LANDSCAPE;
-            if (isLandscape) {
-                setMaxColumns(getResourceColumnsLand());
-            } else {
-                setMaxColumns(getResourceColumnsPortrait());
-            }
+            updateColumns();
         }
 
         @Override
@@ -249,10 +242,11 @@ public class QuickQSPanel extends QSPanel {
             updateResources();
             boolean isLandscape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE;
             if (isLandscape) {
-                mQSPanel.setMaxTiles(getResourceColumnsLand());
+                mQSPanel.setMaxTiles(5);
             } else {
                 mQSPanel.setMaxTiles(getResourceColumnsPortrait());
             }
+            updateColumns();
         }
 
         @Override
@@ -308,17 +302,11 @@ public class QuickQSPanel extends QSPanel {
         }
 
         @Override
-        public int getResourceColumnsLand() {
-            int resourceColumnsLand = Math.max(3, getResources().getInteger(R.integer.quick_settings_num_columns_landscape));
-            return PixeldustUtils.getQuickQSColumnsLandscape(mContext, resourceColumnsLand);
-        }
-
-        @Override
         public void updateSettings() {
             boolean isLandscape = getResources().getConfiguration().orientation
                     == Configuration.ORIENTATION_LANDSCAPE;
             if (isLandscape) {
-                mQSPanel.setMaxTiles(getResourceColumnsLand());
+                mQSPanel.setMaxTiles(5);
             } else {
                 mQSPanel.setMaxTiles(getResourceColumnsPortrait());
             }
