@@ -64,8 +64,6 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraAccessException;
 import android.media.AudioManager;
 import android.os.Binder;
 import android.os.Build;
@@ -1237,19 +1235,12 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
         return new SinglePressAction(com.android.internal.R.drawable.ic_qs_flashlight,
                 com.android.systemui.R.string.global_action_flashlight) {
             public void onPress() {
-                try {
-                    CameraManager cameraManager = (CameraManager)
-                            mContext.getSystemService(Context.CAMERA_SERVICE);
-                    for (final String cameraId : cameraManager.getCameraIdList()) {
-                        CameraCharacteristics characteristics =
-                            cameraManager.getCameraCharacteristics(cameraId);
-                        int orient = characteristics.get(CameraCharacteristics.LENS_FACING);
-                        if (orient == CameraCharacteristics.LENS_FACING_BACK) {
-                            cameraManager.setTorchMode(cameraId, !mFlashlightEnabled);
-                            mFlashlightEnabled = !mFlashlightEnabled;
-                        }
+                if (mStatusBarService != null) {
+                    try {
+                        mStatusBarService.toggleCameraFlash();
+                    } catch (RemoteException e) {
+                    // do nothing.
                     }
-                } catch (CameraAccessException e) {
                 }
             }
 
