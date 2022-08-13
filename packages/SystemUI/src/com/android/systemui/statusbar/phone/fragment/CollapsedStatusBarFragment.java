@@ -26,8 +26,9 @@ import static com.android.systemui.statusbar.events.SystemStatusAnimationSchedul
 import android.annotation.Nullable;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
-import android.database.ContentObserver;
 import android.content.Context;
+import android.database.ContentObserver;
+import android.os.Handler;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.UserHandle;
@@ -105,6 +106,11 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         StatusBarStateController.StateListener,
         SystemStatusAnimationCallback, Dumpable, TunerService.Tunable {
 
+    private static final String STATUS_BAR_SHOW_LYRIC =
+            Settings.Secure.STATUS_BAR_SHOW_LYRIC;
+    private static final String STATUSBAR_CLOCK_CHIP =
+            "system:" + Settings.System.STATUSBAR_CLOCK_CHIP;
+
     public static final String TAG = "CollapsedStatusBarFragment";
     private static final String EXTRA_PANEL_STATE = "panel_state";
     public static final String STATUS_BAR_ICON_MANAGER_TAG = "status_bar_icon_manager";
@@ -119,6 +125,9 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     private LinearLayout mEndSideContent;
     private View mOngoingCallChip;
     private View mNotificationIconAreaInner;
+    private View mCenterClock;
+    private View mLeftClock;
+    private View mRightClock;
     private int mDisabled1;
     private int mDisabled2;
     private DarkIconManager mDarkIconManager;
@@ -148,6 +157,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     private StatusIconContainer mStatusIcons;
     private int mSignalClusterEndPadding = 0;
 
+    private boolean mShowSBClockBg = true;
     private LyricController mLyricController;
 
     private List<String> mBlockedIcons = new ArrayList<>();
@@ -315,14 +325,18 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         mBatteryMeterView = mStatusBar.findViewById(R.id.battery);
         mBatteryMeterView.addCallback(mBatteryMeterViewCallback);
         mOngoingCallChip = mStatusBar.findViewById(R.id.ongoing_call_chip);
+        mCenterClock = mStatusBar.findViewById(R.id.clock_center);
+        mLeftClock = mStatusBar.findViewById(R.id.clock);
+        mRightClock = mStatusBar.findViewById(R.id.clock_right);
         showEndSideContent(false);
         showClock(false);
         initOperatorName();
         initNotificationIconArea();
         Dependency.get(TunerService.class).addTunable(this, StatusBarIconController.ICON_HIDE_LIST);
+        Dependency.get(TunerService.class).addTunable(this, STATUS_BAR_SHOW_LYRIC);
+        Dependency.get(TunerService.class).addTunable(this, STATUSBAR_CLOCK_CHIP);
         mLyricController = new LyricController(getContext(), mStatusBar);
         mStatusBarFragmentComponent.getHeadsUpAppearanceController().setLyricViewController(mLyricController);
-        Dependency.get(TunerService.class).addTunable(this, Settings.Secure.STATUS_BAR_SHOW_LYRIC);
 
         mSystemEventAnimator =
                 new StatusBarSystemEventAnimator(mEndSideContent, getResources());
@@ -427,10 +441,44 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         if (wasClockBlacklisted && !mIsClockBlacklisted) {
             showClock(false);
         }
-        if (key.equals(Settings.Secure.STATUS_BAR_SHOW_LYRIC)) {
-            if (mLyricController != null) {
-                mLyricController.setEnabled(TunerService.parseIntegerSwitch(newValue, false));
-            }
+        switch (key) {
+            case STATUS_BAR_SHOW_LYRIC:
+                if (mLyricController != null) {
+                    mLyricController.setEnabled(TunerService.parseIntegerSwitch(newValue, false));
+                }
+                break;
+            case STATUSBAR_CLOCK_CHIP:
+                mShowSBClockBg = TunerService.parseInteger(newValue, 0);
+                updateStatusBarClock();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void updateStatusBarClock() {
+        if (mShowSBClockBg) {
+            mLeftClock.setBackgroundResource(R.drawable.sb_date_bg);
+            mLeftClock.setPadding(10,5,10,5);
+            mCenterClock.setBackgroundResource(R.drawable.sb_date_bg);
+            mCenterClock.setPadding(10,5,10,5);
+            mRightClock.setBackgroundResource(R.drawable.sb_date_bg);
+            mRightClock.setPadding(10,5,10,5);
+        } else {
+            int clockPaddingStart = getResources().getDimensionPixelSize(
+                    R.dimen.status_bar_clock_starting_padding);
+            int clockPaddingEnd = getResources().getDimensionPixelSize(
+                    R.dimen.status_bar_clock_end_padding);
+            int leftClockPaddingStart = getResources().getDimensionPixelSize(
+                    R.dimen.status_bar_left_clock_starting_padding);
+            int leftClockPaddingEnd = getResources().getDimensionPixelSize(
+                    R.dimen.status_bar_left_clock_end_padding);
+            mLeftClock.setBackgroundResource(0);
+            mLeftClock.setPadding(leftClockPaddingStart, 0, leftClockPaddingEnd, 0);
+            mCenterClock.setBackgroundResource(0);
+            mCenterClock.setPadding(0,0,0,0);
+            mRightClock.setBackgroundResource(0);
+            mRightClock.setPadding(clockPaddingStart, 0, clockPaddingEnd, 0);
         }
     }
 

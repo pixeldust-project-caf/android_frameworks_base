@@ -5620,6 +5620,14 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_TEXT_CHARGING = "status_bar_battery_text_charging";
 
         /**
+         * Statusbar clock background
+         * 0 - hide accented chip
+         * 1 - show accented chip (default)
+         * @hide
+         */
+        public static final String STATUSBAR_CLOCK_CHIP ="statusbar_clock_chip";
+
+        /**
          * IMPORTANT: If you add a new public settings you also have to add it to
          * PUBLIC_SETTINGS below. If the new setting is hidden you have to add
          * it to PRIVATE_SETTINGS below. Also add a validator that can validate
@@ -5978,6 +5986,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(GLOBAL_ACTIONS_MAX_ROWS);
             PRIVATE_SETTINGS.add(OMNI_KEYGUARD_SHOW_BATTERY_BAR);
             PRIVATE_SETTINGS.add(OMNI_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS);
+            PRIVATE_SETTINGS.add(STATUSBAR_CLOCK_CHIP);
         }
 
         /**
