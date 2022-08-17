@@ -83,6 +83,13 @@ public class Clock extends TextView implements
             "system:" + Settings.System.STATUS_BAR_CLOCK_SECONDS;
     private static final String STATUS_BAR_AM_PM =
             "system:" + Settings.System.STATUS_BAR_AM_PM;
+    public static final String STATUS_BAR_CLOCK_SIZE =
+            "system:" + Settings.System.STATUS_BAR_CLOCK_SIZE;
+    public static final String QS_HEADER_CLOCK_SIZE =
+            "system:" + Settings.System.QS_HEADER_CLOCK_SIZE;
+
+    private int mClockSize;
+    private int mClockSizeQsHeader;
 
     private final CurrentUserTracker mCurrentUserTracker;
     private final CommandQueue mCommandQueue;
@@ -205,7 +212,9 @@ public class Clock extends TextView implements
                     Dependency.get(Dependency.TIME_TICK_HANDLER), UserHandle.ALL);
             Dependency.get(TunerService.class).addTunable(this,
                     STATUS_BAR_CLOCK_SECONDS,
-                    STATUS_BAR_AM_PM);
+                    STATUS_BAR_AM_PM,
+                    STATUS_BAR_CLOCK_SIZE,
+                    QS_HEADER_CLOCK_SIZE);
             mCommandQueue.addCallback(this);
             if (mShowDark) {
                 Dependency.get(DarkIconDispatcher.class).addDarkReceiver(this);
@@ -220,9 +229,10 @@ public class Clock extends TextView implements
         mDateTimePatternGenerator = null;
 
         // Make sure we update to the current time
+        updateShowSeconds();
+        updateClockSize();
         updateClock();
         updateClockVisibility();
-        updateShowSeconds();
     }
 
     @Override
@@ -372,6 +382,16 @@ public class Clock extends TextView implements
                 mContentDescriptionFormatString = "";
                 mDateTimePatternGenerator = null;
                 updateClock(true);
+                break;
+            case STATUS_BAR_CLOCK_SIZE:
+                mClockSize =
+                        TunerService.parseInteger(newValue, 14);
+                updateClockSize();
+                break;
+            case QS_HEADER_CLOCK_SIZE:
+                mClockSizeQsHeader =
+                        TunerService.parseInteger(newValue, 14);
+                updateClockSize();
                 break;
             default:
                 break;
@@ -571,5 +591,12 @@ public class Clock extends TextView implements
             mSecondsHandler.postAtTime(this, SystemClock.uptimeMillis() / 1000 * 1000 + 1000);
         }
     };
-}
 
+    public void updateClockSize() {
+        if(mQsHeader) {
+            setTextSize(mClockSizeQsHeader);
+        } else {
+            setTextSize(mClockSize);
+        }
+    }
+}
