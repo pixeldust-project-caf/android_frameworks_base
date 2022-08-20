@@ -22,8 +22,9 @@ import android.hardware.display.DisplayManager
 import android.os.Handler
 import android.os.IBinder
 import android.os.ServiceManager
-import android.view.Surface
 import com.android.systemui.biometrics.AuthController
+import com.android.systemui.biometrics.UdfpsHbmProvider
+import com.android.systemui.dagger.SysUISingleton
 import com.android.systemui.dagger.qualifiers.DisplayId
 import com.android.systemui.dagger.qualifiers.Main
 import com.android.systemui.dagger.qualifiers.UiBackground
