@@ -29,6 +29,7 @@ import java.util.Map;
 
 public class PixelPropsUtils {
 
+    public static final String PACKAGE_GMS = "com.google.android.gms";
     private static final String TAG = PixelPropsUtils.class.getSimpleName();
     private static final boolean DEBUG = false;
 
@@ -53,6 +54,7 @@ public class PixelPropsUtils {
             "com.breel.wallpapers20"
     };
     private static final String[] packagesToKeep = {
+            PACKAGE_GMS,
             "com.google.ar.core"
     };
 
@@ -88,15 +90,14 @@ public class PixelPropsUtils {
     }
 
     public static void setProps(Application app) {
-        String packageName = app.getPackageName();
+        final String packageName = app.getPackageName();
+        final String processName = app.getProcessName();
         if (packageName == null){
             return;
         }
-        if (packageName.equals("com.google.android.gms") &&
-                    app.getProcessName().equals("com.google.android.gms.unstable")) {
-            setPropValue("MODEL", "Pixel 5" + " ");
+        if (packageName.equals(PACKAGE_GMS) &&
+                processName.equals(PACKAGE_GMS + ".unstable")) {
             sIsGms = true;
-            setPropValue("TYPE", "userdebug");
         }
         if ((packageName.startsWith("com.google.") && !Arrays.asList(packagesToKeep).contains(packageName))
                 || Arrays.asList(extraPackagesToChange).contains(packageName)) {
@@ -127,6 +128,10 @@ public class PixelPropsUtils {
                 if (DEBUG) Log.d(TAG, "Defining " + key + " prop for: " + packageName);
                 setPropValue(key, value);
             }
+        }
+        if (sIsGms) {
+            setPropValue("MODEL", Build.MODEL + " ");
+            setPropValue("TYPE", "userdebug");
         }
         // Set proper indexing fingerprint
         if (packageName.equals("com.google.android.settings.intelligence")){
