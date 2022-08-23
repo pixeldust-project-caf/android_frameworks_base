@@ -31,6 +31,7 @@ import java.util.Map;
 public class PixelPropsUtils {
     public static final String PACKAGE_GMS = "com.google.android.gms";
     public static final String PACKAGE_SETTINGS_SERVICES = "com.google.android.settings.intelligence";
+    public static final String PACKAGE_PS = "com.android.vending";
 
     private static final String DEVICE = "ro.pixeldust.device";
     private static final String TAG = PixelPropsUtils.class.getSimpleName();
@@ -50,6 +51,7 @@ public class PixelPropsUtils {
     };
 
     private static final String[] extraPackagesToChange = {
+            PACKAGE_PS,
             "com.android.chrome",
             "com.breel.wallpapers20"
     };
@@ -92,6 +94,7 @@ public class PixelPropsUtils {
     };
 
     private static volatile boolean sIsGms = false;
+    private static volatile boolean sIsFinsky = false;
 
     static {
         propsToKeep = new HashMap<>();
@@ -126,6 +129,10 @@ public class PixelPropsUtils {
 
     public static void setProps(String packageName) {
         if (packageName == null || (Arrays.asList(packagesToKeep).contains(packageName)) || isPixelDevice) {
+            return;
+        }
+        if (packageName.equals(PACKAGE_PS)) {
+            sIsFinsky = true;
             return;
         }
         if (packageName.startsWith("com.google.")
@@ -197,6 +204,10 @@ public class PixelPropsUtils {
     public static void onEngineGetCertificateChain() {
         // Check stack for SafetyNet
         if (sIsGms && isCallerSafetyNet()) {
+            throw new UnsupportedOperationException();
+        }
+        // Check stack for PlayIntegrity
+        if (sIsFinsky) {
             throw new UnsupportedOperationException();
         }
     }
