@@ -60,6 +60,9 @@ import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.ConfigurationController;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
 import com.android.systemui.tuner.TunerService;
+import com.android.systemui.util.settings.SecureSettings;
+
+import java.util.concurrent.Executor;
 
 import javax.inject.Named;
 
@@ -256,7 +259,9 @@ public abstract class StatusBarViewModule {
             StatusBarStateController statusBarStateController,
             CommandQueue commandQueue,
             CollapsedStatusBarFragmentLogger collapsedStatusBarFragmentLogger,
-            OperatorNameViewController.Factory operatorNameViewControllerFactory
+            OperatorNameViewController.Factory operatorNameViewControllerFactory,
+            SecureSettings secureSettings,
+            @Main Executor mainExecutor
     ) {
         return new CollapsedStatusBarFragment(statusBarFragmentComponentFactory,
                 ongoingCallController,
@@ -273,6 +278,8 @@ public abstract class StatusBarViewModule {
                 statusBarStateController,
                 commandQueue,
                 collapsedStatusBarFragmentLogger,
-                operatorNameViewControllerFactory);
+                operatorNameViewControllerFactory,
+                secureSettings,
+                mainExecutor);
     }
 }
