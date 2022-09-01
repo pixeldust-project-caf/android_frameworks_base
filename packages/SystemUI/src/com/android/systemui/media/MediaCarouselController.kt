@@ -1106,3 +1106,10 @@ internal object MediaPlayerData {
         it.isSsReactivated
     } ?: false
 }
+
+data class ArtworkSettings @JvmOverloads constructor(
+    val enabled: Boolean = false,
+    val blurEnabled: Boolean = false,
+    val blurRadius: Float = 1f,
+    val fadeLevel: Int = 30
+)
