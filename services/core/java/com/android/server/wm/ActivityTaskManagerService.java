@@ -282,6 +282,8 @@ import com.android.server.uri.NeededUriGrants;
 import com.android.server.uri.UriGrantsManagerInternal;
 import com.android.server.wallpaper.WallpaperManagerInternal;
 
+import com.android.internal.util.PropImitationHooks;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileDescriptor;
