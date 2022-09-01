@@ -207,7 +207,8 @@ public final class StorageEventHelper extends StorageEventListener {
         synchronized (mPm.mLock) {
             final boolean isUpgrade = !Build.VERSION.INCREMENTAL.equals(ver.fingerprint);
             if (isUpgrade) {
-                logCriticalInfo(Log.INFO, "Build fingerprint changed from " + ver.fingerprint
+                logCriticalInfo(Log.INFO, "Build incremental version changed from "
+                        + ver.fingerprint
                         + " to " + Build.VERSION.INCREMENTAL + "; regranting permissions for "
                         + volumeUuid);
             }
