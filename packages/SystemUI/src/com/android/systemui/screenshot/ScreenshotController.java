@@ -106,7 +106,6 @@ import com.android.systemui.clipboardoverlay.ClipboardOverlayController;
 import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.screenshot.ScreenshotController.SavedImageData.ActionTransition;
 import com.android.systemui.screenshot.TakeScreenshotService.RequestCallback;
-import com.android.systemui.shared.system.ActivityManagerWrapper;
 import com.android.systemui.shared.system.TaskStackChangeListener;
 import com.android.systemui.shared.system.TaskStackChangeListeners;
 import com.android.systemui.util.Assert;
@@ -316,17 +315,21 @@ public class ScreenshotController {
     private final TaskStackChangeListener mTaskListener = new TaskStackChangeListener() {
         @Override
         public void onTaskStackChanged() {
-            mBgExecutor.execute(() -> {
-                try {
-                    final ActivityTaskManager.RootTaskInfo focusedStack =
-                            ActivityTaskManager.getService().getFocusedRootTaskInfo();
-                    if (focusedStack != null && focusedStack.topActivity != null) {
-                        mTaskComponentName = focusedStack.topActivity;
-                    }
-                } catch (Exception e) {}
-            });
+            mBgExecutor.execute(() -> updateForegroundTaskSync());
         }
     };
+
+    private void updateForegroundTaskSync() {
+        try {
+            final ActivityTaskManager.RootTaskInfo focusedStack =
+                    ActivityTaskManager.getService().getFocusedRootTaskInfo();
+            if (focusedStack != null && focusedStack.topActivity != null) {
+                mTaskComponentName = focusedStack.topActivity;
+            }
+        } catch (RemoteException e) {
+            Log.e(TAG, "Failed to get foreground task component", e);
+        }
+    }
 
     private String getForegroundAppLabel() {
         if (mTaskComponentName != null) {
@@ -400,15 +403,6 @@ public class ScreenshotController {
         // Setup the Camera shutter sound
         mCameraSound = loadCameraSound();
 
-        // Grab PackageManager
-        mPm = mContext.getPackageManager();
-
-        // Register task stack listener
-        TaskStackChangeListeners.getInstance().registerTaskStackListener(mTaskListener);
-
-        // Initialize current foreground package name
-        mTaskListener.onTaskStackChanged();
-
         // Grab system services needed for screenshot sound
         mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
@@ -428,6 +422,15 @@ public class ScreenshotController {
         mContext.registerReceiver(mCopyBroadcastReceiver, new IntentFilter(
                         ClipboardOverlayController.COPY_OVERLAY_ACTION),
                 ClipboardOverlayController.SELF_PERMISSION, null, Context.RECEIVER_NOT_EXPORTED);
+
+        // Grab PackageManager
+        mPm = mContext.getPackageManager();
+
+        // Register task stack listener
+        TaskStackChangeListeners.getInstance().registerTaskStackListener(mTaskListener);
+
+        // Initialize current foreground package name
+        updateForegroundTaskSync();
     }
 
     @MainThread
