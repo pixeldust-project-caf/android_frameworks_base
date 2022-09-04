@@ -220,8 +220,10 @@ public class StatusBarSignalPolicy implements SignalCallback,
             newState.activityIn = in;
             newState.activityOut = out;
             newState.contentDescription = indicators.statusIcon.contentDescription;
+            newState.wifiStandardResId = indicators.wifiStandardResId;
             MobileIconState first = getFirstMobileState();
-            newState.signalSpacerVisible = first != null && first.typeId != 0;
+            newState.signalSpacerVisible = (first != null && first.typeId != 0)
+                    || (newState.wifiStandardResId != -1);
         }
         newState.slot = mSlotWifi;
         newState.airplaneSpacerVisible = mIsAirplaneMode;
@@ -553,6 +555,7 @@ public class StatusBarSignalPolicy implements SignalCallback,
         public boolean noDefaultNetwork;
         public boolean noValidatedNetwork;
         public boolean noNetworksAvailable;
+        public int wifiStandardResId;
 
         @Override
         public boolean equals(Object o) {
@@ -569,7 +572,8 @@ public class StatusBarSignalPolicy implements SignalCallback,
                     && signalSpacerVisible == that.signalSpacerVisible
                     && noDefaultNetwork == that.noDefaultNetwork
                     && noValidatedNetwork == that.noValidatedNetwork
-                    && noNetworksAvailable == that.noNetworksAvailable;
+                    && noNetworksAvailable == that.noNetworksAvailable
+                    && wifiStandardResId == that.wifiStandardResId;
         }
 
         public void copyTo(WifiIconState other) {
@@ -580,6 +584,7 @@ public class StatusBarSignalPolicy implements SignalCallback,
             other.noDefaultNetwork = noDefaultNetwork;
             other.noValidatedNetwork = noValidatedNetwork;
             other.noNetworksAvailable = noNetworksAvailable;
+            other.wifiStandardResId = wifiStandardResId;
         }
 
         public WifiIconState copy() {
@@ -592,7 +597,7 @@ public class StatusBarSignalPolicy implements SignalCallback,
         public int hashCode() {
             return Objects.hash(super.hashCode(),
                     resId, airplaneSpacerVisible, signalSpacerVisible, noDefaultNetwork,
-                    noValidatedNetwork, noNetworksAvailable);
+                    noValidatedNetwork, noNetworksAvailable, wifiStandardResId);
         }
 
         @Override public String toString() {

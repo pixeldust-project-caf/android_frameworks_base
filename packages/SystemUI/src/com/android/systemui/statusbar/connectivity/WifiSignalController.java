@@ -46,9 +46,18 @@ import com.android.systemui.dagger.qualifiers.Background;
 
 import java.io.PrintWriter;
 import java.util.BitSet;
+import java.util.Map;
 
 /** */
 public class WifiSignalController extends SignalController<WifiState, IconGroup> {
+
+    private static final Map<Integer, Integer> WIFI_STANDARD_ICONS = Map.of(
+        4, R.drawable.ic_wifi_standard_4,
+        5, R.drawable.ic_wifi_standard_5,
+        6, R.drawable.ic_wifi_standard_6,
+        7, R.drawable.ic_wifi_standard_7
+    );
+
     private final boolean mHasMobileDataFeature;
     private final WifiStatusTracker mWifiTracker;
     private final IconGroup mUnmergedWifiIconGroup = WifiIcons.UNMERGED_WIFI;
@@ -180,9 +189,12 @@ public class WifiSignalController extends SignalController<WifiState, IconGroup>
                         || visibleWhenEnabled);
         String wifiDesc = mCurrentState.connected ? mCurrentState.ssid : null;
         boolean ssidPresent = wifiVisible && mCurrentState.ssid != null;
+        int wifiStandardResId = WIFI_STANDARD_ICONS.getOrDefault(
+                    mCurrentState.wifiStandard, -1);
         String contentDescription = getTextIfExists(getContentDescription()).toString();
         if (mCurrentState.inetCondition == 0) {
             contentDescription += ("," + mContext.getString(R.string.data_connection_no_internet));
+            wifiStandardResId = -1; // hide wifi standard to avoid overlap with exclamation mark
         }
         IconState statusIcon = new IconState(
                 wifiVisible, getCurrentIconId(), contentDescription);
@@ -195,7 +207,8 @@ public class WifiSignalController extends SignalController<WifiState, IconGroup>
                 mCurrentState.enabled, statusIcon, qsIcon,
                 ssidPresent && mCurrentState.activityIn,
                 ssidPresent && mCurrentState.activityOut,
-                wifiDesc, mCurrentState.isTransient, mCurrentState.statusLabel, isDefault
+                wifiDesc, mCurrentState.isTransient, mCurrentState.statusLabel, isDefault,
+                wifiStandardResId
         );
         callback.setWifiIndicators(wifiIndicators);
     }
@@ -258,21 +271,6 @@ public class WifiSignalController extends SignalController<WifiState, IconGroup>
         return getCurrentIconIdForCarrierWifi();
     }
 
-
-    private void updateIconGroup() {
-	if (mCurrentState.wifiStandard == ScanResult.WIFI_STANDARD_11N) {
-            mCurrentState.iconGroup = mWifi4IconGroup;
-        } else if (mCurrentState.wifiStandard == ScanResult.WIFI_STANDARD_11AC) {
-            mCurrentState.iconGroup = mWifi5IconGroup;
-        } else if (mCurrentState.wifiStandard == ScanResult.WIFI_STANDARD_11AX) {
-            mCurrentState.iconGroup = mWifi6IconGroup;
-        } else if (mCurrentState.wifiStandard == ScanResult.WIFI_STANDARD_11BE) {
-            mCurrentState.iconGroup = mWifi7IconGroup;
-        } else {
-            mCurrentState.iconGroup = mDefaultWifiIconGroup;
-        }
-
-    }
     /**
      * Fetches wifi initial state replacing the initial sticky broadcast.
      */
@@ -326,7 +324,8 @@ public class WifiSignalController extends SignalController<WifiState, IconGroup>
         mCurrentState.isCarrierMerged = mWifiTracker.isCarrierMerged;
         mCurrentState.subId = mWifiTracker.subId;
         mCurrentState.wifiStandard = mWifiTracker.wifiStandard;
-        updateIconGroup();
+        mCurrentState.iconGroup = mDefaultWifiIconGroup;
+
     }
 
     boolean isCarrierMergedWifi(int subId) {

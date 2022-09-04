@@ -126,7 +126,8 @@ data class WifiIndicators(
     @JvmField val description: String?,
     @JvmField val isTransient: Boolean,
     @JvmField val statusLabel: String?,
-    @JvmField val isDefault: Boolean
+    @JvmField val isDefault: Boolean,
+    @JvmField val wifiStandardResId: Int
 ) {
     override fun toString(): String {
         return StringBuilder("WifiIndicators[")
@@ -139,6 +140,7 @@ data class WifiIndicators(
                 .append(",isTransient=").append(isTransient)
                 .append(",statusLabel=").append(statusLabel)
                 .append(",isDefault=").append(isDefault)
+                .append(",wifiStandardResId=").append(wifiStandardResId)
                 .append(']').toString()
     }
 }
