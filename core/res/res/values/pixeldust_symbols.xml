@@ -106,4 +106,7 @@
     <java-symbol type="string" name="config_batterymeterLandBoltPathStyleB" />
     <java-symbol type="string" name="config_batterymeterLandPowersavePathStyleB" />
     <java-symbol type="string" name="config_batterymeterLandErrorPerimeterPathStyleB" />
+
+    <!-- Location indicator -->
+    <java-symbol type="drawable" name="stat_sys_location" />
 </resources>
