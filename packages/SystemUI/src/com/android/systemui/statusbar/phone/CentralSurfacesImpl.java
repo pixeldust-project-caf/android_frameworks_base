@@ -156,6 +156,7 @@ import com.android.systemui.fragments.ExtensionFragmentListener;
 import com.android.systemui.fragments.FragmentHostManager;
 import com.android.systemui.fragments.FragmentService;
 import com.android.systemui.keyguard.KeyguardService;
+import com.android.systemui.keyguard.KeyguardSliceProvider;
 import com.android.systemui.keyguard.KeyguardUnlockAnimationController;
 import com.android.systemui.keyguard.KeyguardViewMediator;
 import com.android.systemui.keyguard.ScreenLifecycle;
@@ -1650,8 +1651,8 @@ public class CentralSurfacesImpl extends CoreStartable implements
             case PULSE_ON_NEW_TRACKS:
                 boolean pulseOnNewTracks =
                         TunerService.parseIntegerSwitch(newValue, true);
-                if (mAmbientIndicationContainer != null) {
-                    ((AmbientIndicationContainer) mAmbientIndicationContainer).setPulseOnNewTracks(pulseOnNewTracks);
+                if (KeyguardSliceProvider.getAttachedInstance() != null) {
+                    KeyguardSliceProvider.getAttachedInstance().setPulseOnNewTracks(pulseOnNewTracks);
                 }
                 break;
             default:

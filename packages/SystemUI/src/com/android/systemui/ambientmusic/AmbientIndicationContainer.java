@@ -17,15 +17,12 @@ package com.android.systemui.ambientmusic;
 import android.app.WallpaperColors;
 import android.app.WallpaperManager;
 import android.content.Context;
-import android.content.Intent;
 import android.database.ContentObserver;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.media.MediaMetadata;
 import android.media.session.PlaybackState;
 import android.net.Uri;
-import android.os.UserHandle;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -43,11 +40,8 @@ import com.android.systemui.plugins.DarkIconDispatcher.DarkReceiver;
 import com.android.systemui.statusbar.NotificationLockscreenUserManager;
 import com.android.systemui.statusbar.NotificationMediaManager;
 import com.android.systemui.statusbar.phone.CentralSurfacesImpl;
-import com.android.systemui.statusbar.phone.DozeParameters;
 
 import java.util.ArrayList;
-
-import javax.inject.Inject;
 
 public class AmbientIndicationContainer extends AutoReinflateContainer implements
         DarkIconDispatcher.DarkReceiver,
@@ -65,11 +59,6 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
     private boolean mNpInfoAvailable;
     private boolean mVisible;
     private boolean mMediaIsVisible;
-
-    private boolean mPulseOnNewTracks;
-    private static final String PULSE_ACTION = "com.android.systemui.doze.pulse";
-    @Inject
-    public DozeParameters dozeParameters;
 
     //private final int mFODmargin;
     //private boolean mHasInDisplayFingerprint;
@@ -136,10 +125,6 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
         }
     }
 
-    public void setPulseOnNewTracks(boolean enabled) {
-        mPulseOnNewTracks = enabled;
-    }
-
     @Override
     public void onDarkChanged(ArrayList<Rect> areas, float darkIntensity, int tint) {
         if (mText == null || !shouldShow()) return;
@@ -190,11 +175,6 @@ public class AmbientIndicationContainer extends AutoReinflateContainer implement
             }
             mText.setText(mMediaTitle);
             setVisibility(shouldShow());
-            if (mPulseOnNewTracks
-                    && !dozeParameters.getAlwaysOn() && mDozing) {
-                getContext().sendBroadcastAsUser(new Intent(PULSE_ACTION),
-                        new UserHandle(UserHandle.USER_CURRENT));
-            }
         } else {
             hideIndication();
         }
