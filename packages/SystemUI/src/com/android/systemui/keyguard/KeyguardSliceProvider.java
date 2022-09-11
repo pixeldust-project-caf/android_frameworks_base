@@ -147,8 +147,6 @@ public class KeyguardSliceProvider extends SliceProvider implements
     private int mStatusBarState;
     private boolean mMediaIsVisible;
     private boolean mNowPlayingAvailable;
-    private boolean mPulseOnNewTracks;
-    private static final String PULSE_ACTION = "com.android.systemui.doze.pulse";
     private SystemUIAppComponentFactory.ContextAvailableCallback mContextAvailableCallback;
 
     /**
@@ -454,7 +452,7 @@ public class KeyguardSliceProvider extends SliceProvider implements
     public void onPrimaryMetadataOrStateChanged(MediaMetadata metadata,
             @PlaybackState.State int state) {
         synchronized (this) {
-            boolean nextVisible = NotificationMediaManager.isPlayingState(state) || mMediaManager.getNowPlayingTrack() != null;
+            boolean nextVisible = NotificationMediaManager.isPlayingState(state);
             mMediaHandler.removeCallbacksAndMessages(null);
             if (mMediaIsVisible && !nextVisible && mStatusBarState != StatusBarState.SHADE) {
                 // We need to delay this event for a few millis when stopping to avoid jank in the
@@ -476,11 +474,6 @@ public class KeyguardSliceProvider extends SliceProvider implements
 
     private void updateMediaStateLocked(MediaMetadata metadata, @PlaybackState.State int state) {
         boolean nextVisible = NotificationMediaManager.isPlayingState(state);
-        // Get track info from Now Playing notification, if available, and only if there's no playing media notification
-        CharSequence npTitle = mMediaManager.getNowPlayingTrack();
-        mNowPlayingAvailable = !nextVisible && npTitle != null;
-
-        // Get track info from player media notification, if available
         CharSequence title = null;
         if (metadata != null) {
             title = metadata.getText(MediaMetadata.METADATA_KEY_TITLE);
@@ -491,33 +484,15 @@ public class KeyguardSliceProvider extends SliceProvider implements
         CharSequence artist = metadata == null ? null : metadata.getText(
                 MediaMetadata.METADATA_KEY_ARTIST);
 
-        // If Now playing is available, and there's no playing media notification, get Now Playing title
-        title = mNowPlayingAvailable ? npTitle : title;
-
         if (nextVisible == mMediaIsVisible && TextUtils.equals(title, mMediaTitle)
                 && TextUtils.equals(artist, mMediaArtist)) {
             return;
         }
-        if (mNowPlayingAvailable == mMediaIsVisible && TextUtils.equals(title, mMediaTitle)) {
-            return;
-        }
 
-        // Set new track info from playing media notification
-        mMediaTitle = title;
-        mMediaArtist = mNowPlayingAvailable ? null : artist;
-        mMediaIsVisible = nextVisible || mNowPlayingAvailable;
+        mMediaArtist = artist;
+        mMediaIsVisible = nextVisible;
 
         notifyChange();
-        // if AoD is disabled, the device is not already dozing and we get a new track, trigger an ambient pulse event
-        if (mPulseOnNewTracks && mMediaIsVisible
-                && !mDozeParameters.getAlwaysOn() && mDozing) {
-            getContext().sendBroadcastAsUser(new Intent(PULSE_ACTION),
-                    new UserHandle(UserHandle.USER_CURRENT));
-        }
-    }
-
-    public void setPulseOnNewTracks(boolean enabled) {
-        mPulseOnNewTracks = enabled;
     }
 
     protected void notifyChange() {

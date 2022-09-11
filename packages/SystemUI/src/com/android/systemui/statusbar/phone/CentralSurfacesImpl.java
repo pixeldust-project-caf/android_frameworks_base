@@ -246,6 +246,8 @@ import com.android.wm.shell.bubbles.Bubbles;
 import com.android.wm.shell.startingsurface.SplashscreenContentDrawer;
 import com.android.wm.shell.startingsurface.StartingSurface;
 
+import com.google.android.systemui.smartspace.KeyguardMediaViewController;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
@@ -656,6 +658,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
     private LogMaker mStatusBarStateLog;
     protected final NotificationIconAreaController mNotificationIconAreaController;
     @Nullable private View mAmbientIndicationContainer;
+    @Nullable private KeyguardMediaViewController mKeyguardMediaViewController;
     private final SysuiColorExtractor mColorExtractor;
     private final ScreenLifecycle mScreenLifecycle;
     private final WakefulnessLifecycle mWakefulnessLifecycle;
@@ -1227,6 +1230,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
         if (mAmbientIndicationContainer != null) {
             ((AmbientIndicationContainer) mAmbientIndicationContainer).initializeView(this);
         }
+        mKeyguardMediaViewController = mMediaManager.getKeyguardMediaViewController();
 
         mAutoHideController.setStatusBar(new AutoHideUiElement() {
             @Override
@@ -1651,8 +1655,9 @@ public class CentralSurfacesImpl extends CoreStartable implements
             case PULSE_ON_NEW_TRACKS:
                 boolean pulseOnNewTracks =
                         TunerService.parseIntegerSwitch(newValue, true);
-                if (KeyguardSliceProvider.getAttachedInstance() != null) {
-                    KeyguardSliceProvider.getAttachedInstance().setPulseOnNewTracks(pulseOnNewTracks);
+                KeyguardMediaViewController keyguardMediaViewController = mMediaManager.getKeyguardMediaViewController();
+                if (keyguardMediaViewController != null) {
+                    keyguardMediaViewController.setPulseOnNewTracks(pulseOnNewTracks);
                 }
                 break;
             default:
@@ -3304,6 +3309,10 @@ public class CentralSurfacesImpl extends CoreStartable implements
         updateQsExpansionEnabled();
         if (mAmbientIndicationContainer != null) {
             ((AmbientIndicationContainer)mAmbientIndicationContainer)
+                    .updateDozingState(mDozing);
+        }
+        if (mKeyguardMediaViewController != null) {
+            mKeyguardMediaViewController
                     .updateDozingState(mDozing);
         }
         Trace.endSection();

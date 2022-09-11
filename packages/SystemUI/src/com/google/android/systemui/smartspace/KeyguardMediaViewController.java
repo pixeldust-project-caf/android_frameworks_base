@@ -4,6 +4,7 @@ import android.app.smartspace.SmartspaceAction;
 import android.app.smartspace.SmartspaceTarget;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaMetadata;
 import android.os.UserHandle;
 import android.text.TextUtils;
@@ -14,6 +15,7 @@ import com.android.systemui.broadcast.BroadcastDispatcher;
 import com.android.systemui.dagger.SysUISingleton;
 import com.android.systemui.plugins.BcSmartspaceDataPlugin;
 import com.android.systemui.settings.CurrentUserTracker;
+import com.android.systemui.statusbar.phone.DozeParameters;
 import com.android.systemui.statusbar.NotificationMediaManager;
 import com.android.systemui.util.concurrency.DelayableExecutor;
 
@@ -52,6 +54,13 @@ public final class KeyguardMediaViewController {
     private CharSequence title;
     private final DelayableExecutor uiExecutor;
     private CurrentUserTracker userTracker;
+
+    private boolean mPulseOnNewTracks;
+    private static final String PULSE_ACTION = "com.android.systemui.doze.pulse";
+
+    @Inject
+    public DozeParameters dozeParameters;
+    protected boolean mDozing;
 
     @Inject
     public KeyguardMediaViewController(
@@ -97,6 +106,7 @@ public final class KeyguardMediaViewController {
                         notificationMediaManager = mediaManager;
                         keyguardMediaViewController = mediaListener;
                         notificationMediaManager.addCallback(keyguardMediaViewController);
+                        notificationMediaManager.addReference(KeyguardMediaViewController.this);
                     }
 
                     @Override
@@ -108,6 +118,7 @@ public final class KeyguardMediaViewController {
                         notificationMediaManager = mediaManager;
                         keyguardMediaViewController = mediaListener;
                         notificationMediaManager.removeCallback(keyguardMediaViewController);
+                        notificationMediaManager.removeReference();
                     }
                 });
         userTracker =
@@ -121,9 +132,17 @@ public final class KeyguardMediaViewController {
 
     public final void updateMediaInfo(MediaMetadata mediaMetadata, int i) {
         CharSequence charSequence;
-        if (!NotificationMediaManager.isPlayingState(i)) {
+        boolean nextVisible = NotificationMediaManager.isPlayingState(i) || mediaManager.getNowPlayingTrack() != null;
+        boolean nowPlayingAvailable = !nextVisible && mediaManager.getNowPlayingTrack() != null;
+        if (!nextVisible) {
             reset();
             return;
+        }
+        // if AoD is disabled, the device is not already dozing and we get a new track, trigger an ambient pulse event
+        if (mPulseOnNewTracks && nowPlayingAvailable
+                && !dozeParameters.getAlwaysOn() && mDozing) {
+            context.sendBroadcastAsUser(new Intent(PULSE_ACTION),
+                    new UserHandle(UserHandle.USER_CURRENT));
         }
         Unit unit = null;
         if (mediaMetadata == null) {
@@ -182,5 +201,15 @@ public final class KeyguardMediaViewController {
             return;
         }
         smartspaceView.setMediaTarget(null);
+    }
+
+    public void updateDozingState(boolean dozing) {
+        if (mDozing != dozing) {
+            mDozing = dozing;
+        }
+    }
+
+    public void setPulseOnNewTracks(boolean enabled) {
+        mPulseOnNewTracks = enabled;
     }
 }

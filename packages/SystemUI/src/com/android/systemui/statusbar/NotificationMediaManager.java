@@ -76,6 +76,8 @@ import com.android.systemui.statusbar.policy.KeyguardStateController;
 import com.android.systemui.util.Utils;
 import com.android.systemui.util.concurrency.DelayableExecutor;
 
+import com.google.android.systemui.smartspace.KeyguardMediaViewController;
+
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -142,6 +144,8 @@ public class NotificationMediaManager implements Dumpable {
     private MediaController mMediaController;
     private String mMediaNotificationKey;
     private MediaMetadata mMediaMetadata;
+
+    private KeyguardMediaViewController mKeyguardMediaViewController;
 
     private String mNowPlayingNotificationKey;
     private String mNowPlayingTrack;
@@ -434,8 +438,20 @@ public class NotificationMediaManager implements Dumpable {
                 getMediaControllerPlaybackState(mMediaController));
     }
 
+    public void addReference(KeyguardMediaViewController ref) {
+        mKeyguardMediaViewController = ref;
+    }
+
+    public KeyguardMediaViewController getKeyguardMediaViewController() {
+        return mKeyguardMediaViewController;
+    }
+
     public void removeCallback(MediaListener callback) {
         mMediaListeners.remove(callback);
+    }
+
+    public void removeReference() {
+        mKeyguardMediaViewController = null;
     }
 
     public void findAndUpdateMediaNotifications() {
@@ -605,6 +621,7 @@ public class NotificationMediaManager implements Dumpable {
             mMediaController.unregisterCallback(mMediaListener);
         }
         mMediaController = null;
+        mKeyguardMediaViewController = null;
     }
 
     /**
