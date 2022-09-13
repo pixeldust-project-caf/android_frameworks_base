@@ -474,7 +474,12 @@ public class BtHelper {
         } else if (action.equals(BluetoothHeadset.ACTION_AUDIO_STATE_CHANGED)) {
             int btState = intent.getIntExtra(BluetoothProfile.EXTRA_STATE, -1);
             Log.i(TAG,"receiveBtEvent ACTION_AUDIO_STATE_CHANGED: "+btState);
-            mDeviceBroker.postScoAudioStateChanged(btState);
+            if (checkAndUpdatTwsPlusScoState(intent,
+                            btState) &&
+                        checkAndUpdateGroupScoState(intent,
+                            btState)) {
+                mDeviceBroker.postScoAudioStateChanged(btState);
+            }
         }
     }
 

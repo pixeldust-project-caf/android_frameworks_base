@@ -688,6 +688,15 @@ public class LocalBluetoothProfileManager {
             return;
         }
 
+        // The profiles list's sequence will affect the bluetooth icon at
+        // BluetoothUtils.getBtClassDrawableWithDescription(Context,CachedBluetoothDevice).
+
+        // Moving the LE audio profile to be the first priority if the device supports LE audio.
+        if (ArrayUtils.contains(uuids, BluetoothUuid.LE_AUDIO) && mLeAudioProfile != null) {
+            profiles.add(mLeAudioProfile);
+            removedProfiles.remove(mLeAudioProfile);
+        }
+
         if (mHeadsetProfile != null) {
             if ((ArrayUtils.contains(localUuids, BluetoothUuid.HSP_AG)
                     && ArrayUtils.contains(uuids, BluetoothUuid.HSP))
@@ -806,11 +815,6 @@ public class LocalBluetoothProfileManager {
         if (ArrayUtils.contains(uuids, BluetoothUuid.HEARING_AID) && mHearingAidProfile != null) {
             profiles.add(mHearingAidProfile);
             removedProfiles.remove(mHearingAidProfile);
-        }
-
-        if (ArrayUtils.contains(uuids, BluetoothUuid.LE_AUDIO) && mLeAudioProfile != null) {
-            profiles.add(mLeAudioProfile);
-            removedProfiles.remove(mLeAudioProfile);
         }
 
         if (mSapProfile != null && ArrayUtils.contains(uuids, BluetoothUuid.SAP)) {

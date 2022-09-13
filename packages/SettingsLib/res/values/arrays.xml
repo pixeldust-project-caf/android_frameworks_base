@@ -120,6 +120,13 @@
         <item>mediapktsfiltered</item>
     </string-array>
 
+    <!-- Values for Bluetooth HCI Snoop Logging Enhanced-->
+    <string-array name="bt_hci_snoop_log_values_enhanced" translatable="false">
+        <item>snoopheadersfiltered</item>
+        <item>mediapktsfiltered</item>
+    </string-array>
+
+
     <!-- Titles for Bluetooth AVRCP Versions -->
     <string-array name="bluetooth_avrcp_versions">
         <item>AVRCP 1.5 (Default)</item>

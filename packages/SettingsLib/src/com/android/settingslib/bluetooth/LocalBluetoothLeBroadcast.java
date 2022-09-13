@@ -87,9 +87,11 @@ public class LocalBluetoothLeBroadcast implements LocalBluetoothProfile {
             if (DEBUG) {
                 Log.d(TAG, "Bluetooth service connected");
             }
-            mService = (BluetoothLeBroadcast) proxy;
-            mIsProfileReady = true;
-            registerServiceCallBack(mExecutor, mBroadcastCallback);
+            if(!mIsProfileReady) {
+                mService = (BluetoothLeBroadcast) proxy;
+                mIsProfileReady = true;
+                registerServiceCallBack(mExecutor, mBroadcastCallback);
+            }
         }
 
         @Override
@@ -97,8 +99,10 @@ public class LocalBluetoothLeBroadcast implements LocalBluetoothProfile {
             if (DEBUG) {
                 Log.d(TAG, "Bluetooth service disconnected");
             }
-            mIsProfileReady = false;
-            unregisterServiceCallBack(mBroadcastCallback);
+            if(mIsProfileReady) {
+                mIsProfileReady = false;
+                unregisterServiceCallBack(mBroadcastCallback);
+            }
         }
     };
 
@@ -299,6 +303,18 @@ public class LocalBluetoothLeBroadcast implements LocalBluetoothProfile {
     }
 
     public BluetoothLeBroadcastMetadata getLatestBluetoothLeBroadcastMetadata() {
+        if (mService == null) {
+            Log.d(TAG, "The BluetoothLeBroadcast is null");
+            return null;
+        }
+        if (mBluetoothLeBroadcastMetadata == null) {
+            final List<BluetoothLeBroadcastMetadata> metadataList =
+                    mService.getAllBroadcastMetadata();
+            mBluetoothLeBroadcastMetadata = metadataList.stream()
+                    .filter(i -> i.getBroadcastId() == mBroadcastId)
+                    .findFirst()
+                    .orElse(null);
+        }
         return mBluetoothLeBroadcastMetadata;
     }
 
@@ -368,7 +384,12 @@ public class LocalBluetoothLeBroadcast implements LocalBluetoothProfile {
     }
 
     public LocalBluetoothLeBroadcastMetadata getLocalBluetoothLeBroadcastMetaData() {
-        return new LocalBluetoothLeBroadcastMetadata(mBluetoothLeBroadcastMetadata);
+        final BluetoothLeBroadcastMetadata metadata = getLatestBluetoothLeBroadcastMetadata();
+        if (metadata == null) {
+            Log.d(TAG, "The BluetoothLeBroadcastMetadata is null.");
+            return null;
+        }
+        return new LocalBluetoothLeBroadcastMetadata(metadata);
     }
 
     public boolean isProfileReady() {

@@ -91,6 +91,7 @@ public abstract class MediaOutputBaseDialog extends SystemUIDialog implements
     private TextView mHeaderSubtitle;
     private ImageView mHeaderIcon;
     private ImageView mAppResourceIcon;
+    private ImageView mBroadcastIcon;
     private RecyclerView mDevicesRecyclerView;
     private LinearLayout mDeviceListLayout;
     private LinearLayout mCastAppLayout;
@@ -100,6 +101,7 @@ public abstract class MediaOutputBaseDialog extends SystemUIDialog implements
     private int mListMaxHeight;
     private WallpaperColors mWallpaperColors;
     private Executor mExecutor;
+    private boolean mShouldLaunchLeBroadcastDialog;
 
     MediaOutputBaseAdapter mAdapter;
 
@@ -239,6 +241,7 @@ public abstract class MediaOutputBaseDialog extends SystemUIDialog implements
         mAppButton = mDialogView.requireViewById(R.id.launch_app_button);
         mAppResourceIcon = mDialogView.requireViewById(R.id.app_source_icon);
         mCastAppLayout = mDialogView.requireViewById(R.id.cast_app_section);
+        mBroadcastIcon = mDialogView.requireViewById(R.id.broadcast_icon);
 
         mDeviceListLayout.getViewTreeObserver().addOnGlobalLayoutListener(
                 mDeviceListLayoutListener);
@@ -366,6 +369,9 @@ public abstract class MediaOutputBaseDialog extends SystemUIDialog implements
         mStopButton.setEnabled(true);
         mStopButton.setText(getStopButtonText());
         mStopButton.setOnClickListener(v -> onStopButtonClick());
+
+        mBroadcastIcon.setVisibility(getBroadcastIconVisibility());
+        mBroadcastIcon.setOnClickListener(v -> onBroadcastIconClick());
     }
 
     private void updateButtonBackgroundColorFilter() {
@@ -394,7 +400,9 @@ public abstract class MediaOutputBaseDialog extends SystemUIDialog implements
     }
 
     public void handleLeBroadcastStarted() {
-        startLeBroadcastDialog();
+        // Waiting for the onBroadcastMetadataChanged. The UI launchs the broadcast dialog when
+        // the metadata is ready.
+        mShouldLaunchLeBroadcastDialog = true;
     }
 
     public void handleLeBroadcastStartFailed() {
@@ -404,10 +412,15 @@ public abstract class MediaOutputBaseDialog extends SystemUIDialog implements
     }
 
     public void handleLeBroadcastMetadataChanged() {
+        if (mShouldLaunchLeBroadcastDialog) {
+            startLeBroadcastDialog();
+            mShouldLaunchLeBroadcastDialog = false;
+        }
         refresh();
     }
 
     public void handleLeBroadcastStopped() {
+        mShouldLaunchLeBroadcastDialog = false;
         refresh();
     }
 
@@ -488,6 +501,14 @@ public abstract class MediaOutputBaseDialog extends SystemUIDialog implements
     public void onStopButtonClick() {
         mMediaOutputController.releaseSession();
         dismiss();
+    }
+
+    public int getBroadcastIconVisibility() {
+        return View.GONE;
+    }
+
+    public void onBroadcastIconClick() {
+        // Do nothing.
     }
 
     public boolean isBroadcastSupported() {

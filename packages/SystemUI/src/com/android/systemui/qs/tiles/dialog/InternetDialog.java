@@ -12,8 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Changes from Qualcomm Innovation Center are provided under the following license:
+ *
+ * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause-Clear
  */
 package com.android.systemui.qs.tiles.dialog;
+
+import static android.telephony.ims.feature.ImsFeature.FEATURE_MMTEL;
+import static android.telephony.ims.stub.ImsRegistrationImplBase.REGISTRATION_TECH_CROSS_SIM;
 
 import static com.android.systemui.Prefs.Key.QS_HAS_TURNED_OFF_MOBILE_DATA;
 import static com.android.systemui.qs.tiles.dialog.InternetDialogController.MAX_WIFI_ENTRY_COUNT;
@@ -26,6 +34,8 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.RemoteException;
+import android.telephony.ims.aidl.IImsRegistration;
 import android.telephony.ServiceState;
 import android.telephony.SignalStrength;
 import android.telephony.SubscriptionManager;
@@ -626,9 +636,26 @@ public class InternetDialog extends SystemUIDialog implements
         if (TextUtils.isEmpty(carrierName) || !isInService) {
             carrierName = mContext.getString(R.string.mobile_data_disable_message_default_carrier);
         }
+        // Check if call is ongoing and IMS is registered on C_IWLAN type and adjust the dialog
+        // message
+        boolean isCallIdle = mTelephonyManager.getCallState() == TelephonyManager.CALL_STATE_IDLE;
+        IImsRegistration imsRegistrationImpl = mTelephonyManager.getImsRegistration(
+                mSubscriptionManager.getSlotIndex(mDefaultDataSubId), FEATURE_MMTEL);
+        boolean isImsRegisteredOverCiwlan = false;
+        try {
+            isImsRegisteredOverCiwlan = imsRegistrationImpl.getRegistrationTechnology() ==
+                    REGISTRATION_TECH_CROSS_SIM;
+        } catch (RemoteException ex) {
+            Log.e(TAG, "getRegistrationTechnology failed", ex);
+        }
+        Log.d(TAG, "isCallIdle=" + isCallIdle + ", isImsRegisteredOverCiwlan=" +
+                isImsRegisteredOverCiwlan);
+        String mobileDataDisableDialogMessage = (!isCallIdle && isImsRegisteredOverCiwlan) ?
+                mContext.getString(R.string.mobile_data_disable_ciwlan_call_message) :
+                mContext.getString(R.string.mobile_data_disable_message, carrierName);
         mAlertDialog = new Builder(mContext)
                 .setTitle(R.string.mobile_data_disable_title)
-                .setMessage(mContext.getString(R.string.mobile_data_disable_message, carrierName))
+                .setMessage(mobileDataDisableDialogMessage)
                 .setNegativeButton(android.R.string.cancel, (d, w) -> {
                     mMobileDataToggle.setChecked(true);
                 })

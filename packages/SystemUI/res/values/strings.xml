@@ -14,6 +14,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Changes from Qualcomm Innovation Center are provided under the following license:
+ *
+ * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause-Clear
  */
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
@@ -1952,6 +1957,9 @@
     <!-- Message body of the dialog to turn off data usage [CHAR LIMIT=NONE] -->
     <string name="mobile_data_disable_message">You won\’t have access to data or the internet through <xliff:g id="carrier" example="T-Mobile">%s</xliff:g>. Internet will only be available via Wi-Fi.</string>
 
+    <!-- Message body of the dialog to turn off mobile data when IMS is registered on C_IWLAN and device is in a call [CHAR LIMIT=NONE] -->
+    <string name="mobile_data_disable_ciwlan_call_message">Disabling mobile data may cause ongoing call disconnect.</string>
+
     <!-- Internet dialog, summary of mobile network when there is an ongoing call on the non default data subscription. [CHAR LIMIT=NONE] -->
     <string name="mobile_data_summary_not_allowed_to_disable_data">Unavailable during a call on the other SIM</string>
 
@@ -2542,4 +2550,18 @@
     =1 {# notification}
     other {# notifications}
     }</string>
+
+    <!-- [CHAR LIMIT=NONE] Le audio broadcast dialog, media app is broadcasting -->
+    <string name="broadcasting_description_is_broadcasting">Broadcasting</string>
+    <!-- [CHAR LIMIT=NONE] Le audio broadcast dialog, title -->
+    <string name="bt_le_audio_broadcast_dialog_title">Stop broadcasting <xliff:g id="app_name" example="App Name 1">%1$s</xliff:g>?</string>
+    <!-- [CHAR LIMIT=NONE] Le audio broadcast dialog, sub-title -->
+    <string name="bt_le_audio_broadcast_dialog_sub_title">If you broadcast <xliff:g id="switchApp" example="App Name 2">%1$s</xliff:g> or change the output, your current broadcast will stop</string>
+    <!-- [CHAR LIMIT=NONE] Le audio broadcast dialog, switch to others app. -->
+    <string name="bt_le_audio_broadcast_dialog_switch_app">Broadcast <xliff:g id="switchApp" example="App Name 2">%1$s</xliff:g></string>
+    <!-- [CHAR LIMIT=NONE] Le audio broadcast dialog, different output. -->
+    <string name="bt_le_audio_broadcast_dialog_different_output">Change output</string>
+    <!-- [CHAR LIMIT=NONE] Le audio broadcast dialog, media app is unknown -->
+    <string name="bt_le_audio_broadcast_dialog_unknown_name">Unknown</string>
+
 </resources>
