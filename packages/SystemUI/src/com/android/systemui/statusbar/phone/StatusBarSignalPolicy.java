@@ -79,6 +79,7 @@ public class StatusBarSignalPolicy implements SignalCallback,
     private boolean mHideWifi;
     private boolean mHideEthernet;
     private boolean mActivityEnabled;
+    private boolean mHideIms;
 
     // Track as little state as possible, and only for padding purposes
     private boolean mIsAirplaneMode = false;
@@ -167,13 +168,16 @@ public class StatusBarSignalPolicy implements SignalCallback,
             boolean hideMobile = hideList.contains(mSlotMobile);
             boolean hideWifi = hideList.contains(mSlotWifi);
             boolean hideEthernet = hideList.contains(mSlotEthernet);
+            boolean hideIms = hideList.contains(mSlotIms);
 
             if (hideAirplane != mHideAirplane || hideMobile != mHideMobile
-                    || hideEthernet != mHideEthernet || hideWifi != mHideWifi) {
+                    || hideEthernet != mHideEthernet || hideWifi != mHideWifi
+                    || hideIms != mHideIms) {
                 mHideAirplane = hideAirplane;
                 mHideMobile = hideMobile;
                 mHideEthernet = hideEthernet;
                 mHideWifi = hideWifi;
+                mHideIms = hideIms;
                 // Re-register to get new callbacks.
                 mNetworkController.removeCallback(this);
                 mNetworkController.addCallback(this);
@@ -524,7 +528,15 @@ public class StatusBarSignalPolicy implements SignalCallback,
 
     @Override
     public void setImsIcon(ImsIconState icon) {
-        mIconController.setImsIcon(mSlotIms, icon);
+        boolean showIms = icon.visible && !mHideIms;
+        String description = icon.contentDescription;
+
+        if (showIms) {
+            mIconController.setImsIcon(mSlotIms, icon);
+            mIconController.setIconVisibility(mSlotIms, true);
+        } else {
+            mIconController.setIconVisibility(mSlotIms, false);
+        }
     }
 
     private static abstract class SignalIconState {
