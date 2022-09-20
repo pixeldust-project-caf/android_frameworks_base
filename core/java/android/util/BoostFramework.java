@@ -444,13 +444,13 @@ public class BoostFramework {
             Object retVal = sIOPStart.invoke(mPerf, pid, pkgName, codePath);
             ret = (int) retVal;
         } catch (Exception e) {
-            Log.e(TAG, "Exception " + e);
+            //Log.e(TAG, "Exception " + e);
         }
         try {
              Object retVal = sUxIOPStart.invoke(mUxPerf, pid, pkgName, codePath);
              ret = (int) retVal;
          } catch (Exception e) {
-             Log.e(TAG, "Ux Perf Exception " + e);
+             //Log.e(TAG, "Ux Perf Exception " + e);
          }
 
         return ret;
