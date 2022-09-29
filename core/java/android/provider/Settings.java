@@ -11067,12 +11067,6 @@ public final class Settings {
         public static final String TORCH_LONG_PRESS_POWER = "torch_long_press_power";
 
         /**
-         * List of ; separated apps to be hidden from launcher.
-         * @hide
-         */
-        public static final String LAUNCHER_HIDDEN_APPS = "launcher_hidden_apps";
-
-        /**
          * These entries are considered common between the personal and the managed profile,
          * since the managed profile doesn't get to change them.
          */
