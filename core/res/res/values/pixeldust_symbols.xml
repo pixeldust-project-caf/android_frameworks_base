@@ -99,4 +99,8 @@
     <java-symbol type="string" name="config_batterymeterLandBoltPathStyleB" />
     <java-symbol type="string" name="config_batterymeterLandPowersavePathStyleB" />
     <java-symbol type="string" name="config_batterymeterLandErrorPerimeterPathStyleB" />
+
+    <!-- Transparent color variants -->
+    <java-symbol type="color" name="system_accent_transparent_background_light" />
+    <java-symbol type="color" name="system_accent_transparent_background_dark" />
 </resources>
