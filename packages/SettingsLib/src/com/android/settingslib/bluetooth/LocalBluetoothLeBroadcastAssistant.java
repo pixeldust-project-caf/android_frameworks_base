@@ -62,8 +62,6 @@ public class LocalBluetoothLeBroadcastAssistant implements LocalBluetoothProfile
     private BluetoothLeBroadcastMetadata mBluetoothLeBroadcastMetadata;
     private BluetoothLeBroadcastMetadata.Builder mBuilder;
     private boolean mIsProfileReady;
-    private Object mBassLock = new Object();
-    private BluetoothLeBroadcastAssistant.Callback mCallback = null;
 
     private final ServiceListener mServiceListener = new ServiceListener() {
         @Override
@@ -134,13 +132,7 @@ public class LocalBluetoothLeBroadcastAssistant implements LocalBluetoothProfile
             Log.d(TAG, "The BluetoothLeBroadcastAssistant is null");
             return;
         }
-        synchronized(mBassLock) {
-            if (mCallback == null) {
-                Log.d(TAG, "addSource: Callback is not registered yet");
-                return;
-            }
-            mService.addSource(sink, metadata, isGroupOp);
-        }
+        mService.addSource(sink, metadata, isGroupOp);
     }
 
     /**
@@ -197,13 +189,7 @@ public class LocalBluetoothLeBroadcastAssistant implements LocalBluetoothProfile
             Log.d(TAG, "The BluetoothLeBroadcastAssistant is null");
             return;
         }
-        synchronized(mBassLock) {
-            if (mCallback == null) {
-                Log.d(TAG, "removeSource: Callback is not registered yet");
-                return;
-            }
-            mService.removeSource(sink, sourceId);
-        }
+        mService.removeSource(sink, sourceId);
     }
 
     public void startSearchingForSources(@NonNull List<android.bluetooth.le.ScanFilter> filters) {
@@ -214,30 +200,7 @@ public class LocalBluetoothLeBroadcastAssistant implements LocalBluetoothProfile
             Log.d(TAG, "The BluetoothLeBroadcastAssistant is null");
             return;
         }
-        synchronized(mBassLock) {
-            if (mCallback == null) {
-                Log.d(TAG, "startSearchingForSources: Callback is not registered yet");
-                return;
-            }
-            mService.startSearchingForSources(filters);
-        }
-    }
-
-    public void stopSearchingForSources() {
-        if (DEBUG) {
-            Log.d(TAG, "stopSearchingForSources()");
-        }
-        if (mService == null) {
-            Log.d(TAG, "The BluetoothLeBroadcastAssistant is null");
-            return;
-        }
-        synchronized(mBassLock) {
-            if (mCallback == null) {
-                Log.d(TAG, "stopSearchingForSources: Callback is not registered yet");
-                return;
-            }
-            mService.stopSearchingForSources();
-        }
+        mService.startSearchingForSources(filters);
     }
 
     /**
@@ -283,14 +246,8 @@ public class LocalBluetoothLeBroadcastAssistant implements LocalBluetoothProfile
             Log.d(TAG, "The BluetoothLeBroadcast is null.");
             return;
         }
-        synchronized(mBassLock) {
-            if (mCallback != null) {
-                Log.d(TAG, "Callback is already registered.");
-                return;
-            }
-            mCallback = callback;
-            mService.registerCallback(executor, mCallback);
-        }
+
+        mService.registerCallback(executor, callback);
     }
 
     public void unregisterServiceCallBack(
@@ -300,17 +257,7 @@ public class LocalBluetoothLeBroadcastAssistant implements LocalBluetoothProfile
             return;
         }
 
-        synchronized(mBassLock) {
-            if (mCallback == null) {
-                Log.d(TAG, "Callback is not registered yet.");
-                return;
-            }
-            if (mCallback != callback) {
-                Log.e(TAG, "Invalid callback, use registered callback");
-            }
-            mService.unregisterCallback(mCallback);
-            mCallback = null;
-        }
+        mService.unregisterCallback(callback);
     }
 
     public boolean isProfileReady() {
