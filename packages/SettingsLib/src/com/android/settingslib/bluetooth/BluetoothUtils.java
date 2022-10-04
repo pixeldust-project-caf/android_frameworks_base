@@ -112,14 +112,6 @@ public class BluetoothUtils {
                 default:
                     // unrecognized device class; continue
             }
-            if (!cachedDevice.isLeAudioEnabled()) {
-                int tmpBtClass = btClass.getClassOfDevice() & BluetoothClass.Service.LE_AUDIO;
-                if (tmpBtClass == BluetoothClass.Service.LE_AUDIO) {
-                    return new Pair<>(
-                        getBluetoothDrawable(context, R.drawable.ic_adv_audio),
-                            context.getString(R.string.bluetooth_talkback_group));
-                }
-            }
         }
 
         List<LocalBluetoothProfile> profiles = cachedDevice.getProfiles();

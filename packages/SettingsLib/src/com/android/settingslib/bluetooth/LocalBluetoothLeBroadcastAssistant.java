@@ -203,17 +203,6 @@ public class LocalBluetoothLeBroadcastAssistant implements LocalBluetoothProfile
         mService.startSearchingForSources(filters);
     }
 
-    public void stopSearchingForSources() {
-        if (DEBUG) {
-            Log.d(TAG, "stopSearchingForSources()");
-        }
-        if (mService == null) {
-            Log.d(TAG, "The BluetoothLeBroadcastAssistant is null");
-            return;
-        }
-        mService.stopSearchingForSources();
-    }
-
     /**
      * Return true if a search has been started by this application.
      *
