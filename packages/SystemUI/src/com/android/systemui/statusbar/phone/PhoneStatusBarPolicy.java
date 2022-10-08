@@ -43,11 +43,13 @@ import android.provider.Settings.Global;
 import android.service.notification.ZenModeConfig;
 import android.telecom.TelecomManager;
 import android.text.format.DateFormat;
+import android.util.ArraySet;
 import android.util.Log;
 import android.view.View;
 
 import androidx.lifecycle.Observer;
 
+import com.android.systemui.Dependency;
 import com.android.systemui.R;
 import com.android.systemui.broadcast.BroadcastDispatcher;
 import com.android.systemui.dagger.qualifiers.DisplayId;
@@ -77,6 +79,7 @@ import com.android.systemui.statusbar.policy.RotationLockController.RotationLock
 import com.android.systemui.statusbar.policy.SensorPrivacyController;
 import com.android.systemui.statusbar.policy.UserInfoController;
 import com.android.systemui.statusbar.policy.ZenModeController;
+import com.android.systemui.tuner.TunerService;
 import com.android.systemui.util.RingerModeTracker;
 import com.android.systemui.util.time.DateFormatUtil;
 
@@ -102,6 +105,7 @@ public class PhoneStatusBarPolicy
                 KeyguardStateController.Callback,
                 PrivacyItemController.Callback,
                 LocationController.LocationChangeCallback,
+                TunerService.Tunable,
                 RecordingController.RecordingStateChangeCallback {
     private static final String TAG = "PhoneStatusBarPolicy";
     private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
@@ -164,8 +168,11 @@ public class PhoneStatusBarPolicy
     private BluetoothController mBluetooth;
     private AlarmManager.AlarmClockInfo mNextAlarm;
 
+    private final Context mContext;
+    private boolean mHideBluetooth;
+
     @Inject
-    public PhoneStatusBarPolicy(StatusBarIconController iconController,
+    public PhoneStatusBarPolicy(Context context, StatusBarIconController iconController,
             CommandQueue commandQueue, BroadcastDispatcher broadcastDispatcher,
             @UiBackground Executor uiBgExecutor, @Main Looper looper, @Main Resources resources,
             CastController castController, HotspotController hotspotController,
@@ -183,6 +190,7 @@ public class PhoneStatusBarPolicy
             RingerModeTracker ringerModeTracker,
             PrivacyItemController privacyItemController,
             PrivacyLogger privacyLogger) {
+        mContext = context;
         mIconController = iconController;
         mCommandQueue = commandQueue;
         mBroadcastDispatcher = broadcastDispatcher;
@@ -233,6 +241,9 @@ public class PhoneStatusBarPolicy
         mDisplayId = displayId;
         mSharedPreferences = sharedPreferences;
         mDateFormatUtil = dateFormatUtil;
+
+        Dependency.get(TunerService.class).addTunable(this,
+                StatusBarIconController.ICON_HIDE_LIST);
     }
 
     /** Initialize the object after construction. */
@@ -353,6 +364,22 @@ public class PhoneStatusBarPolicy
     }
 
     @Override
+    public void onTuningChanged(String key, String newValue) {
+        switch (key) {
+            case StatusBarIconController.ICON_HIDE_LIST:
+                ArraySet<String> hideList = StatusBarIconController.getIconHideList(mContext, newValue);
+                boolean hideBluetooth = hideList.contains(mSlotBluetooth);
+                if (hideBluetooth != mHideBluetooth) {
+                    mHideBluetooth = hideBluetooth;
+                    updateBluetooth();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
     public void onConfigChanged(ZenModeConfig config) {
         updateVolumeZen();
     }
@@ -460,7 +487,7 @@ public class PhoneStatusBarPolicy
         }
 
         mIconController.setBluetoothIcon(mSlotBluetooth,
-                new BluetoothIconState(bluetoothVisible, batteryLevel, contentDescription));
+                new BluetoothIconState(!mHideBluetooth && bluetoothVisible, batteryLevel, contentDescription));
     }
 
     private final void updateTTY() {
