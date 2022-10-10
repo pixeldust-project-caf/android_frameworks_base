@@ -57,6 +57,9 @@
     <!-- Fingerprint from stock ROM -->
     <java-symbol type="string" name="config_stockFingerprint" />
 
+    <!-- Whether to show WiFi/Hotspot standard -->
+    <java-symbol type="bool" name="config_show_network_standard" />
+
     <!-- More battery styles -->
     <java-symbol type="string" name="config_batterymeterLandPerimeterPathBuddy" />
     <java-symbol type="string" name="config_batterymeterLandFillMaskBuddy" />

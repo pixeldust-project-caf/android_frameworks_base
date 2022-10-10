@@ -234,11 +234,18 @@ public class StatusBarWifiView extends BaseStatusBarFrameLayout implements DarkR
     }
 
     private void setWifiStandard() {
+        final boolean showNetworkStandard = mContext.getResources().getBoolean(
+                com.android.internal.R.bool.config_show_network_standard);
+        if (!showNetworkStandard) {
+            mWifiStandard.setVisibility(View.GONE);
+            return;
+        }
         int wifiStandard = mState.wifiStandard;
         if (wifiStandard >= 4) {
             int identifier = getResources().getIdentifier("ic_wifi_standard_" + wifiStandard,
                     "drawable", getContext().getPackageName());
             if (identifier > 0) {
+                mWifiStandard.setVisibility(View.VISIBLE);
                 mWifiStandard.setImageDrawable(mContext.getDrawable(identifier));
             }
         }
