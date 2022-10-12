@@ -1234,7 +1234,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
     }
 
     private Action getFlashlightToggleAction() {
-        return new SinglePressAction(com.android.systemui.R.drawable.ic_lock_flashlight,
+        return new SinglePressAction(com.android.internal.R.drawable.ic_qs_flashlight,
                 com.android.systemui.R.string.global_action_flashlight) {
             public void onPress() {
                 try {
