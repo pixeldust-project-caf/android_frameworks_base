@@ -106,7 +106,6 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     private final NotificationPanelViewController mNotificationPanelViewController;
     private final NetworkController mNetworkController;
     private LinearLayout mSystemIconArea;
-    private boolean mSystemIconAreaPendingToShow;
     private View mOngoingCallChip;
     private View mNotificationIconAreaInner;
     private int mDisabled1;
@@ -501,7 +500,6 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     }
 
     private void hideSystemIconArea(boolean animate) {
-        mSystemIconAreaPendingToShow = false;
         animateHide(mSystemIconArea, animate);
     }
 
@@ -510,8 +508,6 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         int state = mAnimationScheduler.getAnimationState();
         if (state == IDLE || state == SHOWING_PERSISTENT_DOT) {
             animateShow(mSystemIconArea, animate);
-        } else {
-            mSystemIconAreaPendingToShow = true;
         }
     }
 
@@ -672,10 +668,6 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     @Nullable
     @Override
     public Animator onSystemEventAnimationFinish(boolean hasPersistentDot) {
-        if (mSystemIconAreaPendingToShow) {
-            mSystemIconAreaPendingToShow = false;
-            animateShow(mSystemIconArea, false);
-        }
         return mSystemEventAnimator.onSystemEventAnimationFinish(hasPersistentDot);
     }
 
