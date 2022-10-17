@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -39,7 +40,6 @@ import android.os.PowerManager.WakeLock;
 import android.telephony.TelephonyManager;
 import android.testing.AndroidTestingRunner;
 import android.testing.TestableLooper;
-import android.testing.TestableLooper.RunWithLooper;
 
 import androidx.test.filters.SmallTest;
 
@@ -64,8 +64,6 @@ import com.android.systemui.statusbar.phone.ScreenOffAnimationController;
 import com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
-import com.android.systemui.unfold.FoldAodAnimationController;
-import com.android.systemui.unfold.UnfoldLightRevealOverlayAnimation;
 import com.android.systemui.util.DeviceConfigProxy;
 import com.android.systemui.util.DeviceConfigProxyFake;
 import com.android.systemui.util.concurrency.FakeExecutor;
@@ -74,14 +72,13 @@ import com.android.systemui.util.time.FakeSystemClock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import dagger.Lazy;
 
 @RunWith(AndroidTestingRunner.class)
-@RunWithLooper
+@TestableLooper.RunWithLooper
 @SmallTest
 public class KeyguardViewMediatorTest extends SysuiTestCase {
     private KeyguardViewMediator mViewMediator;
@@ -109,8 +106,6 @@ public class KeyguardViewMediatorTest extends SysuiTestCase {
     private @Mock Lazy<NotificationShadeWindowController> mNotificationShadeWindowControllerLazy;
     private @Mock DreamOverlayStateController mDreamOverlayStateController;
     private @Mock ActivityLaunchAnimator mActivityLaunchAnimator;
-    private @Mock FoldAodAnimationController mFoldAodAnimationController;
-    private @Mock UnfoldLightRevealOverlayAnimation mUnfoldAnimation;
     private DeviceConfigProxy mDeviceConfig = new DeviceConfigProxyFake();
     private FakeExecutor mUiBgExecutor = new FakeExecutor(new FakeSystemClock());
 
@@ -165,18 +160,29 @@ public class KeyguardViewMediatorTest extends SysuiTestCase {
         assertFalse(mViewMediator.isAnimatingScreenOff());
     }
 
-    private void onUnfoldOverlayReady() {
-        ArgumentCaptor<Runnable> overlayReadyCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(mUnfoldAnimation).onScreenTurningOn(overlayReadyCaptor.capture());
-        overlayReadyCaptor.getValue().run();
-        TestableLooper.get(this).processAllMessages();
-    }
+    @Test
+    @TestableLooper.RunWithLooper(setAsMainLooper = true)
+    public void restoreBouncerWhenSimLockedAndKeyguardIsGoingAway() {
+        // When showing and provisioned
+        mViewMediator.onSystemReady();
+        when(mUpdateMonitor.isDeviceProvisioned()).thenReturn(true);
+        mViewMediator.setShowingLocked(true);
 
-    private void onFoldAodReady() {
-        ArgumentCaptor<Runnable> ready = ArgumentCaptor.forClass(Runnable.class);
-        verify(mFoldAodAnimationController).onScreenTurningOn(ready.capture());
-        ready.getValue().run();
+        // and a SIM becomes locked and requires a PIN
+        mViewMediator.mUpdateCallback.onSimStateChanged(
+                1 /* subId */,
+                0 /* slotId */,
+                TelephonyManager.SIM_STATE_PIN_REQUIRED);
+
+        // and the keyguard goes away
+        mViewMediator.setShowingLocked(false);
+        when(mStatusBarKeyguardViewManager.isShowing()).thenReturn(false);
+        mViewMediator.mUpdateCallback.onKeyguardVisibilityChanged(false);
+
         TestableLooper.get(this).processAllMessages();
+
+        // then make sure it comes back
+        verify(mStatusBarKeyguardViewManager, atLeast(1)).show(null);
     }
 
     @Test

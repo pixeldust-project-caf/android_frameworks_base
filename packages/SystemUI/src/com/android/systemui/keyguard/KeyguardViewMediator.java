@@ -431,6 +431,12 @@ public class KeyguardViewMediator extends CoreStartable implements Dumpable,
     private boolean mPendingLock;
 
     /**
+     * When starting to go away, flag a need to show the PIN lock so the keyguard can be brought
+     * back.
+     */
+    private boolean mPendingPinLock = false;
+
+    /**
      * Whether a power button gesture (such as double tap for camera) has been detected. This is
      * delivered directly from {@link KeyguardService}, immediately upon the gesture being detected.
      * This is used in {@link #onStartedWakingUp} to decide whether to execute the pending lock, or
@@ -504,6 +510,19 @@ public class KeyguardViewMediator extends CoreStartable implements Dumpable,
             };
 
     KeyguardUpdateMonitorCallback mUpdateCallback = new KeyguardUpdateMonitorCallback() {
+
+        @Override
+        public void onKeyguardVisibilityChanged(boolean showing) {
+            synchronized (KeyguardViewMediator.this) {
+                if (!showing && mPendingPinLock) {
+                    Log.i(TAG, "PIN lock requested, starting keyguard");
+
+                    // Bring the keyguard back in order to show the PIN lock
+                    mPendingPinLock = false;
+                    doKeyguardLocked(null);
+                }
+            }
+        }
 
         @Override
         public void onUserSwitching(int userId) {
@@ -1001,6 +1020,9 @@ public class KeyguardViewMediator extends CoreStartable implements Dumpable,
         @Override
         public void onBouncerShowingChanged() {
             synchronized (KeyguardViewMediator.this) {
+                if (mKeyguardStateController.isBouncerShowing()) {
+                    mPendingPinLock = false;
+                }
                 adjustStatusBarLocked(mKeyguardStateController.isBouncerShowing(), false);
             }
         }
@@ -3045,7 +3067,7 @@ public class KeyguardViewMediator extends CoreStartable implements Dumpable,
         }
     }
 
-    private void setShowingLocked(boolean showing) {
+    void setShowingLocked(boolean showing) {
         setShowingLocked(showing, false /* forceCallbacks */);
     }
 
