@@ -714,13 +714,13 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                 }
             } else if (GLOBAL_ACTION_KEY_SETTINGS.equals(actionKey)) {
                 if (mSystemSettings.getInt(
-                        Settings.System.GLOBAL_ACTIONS_SETTINGS, 0) != 0) {
+                        Settings.System.GLOBAL_ACTIONS_SETTINGS, 0) == 1) {
                     addIfShouldShowAction(tempActions, getSettingsAction());
                 }
             } else if (GLOBAL_ACTION_KEY_LOCKDOWN.equals(actionKey)) {
                 if (mSystemSettings.getIntForUser(
-                        Settings.System.GLOBAL_ACTIONS_LOCKDOWN, 0,
-                        currentUser.get().id) != 0) {
+                        Settings.System.GLOBAL_ACTIONS_LOCKDOWN, 1,
+                        currentUser.get().id) == 1) {
                     addIfShouldShowAction(tempActions, new LockDownAction());
                 }
             } else if (GLOBAL_ACTION_KEY_VOICEASSIST.equals(actionKey)) {
@@ -768,7 +768,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                 }
             } else if (GLOBAL_ACTION_KEY_EMERGENCY.equals(actionKey)) {
                 if (mSystemSettings.getInt(
-                        Settings.System.GLOBAL_ACTIONS_EMERGENCY, 0) == 1
+                        Settings.System.GLOBAL_ACTIONS_EMERGENCY, 1) == 1
                         && !mIsRebootMenu && shouldDisplayEmergency()) {
                     addIfShouldShowAction(tempActions, new EmergencyDialerAction());
 		}
