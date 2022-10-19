@@ -76,6 +76,8 @@ public class PixelPropsUtils {
 
     // Codenames for currently supported Pixels by Google
     private static final String[] pixelCodenames = {
+            "cheetah",
+            "panther",
             "bluejay",
             "oriole",
             "raven",
