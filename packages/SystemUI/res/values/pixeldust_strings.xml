@@ -30,4 +30,7 @@
 
     <!-- Name of the clock in status bar [CHAR LIMIT=30] -->
     <string name="clock">Clock</string>
+
+    <!-- SysUI tuner status bar ring mode -->
+    <string name="status_bar_ring_mode">Ring mode</string>
 </resources>
