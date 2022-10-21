@@ -15,10 +15,16 @@
  */
 package com.android.systemui.tuner;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.provider.Settings;
 import android.os.Bundle;
+import android.os.UserHandle;
 import android.view.MenuItem;
 
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragment;
+import androidx.preference.SwitchPreference;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
@@ -26,11 +32,20 @@ import com.android.systemui.R;
 
 public class StatusBarTuner extends PreferenceFragment {
 
+    private static final String SHOW_ACTIVITY_INDICATORS = "status_bar_show_activity_indicators";
+
+    private SwitchPreference mShowActivityIndicators;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
         getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+        mShowActivityIndicators = (SwitchPreference) findPreference(SHOW_ACTIVITY_INDICATORS);
+        mShowActivityIndicators.setChecked(Settings.System.getIntForUser(getActivity().getContentResolver(),
+            Settings.System.STATUS_BAR_SHOW_ACTIVITY_INDICATORS,
+            getActivity().getResources().getBoolean(R.bool.config_showActivity) ? 1 : 0,
+            UserHandle.USER_CURRENT) == 1);
     }
 
     @Override
@@ -57,5 +72,16 @@ public class StatusBarTuner extends PreferenceFragment {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean onPreferenceTreeClick(Preference preference) {
+        if (preference == mShowActivityIndicators) {
+            boolean checked = ((SwitchPreference)preference).isChecked();
+            Settings.System.putInt(getActivity().getContentResolver(),
+                    Settings.System.STATUS_BAR_SHOW_ACTIVITY_INDICATORS, checked ? 1 : 0);
+            return true;
+        }
+        return super.onPreferenceTreeClick(preference);
     }
 }
