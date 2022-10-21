@@ -31,6 +31,8 @@
     <!-- Name of the clock in status bar [CHAR LIMIT=30] -->
     <string name="clock">Clock</string>
 
-    <!-- SysUI tuner status bar ring mode -->
+    <!-- SysUI tuner labels -->
     <string name="status_bar_ring_mode">Ring mode</string>
+    <string name="status_bar_show_activity_indicators_title">Data activity indicators</string>
+    <string name="status_bar_show_activity_indicators_summary">Show data activity for Wi-Fi and cellular connection</string>
 </resources>
