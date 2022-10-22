@@ -4027,14 +4027,28 @@ public class CentralSurfacesImpl extends CoreStartable implements
 
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_QUICK_QS_PULLDOWN),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             super.onChange(selfChange, uri);
+            if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_QUICK_QS_PULLDOWN))) {
+                setStatusBarWindowViewOptions();
+            }
         }
 
         public void update() {
+            setStatusBarWindowViewOptions();
+        }
+    }
+
+    private void setStatusBarWindowViewOptions() {
+        if (mNotificationShadeWindowViewController != null) {
+            mNotificationShadeWindowViewController.setStatusBarWindowViewOptions();
         }
     }
 

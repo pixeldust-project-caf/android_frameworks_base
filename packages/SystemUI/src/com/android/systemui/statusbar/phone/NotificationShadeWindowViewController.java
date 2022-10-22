@@ -503,4 +503,12 @@ public class NotificationShadeWindowViewController {
     void setDragDownHelper(DragDownHelper dragDownHelper) {
         mDragDownHelper = dragDownHelper;
     }
+
+    public void setStatusBarWindowViewOptions() {
+        int isQsQuickPulldown = Settings.System.getIntForUser(mView.getContext().getContentResolver(),
+                Settings.System.STATUS_BAR_QUICK_QS_PULLDOWN, 0, UserHandle.USER_CURRENT);
+        if (mNotificationPanelViewController != null) {
+            mNotificationPanelViewController.setQsQuickPulldown(isQsQuickPulldown);
+        }
+    }
 }
