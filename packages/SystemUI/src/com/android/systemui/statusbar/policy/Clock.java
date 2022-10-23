@@ -81,8 +81,6 @@ public class Clock extends TextView implements
 
     public static final String STATUS_BAR_CLOCK_SECONDS =
             "system:" + Settings.System.STATUS_BAR_CLOCK_SECONDS;
-    private static final String STATUS_BAR_AM_PM =
-            "system:" + Settings.System.STATUS_BAR_AM_PM;
     public static final String STATUS_BAR_CLOCK_SIZE =
             "system:" + Settings.System.STATUS_BAR_CLOCK_SIZE;
     public static final String QS_HEADER_CLOCK_SIZE =
@@ -111,7 +109,7 @@ public class Clock extends TextView implements
     private static final int AM_PM_STYLE_SMALL   = 1;
     private static final int AM_PM_STYLE_GONE    = 2;
 
-    private int mAmPmStyle = AM_PM_STYLE_GONE;
+    private final int mAmPmStyle;
     private final boolean mShowDark;
     private boolean mShowSeconds;
     private Handler mSecondsHandler;
@@ -140,7 +138,7 @@ public class Clock extends TextView implements
                 R.styleable.Clock,
                 0, 0);
         try {
-            mAmPmStyle = a.getInt(R.styleable.Clock_amPmStyle, mAmPmStyle);
+            mAmPmStyle = a.getInt(R.styleable.Clock_amPmStyle, AM_PM_STYLE_GONE);
             mShowDark = a.getBoolean(R.styleable.Clock_showDark, true);
             mNonAdaptedColor = getCurrentTextColor();
         } finally {
@@ -212,7 +210,6 @@ public class Clock extends TextView implements
                     Dependency.get(Dependency.TIME_TICK_HANDLER), UserHandle.ALL);
             Dependency.get(TunerService.class).addTunable(this,
                     STATUS_BAR_CLOCK_SECONDS,
-                    STATUS_BAR_AM_PM,
                     STATUS_BAR_CLOCK_SIZE,
                     QS_HEADER_CLOCK_SIZE);
             mCommandQueue.addCallback(this);
@@ -324,21 +321,17 @@ public class Clock extends TextView implements
         super.setVisibility(visibility);
     }
 
-    final void updateClock(boolean forceTextUpdate) {
-        if (mDemoMode || mCalendar == null) return;
+    final void updateClock() {
+        if (mDemoMode) return;
         mCalendar.setTimeInMillis(System.currentTimeMillis());
         CharSequence smallTime = getSmallTime();
         // Setting text actually triggers a layout pass (because the text view is set to
         // wrap_content width and TextView always relayouts for this). Avoid needless
         // relayout if the text didn't actually change.
-        if (forceTextUpdate || !TextUtils.equals(smallTime, getText())) {
+        if (!TextUtils.equals(smallTime, getText())) {
             setText(smallTime);
         }
         setContentDescription(mContentDescriptionFormat.format(mCalendar.getTime()));
-    }
-
-    final void updateClock() {
-        updateClock(false);
     }
 
     /**
@@ -374,14 +367,6 @@ public class Clock extends TextView implements
                 mShowSeconds =
                         TunerService.parseIntegerSwitch(newValue, false);
                 updateShowSeconds();
-                break;
-            case STATUS_BAR_AM_PM:
-                mAmPmStyle =
-                        TunerService.parseInteger(newValue, AM_PM_STYLE_GONE);
-                // Force refresh of dependent variables.
-                mContentDescriptionFormatString = "";
-                mDateTimePatternGenerator = null;
-                updateClock(true);
                 break;
             case STATUS_BAR_CLOCK_SIZE:
                 mClockSize =
