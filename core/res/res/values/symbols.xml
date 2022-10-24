@@ -2675,6 +2675,11 @@
   <java-symbol type="string" name="face_acquired_roll_too_extreme" />
   <java-symbol type="string" name="face_acquired_obscured" />
   <java-symbol type="string" name="face_acquired_sensor_dirty" />
+  <java-symbol type="string" name="face_acquired_dark_glasses_detected" />
+  <java-symbol type="string" name="face_acquired_mouth_covering_detected" />
+  <java-symbol type="string" name="face_acquired_recalibrate_alt" />
+  <java-symbol type="string" name="face_acquired_dark_glasses_detected_alt" />
+  <java-symbol type="string" name="face_acquired_mouth_covering_detected_alt" />
   <java-symbol type="array" name="face_acquired_vendor" />
   <java-symbol type="string" name="face_name_template" />
   <java-symbol type="string" name="face_app_setting_name" />
@@ -4708,6 +4713,8 @@
 
   <java-symbol type="bool" name="config_volumeAdjustmentForRemoteGroupSessions" />
 
+  <java-symbol type="integer" name="config_mediaOutputSwitchDialogVersion" />
+
   <!-- List of shared library packages that should be loaded by the classloader after the
        code and resources provided by applications. -->
   <java-symbol type="array" name="config_sharedLibrariesLoadedAfterApp" />
@@ -4826,4 +4833,6 @@
 
   <java-symbol type="dimen" name="status_bar_height_default" />
   <java-symbol type="integer" name="config_maximumDelayTimeToDeactivateDataCall" />
+
+  <java-symbol type="bool" name="system_server_plays_face_haptics" />
 </resources>
