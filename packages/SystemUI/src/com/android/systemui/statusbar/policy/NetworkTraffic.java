@@ -395,7 +395,7 @@ public class NetworkTraffic extends TextView implements TunerService.Tunable {
                 break;
             case NETWORK_TRAFFIC_AUTOHIDE:
                 mAutoHide =
-                        TunerService.parseIntegerSwitch(newValue, false);
+                        TunerService.parseIntegerSwitch(newValue, true);
                 updateViews();
                 break;
             case NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD:
@@ -416,7 +416,7 @@ public class NetworkTraffic extends TextView implements TunerService.Tunable {
                 break;
             case NETWORK_TRAFFIC_HIDEARROW:
                 mHideArrows =
-                        TunerService.parseIntegerSwitch(newValue, false);
+                        TunerService.parseIntegerSwitch(newValue, true);
                 if (!mHideArrows) {
                     setGravity(Gravity.END|Gravity.CENTER_VERTICAL);
                 } else {
