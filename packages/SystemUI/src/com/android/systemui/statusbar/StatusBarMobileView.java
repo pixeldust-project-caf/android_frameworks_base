@@ -108,12 +108,6 @@ public class StatusBarMobileView extends FrameLayout implements DarkReceiver,
         outRect.bottom += translationY;
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        mMobileGroup.measure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(mMobileGroup.getMeasuredWidth(), mMobileGroup.getMeasuredHeight());
-    }
-
     private void init(boolean providerModel) {
         mProviderModel = providerModel;
         mDualToneHandler = new DualToneHandler(getContext());
