@@ -185,6 +185,8 @@ public class StatusBarMobileView extends BaseStatusBarFrameLayout implements Dar
         if (mState.typeId > 0) {
             mMobileType.setContentDescription(mState.typeContentDescription);
             mMobileType.setImageResource(mState.typeId);
+            mMobileType.setScaleX(getContext().getResources().getConfiguration().fontScale);
+            mMobileType.setScaleY(getContext().getResources().getConfiguration().fontScale);
             mMobileType.setVisibility(View.VISIBLE);
         } else {
             mMobile.setVisibility(View.GONE);
@@ -441,6 +443,8 @@ public class StatusBarMobileView extends BaseStatusBarFrameLayout implements Dar
         mMobileType.setVisibility(View.GONE);
         mMobileTypeSmall.setContentDescription(state.typeContentDescription);
         mMobileTypeSmall.setImageResource(state.typeId);
+        mMobileType.setScaleX(getContext().getResources().getConfiguration().fontScale);
+        mMobileType.setScaleY(getContext().getResources().getConfiguration().fontScale);
         mMobileTypeSmall.setVisibility(View.VISIBLE);
         setMobileSignalWidth(false);
     }
@@ -449,6 +453,8 @@ public class StatusBarMobileView extends BaseStatusBarFrameLayout implements Dar
         mMobileType.setVisibility(View.VISIBLE);
         mMobileType.setContentDescription(state.typeContentDescription);
         mMobileType.setImageResource(state.typeId);
+        mMobileType.setScaleX(getContext().getResources().getConfiguration().fontScale);
+        mMobileType.setScaleY(getContext().getResources().getConfiguration().fontScale);
         mMobileTypeSmall.setVisibility(View.GONE);
         setMobileSignalWidth(true);
     }
