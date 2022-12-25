@@ -110,8 +110,6 @@ import com.android.internal.policy.SystemBarUtils;
 import com.android.internal.util.LatencyTracker;
 import com.android.internal.util.pixeldust.PixeldustUtils;
 import com.android.keyguard.ActiveUnlockConfig;
-import com.android.keyguard.EmergencyButton;
-import com.android.keyguard.EmergencyButtonController;
 import com.android.keyguard.FaceAuthApiRequestReason;
 import com.android.keyguard.KeyguardClockSwitch.ClockSize;
 import com.android.keyguard.KeyguardStatusView;
@@ -401,9 +399,6 @@ public final class NotificationPanelViewController implements Dumpable {
     private boolean mAnimateNextPositionUpdate;
     private final ScreenOffAnimationController mScreenOffAnimationController;
     private final UnlockedScreenOffAnimationController mUnlockedScreenOffAnimationController;
-
-    private final EmergencyButtonController.Factory mEmergencyButtonControllerFactory;
-    private EmergencyButtonController mEmergencyButtonController;
 
     private TrackingStartedListener mTrackingStartedListener;
     private OpenCloseListener mOpenCloseListener;
@@ -748,7 +743,6 @@ public final class NotificationPanelViewController implements Dumpable {
             KeyguardBottomAreaViewModel keyguardBottomAreaViewModel,
             KeyguardBottomAreaInteractor keyguardBottomAreaInteractor,
             AlternateBouncerInteractor alternateBouncerInteractor,
-            EmergencyButtonController.Factory emergencyButtonControllerFactory,
             DreamingToLockscreenTransitionViewModel dreamingToLockscreenTransitionViewModel,
             OccludedToLockscreenTransitionViewModel occludedToLockscreenTransitionViewModel,
             LockscreenToDreamingTransitionViewModel lockscreenToDreamingTransitionViewModel,
@@ -847,7 +841,6 @@ public final class NotificationPanelViewController implements Dumpable {
         mContentResolver = contentResolver;
         mKeyguardQsUserSwitchComponentFactory = keyguardQsUserSwitchComponentFactory;
         mKeyguardUserSwitcherComponentFactory = keyguardUserSwitcherComponentFactory;
-        mEmergencyButtonControllerFactory = emergencyButtonControllerFactory;
         mFragmentService = fragmentService;
         mSettingsChangeObserver = new SettingsChangeObserver(handler);
         mSplitShadeEnabled =
@@ -1383,10 +1376,6 @@ public final class NotificationPanelViewController implements Dumpable {
                 stringResourceId ->
                         mKeyguardIndicationController.showTransientIndication(stringResourceId),
                 mVibratorHelper);
-        EmergencyButton emergencyButton =
-                mKeyguardBottomArea.findViewById(R.id.emergency_call_button);
-        mEmergencyButtonController = mEmergencyButtonControllerFactory.create(emergencyButton);
-        mEmergencyButtonController.init();
     }
 
     @VisibleForTesting
