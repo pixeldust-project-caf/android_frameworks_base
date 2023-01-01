@@ -150,6 +150,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
     private final LogBuffer mLogBuffer;
     private final MobileSignalControllerFactory mMobileFactory;
 
+    private boolean mSwap = false;
+
     private final Handler mHandler = new Handler();
 
     // Volte Icon Style
@@ -890,9 +892,9 @@ public class NetworkControllerImpl extends BroadcastReceiver
             if (volte1 && volte2) {
                 resId = R.drawable.stat_sys_volte_slot12;
             } else if (volte1) {
-                resId = R.drawable.stat_sys_volte_slot1;
+                resId = mSwap ? R.drawable.stat_sys_volte_slot2 : R.drawable.stat_sys_volte_slot1;
             } else if (volte2) {
-                resId = R.drawable.stat_sys_volte_slot2;
+                resId = mSwap ? R.drawable.stat_sys_volte_slot1 : R.drawable.stat_sys_volte_slot2;
             }
         } else {
             resId = getCustomVolteResId();
@@ -990,9 +992,9 @@ public class NetworkControllerImpl extends BroadcastReceiver
             if (vowifi1 && vowifi2) {
                 resVowId = R.drawable.stat_sys_vowifi_slot12;
             } else if (vowifi1) {
-                resVowId = R.drawable.stat_sys_vowifi_slot1;
+                resVowId = mSwap ? R.drawable.stat_sys_vowifi_slot2 : R.drawable.stat_sys_vowifi_slot1;
             } else if (vowifi2) {
-                resVowId = R.drawable.stat_sys_vowifi_slot2;
+                resVowId = mSwap ? R.drawable.stat_sys_vowifi_slot1 : R.drawable.stat_sys_vowifi_slot2;
             }
         } else {
             resVowId = getCustomVowifiResId();
@@ -1237,6 +1239,14 @@ public class NetworkControllerImpl extends BroadcastReceiver
         return false;
     }
 
+    private boolean isSwap(final @Nullable List<SubscriptionInfo> list) {
+        if (list != null && list.size() == 2) {
+            if (list.get(0).getSubscriptionId() > list.get(1).getSubscriptionId())
+                return true;
+        }
+        return false;
+    }
+
     @GuardedBy("mLock")
     @VisibleForTesting
     void setCurrentSubscriptionsLocked(List<SubscriptionInfo> subscriptions) {
@@ -1248,6 +1258,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
                         : lhs.getSimSlotIndex() - rhs.getSimSlotIndex();
             }
         });
+        mSwap = isSwap(subscriptions);
         Log.i(
                 TAG,
                 String.format(
