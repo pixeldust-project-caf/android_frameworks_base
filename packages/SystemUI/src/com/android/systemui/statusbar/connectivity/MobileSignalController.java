@@ -19,11 +19,9 @@ import static com.android.settingslib.mobile.MobileMappings.getDefaultIcons;
 import static com.android.settingslib.mobile.MobileMappings.getIconKey;
 import static com.android.settingslib.mobile.MobileMappings.mapIconSets;
 
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.net.NetworkCapabilities;
 import android.net.Uri;
@@ -82,6 +80,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     private final String mNetworkNameDefault;
     private final String mNetworkNameSeparator;
     private final ContentObserver mSettingsObserver;
+    private final Handler mReceiverHandler;
     // Save entire info for logging, we only use the id.
     final SubscriptionInfo mSubscriptionInfo;
     private Map<String, MobileIconGroup> mNetworkToIconLookup;
@@ -193,6 +192,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             }
         };
         mUserTracker = userTracker;
+        mReceiverHandler = new Handler(receiverLooper);
 
         mNetworkToIconLookup = mapIconSets(mConfig);
         mDefaultIcons = getDefaultIcons(mConfig);
@@ -269,6 +269,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             Settings.System.getUriFor(Settings.System.SHOW_FOURG_ICON),
             false, mSettingsObserver, UserHandle.USER_ALL);
         mUserTracker.addCallback(this, (r) -> { r.run(); });
+        mReceiverHandler.post(mTryRegisterIms);
         try {
             mImsMmTelManager.registerImsStateCallback(mContext.getMainExecutor(),
                     mImsStateCallback);
@@ -276,6 +277,29 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             Log.e(mTag, "failed to call registerImsStateCallback ", exception);
         }
     }
+
+    // There is no listener to monitor whether the IMS service is ready, so we have to retry the
+    // IMS registration.
+    private final Runnable mTryRegisterIms = new Runnable() {
+        private static final int MAX_RETRY = 12;
+        private int mRetryCount;
+
+        @Override
+        public void run() {
+            try {
+                mRetryCount++;
+                mImsMmTelManager.registerImsRegistrationCallback(
+                        mReceiverHandler::post, mRegistrationCallback);
+                Log.d(mTag, "registerImsRegistrationCallback succeeded");
+            } catch (RuntimeException | ImsException e) {
+                if (mRetryCount < MAX_RETRY) {
+                    Log.e(mTag, mRetryCount + " registerImsRegistrationCallback failed", e);
+                    // Wait for 5 seconds to retry
+                    mReceiverHandler.postDelayed(mTryRegisterIms, 5000);
+                }
+            }
+        }
+    };
 
     /**
      * Stop listening for phone state changes.
@@ -288,7 +312,6 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         } catch (Exception e){
             Log.e(mTag, "unregisterListener: fail to call unregisterImsRegistrationCallback", e);
         }
-        mContext.unregisterReceiver(mVolteSwitchObserver);
         mImsMmTelManager.unregisterImsStateCallback(mImsStateCallback);
     }
 
@@ -347,7 +370,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             Log.d(mTag, "setListeners: register CapabilitiesCallback and RegistrationCallback");
             mImsMmTelManager.registerMmTelCapabilityCallback(mContext.getMainExecutor(),
                     mCapabilityCallback);
-            mImsMmTelManager.registerImsRegistrationCallback (mContext.getMainExecutor(),
+            mImsMmTelManager.registerImsRegistrationCallback(mContext.getMainExecutor(),
                     mRegistrationCallback);
         } catch (ImsException e) {
             Log.e(mTag, "unable to register listeners.", e);
@@ -734,13 +757,6 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             Log.d(mTag, "onCapabilitiesStatusChanged isVoiceCapable=" + mCurrentState.voiceCapable
                     + " isVideoCapable=" + mCurrentState.videoCapable);
             notifyListenersIfNecessary();
-        }
-    };
-
-    private final BroadcastReceiver mVolteSwitchObserver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            Log.d(mTag, "action=" + intent.getAction());
-            notifyListeners();
         }
     };
 
