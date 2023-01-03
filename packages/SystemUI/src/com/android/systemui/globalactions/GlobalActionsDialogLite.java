@@ -137,6 +137,8 @@ import com.android.systemui.broadcast.BroadcastDispatcher;
 import com.android.systemui.colorextraction.SysuiColorExtractor;
 import com.android.systemui.dagger.qualifiers.Background;
 import com.android.systemui.dagger.qualifiers.Main;
+import com.android.systemui.flags.FeatureFlags;
+import com.android.systemui.plugins.ActivityStarter;
 import com.android.systemui.plugins.GlobalActions.GlobalActionsManager;
 import com.android.systemui.plugins.GlobalActionsPanelPlugin;
 import com.android.systemui.screenrecord.RecordingController;
@@ -274,8 +276,10 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
     private int mSmallestScreenWidthDp;
     private final Optional<CentralSurfaces> mCentralSurfacesOptional;
     private final KeyguardUpdateMonitor mKeyguardUpdateMonitor;
+    private final ActivityStarter mActivityStarter;
     private final DialogLaunchAnimator mDialogLaunchAnimator;
     private final RecordingController mRecordingController;
+    private final FeatureFlags mFlags;
     private boolean mFlashlightEnabled = false;
 
     private String[] mDefaultMenuActions;
@@ -393,7 +397,9 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
             Optional<CentralSurfaces> centralSurfacesOptional,
             KeyguardUpdateMonitor keyguardUpdateMonitor,
             DialogLaunchAnimator dialogLaunchAnimator,
-            RecordingController recordingController) {
+            RecordingController recordingController,
+            FeatureFlags flags,
+            ActivityStarter activityStarter) {
         mContext = context;
         mWindowManagerFuncs = windowManagerFuncs;
         mAudioManager = audioManager;
@@ -427,6 +433,8 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
         mKeyguardUpdateMonitor = keyguardUpdateMonitor;
         mDialogLaunchAnimator = dialogLaunchAnimator;
         mRecordingController = recordingController;
+        mFlags = flags;
+        mActivityStarter = activityStarter;
 
         // receive broadcasts
         IntentFilter filter = new IntentFilter();
@@ -1279,7 +1287,8 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                         mCentralSurfacesOptional.ifPresent(CentralSurfaces::collapseShade);
                     };
                     ScreenRecordDialog screenRecordDialog =
-                        mRecordingController.createScreenRecordDialog(mContext, onScreenRecord);
+                        mRecordingController.createScreenRecordDialog(mContext, mFlags,
+                            mDialogLaunchAnimator, mActivityStarter, onScreenRecord);
                     screenRecordDialog.show();
                 });
             }
