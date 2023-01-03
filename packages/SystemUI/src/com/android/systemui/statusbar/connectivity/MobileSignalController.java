@@ -255,7 +255,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 R.string.status_bar_network_name_separator).toString();
         mNetworkNameDefault = getTextIfExists(
                 com.android.internal.R.string.lockscreen_carrier_default).toString();
-        mSettingsObserver = new ContentObserver(mReceiverHandler) {
+        mSettingsObserver = new ContentObserver(new Handler()) {
             @Override
             public void onChange(boolean selfChange, Uri uri) {
                 if (Settings.System.SHOW_FOURG_ICON.equals(uri.getLastPathSegment())) {
