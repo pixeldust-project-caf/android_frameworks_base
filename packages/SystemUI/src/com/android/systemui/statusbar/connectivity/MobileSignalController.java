@@ -241,8 +241,8 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
 
     @Override
     void notifyListenersIfNecessary() {
-        mNetworkController.updateImsIcon();
         super.notifyListenersIfNecessary();
+        mNetworkController.updateImsIcon();
     }
 
     @Override
@@ -291,6 +291,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 mImsMmTelManager.registerImsRegistrationCallback(
                         mReceiverHandler::post, mRegistrationCallback);
                 Log.d(mTag, "registerImsRegistrationCallback succeeded");
+                queryImsState();
             } catch (RuntimeException | ImsException e) {
                 if (mRetryCount < MAX_RETRY) {
                     Log.e(mTag, mRetryCount + " registerImsRegistrationCallback failed", e);
@@ -403,6 +404,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         } catch (Exception e) {
             Log.e(mTag, "removeListeners", e);
         }
+        queryImsState();
     }
 
     @Override
