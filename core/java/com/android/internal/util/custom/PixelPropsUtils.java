@@ -196,6 +196,10 @@ public class PixelPropsUtils {
                 dlog("Setting sdk to 32");
                 setVersionField("DEVICE_INITIAL_SDK_INT", Build.VERSION_CODES.S);
             }
+            if (sIsGms && Build.VERSION.DEVICE_INITIAL_SDK_INT > Build.VERSION_CODES.S) {
+                dlog("Setting sdk to 32");
+                setVersionField("DEVICE_INITIAL_SDK_INT", Build.VERSION_CODES.S);
+            }
             // Set proper indexing fingerprint
             if (packageName.equals(PACKAGE_SETTINGS_SERVICES)) {
                 setPropValue("FINGERPRINT", Build.VERSION.INCREMENTAL);
