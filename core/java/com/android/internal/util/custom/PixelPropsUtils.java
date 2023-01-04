@@ -19,6 +19,7 @@ package com.android.internal.util.custom;
 import android.app.Application;
 import android.content.res.Resources;
 import android.os.Build;
+import android.os.Build.VERSION;
 import android.os.SystemProperties;
 import android.util.Log;
 
@@ -197,6 +198,10 @@ public class PixelPropsUtils {
                 setPropValue("MODEL", "angler");
                 setPropValue("TYPE", "userdebug");
             }
+            if (sIsGms && Build.VERSION.DEVICE_INITIAL_SDK_INT > Build.VERSION_CODES.S) {
+                dlog("Setting sdk to 32");
+                setVersionField("DEVICE_INITIAL_SDK_INT", Build.VERSION_CODES.S);
+            }
             // Set proper indexing fingerprint
             if (packageName.equals(PACKAGE_SETTINGS_SERVICES)) {
                 setPropValue("FINGERPRINT", Build.VERSION.INCREMENTAL);
@@ -213,6 +218,22 @@ public class PixelPropsUtils {
             field.setAccessible(false);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             Log.e(TAG, "Failed to set prop " + key, e);
+        }
+    }
+
+    private static void setVersionField(String key, Integer value) {
+        try {
+            // Unlock
+            Field field = Build.VERSION.class.getDeclaredField(key);
+            field.setAccessible(true);
+
+            // Edit
+            field.set(null, value);
+
+            // Lock
+            field.setAccessible(false);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            Log.e(TAG, "Failed to spoof Build." + key, e);
         }
     }
 
