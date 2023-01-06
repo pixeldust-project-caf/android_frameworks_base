@@ -204,7 +204,7 @@ public class WifiSignalController extends SignalController<WifiState, IconGroup>
                 ssidPresent && mCurrentState.activityIn,
                 ssidPresent && mCurrentState.activityOut,
                 wifiDesc, mCurrentState.isTransient, mCurrentState.statusLabel,
-                mCurrentState.wifiStandard
+                mCurrentState.inetCondition > 0 ? mCurrentState.wifiStandard : -1
         );
         callback.setWifiIndicators(wifiIndicators);
     }
