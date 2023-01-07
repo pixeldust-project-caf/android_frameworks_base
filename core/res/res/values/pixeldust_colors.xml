@@ -10,4 +10,8 @@
     <!-- Transparent color variants -->
     <color name="system_accent_transparent_background_light">@*android:color/system_accent1_100</color>
     <color name="system_accent_transparent_background_dark">@*android:color/system_accent1_900</color>
+
+    <!-- Keyguard buttons (udfps, affordance etc.) -->
+    <color name="keyguard_button_fg_color">@android:color/white</color>
+    <color name="keyguard_button_bg_color">#80000000</color>
 </resources>
