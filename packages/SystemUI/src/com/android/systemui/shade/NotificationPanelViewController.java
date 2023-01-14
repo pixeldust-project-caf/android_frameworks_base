@@ -4821,6 +4821,11 @@ public final class NotificationPanelViewController implements Dumpable {
                 /* notifyForDescendants */ false,
                 mSettingsChangeObserver
         );
+        mContentResolver.registerContentObserver(
+                Settings.System.getUriFor(Settings.System.KEYGUARD_QUICK_TOGGLES),
+                /* notifyForDescendants */ false,
+                mSettingsChangeObserver
+        );
     }
 
     /** Updates notification panel-specific flags on {@link SysUiState}. */
@@ -5667,6 +5672,11 @@ public final class NotificationPanelViewController implements Dumpable {
         @Override
         public void onChange(boolean selfChange) {
             debugLog("onSettingsChanged");
+
+            if (uri.getLastPathSegment().equals(
+                    Settings.System.KEYGUARD_QUICK_TOGGLES)) {
+                mKeyguardBottomAreaViewModel.updateSettings();
+            }
 
             // Can affect multi-user switcher visibility
             reInflateViews();
