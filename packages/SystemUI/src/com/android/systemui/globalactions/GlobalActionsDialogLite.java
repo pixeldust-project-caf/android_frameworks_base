@@ -72,6 +72,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
+import android.os.Process;
 import android.os.RemoteException;
 import android.os.SystemProperties;
 import android.os.UserHandle;
@@ -204,6 +205,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
     private static final String GLOBAL_ACTION_KEY_REBOOT_FASTBOOT = "reboot_fastboot";
     private static final String GLOBAL_ACTION_KEY_SCREENRECORD = "screenrecord";
     private static final String GLOBAL_ACTION_KEY_FLASHLIGHT = "flashlight";
+    private static final String GLOBAL_ACTION_KEY_RESTART_SYSTEMUI = "restart_systemui";
 
     // See NotificationManagerService#scheduleDurationReachedLocked
     private static final long TOAST_FADE_TIME = 333;
@@ -636,7 +638,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                 Settings.System.GLOBAL_ACTIONS_MAX_ROWS, 4);
         if (mIsRebootMenu) {
             // To show reboot to bootloader, recovery, fastbootd, system.
-            return 4;
+            return 5;
         } else if (globalactionMaxColumns != 0 &&
                       globalactionMaxRows != 0) {
             return globalactionMaxColumns * globalactionMaxRows;
@@ -790,7 +792,13 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                         Settings.System.GLOBAL_ACTIONS_EMERGENCY, 1) == 1
                         && !mIsRebootMenu && shouldDisplayEmergency()) {
                     addIfShouldShowAction(tempActions, new EmergencyDialerAction());
-		}
+                }
+            } else if (GLOBAL_ACTION_KEY_RESTART_SYSTEMUI.equals(actionKey)) {
+                if (!mIsRebootMenu) {
+                    continue;
+                } else {
+                    addIfShouldShowAction(tempActions, new RestartSystemUIAction());
+                }
             } else {
                 Log.e(TAG, "Invalid global action key " + actionKey);
             }
@@ -1391,6 +1399,27 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
             mHandler.postDelayed(() -> {
                 mDevicePolicyManager.logoutUser();
             }, mDialogPressDelay);
+        }
+    }
+
+    private final class RestartSystemUIAction extends SinglePressAction {
+        private RestartSystemUIAction() {
+            super(com.android.systemui.R.drawable.ic_restart_systemui, com.android.systemui.R.string.global_action_restart_systemui);
+        }
+
+        @Override
+        public boolean showDuringKeyguard() {
+            return true;
+        }
+
+        @Override
+        public boolean showBeforeProvisioning() {
+            return true;
+        }
+
+        @Override
+        public void onPress() {
+            Process.killProcess(Process.myPid());
         }
     }
 

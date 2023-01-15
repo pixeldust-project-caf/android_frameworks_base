@@ -24,6 +24,7 @@
     <string name="global_action_screenshot">Screenshot</string>
     <string name="global_action_screenrecord">Screenrecord</string>
     <string name="global_action_flashlight">Flashlight</string>
+    <string name="global_action_restart_systemui">SystemUI</string>
 
     <!-- Screenshot Delete Toast -->
     <string name="delete_screenshot_toast">Screenshot deleted</string>

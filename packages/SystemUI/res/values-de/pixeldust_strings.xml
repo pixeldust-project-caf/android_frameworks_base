@@ -18,6 +18,7 @@
     <string name="global_action_screenshot">Bildschirmfoto</string>
     <string name="global_action_screenrecord">Bildschirmaufnahme</string>
     <string name="global_action_flashlight">Taschenlampe</string>
+    <string name="global_action_restart_systemui">System-UI</string>
 
     <!-- Screenshot Delete Toast -->
     <string name="delete_screenshot_toast">Bildschirmfoto gelöscht</string>
