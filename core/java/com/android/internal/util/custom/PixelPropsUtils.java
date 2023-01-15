@@ -145,18 +145,14 @@ public class PixelPropsUtils {
         if (packageName.startsWith("com.google.")
                 || Arrays.asList(extraPackagesToChange).contains(packageName)) {
             if (packageName.equals("com.google.android.apps.photos")) {
-                if (SystemProperties.getBoolean("persist.sys.pixelprops.gphotos", true)) {
+            if (packageName.equals(PACKAGE_GPHOTOS)) {
+                if (SystemProperties.getBoolean("persist.sys.pixelprops.gphotos", false)) {
                     propsToChange.putAll(propsToChangePixelXL);
-                } else {
-                    propsToChange.putAll(propsToChangePixel5);
+                } else if (!isPixelDevice) {
+                    propsToChange.putAll(propsToChangePixel7Pro);
                 }
             } else {
-                if ((Arrays.asList(packagesToChangePixel7Pro).contains(packageName))
-                        || Arrays.asList(extraPackagesToChange).contains(packageName)) {
-                    propsToChange.putAll(propsToChangePixel7Pro);
-                } else {
-                    propsToChange.putAll(propsToChangePixel5);
-                }
+                propsToChange.putAll(propsToChangePixel7Pro);
             }
             if (DEBUG)
                 Log.d(TAG, "Defining props for: " + packageName);
