@@ -17,9 +17,12 @@
 package com.android.internal.util.custom;
 
 import android.app.Application;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.SystemProperties;
 import android.util.Log;
+
+import com.android.internal.R;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -29,9 +32,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PixelPropsUtils {
-    public static final String PACKAGE_GMS = "com.google.android.gms";
+
+    private static final String PACKAGE_ARCORE = "com.google.ar.core";
+    private static final String PACKAGE_GPHOTOS = "com.google.android.apps.photos";
+    private static final String PACKAGE_GMS = "com.google.android.gms";
+    private static final String PROCESS_GMS_UNSTABLE = PACKAGE_GMS + ".unstable";
+    private static final String PACKAGE_PS = "com.android.vending";
     public static final String PACKAGE_SETTINGS_SERVICES = "com.google.android.settings.intelligence";
-    public static final String PACKAGE_PS = "com.android.vending";
+
+    private static final String sCertifiedFp =
+            Resources.getSystem().getString(R.string.config_certifiedFingerprint);
+
+    private static final String sStockFp =
+            Resources.getSystem().getString(R.string.config_stockFingerprint);
 
     private static final String DEVICE = "ro.pixeldust.device";
     private static final String TAG = PixelPropsUtils.class.getSimpleName();
@@ -135,7 +148,7 @@ public class PixelPropsUtils {
     }
 
     public static void setProps(String packageName) {
-        if (packageName == null || (Arrays.asList(packagesToKeep).contains(packageName)) || isPixelDevice) {
+        if (packageName == null || (Arrays.asList(packagesToKeep).contains(packageName))) {
             return;
         }
         if (packageName.equals(PACKAGE_PS)) {
@@ -144,7 +157,6 @@ public class PixelPropsUtils {
         }
         if (packageName.startsWith("com.google.")
                 || Arrays.asList(extraPackagesToChange).contains(packageName)) {
-            if (packageName.equals("com.google.android.apps.photos")) {
             if (packageName.equals(PACKAGE_GPHOTOS)) {
                 if (SystemProperties.getBoolean("persist.sys.pixelprops.gphotos", false)) {
                     propsToChange.putAll(propsToChangePixelXL);
@@ -154,27 +166,33 @@ public class PixelPropsUtils {
             } else {
                 propsToChange.putAll(propsToChangePixel7Pro);
             }
-            if (DEBUG)
-                Log.d(TAG, "Defining props for: " + packageName);
-            for (Map.Entry<String, Object> prop : propsToChange.entrySet()) {
-                String key = prop.getKey();
-                Object value = prop.getValue();
-                if (propsToKeep.containsKey(packageName) && propsToKeep.get(packageName).contains(key)) {
-                    if (DEBUG)
-                        Log.d(TAG, "Not defining " + key + " prop for: " + packageName);
-                    continue;
+            dlog("Defining props for: " + packageName);
+            if (!isPixelDevice) {
+                for (Map.Entry<String, Object> prop : propsToChange.entrySet()) {
+                    String key = prop.getKey();
+                    Object value = prop.getValue();
+                    if (propsToKeep.containsKey(packageName) && propsToKeep.get(packageName).contains(key)) {
+                        dlog("Not defining " + key + " prop for: " + packageName);
+                        continue;
+                    }
+                    dlog("Defining " + key + " prop for: " + packageName);
+                    setPropValue(key, value);
                 }
-                if (DEBUG)
-                    Log.d(TAG, "Defining " + key + " prop for: " + packageName);
-                setPropValue(key, value);
             }
             if (packageName.equals(PACKAGE_GMS)) {
                 final String processName = Application.getProcessName();
-                if (processName.equals("com.google.android.gms.unstable")) {
+                if (processName.equals(PROCESS_GMS_UNSTABLE)) {
                     sIsGms = true;
                 }
             }
-            if (sIsGms) {
+            if (!sCertifiedFp.isEmpty() && (sIsGms || sIsFinsky)) {
+                dlog("Setting certified fingerprint for: " + packageName);
+                setPropValue("FINGERPRINT", sCertifiedFp);
+            } else if (!sStockFp.isEmpty() && packageName.equals(PACKAGE_ARCORE)) {
+                dlog("Setting stock fingerprint for: " + packageName);
+                setPropValue("FINGERPRINT", sStockFp);
+            } else if (sIsGms) {
+                dlog("Setting 6P fingerprint for: " + packageName);
                 setPropValue("FINGERPRINT", "google/angler/angler:6.0/MDB08L/2343525:user/release-keys");
                 setPropValue("MODEL", "angler");
                 setPropValue("TYPE", "userdebug");
@@ -188,8 +206,7 @@ public class PixelPropsUtils {
 
     private static void setPropValue(String key, Object value) {
         try {
-            if (DEBUG)
-                Log.d(TAG, "Defining prop " + key + " to " + value.toString());
+            dlog("Defining prop " + key + " to " + value.toString());
             Field field = Build.class.getDeclaredField(key);
             field.setAccessible(true);
             field.set(null, value);
@@ -213,5 +230,9 @@ public class PixelPropsUtils {
         if (sIsFinsky) {
             throw new UnsupportedOperationException();
         }
+    }
+
+    public static void dlog(String msg) {
+      if (DEBUG) Log.d(TAG, msg);
     }
 }
