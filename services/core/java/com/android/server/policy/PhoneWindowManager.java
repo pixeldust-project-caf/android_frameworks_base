@@ -2579,7 +2579,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     Settings.System.VOLBTN_MUSIC_CONTROLS, 1,
                     UserHandle.USER_CURRENT) == 1;
             mTorchLongPressPowerEnabled = Settings.Secure.getIntForUser(resolver,
-                    Settings.Secure.TORCH_LONG_PRESS_POWER, 0,
+                    Settings.Secure.TORCH_LONG_PRESS_POWER, 1,
                     UserHandle.USER_CURRENT) == 1;
         }
         if (updateRotation) {
