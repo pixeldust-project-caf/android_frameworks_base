@@ -67,7 +67,9 @@ public class PixelPropsUtils {
             "com.google.android.apps.wallpaper",
             "com.google.android.contacts",
             "com.google.android.deskclock",
-            "com.google.android.inputmethod.latin"
+            "com.google.android.inputmethod.latin",
+            "com.google.android.apps.turbo",
+            "com.google.android.googlequicksearchbox"
     };
 
     private static final String[] extraPackagesToChange = {
@@ -77,7 +79,6 @@ public class PixelPropsUtils {
     };
 
     private static final String[] packagesToKeep = {
-            "com.google.android.GoogleCamera",
             "com.google.android.GoogleCamera.Cameight",
             "com.google.android.GoogleCamera.Go",
             "com.google.android.GoogleCamera.Urnyx",
@@ -128,7 +129,7 @@ public class PixelPropsUtils {
         propsToChangePixel7Pro.put("PRODUCT", "cheetah");
         propsToChangePixel7Pro.put("MODEL", "Pixel 7 Pro");
         propsToChangePixel7Pro.put(
-                "FINGERPRINT", "google/cheetah/cheetah:13/TQ1A.221205.011/9244662:user/release-keys");
+                "FINGERPRINT", "google/cheetah/cheetah:13/TQ1A.230105.002/9325679:user/release-keys");
         propsToChangePixel5 = new HashMap<>();
         propsToChangePixel5.put("BRAND", "google");
         propsToChangePixel5.put("MANUFACTURER", "Google");
@@ -136,7 +137,7 @@ public class PixelPropsUtils {
         propsToChangePixel5.put("PRODUCT", "redfin");
         propsToChangePixel5.put("MODEL", "Pixel 5");
         propsToChangePixel5.put(
-                "FINGERPRINT", "google/redfin/redfin:13/TQ1A.221205.011/9244662:user/release-keys");
+                "FINGERPRINT", "google/redfin/redfin:13/TQ1A.230105.001/9292298:user/release-keys");
         propsToChangePixelXL = new HashMap<>();
         propsToChangePixelXL.put("BRAND", "google");
         propsToChangePixelXL.put("MANUFACTURER", "Google");
