@@ -245,7 +245,6 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
     protected ActionsDialogLite mDialog;
 
     private Action mSilentModeAction;
-    private ToggleAction mAirplaneModeOn;
 
     protected MyAdapter mAdapter;
     protected MyOverflowAdapter mOverflowAdapter;
@@ -253,7 +252,6 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
 
     private boolean mKeyguardShowing = false;
     private boolean mDeviceProvisioned = false;
-    private ToggleState mAirplaneState = ToggleState.Off;
     private boolean mIsWaitingForEcmExit = false;
     private boolean mHasTelephony;
     private boolean mHasVibrator;
@@ -436,10 +434,6 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
 
         mHasTelephony = packageManager.hasSystemFeature(PackageManager.FEATURE_TELEPHONY);
 
-        // get notified of phone state changes
-        mGlobalSettings.registerContentObserver(
-                Settings.Global.getUriFor(Settings.Global.AIRPLANE_MODE_ON), true,
-                mAirplaneModeObserver);
         mHasVibrator = vibrator.hasVibrator();
 
         mShowSilentToggle = SHOW_SILENT_TOGGLE && !resources.getBoolean(
@@ -468,7 +462,6 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
      */
     public void destroy() {
         mBroadcastDispatcher.unregisterReceiver(mBroadcastReceiver);
-        mGlobalSettings.unregisterContentObserver(mAirplaneModeObserver);
         mConfigurationController.removeCallback(this);
     }
 
@@ -677,8 +670,6 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
         } else {
             mSilentModeAction = new SilentModeTriStateAction(mAudioManager, mHandler);
         }
-        mAirplaneModeOn = new AirplaneModeAction();
-        onAirplaneModeChanged();
 
         mItems.clear();
         mOverflowItems.clear();
@@ -715,7 +706,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
             } else if (GLOBAL_ACTION_KEY_AIRPLANE.equals(actionKey)) {
                 if (mSystemSettings.getInt(
                         Settings.System.GLOBAL_ACTIONS_AIRPLANE, 0) == 1) {
-                    addIfShouldShowAction(tempActions, mAirplaneModeOn);
+                    addIfShouldShowAction(tempActions, getAirplaneModeToggleAction());
                 }
             } else if (GLOBAL_ACTION_KEY_BUGREPORT.equals(actionKey)) {
                 if (shouldDisplayBugReport(currentUser.get())) {
@@ -1603,7 +1594,6 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
 
     protected void prepareDialog() {
         refreshSilentMode();
-        mAirplaneModeOn.updateState(mAirplaneState);
         mAdapter.notifyDataSetChanged();
         mLifecycle.setCurrentState(Lifecycle.State.RESUMED);
     }
@@ -2255,47 +2245,30 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
         }
     }
 
-    private class AirplaneModeAction extends ToggleAction {
-        AirplaneModeAction() {
-            super(
-                    com.android.systemui.R.drawable.ic_lock_airplane_mode_enabled,
-                    com.android.systemui.R.drawable.ic_lock_airplane_mode_disabled,
-                    R.string.global_actions_toggle_airplane_mode,
-                    R.string.global_actions_airplane_mode_on_status,
-                    R.string.global_actions_airplane_mode_off_status);
-        }
-
-        void onToggle(boolean on) {
-            if (mHasTelephony && TelephonyProperties.in_ecm_mode().orElse(false)) {
-                mIsWaitingForEcmExit = true;
-                // Launch ECM exit dialog
-                Intent ecmDialogIntent =
-                        new Intent(TelephonyManager.ACTION_SHOW_NOTICE_ECM_BLOCK_OTHERS, null);
-                ecmDialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mContext.startActivity(ecmDialogIntent);
-            } else {
-                changeAirplaneModeSystemSetting(on);
+    private Action getAirplaneModeToggleAction() {
+        return new SinglePressAction(com.android.systemui.R.drawable.ic_lock_airplane_mode_enabled,
+                R.string.global_actions_toggle_airplane_mode) {
+            public void onPress() {
+                if (mHasTelephony && TelephonyProperties.in_ecm_mode().orElse(false)) {
+                    mIsWaitingForEcmExit = true;
+                    // Launch ECM exit dialog
+                    Intent ecmDialogIntent =
+                            new Intent(TelephonyManager.ACTION_SHOW_NOTICE_ECM_BLOCK_OTHERS, null);
+                    ecmDialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    mContext.startActivity(ecmDialogIntent);
+                } else {
+                    changeAirplaneModeSystemSetting(!isAirplaneModeOn());
+                }
             }
-        }
 
-        @Override
-        protected void changeStateFromPress(boolean buttonOn) {
-            if (!mHasTelephony) return;
-
-            // In ECM mode airplane state cannot be changed
-            if (!TelephonyProperties.in_ecm_mode().orElse(false)) {
-                mState = buttonOn ? ToggleState.TurningOn : ToggleState.TurningOff;
-                mAirplaneState = mState;
+            public boolean showDuringKeyguard() {
+                return true;
             }
-        }
 
-        public boolean showDuringKeyguard() {
-            return true;
-        }
-
-        public boolean showBeforeProvisioning() {
-            return false;
-        }
+            public boolean showBeforeProvisioning() {
+                return false;
+            }
+        };
     }
 
     private class SilentModeToggleAction extends ToggleAction {
@@ -2430,13 +2403,6 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
         }
     };
 
-    private final ContentObserver mAirplaneModeObserver = new ContentObserver(mMainHandler) {
-        @Override
-        public void onChange(boolean selfChange) {
-            onAirplaneModeChanged();
-        }
-    };
-
     private static final int MESSAGE_DISMISS = 0;
     private static final int MESSAGE_REFRESH = 1;
     private static final int MESSAGE_SHOW = 2;
@@ -2474,17 +2440,6 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
         }
     };
 
-    private void onAirplaneModeChanged() {
-        // Let the service state callbacks handle the state.
-        if (mAirplaneModeOn == null) return;
-
-        boolean airplaneModeOn = mGlobalSettings.getInt(
-                Settings.Global.AIRPLANE_MODE_ON,
-                0) == 1;
-        mAirplaneState = airplaneModeOn ? ToggleState.On : ToggleState.Off;
-        mAirplaneModeOn.updateState(mAirplaneState);
-    }
-
     /**
      * Change the airplane mode system setting
      */
@@ -2494,9 +2449,13 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
         intent.addFlags(Intent.FLAG_RECEIVER_REPLACE_PENDING);
         intent.putExtra("state", on);
         mContext.sendBroadcastAsUser(intent, UserHandle.ALL);
-        if (!mHasTelephony) {
-            mAirplaneState = on ? ToggleState.On : ToggleState.Off;
-        }
+    }
+
+    /**
+     * Check if the airplane mode is enabled
+     */
+    private boolean isAirplaneModeOn() {
+        return mGlobalSettings.getInt(Settings.Global.AIRPLANE_MODE_ON, 0) == 1;
     }
 
     @NonNull
