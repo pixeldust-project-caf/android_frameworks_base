@@ -359,8 +359,8 @@ public class AudioSystem
                 return AudioSystem.AUDIO_FORMAT_APTX_TWSP;
             case BluetoothCodecConfig.SOURCE_CODEC_TYPE_LC3:
                 return AudioSystem.AUDIO_FORMAT_LC3;
-            case SOURCE_CODEC_TYPE_OPUS: // TODO update in U
-                return AudioSystem.AUDIO_FORMAT_OPUS;
+            /*case SOURCE_CODEC_TYPE_OPUS: // TODO update in U
+                return AudioSystem.AUDIO_FORMAT_OPUS;*/
             default:
                 Log.e(TAG, "Unknown BT codec 0x" + Integer.toHexString(btCodec)
                         + " for conversion to audio format");

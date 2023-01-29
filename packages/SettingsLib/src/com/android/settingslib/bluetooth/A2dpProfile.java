@@ -377,9 +377,9 @@ public class A2dpProfile implements LocalBluetoothProfile {
            case BluetoothCodecConfig.SOURCE_CODEC_TYPE_LC3:
                index = 8;
                break;
-            case SOURCE_CODEC_TYPE_OPUS: // TODO update in U
+           /*case SOURCE_CODEC_TYPE_OPUS: // TODO update in U
                 index = 9;
-                break;
+                break;*/
            }
 
         if (index < 0) {
