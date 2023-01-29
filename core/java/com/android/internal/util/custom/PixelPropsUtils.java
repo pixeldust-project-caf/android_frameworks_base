@@ -172,9 +172,7 @@ public class PixelPropsUtils {
                 final String processName = Application.getProcessName();
                 if (processName.equals("com.google.android.gms.unstable")) {
                     sIsGms = true;
-                    setPropValue("FINGERPRINT", "google/angler/angler:6.0/MDB08L/2343525:user/release-keys");
-                    setPropValue("MODEL", "angler");
-                    setPropValue("TYPE", "userdebug");
+                    spoofBuildGms();
                 }
             }
             // Set proper indexing fingerprint
@@ -195,6 +193,12 @@ public class PixelPropsUtils {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             Log.e(TAG, "Failed to set prop " + key, e);
         }
+    }
+
+    private static void spoofBuildGms() {
+        // Alter model name and fingerprint to avoid hardware attestation enforcement
+        setPropValue("FINGERPRINT", "google/angler/angler:6.0/MDB08L/2343525:user/release-keys");
+        setPropValue("MODEL", Build.MODEL + "\u200b");
     }
 
     private static boolean isCallerSafetyNet() {
