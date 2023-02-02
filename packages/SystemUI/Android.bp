@@ -127,6 +127,7 @@ android_library {
         "LowLightDreamLib",
         "colorkt",
         "themelib",
+        "bcsmartspace-google",
     ],
     manifest: "AndroidManifest.xml",
 
