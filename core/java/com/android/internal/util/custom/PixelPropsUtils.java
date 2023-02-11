@@ -175,6 +175,7 @@ public class PixelPropsUtils {
                     sIsGms = true;
                 }
             }
+            boolean useFallbackFp = false;
             if (!sCertifiedFp.isEmpty() && (sIsGms || sIsFinsky)) {
                 dlog("Setting certified fingerprint for: " + packageName);
                 setPropValue("FINGERPRINT", sCertifiedFp);
@@ -182,12 +183,16 @@ public class PixelPropsUtils {
                 dlog("Setting stock fingerprint for: " + packageName);
                 setPropValue("FINGERPRINT", sStockFp);
             } else if (sIsGms) {
-                dlog("Setting 6P fingerprint for: " + packageName);
-                setPropValue("FINGERPRINT", "google/angler/angler:6.0/MDB08L/2343525:user/release-keys");
-                setPropValue("MODEL", "angler");
+                dlog("Setting Pixel XL fingerprint for: " + packageName);
+                setPropValue("FINGERPRINT", "google/marlin/marlin:7.1.2/NJH47F/4146041:user/release-keys");
+                setPropValue("PRODUCT", "marlin");
+                setPropValue("DEVICE", "marlin");
+                setPropValue("MODEL", "Pixel XL");
+                setVersionField("DEVICE_INITIAL_SDK_INT", Build.VERSION_CODES.N_MR1);
                 setPropValue("TYPE", "userdebug");
+                useFallbackFp = true;
             }
-            if (sIsGms && Build.VERSION.DEVICE_INITIAL_SDK_INT > Build.VERSION_CODES.S) {
+            if (!useFallbackFp && sIsGms && Build.VERSION.DEVICE_INITIAL_SDK_INT > Build.VERSION_CODES.S) {
                 dlog("Setting sdk to 32");
                 setVersionField("DEVICE_INITIAL_SDK_INT", Build.VERSION_CODES.S);
             }
@@ -227,17 +232,14 @@ public class PixelPropsUtils {
     }
 
     private static boolean isCallerSafetyNet() {
-        return Arrays.stream(Thread.currentThread().getStackTrace())
+        return sIsGms && Arrays.stream(Thread.currentThread().getStackTrace())
                 .anyMatch(elem -> elem.getClassName().contains("DroidGuard"));
     }
 
     public static void onEngineGetCertificateChain() {
-        // Check stack for SafetyNet
-        if (sIsGms && isCallerSafetyNet()) {
-            throw new UnsupportedOperationException();
-        }
-        // Check stack for PlayIntegrity
-        if (sIsFinsky) {
+        // Check stack for SafetyNet or Play Integrity
+        if (isCallerSafetyNet() || sIsFinsky) {
+            Log.i(TAG, "Blocked key attestation sIsGms=" + sIsGms + " sIsFinsky=" + sIsFinsky);
             throw new UnsupportedOperationException();
         }
     }
