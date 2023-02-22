@@ -36,6 +36,7 @@ import android.provider.Settings;
 
 import com.android.settingslib.R;
 import com.android.settingslib.Utils;
+import com.android.wifitrackerlib.WifiEntry;
 
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -365,6 +366,9 @@ public class WifiStatusTracker {
     private String getValidSsid(WifiInfo info) {
         String ssid = info.getSSID();
         if (ssid != null && !WifiManager.UNKNOWN_SSID.equals(ssid)) {
+            if (WifiEntry.isGbkSsidSupported()) {
+                return com.android.wifitrackerlib.Utils.getReadableText(ssid);
+            }
             return ssid;
         }
         return null;
