@@ -50,7 +50,6 @@ public class PixelPropsUtils {
     private static final String DEVICE = "ro.pixeldust.device";
     private static final String TAG = PixelPropsUtils.class.getSimpleName();
     private static final boolean DEBUG = false;
-    private static final Map<String, Object> propsToChange;
     private static final Map<String, Object> propsToChangePixel7Pro;
     private static final Map<String, Object> propsToChangePixelXL;
     private static final Map<String, ArrayList<String>> propsToKeep;
@@ -116,7 +115,6 @@ public class PixelPropsUtils {
     static {
         propsToKeep = new HashMap<>();
         propsToKeep.put(PACKAGE_SETTINGS_SERVICES, new ArrayList<>(Collections.singletonList("FINGERPRINT")));
-        propsToChange = new HashMap<>();
         propsToChangePixel7Pro = new HashMap<>();
         propsToChangePixel7Pro.put("BRAND", "google");
         propsToChangePixel7Pro.put("MANUFACTURER", "Google");
@@ -136,6 +134,7 @@ public class PixelPropsUtils {
     }
 
     public static void setProps(String packageName) {
+        Map<String, Object> propsToChange = new HashMap<>();
         boolean isPixelDevice = Arrays.asList(pixelCodenames).contains(SystemProperties.get(DEVICE));
         if (packageName == null || (Arrays.asList(packagesToKeep).contains(packageName))) {
             return;
