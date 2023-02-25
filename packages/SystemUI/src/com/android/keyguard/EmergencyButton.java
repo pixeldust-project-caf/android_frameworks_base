@@ -113,39 +113,7 @@ public class EmergencyButton extends Button {
 
     public void updateEmergencyCallButton(boolean isInCall, boolean hasTelephonyRadio,
                                           boolean simLocked, boolean isEmergencyCapable) {
-        boolean visible = false;
-        if (hasTelephonyRadio) {
-            // Emergency calling requires a telephony radio.
-            if (isInCall) {
-                visible = true; // always show "return to call" if phone is off-hook
-            } else {
-                if (simLocked) {
-                    // Some countries can't handle emergency calls while SIM is locked.
-                    visible = mEnableEmergencyCallWhileSimLocked;
-                } else {
-                    // Show if there is a secure screen (pin/pattern/SIM pin/SIM puk) or config set
-                    visible = mLockPatternUtils.isSecure(KeyguardUpdateMonitor.getCurrentUser()) ||
-                            mContext.getResources().getBoolean(R.bool.config_showEmergencyButton);
-                }
-
-                if (mContext.getResources().getBoolean(R.bool.kg_hide_emgcy_btn_when_oos)) {
-                    visible = visible && isEmergencyCapable;
-                }
-            }
-        }
-        if (visible) {
-            setVisibility(View.VISIBLE);
-
-            int textId;
-            if (isInCall) {
-                textId = com.android.internal.R.string.lockscreen_return_to_call;
-            } else {
-                textId = com.android.internal.R.string.lockscreen_emergency_call;
-            }
-            setText(textId);
-        } else {
-            setVisibility(View.GONE);
-        }
+        setVisibility(View.GONE);
     }
 
 }
