@@ -50,7 +50,6 @@ public class PixelPropsUtils {
     private static final String DEVICE = "ro.pixeldust.device";
     private static final String TAG = PixelPropsUtils.class.getSimpleName();
     private static final boolean DEBUG = false;
-    private static boolean isPixelDevice = false;
     private static final Map<String, Object> propsToChange;
     private static final Map<String, Object> propsToChangePixel7Pro;
     private static final Map<String, Object> propsToChangePixelXL;
@@ -134,10 +133,10 @@ public class PixelPropsUtils {
         propsToChangePixelXL.put("MODEL", "Pixel XL");
         propsToChangePixelXL.put(
                 "FINGERPRINT", "google/marlin/marlin:10/QP1A.191005.007.A3/5972272:user/release-keys");
-        isPixelDevice = Arrays.asList(pixelCodenames).contains(SystemProperties.get(DEVICE));
     }
 
     public static void setProps(String packageName) {
+        boolean isPixelDevice = Arrays.asList(pixelCodenames).contains(SystemProperties.get(DEVICE));
         if (packageName == null || (Arrays.asList(packagesToKeep).contains(packageName))) {
             return;
         }
@@ -150,7 +149,8 @@ public class PixelPropsUtils {
             if (packageName.equals(PACKAGE_GPHOTOS)) {
                 if (SystemProperties.getBoolean("persist.sys.pixelprops.gphotos", false)) {
                     propsToChange.putAll(propsToChangePixelXL);
-                } else if (!isPixelDevice) {
+                } else {
+                    if (isPixelDevice) return;
                     propsToChange.putAll(propsToChangePixel7Pro);
                 }
             } else {
