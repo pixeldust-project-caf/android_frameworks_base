@@ -36,7 +36,6 @@ public class PixelPropsUtils {
     private static final String DEVICE = "ro.pixeldust.device";
     private static final String TAG = PixelPropsUtils.class.getSimpleName();
     private static final boolean DEBUG = false;
-    private static boolean isPixelDevice = false;
     private static final Map<String, Object> propsToChange;
     private static final Map<String, Object> propsToChangePixel7Pro;
     private static final Map<String, Object> propsToChangePixel5;
@@ -125,11 +124,10 @@ public class PixelPropsUtils {
         propsToChangePixelXL.put("MODEL", "Pixel XL");
         propsToChangePixelXL.put(
                 "FINGERPRINT", "google/marlin/marlin:10/QP1A.191005.007.A3/5972272:user/release-keys");
-        isPixelDevice = Arrays.asList(pixelCodenames).contains(SystemProperties.get(DEVICE));
     }
 
     public static void setProps(String packageName) {
-        if (packageName == null || (Arrays.asList(packagesToKeep).contains(packageName)) || isPixelDevice) {
+        if (packageName == null || (Arrays.asList(packagesToKeep).contains(packageName))) {
             return;
         }
         if (packageName.equals(PACKAGE_PS)) {
@@ -138,10 +136,14 @@ public class PixelPropsUtils {
         }
         if (packageName.startsWith("com.google.")
                 || Arrays.asList(extraPackagesToChange).contains(packageName)) {
+
+            boolean isPixelDevice = Arrays.asList(pixelCodenames).contains(SystemProperties.get(DEVICE));
+
             if (packageName.equals("com.google.android.apps.photos")) {
                 if (SystemProperties.getBoolean("persist.sys.pixelprops.gphotos", true)) {
                     propsToChange.putAll(propsToChangePixelXL);
                 } else {
+                    if (isPixelDevice) return;
                     propsToChange.putAll(propsToChangePixel5);
                 }
             } else {
@@ -170,12 +172,10 @@ public class PixelPropsUtils {
                 final String processName = Application.getProcessName();
                 if (processName.equals("com.google.android.gms.unstable")) {
                     sIsGms = true;
+                    setPropValue("FINGERPRINT", "google/angler/angler:6.0/MDB08L/2343525:user/release-keys");
+                    setPropValue("MODEL", "angler");
+                    setPropValue("TYPE", "userdebug");
                 }
-            }
-            if (sIsGms) {
-                setPropValue("FINGERPRINT", "google/angler/angler:6.0/MDB08L/2343525:user/release-keys");
-                setPropValue("MODEL", "angler");
-                setPropValue("TYPE", "userdebug");
             }
             // Set proper indexing fingerprint
             if (packageName.equals(PACKAGE_SETTINGS_SERVICES)) {
