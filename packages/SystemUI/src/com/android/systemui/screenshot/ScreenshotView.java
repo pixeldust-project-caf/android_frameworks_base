@@ -95,6 +95,7 @@ import com.android.systemui.shared.system.InputMonitorCompat;
 import com.android.systemui.shared.system.QuickStepContract;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 /**
  * Handles the visual elements and animations for the screenshot flow.
@@ -139,6 +140,7 @@ public class ScreenshotView extends FrameLayout implements
     private boolean mOrientationPortrait;
     private boolean mDirectionLTR;
 
+    private ScreenshotSelectorView mScreenshotSelectorView;
     private ImageView mScrollingScrim;
     private DraggableConstraintLayout mScreenshotStatic;
     private ViewGroup mMessageContainer;
@@ -386,6 +388,7 @@ public class ScreenshotView extends FrameLayout implements
         mDismissButton = requireNonNull(findViewById(R.id.screenshot_dismiss_button));
         mScrollablePreview = requireNonNull(findViewById(R.id.screenshot_scrollable_preview));
         mScreenshotFlash = requireNonNull(findViewById(R.id.screenshot_flash));
+        mScreenshotSelectorView = requireNonNull(findViewById(R.id.screenshot_selector));
         mShareChip = requireNonNull(mActionsContainer.findViewById(R.id.screenshot_share_chip));
         mEditChip = requireNonNull(mActionsContainer.findViewById(R.id.screenshot_edit_chip));
         mScrollChip = requireNonNull(mActionsContainer.findViewById(R.id.screenshot_scroll_chip));
@@ -401,6 +404,8 @@ public class ScreenshotView extends FrameLayout implements
         mActionsContainerBackground.setTouchDelegate(actionsDelegate);
 
         setFocusable(true);
+        mScreenshotSelectorView.setFocusable(true);
+        mScreenshotSelectorView.setFocusableInTouchMode(true);
         mActionsContainer.setScrollX(0);
 
         mNavMode = getResources().getInteger(
@@ -455,6 +460,12 @@ public class ScreenshotView extends FrameLayout implements
         mCallbacks = callbacks;
         mActionExecutor = actionExecutor;
         mFlags = flags;
+    }
+
+    void takePartialScreenshot(Consumer<Rect> onPartialScreenshotSelected) {
+        mScreenshotSelectorView.setOnScreenshotSelected(onPartialScreenshotSelected);
+        mScreenshotSelectorView.setVisibility(View.VISIBLE);
+        mScreenshotSelectorView.requestFocus();
     }
 
     void setScreenshot(Bitmap bitmap, Insets screenInsets) {
@@ -1103,6 +1114,7 @@ public class ScreenshotView extends FrameLayout implements
         mQuickShareChip = null;
         setAlpha(1);
         mScreenshotStatic.setAlpha(1);
+        mScreenshotSelectorView.stop();
     }
 
     private void startSharedTransition(ActionTransition transition) {
