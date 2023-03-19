@@ -44,7 +44,7 @@ interface KeyguardQuickAffordanceRegistry<T : KeyguardQuickAffordanceConfig> {
     fun updateSettings()
 }
 
-const val DEFAULT_CONFIG = HOME_CONTROLS + "," + FLASHLIGHT + ";" + QUICK_ACCESS_WALLET + "," + QR_CODE_SCANNER + "," + CAMERA
+const val DEFAULT_CONFIG = HOME_CONTROLS + "," + FLASHLIGHT + "," + DO_NOT_DISTURB + ";" + QUICK_ACCESS_WALLET + "," + QR_CODE_SCANNER + "," + CAMERA
 
 class KeyguardQuickAffordanceRegistryImpl
 @Inject
