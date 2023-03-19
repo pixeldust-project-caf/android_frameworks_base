@@ -49,4 +49,7 @@
 
     <!-- Whether devices suports in-display fingerprint when screen is off -->
     <java-symbol type="bool" name="config_supportsScreenOffUdfps" />
+
+    <!-- Bootleg unneccesary gradient declaration | Just for our shishu bars -->
+    <java-symbol type="color" name="bootleg_accent_gradient_end_color" />
 </resources>
