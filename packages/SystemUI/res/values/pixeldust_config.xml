@@ -32,4 +32,7 @@
 
     <!-- Udfps vendor code -->
     <integer name="config_udfps_vendor_code">0</integer>
+
+    <!-- Whether to enable lock screen quick affordances -->
+    <bool name="flag_enable_customizable_lock_screen_quick_affordances">true</bool>
 </resources>
