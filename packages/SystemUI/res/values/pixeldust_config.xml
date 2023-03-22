@@ -22,4 +22,7 @@
 
     <!-- Charging info current divider, if needed -->
     <integer name="config_currentInfoDivider" translatable="false">1000</integer>
+
+    <!-- Whether to enable lock screen quick affordances -->
+    <bool name="flag_enable_customizable_lock_screen_quick_affordances">true</bool>
 </resources>
