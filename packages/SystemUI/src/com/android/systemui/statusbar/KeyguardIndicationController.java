@@ -317,10 +317,12 @@ public class KeyguardIndicationController {
             R.id.keyguard_indication_text_bottom);
         mInitialTextColorState = mTopIndicationView != null
                 ? mTopIndicationView.getTextColors() : ColorStateList.valueOf(Color.WHITE);
-        mRotateTextViewController = new KeyguardIndicationRotateTextViewController(
-            mLockScreenIndicationView,
-            mExecutor,
-            mStatusBarStateController);
+        if (mRotateTextViewController == null || !mRotateTextViewController.isAttachedToWindow()) {
+            mRotateTextViewController = new KeyguardIndicationRotateTextViewController(
+                mLockScreenIndicationView,
+                mExecutor,
+                mStatusBarStateController);
+        }
         mBatteryBar = indicationArea.findViewById(R.id.battery_bar_view);
         updateDeviceEntryIndication(false /* animate */);
         updateOrganizedOwnedDevice();
