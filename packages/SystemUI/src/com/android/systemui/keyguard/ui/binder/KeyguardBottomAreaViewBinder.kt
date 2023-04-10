@@ -34,7 +34,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import com.android.keyguard.EmergencyCarrierArea
 import com.android.settingslib.Utils
 import com.android.systemui.R
 import com.android.systemui.animation.Expandable
@@ -111,8 +110,6 @@ object KeyguardBottomAreaViewBinder {
         val indicationText: TextView = view.requireViewById(R.id.keyguard_indication_text)
         val indicationTextBottom: TextView =
             view.requireViewById(R.id.keyguard_indication_text_bottom)
-        val emergencyCarrierArea: EmergencyCarrierArea =
-            view.requireViewById(R.id.keyguard_selector_fade_container)
 
         view.clipChildren = false
         view.clipToPadding = false
@@ -149,16 +146,6 @@ object KeyguardBottomAreaViewBinder {
                     viewModel.isOverlayContainerVisible.collect { isVisible ->
                         overlayContainer.visibility =
                             if (isVisible) {
-                                View.VISIBLE
-                            } else {
-                                View.INVISIBLE
-                            }
-                        val showEmergencyButton: Boolean =
-                            view.context.resources.getBoolean(R.bool.config_showEmergencyButton)
-                        emergencyCarrierArea.visibility =
-                            if (!showEmergencyButton) {
-                                View.GONE
-                            } else if (isVisible) {
                                 View.VISIBLE
                             } else {
                                 View.INVISIBLE
