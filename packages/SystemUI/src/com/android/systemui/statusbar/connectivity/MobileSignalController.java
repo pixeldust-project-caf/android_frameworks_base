@@ -36,6 +36,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.UserHandle;
+import android.os.SystemProperties;
 import android.provider.Settings;
 import android.provider.Settings.Global;
 import android.telephony.AccessNetworkConstants;
@@ -285,7 +286,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         mLastState.iconGroup = mCurrentState.iconGroup = mDefaultIcons;
         mImsMmTelManager = ImsMmTelManager.createForSubscriptionId(info.getSubscriptionId());
         mMobileStatusTracker = mobileStatusTrackerFactory.createTracker(mMobileCallback);
-        mProviderModelBehavior = featureFlags.isEnabled(Flags.COMBINED_STATUS_BAR_SIGNAL_ICONS);
+        mProviderModelBehavior = SystemProperties.getBoolean("persist.sys.flags.combined_signal_icons", false);
     }
 
     private void updateSettings() {
@@ -542,6 +543,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         CharSequence qsDescription = null;
 
         if (mCurrentState.dataSim) {
+
             if (mCurrentState.showQuickSettingsRatIcon() || mConfig.alwaysShowDataRatIcon) {
                 qsTypeIcon = dataTypeIcon;
             }

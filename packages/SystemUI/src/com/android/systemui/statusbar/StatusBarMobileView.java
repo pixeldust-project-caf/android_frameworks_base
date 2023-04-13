@@ -71,6 +71,7 @@ public class StatusBarMobileView extends BaseStatusBarFrameLayout implements Dar
     private ImageView mVolte;
     private boolean mOldStyleType;
     private ImageView mMobileTypeSmall;
+    private boolean mProviderModel;
 
     /**
      * Designated constructor
@@ -86,13 +87,14 @@ public class StatusBarMobileView extends BaseStatusBarFrameLayout implements Dar
      */
     public static StatusBarMobileView fromContext(
             Context context,
-            String slot
+            String slot,
+            boolean providerModel
     ) {
         LayoutInflater inflater = LayoutInflater.from(context);
         StatusBarMobileView v = (StatusBarMobileView)
                 inflater.inflate(R.layout.status_bar_mobile_signal_group, null);
         v.setSlot(slot);
-        v.init();
+        v.init(providerModel);
         v.setVisibleState(STATE_ICON);
         return v;
     }
@@ -120,12 +122,17 @@ public class StatusBarMobileView extends BaseStatusBarFrameLayout implements Dar
         outRect.bottom += translationY;
     }
 
-    private void init() {
+    private void init(boolean providerModel) {
+        mProviderModel = providerModel;
         mDualToneHandler = new DualToneHandler(getContext());
         mMobileGroup = findViewById(R.id.mobile_group);
         mMobile = findViewById(R.id.mobile_signal);
         mMobileType = findViewById(R.id.mobile_type);
-        mMobileRoaming = findViewById(R.id.mobile_roaming);
+        if (mProviderModel) {
+            mMobileRoaming = findViewById(R.id.mobile_roaming_large);
+        } else {
+            mMobileRoaming = findViewById(R.id.mobile_roaming);
+        }
         mMobileRoamingSpace = findViewById(R.id.mobile_roaming_space);
         mMobileTypeSpace = findViewById(R.id.mobile_type_space);
         mIn = findViewById(R.id.mobile_in);
