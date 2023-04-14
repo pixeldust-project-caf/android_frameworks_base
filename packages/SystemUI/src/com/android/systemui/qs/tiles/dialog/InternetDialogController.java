@@ -363,7 +363,11 @@ public class InternetDialogController implements AccessPointController.AccessPoi
         mTelephonyManager.registerTelephonyCallback(mExecutor, telephonyCallback);
 
         // Listen the connectivity changes
-        mConnectivityManager.registerDefaultNetworkCallback(mConnectivityManagerNetworkCallback);
+        try {
+            mConnectivityManager.registerDefaultNetworkCallback(mConnectivityManagerNetworkCallback);
+        } catch (Exception e) {
+            // Do nothing
+        }
         mCanConfigWifi = canConfigWifi;
         scanWifiAccessPoints();
         if (!mIsExtTelServiceConnected) {
