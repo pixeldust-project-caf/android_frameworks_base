@@ -231,7 +231,7 @@ constructor(
                 playbackState?.state ?: PlaybackState.STATE_NONE
             )
         val enableSquiggle = Settings.Secure.getIntForUser(context.getContentResolver(),
-                Settings.Secure.SHOW_MEDIA_SQUIGGLE_ANIMATION, 0, UserHandle.USER_CURRENT) != 0
+                Settings.Secure.SHOW_MEDIA_SQUIGGLE_ANIMATION, 1, UserHandle.USER_CURRENT) != 0
         val enabled =
             if (
                 playbackState == null ||
