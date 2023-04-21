@@ -4105,6 +4105,11 @@
     <!-- Description of an application permission that lets it query all other packages. [CHAR LIMIT=NONE] -->
     <string name="permdesc_queryAllPackages">Allows an app to see all installed packages.</string>
 
+    <!-- Description of an application permission that grants access to secondary SIM do not disturb feature. -->
+    <string name="permdesc_sec_dnd">enable do not disturb feature on secondary SIM</string>
+    <!-- Title of an application permission that grants access to secondary SIM do not disturb feature. -->
+    <string name="permlabel_sec_dnd">Secondary SIM Do Not Disturb</string>
+
     <!-- Shown in the tutorial for tap twice for zoom control. -->
     <string name="tutorial_double_tap_to_zoom_message_short">Tap twice for zoom control</string>
 
