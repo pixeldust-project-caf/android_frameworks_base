@@ -630,11 +630,13 @@ public class InternetDialog extends SystemUIDialog implements
         mIsCallIdle = mTelephonyManager.getCallState() == TelephonyManager.CALL_STATE_IDLE;
         IImsRegistration imsRegistrationImpl = mTelephonyManager.getImsRegistration(
                 mSubscriptionManager.getSlotIndex(mDefaultDataSubId), FEATURE_MMTEL);
-        try {
-            mIsImsRegisteredOverCiwlan = imsRegistrationImpl.getRegistrationTechnology() ==
-                    REGISTRATION_TECH_CROSS_SIM;
-        } catch (RemoteException ex) {
-            Log.e(TAG, "getRegistrationTechnology failed", ex);
+        if (imsRegistrationImpl != null) {
+            try {
+                mIsImsRegisteredOverCiwlan = imsRegistrationImpl.getRegistrationTechnology() ==
+                        REGISTRATION_TECH_CROSS_SIM;
+            } catch (RemoteException ex) {
+                Log.e(TAG, "getRegistrationTechnology failed", ex);
+            }
         }
         if (mInternetDialogController.isMobileDataEnabled() && !mIsCallIdle &&
                 mIsImsRegisteredOverCiwlan) {

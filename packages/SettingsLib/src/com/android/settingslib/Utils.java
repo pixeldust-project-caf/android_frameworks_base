@@ -40,6 +40,7 @@ import android.telephony.AccessNetworkConstants;
 import android.telephony.NetworkRegistrationInfo;
 import android.telephony.ServiceState;
 import android.telephony.TelephonyManager;
+import android.net.wifi.ScanResult;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -105,6 +106,14 @@ public class Utils {
             com.android.internal.R.drawable.ic_wifi_6_signal_2,
             com.android.internal.R.drawable.ic_wifi_6_signal_3,
             com.android.internal.R.drawable.ic_wifi_6_signal_4
+    };
+
+    static final int[] WIFI_7_PIE = {
+            com.android.internal.R.drawable.ic_wifi_7_signal_0,
+            com.android.internal.R.drawable.ic_wifi_7_signal_1,
+            com.android.internal.R.drawable.ic_wifi_7_signal_2,
+            com.android.internal.R.drawable.ic_wifi_7_signal_3,
+            com.android.internal.R.drawable.ic_wifi_7_signal_4
     };
 
     public static void updateLocationEnabled(Context context, boolean enabled, int userId,
@@ -497,12 +506,14 @@ public class Utils {
         if (showX) return SHOW_X_WIFI_PIE[level];
 
         switch (standard) {
-            case 4:
+            case ScanResult.WIFI_STANDARD_11N:
                 return WIFI_4_PIE[level];
-            case 5:
+            case ScanResult.WIFI_STANDARD_11AC:
                 return WIFI_5_PIE[level];
-            case 6:
+            case ScanResult.WIFI_STANDARD_11AX:
                 return WIFI_6_PIE[level];
+            case ScanResult.WIFI_STANDARD_11BE:
+                return WIFI_7_PIE[level];
             default:
                 return WIFI_PIE[level];
        }

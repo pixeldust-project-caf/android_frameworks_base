@@ -127,6 +127,14 @@ public class WifiUtils {
             com.android.internal.R.drawable.ic_wifi_6_signal_4
     };
 
+    static final int[] WIFI_7_PIE = {
+            com.android.internal.R.drawable.ic_wifi_7_signal_0,
+            com.android.internal.R.drawable.ic_wifi_7_signal_1,
+            com.android.internal.R.drawable.ic_wifi_7_signal_2,
+            com.android.internal.R.drawable.ic_wifi_7_signal_3,
+            com.android.internal.R.drawable.ic_wifi_7_signal_4
+    };
+
     public static String buildLoggingSummary(AccessPoint accessPoint, WifiConfiguration config) {
         final StringBuilder summary = new StringBuilder();
         final WifiInfo info = accessPoint.getInfo();
@@ -387,12 +395,14 @@ public class WifiUtils {
         }
         if (noInternet) return NO_INTERNET_WIFI_PIE[wifiLevel];
         switch (standard) {
-            case 4:
+            case ScanResult.WIFI_STANDARD_11N:
                 return WIFI_4_PIE[wifiLevel];
-            case 5:
+            case ScanResult.WIFI_STANDARD_11AC:
                 return WIFI_5_PIE[wifiLevel];
-            case 6:
+            case ScanResult.WIFI_STANDARD_11AX:
                 return WIFI_6_PIE[wifiLevel];
+            case ScanResult.WIFI_STANDARD_11BE:
+                return WIFI_7_PIE[wifiLevel];
             default:
                 return WIFI_PIE[wifiLevel];
        }
