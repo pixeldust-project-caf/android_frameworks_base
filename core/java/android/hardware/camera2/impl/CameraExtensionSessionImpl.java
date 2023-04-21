@@ -714,7 +714,7 @@ public final class CameraExtensionSessionImpl extends CameraExtensionSession {
 
         synchronized (mInterfaceLock) {
             mInternalRepeatingRequestEnabled = false;
-            mHandlerThread.quitSafely();
+            mHandlerThread.quit();
 
             try {
                 mPreviewExtender.onDeInit();
