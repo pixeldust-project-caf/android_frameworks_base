@@ -157,7 +157,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     private StatusIconContainer mStatusIcons;
     private int mSignalClusterEndPadding = 0;
 
-    private boolean mShowSBClockBg = true;
+    private int mShowSBClockBg;
     private LyricController mLyricController;
 
     private List<String> mBlockedIcons = new ArrayList<>();
@@ -457,13 +457,18 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     }
 
     private void updateStatusBarClock() {
-        if (mShowSBClockBg) {
-            mLeftClock.setBackgroundResource(R.drawable.sb_date_bg);
-            mLeftClock.setPadding(10,5,10,5);
-            mCenterClock.setBackgroundResource(R.drawable.sb_date_bg);
-            mCenterClock.setPadding(10,5,10,5);
-            mRightClock.setBackgroundResource(R.drawable.sb_date_bg);
-            mRightClock.setPadding(10,5,10,5);
+        if (mShowSBClockBg != 0) {
+            String chipStyleUri = "sb_date_bg" + String.valueOf(mShowSBClockBg);
+            int resId = getContext().getResources().getIdentifier(chipStyleUri, "drawable", "com.android.systemui");
+            mLeftClock.setBackgroundResource(resId);
+            mLeftClock.setPadding(10,2,10,2);
+            mLeftClock.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            mCenterClock.setBackgroundResource(resId);
+            mCenterClock.setPadding(10,2,10,2);
+            mCenterClock.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            mRightClock.setBackgroundResource(resId);
+            mRightClock.setPadding(10,2,10,2);
+            mRightClock.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         } else {
             int clockPaddingStart = getResources().getDimensionPixelSize(
                     R.dimen.status_bar_clock_starting_padding);
@@ -479,6 +484,9 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
             mCenterClock.setPadding(0,0,0,0);
             mRightClock.setBackgroundResource(0);
             mRightClock.setPadding(clockPaddingStart, 0, clockPaddingEnd, 0);
+            mLeftClock.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+            mCenterClock.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+            mRightClock.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         }
     }
 
