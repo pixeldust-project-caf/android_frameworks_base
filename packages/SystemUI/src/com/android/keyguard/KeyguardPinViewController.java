@@ -123,25 +123,6 @@ public class KeyguardPinViewController
     }
 
     @Override
-    public void reloadColors() {
-        super.reloadColors();
-        mView.reloadColors();
-    }
-
-    @Override
-    void resetState() {
-        super.resetState();
-        mMessageAreaController.setMessage("");
-        showDeleteButton(false, false);
-    }
-
-    @Override
-    public void startAppearAnimation() {
-        mMessageAreaController.setMessageIfEmpty(R.string.keyguard_enter_your_pin);
-        super.startAppearAnimation();
-    }
-
-    @Override
     public boolean startDisappearAnimation(Runnable finishRunnable) {
         return mView.startDisappearAnimation(
                 mKeyguardUpdateMonitor.needsSlowUnlockTransition(), finishRunnable);

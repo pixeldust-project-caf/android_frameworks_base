@@ -31,7 +31,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -45,7 +44,10 @@ import com.android.systemui.statusbar.phone.StatusBarSignalPolicy.MobileIconStat
 
 import java.util.ArrayList;
 
-public class StatusBarMobileView extends FrameLayout implements DarkReceiver,
+/**
+ * View group for the mobile icon in the status bar
+ */
+public class StatusBarMobileView extends BaseStatusBarFrameLayout implements DarkReceiver,
         StatusIconDisplayable {
     private static final String TAG = "StatusBarMobileView";
 
@@ -105,11 +107,6 @@ public class StatusBarMobileView extends FrameLayout implements DarkReceiver,
 
     public StatusBarMobileView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    public StatusBarMobileView(Context context, AttributeSet attrs, int defStyleAttr,
-            int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     @Override

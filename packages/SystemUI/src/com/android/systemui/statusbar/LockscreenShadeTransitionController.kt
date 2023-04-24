@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.Configuration
+import android.os.PowerManager
 import android.os.SystemClock
 import android.util.IndentingPrintWriter
 import android.util.MathUtils
@@ -25,7 +26,7 @@ import com.android.systemui.classifier.FalsingCollector
 import com.android.systemui.dagger.SysUISingleton
 import com.android.systemui.dump.DumpManager
 import com.android.systemui.keyguard.WakefulnessLifecycle
-import com.android.systemui.media.MediaHierarchyManager
+import com.android.systemui.media.controls.ui.MediaHierarchyManager
 import com.android.systemui.plugins.ActivityStarter.OnDismissAction
 import com.android.systemui.plugins.FalsingManager
 import com.android.systemui.plugins.qs.QS
@@ -273,7 +274,12 @@ class LockscreenShadeTransitionController @Inject constructor(
         // Bind the click listener of the shelf to go to the full shade
         notificationShelfController.setOnClickListener {
             if (statusBarStateController.state == StatusBarState.KEYGUARD) {
-                centralSurfaces.wakeUpIfDozing(SystemClock.uptimeMillis(), it, "SHADE_CLICK")
+                centralSurfaces.wakeUpIfDozing(
+                        SystemClock.uptimeMillis(),
+                        it,
+                        "SHADE_CLICK",
+                        PowerManager.WAKE_REASON_GESTURE,
+                )
                 goToLockedShade(it)
             }
         }
@@ -664,7 +670,7 @@ class LockscreenShadeTransitionController @Inject constructor(
         } else {
             pulseHeight = height
             val overflow = nsslController.setPulseHeight(height)
-            notificationPanelController.setOverStrechAmount(overflow)
+            notificationPanelController.setOverStretchAmount(overflow)
             val transitionHeight = if (keyguardBypassController.bypassEnabled) height else 0.0f
             transitionToShadeAmountCommon(transitionHeight)
         }

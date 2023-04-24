@@ -1,3 +1,9 @@
+/*
+ * Changes from Qualcomm Innovation Center are provided under the following license:
+ * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause-Clear
+ */
+
 package com.android.settingslib;
 
 import static android.app.admin.DevicePolicyResources.Strings.Settings.WORK_PROFILE_USER_LABEL;
@@ -341,8 +347,16 @@ public class Utils {
 
     @ColorInt
     public static int getColorAttrDefaultColor(Context context, int attr) {
+        return getColorAttrDefaultColor(context, attr, 0);
+    }
+
+    /**
+     * Get color styled attribute {@code attr}, default to {@code defValue} if not found.
+     */
+    @ColorInt
+    public static int getColorAttrDefaultColor(Context context, int attr, @ColorInt int defValue) {
         TypedArray ta = context.obtainStyledAttributes(new int[]{attr});
-        @ColorInt int colorAccent = ta.getColor(0, 0);
+        @ColorInt int colorAccent = ta.getColor(0, defValue);
         ta.recycle();
         return colorAccent;
     }

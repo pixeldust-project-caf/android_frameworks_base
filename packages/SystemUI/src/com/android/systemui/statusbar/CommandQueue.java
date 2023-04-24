@@ -69,12 +69,15 @@ import com.android.internal.statusbar.LetterboxDetails;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.GcUtils;
 import com.android.internal.view.AppearanceRegion;
+import com.android.systemui.dump.DumpHandler;
 import com.android.systemui.statusbar.CommandQueue.Callbacks;
 import com.android.systemui.statusbar.commandline.CommandRegistry;
 import com.android.systemui.statusbar.policy.CallbackController;
 import com.android.systemui.tracing.ProtoTracer;
 
+import java.io.FileDescriptor;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
@@ -162,7 +165,10 @@ public class CommandQueue extends IStatusBar.Stub implements
     private static final int MSG_REGISTER_NEARBY_MEDIA_DEVICE_PROVIDER = 66 << MSG_SHIFT;
     private static final int MSG_UNREGISTER_NEARBY_MEDIA_DEVICE_PROVIDER = 67 << MSG_SHIFT;
     private static final int MSG_TILE_SERVICE_REQUEST_LISTENING_STATE = 68 << MSG_SHIFT;
-    private static final int MSG_TOGGLE_CAMERA_FLASH = 69 << MSG_SHIFT;
+    private static final int MSG_SHOW_REAR_DISPLAY_DIALOG = 69 << MSG_SHIFT;
+    private static final int MSG_GO_TO_FULLSCREEN_FROM_SPLIT = 70 << MSG_SHIFT;
+    private static final int MSG_ENTER_STAGE_SPLIT_FROM_RUNNING_APP = 71 << MSG_SHIFT;
+    private static final int MSG_TOGGLE_CAMERA_FLASH = 72 << MSG_SHIFT;
     private static final int MSG_SCREEN_PINNING_STATE_CHANGED = 102 << MSG_SHIFT;
     private static final int MSG_LEFT_IN_LANDSCAPE_STATE_CHANGED = 103 << MSG_SHIFT;
 
@@ -187,6 +193,7 @@ public class CommandQueue extends IStatusBar.Stub implements
     private int mLastUpdatedImeDisplayId = INVALID_DISPLAY;
     private ProtoTracer mProtoTracer;
     private final @Nullable CommandRegistry mRegistry;
+    private final @Nullable DumpHandler mDumpHandler;
 
     /**
      * These methods are called back on the main thread.
@@ -474,19 +481,41 @@ public class CommandQueue extends IStatusBar.Stub implements
         default void unregisterNearbyMediaDevicesProvider(
                 @NonNull INearbyMediaDevicesProvider provider) {}
 
+        /**
+         * @see IStatusBar#showRearDisplayDialog
+         */
+        default void showRearDisplayDialog(int currentBaseState) {}
+
+        /**
+         * @see IStatusBar#goToFullscreenFromSplit
+         */
+        default void goToFullscreenFromSplit() {}
+
+        /**
+         * @see IStatusBar#enterStageSplitFromRunningApp
+         */
+        default void enterStageSplitFromRunningApp(boolean leftOrTop) {}
+
         default void toggleCameraFlash() { }
 
         default void screenPinningStateChanged(boolean enabled) {}
+
         default void leftInLandscapeChanged(boolean isLeft) {}
     }
 
     public CommandQueue(Context context) {
-        this(context, null, null);
+        this(context, null, null, null);
     }
 
-    public CommandQueue(Context context, ProtoTracer protoTracer, CommandRegistry registry) {
+    public CommandQueue(
+            Context context,
+            ProtoTracer protoTracer,
+            CommandRegistry registry,
+            DumpHandler dumpHandler
+    ) {
         mProtoTracer = protoTracer;
         mRegistry = registry;
+        mDumpHandler = dumpHandler;
         context.getSystemService(DisplayManager.class).registerDisplayListener(this, mHandler);
         // We always have default display.
         setDisabled(DEFAULT_DISPLAY, DISABLE_NONE, DISABLE2_NONE);
@@ -1186,6 +1215,35 @@ public class CommandQueue extends IStatusBar.Stub implements
     }
 
     @Override
+    public void dumpProto(String[] args, ParcelFileDescriptor pfd) {
+        final FileDescriptor fd = pfd.getFileDescriptor();
+        // This is mimicking Binder#dumpAsync, but on this side of the binder. Might be possible
+        // to just throw this work onto the handler just like the other messages
+        Thread thr = new Thread("Sysui.dumpProto") {
+            public void run() {
+                try {
+                    if (mDumpHandler == null) {
+                        return;
+                    }
+                    // We won't be using the PrintWriter.
+                    OutputStream o = new OutputStream() {
+                        @Override
+                        public void write(int b) {}
+                    };
+                    mDumpHandler.dump(fd, new PrintWriter(o), args);
+                } finally {
+                    try {
+                        // Close the file descriptor so the TransferPipe finishes its thread
+                        pfd.close();
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        };
+        thr.start();
+    }
+
+    @Override
     public void runGcForTest() {
         // Gc sysui
         GcUtils.runGcAndFinalizersSync();
@@ -1195,6 +1253,21 @@ public class CommandQueue extends IStatusBar.Stub implements
     public void requestTileServiceListeningState(@NonNull ComponentName componentName) {
         mHandler.obtainMessage(MSG_TILE_SERVICE_REQUEST_LISTENING_STATE, componentName)
                 .sendToTarget();
+    }
+
+    @Override
+    public void showRearDisplayDialog(int currentBaseState) {
+        synchronized (mLock) {
+            mHandler.obtainMessage(MSG_SHOW_REAR_DISPLAY_DIALOG, currentBaseState).sendToTarget();
+        }
+    }
+
+    @Override
+    public void enterStageSplitFromRunningApp(boolean leftOrTop) {
+        synchronized (mLock) {
+            mHandler.obtainMessage(MSG_ENTER_STAGE_SPLIT_FROM_RUNNING_APP,
+                    leftOrTop).sendToTarget();
+        }
     }
 
     @Override
@@ -1256,6 +1329,11 @@ public class CommandQueue extends IStatusBar.Stub implements
             @NonNull INearbyMediaDevicesProvider provider) {
         mHandler.obtainMessage(MSG_UNREGISTER_NEARBY_MEDIA_DEVICE_PROVIDER, provider)
                 .sendToTarget();
+    }
+
+    @Override
+    public void goToFullscreenFromSplit() {
+        mHandler.obtainMessage(MSG_GO_TO_FULLSCREEN_FROM_SPLIT).sendToTarget();
     }
 
     @Override
@@ -1717,6 +1795,21 @@ public class CommandQueue extends IStatusBar.Stub implements
                     ComponentName component = (ComponentName) msg.obj;
                     for (int i = 0; i < mCallbacks.size(); i++) {
                         mCallbacks.get(i).requestTileServiceListeningState(component);
+                    }
+                    break;
+                case MSG_SHOW_REAR_DISPLAY_DIALOG:
+                    for (int i = 0; i < mCallbacks.size(); i++) {
+                        mCallbacks.get(i).showRearDisplayDialog((Integer) msg.obj);
+                    }
+                    break;
+                case MSG_GO_TO_FULLSCREEN_FROM_SPLIT:
+                    for (int i = 0; i < mCallbacks.size(); i++) {
+                        mCallbacks.get(i).goToFullscreenFromSplit();
+                    }
+                    break;
+                case MSG_ENTER_STAGE_SPLIT_FROM_RUNNING_APP:
+                    for (int i = 0; i < mCallbacks.size(); i++) {
+                        mCallbacks.get(i).enterStageSplitFromRunningApp((Boolean) msg.obj);
                     }
                     break;
                 case MSG_TOGGLE_CAMERA_FLASH:

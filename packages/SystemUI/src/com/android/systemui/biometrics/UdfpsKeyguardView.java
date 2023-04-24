@@ -26,6 +26,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.RectF;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.MathUtils;
@@ -79,6 +80,8 @@ public class UdfpsKeyguardView extends UdfpsAnimationView {
 
     private boolean mCustomUdfpsIcon;
     private boolean mPackageInstalled;
+
+    private LayoutParams mParams;
 
     public UdfpsKeyguardView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -257,6 +260,22 @@ public class UdfpsKeyguardView extends UdfpsAnimationView {
         updateAlpha();
     }
 
+    @Override
+    void onSensorRectUpdated(RectF bounds) {
+        super.onSensorRectUpdated(bounds);
+
+        if (mUseExpandedOverlay) {
+            mParams = new LayoutParams((int) bounds.width(), (int) bounds.height());
+            RectF converted = getBoundsRelativeToView(bounds);
+            mParams.setMargins(
+                    (int) converted.left,
+                    (int) converted.top,
+                    (int) converted.right,
+                    (int) converted.bottom
+            );
+        }
+    }
+
     /**
      * Animates in the bg protection circle behind the fp icon to highlight the icon.
      */
@@ -295,6 +314,7 @@ public class UdfpsKeyguardView extends UdfpsAnimationView {
         pw.println("    mUdfpsRequested=" + mUdfpsRequested);
         pw.println("    mInterpolatedDarkAmount=" + mInterpolatedDarkAmount);
         pw.println("    mAnimationType=" + mAnimationType);
+        pw.println("    mUseExpandedOverlay=" + mUseExpandedOverlay);
     }
 
     private final AsyncLayoutInflater.OnInflateFinishedListener mLayoutInflaterFinishListener =
@@ -310,7 +330,12 @@ public class UdfpsKeyguardView extends UdfpsAnimationView {
             updateColor();
             updateAlpha();
             updateIcon();
-            parent.addView(view);
+
+            if (mUseExpandedOverlay) {
+                parent.addView(view, mParams);
+            } else {
+                parent.addView(view);
+            }
 
             // requires call to invalidate to update the color
             mLockScreenFp.addValueCallback(

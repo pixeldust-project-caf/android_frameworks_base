@@ -604,7 +604,10 @@ public class LockTaskController {
                 getDevicePolicyManager().notifyLockTaskModeChanged(false, null, userId);
             }
             if (oldLockTaskModeState == LOCK_TASK_MODE_PINNED) {
-                getStatusBarService().showPinningEnterExitToast(false /* entering */);
+                final IStatusBarService statusBarService = getStatusBarService();
+                if (statusBarService != null) {
+                    statusBarService.showPinningEnterExitToast(false /* entering */);
+                }
             }
             mWindowManager.onLockTaskStateChanged(mLockTaskModeState);
             getStatusBarService().screenPinningStateChanged(false);
@@ -620,7 +623,10 @@ public class LockTaskController {
     void showLockTaskToast() {
         if (mLockTaskModeState == LOCK_TASK_MODE_PINNED) {
             try {
-                getStatusBarService().showPinningEscapeToast();
+                final IStatusBarService statusBarService = getStatusBarService();
+                if (statusBarService != null) {
+                    statusBarService.showPinningEscapeToast();
+                }
             } catch (RemoteException e) {
                 Slog.e(TAG, "Failed to send pinning escape toast", e);
             }
@@ -728,7 +734,10 @@ public class LockTaskController {
         // When lock task starts, we disable the status bars.
         try {
             if (lockTaskModeState == LOCK_TASK_MODE_PINNED) {
-                getStatusBarService().showPinningEnterExitToast(true /* entering */);
+                final IStatusBarService statusBarService = getStatusBarService();
+                if (statusBarService != null) {
+                    statusBarService.showPinningEnterExitToast(true /* entering */);
+                }
             }
             mWindowManager.onLockTaskStateChanged(lockTaskModeState);
             mLockTaskModeState = lockTaskModeState;

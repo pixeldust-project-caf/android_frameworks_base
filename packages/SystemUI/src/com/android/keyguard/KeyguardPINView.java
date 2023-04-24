@@ -61,6 +61,7 @@ public class KeyguardPINView extends KeyguardPinBasedInputView {
     @DevicePostureInt private int mLastDevicePosture = DEVICE_POSTURE_UNKNOWN;
     private boolean mScramblePin;
     private List<Integer> mDigits = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 0);
+    public static final long ANIMATION_DURATION = 650;
 
     public KeyguardPINView(Context context) {
         this(context, null);
@@ -201,10 +202,12 @@ public class KeyguardPINView extends KeyguardPinBasedInputView {
 
     @Override
     public void startAppearAnimation() {
+        setAlpha(1f);
+        setTranslationY(0);
         if (mAppearAnimator.isRunning()) {
             mAppearAnimator.cancel();
         }
-        mAppearAnimator.setDuration(650);
+        mAppearAnimator.setDuration(ANIMATION_DURATION);
         mAppearAnimator.addUpdateListener(animation -> animate(animation.getAnimatedFraction()));
         mAppearAnimator.start();
     }

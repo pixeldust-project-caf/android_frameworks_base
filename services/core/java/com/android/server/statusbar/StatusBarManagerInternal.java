@@ -174,6 +174,25 @@ public interface StatusBarManagerInternal {
     void setUdfpsHbmListener(IUdfpsHbmListener listener);
 
     /**
+     * Shows the rear display educational dialog
+     *
+     * @see com.android.internal.statusbar.IStatusBar#showRearDisplayDialog
+     */
+    void showRearDisplayDialog(int currentBaseState);
+
+    /**
+     * Called when requested to go to fullscreen from the active split app.
+     */
+    void goToFullscreenFromSplit();
+
+    /**
+     * Enters stage split from a current running app.
+     *
+     * @see com.android.internal.statusbar.IStatusBar#enterStageSplitFromRunningApp
+     */
+    void enterStageSplitFromRunningApp(boolean leftOrTop);
+
+    /**
      * Window manager notifies SystemUI of navigation bar "left in landscape" changes
      */
     void leftInLandscapeChanged(boolean isLeft);

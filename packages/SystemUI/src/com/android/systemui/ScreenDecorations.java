@@ -26,11 +26,7 @@ import static android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_M
 import android.annotation.IdRes;
 import android.annotation.NonNull;
 import android.annotation.Nullable;
-import android.app.ActivityManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -46,7 +42,6 @@ import android.hardware.graphics.common.DisplayDecorationSupport;
 import android.os.Handler;
 import android.os.SystemProperties;
 import android.os.Trace;
-import android.os.UserHandle;
 import android.provider.Settings.Secure;
 import android.util.DisplayUtils;
 import android.util.Log;
@@ -69,7 +64,6 @@ import androidx.annotation.VisibleForTesting;
 
 import com.android.internal.util.Preconditions;
 import com.android.settingslib.Utils;
-import com.android.systemui.broadcast.BroadcastDispatcher;
 import com.android.systemui.dagger.SysUISingleton;
 import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.decor.CutoutDecorProviderFactory;
@@ -105,7 +99,7 @@ import kotlin.Pair;
  * for antialiasing and emulation purposes.
  */
 @SysUISingleton
-public class ScreenDecorations extends CoreStartable implements Tunable , Dumpable {
+public class ScreenDecorations implements CoreStartable, Tunable , Dumpable {
     private static final boolean DEBUG = false;
     private static final String TAG = "ScreenDecorations";
 
@@ -133,7 +127,7 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
     private DisplayManager mDisplayManager;
     @VisibleForTesting
     protected boolean mIsRegistered;
-    private final BroadcastDispatcher mBroadcastDispatcher;
+    private final Context mContext;
     private final Executor mMainExecutor;
     private final TunerService mTunerService;
     private final SecureSettings mSecureSettings;
@@ -173,6 +167,7 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
     private Display.Mode mDisplayMode;
     @VisibleForTesting
     protected DisplayInfo mDisplayInfo = new DisplayInfo();
+    private DisplayCutout mDisplayCutout;
 
     @VisibleForTesting
     protected void showCameraProtection(@NonNull Path protectionPath, @NonNull Rect bounds) {
@@ -219,8 +214,10 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
                 (FaceScanningOverlay) getOverlayView(mFaceScanningViewId);
         if (faceScanningOverlay != null) {
             faceScanningOverlay.setHideOverlayRunnable(() -> {
+                Trace.beginSection("ScreenDecorations#hideOverlayRunnable");
                 updateOverlayWindowVisibilityIfViewExists(
                         faceScanningOverlay.findViewById(mFaceScanningViewId));
+                Trace.endSection();
             });
             faceScanningOverlay.enableShowProtection(false);
         }
@@ -282,16 +279,18 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
             if (mOverlays == null || !shouldOptimizeVisibility()) {
                 return;
             }
-
+            Trace.beginSection("ScreenDecorations#updateOverlayWindowVisibilityIfViewExists");
             for (final OverlayWindow overlay : mOverlays) {
                 if (overlay == null) {
                     continue;
                 }
                 if (overlay.getView(view.getId()) != null) {
                     overlay.getRootView().setVisibility(getWindowVisibility(overlay, true));
+                    Trace.endSection();
                     return;
                 }
             }
+            Trace.endSection();
         });
     }
 
@@ -305,17 +304,15 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
     public ScreenDecorations(Context context,
             @Main Executor mainExecutor,
             SecureSettings secureSettings,
-            BroadcastDispatcher broadcastDispatcher,
             TunerService tunerService,
             UserTracker userTracker,
             PrivacyDotViewController dotViewController,
             ThreadFactory threadFactory,
             PrivacyDotDecorProviderFactory dotFactory,
             FaceScanningProviderFactory faceScanningFactory) {
-        super(context);
+        mContext = context;
         mMainExecutor = mainExecutor;
         mSecureSettings = secureSettings;
-        mBroadcastDispatcher = broadcastDispatcher;
         mTunerService = tunerService;
         mUserTracker = userTracker;
         mDotViewController = dotViewController;
@@ -381,12 +378,14 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
     }
 
     private void startOnScreenDecorationsThread() {
+        Trace.beginSection("ScreenDecorations#startOnScreenDecorationsThread");
         mWindowManager = mContext.getSystemService(WindowManager.class);
         mDisplayManager = mContext.getSystemService(DisplayManager.class);
         mContext.getDisplay().getDisplayInfo(mDisplayInfo);
         mRotation = mDisplayInfo.rotation;
         mDisplayMode = mDisplayInfo.getMode();
         mDisplayUniqueId = mDisplayInfo.uniqueId;
+        mDisplayCutout = mDisplayInfo.displayCutout;
         mRoundedCornerResDelegate = new RoundedCornerResDelegate(mContext.getResources(),
                 mDisplayUniqueId);
         mRoundedCornerResDelegate.setPhysicalPixelDisplaySizeRatio(
@@ -459,7 +458,6 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
                     }
                 }
 
-                boolean needToUpdateProviderViews = false;
                 final String newUniqueId = mDisplayInfo.uniqueId;
                 if (!Objects.equals(newUniqueId, mDisplayUniqueId)) {
                     mDisplayUniqueId = newUniqueId;
@@ -477,43 +475,13 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
                         setupDecorations();
                         return;
                     }
-
-                    if (mScreenDecorHwcLayer != null) {
-                        updateHwLayerRoundedCornerDrawable();
-                        updateHwLayerRoundedCornerExistAndSize();
-                    }
-                    needToUpdateProviderViews = true;
-                }
-
-                final float newRatio = getPhysicalPixelDisplaySizeRatio();
-                if (mRoundedCornerResDelegate.getPhysicalPixelDisplaySizeRatio() != newRatio) {
-                    mRoundedCornerResDelegate.setPhysicalPixelDisplaySizeRatio(newRatio);
-                    if (mScreenDecorHwcLayer != null) {
-                        updateHwLayerRoundedCornerExistAndSize();
-                    }
-                    needToUpdateProviderViews = true;
-                }
-
-                if (needToUpdateProviderViews) {
-                    updateOverlayProviderViews(null);
-                } else {
-                    updateOverlayProviderViews(new Integer[] {
-                            mFaceScanningViewId,
-                            R.id.display_cutout,
-                            R.id.display_cutout_left,
-                            R.id.display_cutout_right,
-                            R.id.display_cutout_bottom,
-                    });
-                }
-
-                if (mScreenDecorHwcLayer != null) {
-                    mScreenDecorHwcLayer.onDisplayChanged(newUniqueId);
                 }
             }
         };
 
         mDisplayManager.registerDisplayListener(mDisplayListener, mHandler);
         updateConfiguration();
+        Trace.endSection();
     }
 
     @VisibleForTesting
@@ -563,6 +531,12 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
     }
 
     private void setupDecorations() {
+        Trace.beginSection("ScreenDecorations#setupDecorations");
+        setupDecorationsInner();
+        Trace.endSection();
+    }
+
+    private void setupDecorationsInner() {
         if (hasRoundedCorners() || shouldDrawCutout() || isPrivacyDotEnabled()
                 || mFaceScanningFactory.getHasProviders()) {
 
@@ -615,7 +589,11 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
                 return;
             }
 
-            mMainExecutor.execute(() -> mTunerService.addTunable(this, SIZE));
+            mMainExecutor.execute(() -> {
+                Trace.beginSection("ScreenDecorations#addTunable");
+                mTunerService.addTunable(this, SIZE);
+                Trace.endSection();
+            });
 
             // Watch color inversion and invert the overlay as needed.
             if (mColorInversionSetting == null) {
@@ -632,19 +610,20 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
             mColorInversionSetting.onChange(false);
             updateColorInversion(mColorInversionSetting.getValue());
 
-            IntentFilter filter = new IntentFilter();
-            filter.addAction(Intent.ACTION_USER_SWITCHED);
-            mBroadcastDispatcher.registerReceiver(mUserSwitchIntentReceiver, filter,
-                    mExecutor, UserHandle.ALL);
+            mUserTracker.addCallback(mUserChangedCallback, mExecutor);
             mIsRegistered = true;
         } else {
-            mMainExecutor.execute(() -> mTunerService.removeTunable(this));
+            mMainExecutor.execute(() -> {
+                Trace.beginSection("ScreenDecorations#removeTunable");
+                mTunerService.removeTunable(this);
+                Trace.endSection();
+            });
 
             if (mColorInversionSetting != null) {
                 mColorInversionSetting.setListening(false);
             }
 
-            mBroadcastDispatcher.unregisterReceiver(mUserSwitchIntentReceiver);
+            mUserTracker.removeCallback(mUserChangedCallback);
             mIsRegistered = false;
         }
     }
@@ -931,18 +910,18 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
         }
     }
 
-    private final BroadcastReceiver mUserSwitchIntentReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int newUserId = ActivityManager.getCurrentUser();
-            if (DEBUG) {
-                Log.d(TAG, "UserSwitched newUserId=" + newUserId);
-            }
-            // update color inversion setting to the new user
-            mColorInversionSetting.setUserId(newUserId);
-            updateColorInversion(mColorInversionSetting.getValue());
-        }
-    };
+    private final UserTracker.Callback mUserChangedCallback =
+            new UserTracker.Callback() {
+                @Override
+                public void onUserChanged(int newUser, @NonNull Context userContext) {
+                    if (DEBUG) {
+                        Log.d(TAG, "UserSwitched newUserId=" + newUser);
+                    }
+                    // update color inversion setting to the new user
+                    mColorInversionSetting.setUserId(newUser);
+                    updateColorInversion(mColorInversionSetting.getValue());
+                }
+            };
 
     private void updateColorInversion(int colorsInvertedValue) {
         mTintColor = colorsInvertedValue != 0 ? Color.WHITE : Color.BLACK;
@@ -977,13 +956,14 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
     }
 
     @Override
-    protected void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(Configuration newConfig) {
         if (DEBUG_DISABLE_SCREEN_DECORATIONS) {
             Log.i(TAG, "ScreenDecorations is disabled");
             return;
         }
 
         mExecutor.execute(() -> {
+            Trace.beginSection("ScreenDecorations#onConfigurationChanged");
             int oldRotation = mRotation;
             mPendingConfigChange = false;
             updateConfiguration();
@@ -996,6 +976,7 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
                 // the updated rotation).
                 updateLayoutParams();
             }
+            Trace.endSection();
         });
     }
 
@@ -1057,7 +1038,8 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
         mRoundedCornerResDelegate.dump(pw, args);
     }
 
-    private void updateConfiguration() {
+    @VisibleForTesting
+    void updateConfiguration() {
         Preconditions.checkState(mHandler.getLooper().getThread() == Thread.currentThread(),
                 "must call on " + mHandler.getLooper().getThread()
                         + ", but was " + Thread.currentThread());
@@ -1068,14 +1050,19 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
             mDotViewController.setNewRotation(newRotation);
         }
         final Display.Mode newMod = mDisplayInfo.getMode();
+        final DisplayCutout newCutout = mDisplayInfo.displayCutout;
 
         if (!mPendingConfigChange
-                && (newRotation != mRotation || displayModeChanged(mDisplayMode, newMod))) {
+                && (newRotation != mRotation || displayModeChanged(mDisplayMode, newMod)
+                || !Objects.equals(newCutout, mDisplayCutout))) {
             mRotation = newRotation;
             mDisplayMode = newMod;
+            mDisplayCutout = newCutout;
+            mRoundedCornerResDelegate.setPhysicalPixelDisplaySizeRatio(
+                    getPhysicalPixelDisplaySizeRatio());
             if (mScreenDecorHwcLayer != null) {
                 mScreenDecorHwcLayer.pendingConfigChange = false;
-                mScreenDecorHwcLayer.updateRotation(mRotation);
+                mScreenDecorHwcLayer.updateConfiguration(mDisplayUniqueId);
                 updateHwLayerRoundedCornerExistAndSize();
                 updateHwLayerRoundedCornerDrawable();
             }
@@ -1118,7 +1105,8 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
                 context.getResources(), context.getDisplay().getUniqueId());
     }
 
-    private void updateOverlayProviderViews(@Nullable Integer[] filterIds) {
+    @VisibleForTesting
+    void updateOverlayProviderViews(@Nullable Integer[] filterIds) {
         if (mOverlays == null) {
             return;
         }
@@ -1161,6 +1149,7 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
             if (mOverlays == null || !SIZE.equals(key)) {
                 return;
             }
+            Trace.beginSection("ScreenDecorations#onTuningChanged");
             try {
                 final int sizeFactor = Integer.parseInt(newValue);
                 mRoundedCornerResDelegate.setTuningSizeFactor(sizeFactor);
@@ -1174,6 +1163,7 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
                     R.id.rounded_corner_bottom_right
             });
             updateHwLayerRoundedCornerExistAndSize();
+            Trace.endSection();
         });
     }
 

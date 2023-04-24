@@ -26,7 +26,6 @@ import android.widget.Button;
 
 import com.android.internal.util.EmergencyAffordanceManager;
 import com.android.internal.widget.LockPatternUtils;
-import com.android.settingslib.Utils;
 import com.android.systemui.R;
 
 import java.util.List;
@@ -93,17 +92,6 @@ public class EmergencyButton extends Button {
             }
         }
         return super.onTouchEvent(event);
-    }
-
-    /**
-     * Reload colors from resources.
-     **/
-    public void reloadColors() {
-        int color = Utils.getColorAttrDefaultColor(getContext(),
-                com.android.internal.R.attr.textColorOnAccent);
-        setTextColor(color);
-        setBackground(getContext()
-                .getDrawable(com.android.systemui.R.drawable.kg_emergency_button_background));
     }
 
     @Override

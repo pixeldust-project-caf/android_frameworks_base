@@ -2029,7 +2029,12 @@ public class RootWindowContainer extends WindowContainer<DisplayContent>
                 // non-fullscreen bounds. Then when this new PIP task exits PIP, it can restore
                 // to its previous freeform bounds.
                 rootTask.setLastNonFullscreenBounds(task.mLastNonFullscreenBounds);
-                rootTask.setBounds(task.getBounds());
+                // When creating a new Task for PiP, set its initial bounds as the TaskFragment in
+                // case the activity is embedded, so that it can be animated to PiP window from the
+                // current bounds.
+                // Use Task#setBoundsUnchecked to skip checking windowing mode as the windowing mode
+                // will be updated later after this is collected in transition.
+                rootTask.setBoundsUnchecked(r.getTaskFragment().getBounds());
 
                 // Move the last recents animation transaction from original task to the new one.
                 if (task.mLastRecentsAnimationTransaction != null) {
@@ -2101,6 +2106,7 @@ public class RootWindowContainer extends WindowContainer<DisplayContent>
                     // from the client organizer, so the PIP activity can get the correct config
                     // from the Task, and prevent conflict with the PipTaskOrganizer.
                     tf.updateRequestedOverrideConfiguration(EMPTY);
+                    tf.updateRelativeEmbeddedBounds();
                 }
             });
             rootTask.setWindowingMode(WINDOWING_MODE_PINNED);
@@ -2735,7 +2741,7 @@ public class RootWindowContainer extends WindowContainer<DisplayContent>
         final ArrayList<Task> addedTasks = new ArrayList<>();
         forAllActivities((r) -> {
             final Task task = r.getTask();
-            if (r.mVisibleRequested && r.mStartingData == null && !addedTasks.contains(task)) {
+            if (r.isVisibleRequested() && r.mStartingData == null && !addedTasks.contains(task)) {
                 r.showStartingWindow(true /*taskSwitch*/);
                 addedTasks.add(task);
             }
@@ -2760,7 +2766,7 @@ public class RootWindowContainer extends WindowContainer<DisplayContent>
         forAllLeafTasks(task -> {
             final int oldRank = task.mLayerRank;
             final ActivityRecord r = task.topRunningActivityLocked();
-            if (r != null && r.mVisibleRequested) {
+            if (r != null && r.isVisibleRequested()) {
                 task.mLayerRank = ++mTmpTaskLayerRank;
             } else {
                 task.mLayerRank = Task.LAYER_RANK_INVISIBLE;
@@ -3567,7 +3573,6 @@ public class RootWindowContainer extends WindowContainer<DisplayContent>
             final DisplayContent display = getChildAt(i);
             display.dump(pw, prefix, dumpAll);
         }
-        pw.println();
     }
 
     /**

@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+/**
+ * Changes from Qualcomm Innovation Center are provided under the following license:
+ * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause-Clear
+ */
+
 package com.android.systemui.qs.tiles;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -23,6 +29,7 @@ import static org.mockito.Mockito.when;
 
 
 import android.os.Handler;
+import android.service.quicksettings.Tile;
 import android.testing.AndroidTestingRunner;
 import android.testing.TestableLooper;
 
@@ -38,7 +45,9 @@ import com.android.systemui.qs.QSTileHost;
 import com.android.systemui.qs.logging.QSLogger;
 import com.android.systemui.qs.tiles.dialog.InternetDialogFactory;
 import com.android.systemui.statusbar.connectivity.AccessPointController;
+import com.android.systemui.statusbar.connectivity.IconState;
 import com.android.systemui.statusbar.connectivity.NetworkController;
+import com.android.systemui.util.CarrierNameCustomization;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -59,6 +68,8 @@ public class InternetTileTest extends SysuiTestCase {
     private AccessPointController mAccessPointController;
     @Mock
     private InternetDialogFactory mInternetDialogFactory;
+    @Mock
+    private CarrierNameCustomization mCarrierNameCustomization;
 
     private TestableLooper mTestableLooper;
     private InternetTile mTile;
@@ -81,7 +92,8 @@ public class InternetTileTest extends SysuiTestCase {
             mock(QSLogger.class),
             mNetworkController,
             mAccessPointController,
-            mInternetDialogFactory
+            mInternetDialogFactory,
+            mCarrierNameCustomization
         );
 
         mTile.initialize();
@@ -112,5 +124,25 @@ public class InternetTileTest extends SysuiTestCase {
         assertThat(String.valueOf(mTile.getState().secondaryLabel))
             .isNotEqualTo(mContext.getString(R.string.quick_settings_networks_available));
         assertThat(mTile.getLastTileState()).isEqualTo(-1);
+    }
+
+    @Test
+    public void setIsAirplaneMode_APM_enabled_wifi_disabled() {
+        IconState state = new IconState(true, 0, "");
+        mTile.mSignalCallback.setIsAirplaneMode(state);
+        mTestableLooper.processAllMessages();
+        assertThat(mTile.getState().state).isEqualTo(Tile.STATE_INACTIVE);
+        assertThat(mTile.getState().secondaryLabel)
+            .isEqualTo(mContext.getString(R.string.status_bar_airplane));
+    }
+
+    @Test
+    public void setIsAirplaneMode_APM_enabled_wifi_enabled() {
+        IconState state = new IconState(false, 0, "");
+        mTile.mSignalCallback.setIsAirplaneMode(state);
+        mTestableLooper.processAllMessages();
+        assertThat(mTile.getState().state).isEqualTo(Tile.STATE_ACTIVE);
+        assertThat(mTile.getState().secondaryLabel)
+            .isNotEqualTo(mContext.getString(R.string.status_bar_airplane));
     }
 }
