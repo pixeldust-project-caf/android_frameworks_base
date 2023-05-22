@@ -119,7 +119,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
     protected static final int NEUTRAL = 0;
     protected static final int ACCENT = 1;
 
-    private static final String DARK_OVERLAY_NAME = "com.android.derp.dark_bg";
+    private static final String DARK_OVERLAY_NAME = "com.android.system.theme.black";
 
     private final ThemeOverlayApplier mThemeManager;
     private final UserManager mUserManager;
