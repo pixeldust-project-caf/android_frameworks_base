@@ -172,38 +172,6 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             mCurrentState.imsRegistered = true;
             mCurrentState.imsRegistrationTech = attributes.getRegistrationTechnology();
             notifyListenersIfNecessary();
-            if (!mProviderModelBehavior) {
-                return;
-            }
-
-            int imsTransportType = attributes.getTransportType();
-            int registrationAttributes = attributes.getAttributeFlags();
-            if (imsTransportType == AccessNetworkConstants.TRANSPORT_TYPE_WWAN) {
-                mImsType = IMS_TYPE_WWAN;
-                IconState statusIcon = new IconState(
-                        true,
-                        getCallStrengthIcon(mLastWwanLevel, /* isWifi= */false),
-                        getCallStrengthDescription(mLastWwanLevel, /* isWifi= */false));
-                notifyCallStateChange(statusIcon, mSubscriptionInfo.getSubscriptionId());
-            } else if (imsTransportType == AccessNetworkConstants.TRANSPORT_TYPE_WLAN) {
-                if (registrationAttributes == 0) {
-                    mImsType = IMS_TYPE_WLAN;
-                    IconState statusIcon = new IconState(
-                            true,
-                            getCallStrengthIcon(mLastWlanLevel, /* isWifi= */true),
-                            getCallStrengthDescription(mLastWlanLevel, /* isWifi= */true));
-                    notifyCallStateChange(statusIcon, mSubscriptionInfo.getSubscriptionId());
-                } else if (registrationAttributes
-                        == ImsRegistrationAttributes.ATTR_EPDG_OVER_CELL_INTERNET) {
-                    mImsType = IMS_TYPE_WLAN_CROSS_SIM;
-                    IconState statusIcon = new IconState(
-                            true,
-                            getCallStrengthIcon(mLastWlanCrossSimLevel, /* isWifi= */false),
-                            getCallStrengthDescription(
-                                    mLastWlanCrossSimLevel, /* isWifi= */false));
-                    notifyCallStateChange(statusIcon, mSubscriptionInfo.getSubscriptionId());
-                }
-            }
         }
 
         @Override
@@ -430,6 +398,8 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             Log.d(mTag, "setListeners: register CapabilitiesCallback and RegistrationCallback");
             mImsMmTelManager.registerMmTelCapabilityCallback(mContext.getMainExecutor(),
                     mCapabilityCallback);
+            mImsMmTelManager.registerImsRegistrationCallback (mContext.getMainExecutor(),
+                    mRegistrationCallback);
         } catch (ImsException e) {
             Log.e(mTag, "unable to register listeners.", e);
         }
@@ -455,6 +425,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             Log.d(mTag,
                     "removeListeners: unregister CapabilitiesCallback and RegistrationCallback");
             mImsMmTelManager.unregisterMmTelCapabilityCallback(mCapabilityCallback);
+            mImsMmTelManager.unregisterImsRegistrationCallback(mRegistrationCallback);
         }catch (Exception e) {
             Log.e(mTag, "removeListeners", e);
         }
