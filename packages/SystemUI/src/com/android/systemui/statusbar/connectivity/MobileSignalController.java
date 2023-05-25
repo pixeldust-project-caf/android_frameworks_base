@@ -91,9 +91,6 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         implements UserTracker.Callback {
     private static final SimpleDateFormat SSDF = new SimpleDateFormat("MM-dd HH:mm:ss.SSS");
     private static final int STATUS_HISTORY_SIZE = 64;
-    private static final int IMS_TYPE_WWAN = 1;
-    private static final int IMS_TYPE_WLAN = 2;
-    private static final int IMS_TYPE_WLAN_CROSS_SIM = 3;
     private final TelephonyManager mPhone;
     private final CarrierConfigTracker mCarrierConfigTracker;
     private final ImsMmTelManager mImsMmTelManager;
@@ -102,8 +99,6 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     private final String mNetworkNameDefault;
     private final String mNetworkNameSeparator;
     private final ContentObserver mSettingsObserver;
-    private final boolean mProviderModelBehavior;
-    private int mImsType = IMS_TYPE_WWAN;
     // Save entire info for logging, we only use the id.
     final SubscriptionInfo mSubscriptionInfo;
     private Map<String, MobileIconGroup> mNetworkToIconLookup;
@@ -112,9 +107,6 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     private Config mConfig;
     @VisibleForTesting
     boolean mInflateSignalStrengths = false;
-    private int mLastWwanLevel;
-    private int mLastWlanLevel;
-    private int mLastWlanCrossSimLevel;
     @VisibleForTesting
     final MobileStatusTracker mMobileStatusTracker;
 
@@ -180,16 +172,6 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             mCurrentState.imsRegistered = false;
             mCurrentState.imsRegistrationTech = REGISTRATION_TECH_NONE;
             notifyListenersIfNecessary();
-            if (!mProviderModelBehavior) {
-                return;
-            }
-
-            mImsType = IMS_TYPE_WWAN;
-            IconState statusIcon = new IconState(
-                    true,
-                    getCallStrengthIcon(mLastWwanLevel, /* isWifi= */false),
-                    getCallStrengthDescription(mLastWwanLevel, /* isWifi= */false));
-            notifyCallStateChange(statusIcon, mSubscriptionInfo.getSubscriptionId());
         }
     };
 
@@ -398,7 +380,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             Log.d(mTag, "setListeners: register CapabilitiesCallback and RegistrationCallback");
             mImsMmTelManager.registerMmTelCapabilityCallback(mContext.getMainExecutor(),
                     mCapabilityCallback);
-            mImsMmTelManager.registerImsRegistrationCallback (mContext.getMainExecutor(),
+            mImsMmTelManager.registerImsRegistrationCallback(mContext.getMainExecutor(),
                     mRegistrationCallback);
         } catch (ImsException e) {
             Log.e(mTag, "unable to register listeners.", e);

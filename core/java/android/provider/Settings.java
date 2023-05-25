@@ -5806,11 +5806,6 @@ public final class Settings {
         /**
          * @hide
          */
-        public static final String USE_OLD_MOBILETYPE = "use_old_mobiletype";
-
-        /**
-         * @hide
-         */
         public static final String UDFPS_ANIM = "udfps_anim";
 
         /**
@@ -11620,12 +11615,6 @@ public final class Settings {
          * @hide
          */
         public static final String PULSE_VERTICAL_MIRROR = "pulse_vertical_mirror";
-
-        /**
-         * Whether to show Wi-Fi standard icon
-         * @hide
-         */
-        public static final String SHOW_WIFI_STANDARD_ICON = "show_wifi_standard_icon";
 
         /**
          * Enable udfps detection even when screen is off

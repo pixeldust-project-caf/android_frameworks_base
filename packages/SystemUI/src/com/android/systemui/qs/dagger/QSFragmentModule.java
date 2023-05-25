@@ -107,7 +107,7 @@ public interface QSFragmentModule {
     /** */
     @Provides
     static BatteryMeterView providesBatteryMeterView(QuickStatusBarHeader quickStatusBarHeader) {
-        return quickStatusBarHeader.getBatteryMeterView();
+        return quickStatusBarHeader.findViewById(R.id.batteryRemainingIcon);
     }
 
     /** */

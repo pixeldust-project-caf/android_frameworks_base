@@ -139,7 +139,6 @@ import com.android.systemui.plugins.ActivityStarter;
 import com.android.systemui.plugins.GlobalActions.GlobalActionsManager;
 import com.android.systemui.plugins.GlobalActionsPanelPlugin;
 import com.android.systemui.screenrecord.RecordingController;
-import com.android.systemui.screenrecord.ScreenRecordDialog;
 import com.android.systemui.scrim.ScrimDrawable;
 import com.android.systemui.settings.UserTracker;
 import com.android.systemui.statusbar.NotificationShadeWindowController;
@@ -1284,10 +1283,10 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                     Runnable onScreenRecord = () -> {
                         mCentralSurfacesOptional.ifPresent(CentralSurfaces::collapseShade);
                     };
-                    ScreenRecordDialog screenRecordDialog =
+                    Dialog dialog =
                         mRecordingController.createScreenRecordDialog(mContext, mFlags,
                             mDialogLaunchAnimator, mActivityStarter, onScreenRecord);
-                    screenRecordDialog.show();
+                    dialog.show();
                 });
             }
 

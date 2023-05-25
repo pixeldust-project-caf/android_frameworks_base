@@ -236,6 +236,5 @@ public class SystemSettingsValidators {
                     }
                 });
         VALIDATORS.put(System.SHOW_FOURG_ICON, BOOLEAN_VALIDATOR);
-        VALIDATORS.put(System.USE_OLD_MOBILETYPE, BOOLEAN_VALIDATOR);
     }
 }

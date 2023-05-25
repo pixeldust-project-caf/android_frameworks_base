@@ -2697,8 +2697,8 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
         final boolean shouldListenKeyguardState;
         if (!mFingerprintWakeAndUnlock) {
             shouldListenKeyguardState =
-                (mKeyguardIsVisible
-                        || mBouncerIsOrWillBeShowing
+                (isKeyguardVisible()
+                        || mPrimaryBouncerIsOrWillBeShowing
                         || shouldListenForFingerprintAssistant
                         || (mKeyguardOccluded && mIsDreaming))
                         && mDeviceInteractive && !mGoingToSleep && !mKeyguardGoingAway
@@ -2706,7 +2706,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
                             && (mOccludingAppRequestingFp || isUdfps));
         } else {
             shouldListenKeyguardState =
-                mKeyguardIsVisible
+                isKeyguardVisible()
                         || !mDeviceInteractive
                         || (mPrimaryBouncerIsOrWillBeShowing && !mKeyguardGoingAway)
                         || mGoingToSleep

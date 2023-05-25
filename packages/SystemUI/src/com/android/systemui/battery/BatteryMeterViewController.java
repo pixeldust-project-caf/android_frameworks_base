@@ -15,8 +15,6 @@
  */
 package com.android.systemui.battery;
 
-import static android.provider.Settings.Global.BATTERY_ESTIMATES_LAST_UPDATE_TIME;
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
@@ -33,7 +31,6 @@ import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.flags.FeatureFlags;
 import com.android.systemui.flags.Flags;
 import com.android.systemui.settings.UserTracker;
-import com.android.systemui.statusbar.phone.StatusBarIconController;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.ConfigurationController;
 import com.android.systemui.tuner.TunerService;
@@ -58,7 +55,6 @@ public class BatteryMeterViewController extends ViewController<BatteryMeterView>
     private final BatteryController mBatteryController;
 
     private final SettingObserver mSettingObserver;
-    private final UserTracker mUserTracker;
 
     private final ConfigurationController.ConfigurationListener mConfigurationListener =
             new ConfigurationController.ConfigurationListener() {
@@ -73,13 +69,11 @@ public class BatteryMeterViewController extends ViewController<BatteryMeterView>
         public void onTuningChanged(String key, String newValue) {
             switch (key) {
                 case STATUS_BAR_BATTERY_STYLE:
-                    if (mView.mQS) break;
                     int batteryStyle = TunerService.parseInteger(newValue,
                             BatteryMeterView.BATTERY_STYLE_PORTRAIT);
                     mView.setBatteryStyle(batteryStyle);
                     break;
                 case STATUS_BAR_SHOW_BATTERY_PERCENT:
-                    if (mView.mQS) break;
                     int showBatteryPercent =
                             TunerService.parseInteger(newValue, 0);
                     mView.setBatteryPercent(showBatteryPercent);
@@ -118,16 +112,6 @@ public class BatteryMeterViewController extends ViewController<BatteryMeterView>
                 }
             };
 
-    private final UserTracker.Callback mUserChangedCallback =
-            new UserTracker.Callback() {
-                @Override
-                public void onUserChanged(int newUser, @NonNull Context userContext) {
-                    mContentResolver.unregisterContentObserver(mSettingObserver);
-                    registerShowBatteryPercentObserver(newUser);
-                    mView.updateShowPercent();
-                }
-            };
-
     // Some places may need to show the battery conditionally, and not obey the tuner
     private boolean mIgnoreTunerUpdates;
     private boolean mIsSubscribedForTunerUpdates;
@@ -143,7 +127,6 @@ public class BatteryMeterViewController extends ViewController<BatteryMeterView>
             FeatureFlags featureFlags,
             BatteryController batteryController) {
         super(view);
-        mUserTracker = userTracker;
         mConfigurationController = configurationController;
         mTunerService = tunerService;
         mMainHandler = mainHandler;
@@ -153,7 +136,6 @@ public class BatteryMeterViewController extends ViewController<BatteryMeterView>
         mView.setBatteryEstimateFetcher(mBatteryController::getEstimatedTimeRemainingString);
         mView.setDisplayShieldEnabled(featureFlags.isEnabled(Flags.BATTERY_SHIELD_ICON));
 
-        mSlotBattery = getResources().getString(com.android.internal.R.string.status_bar_battery);
         mSettingObserver = new SettingObserver(mMainHandler);
     }
 
@@ -163,9 +145,7 @@ public class BatteryMeterViewController extends ViewController<BatteryMeterView>
         subscribeForTunerUpdates();
         mBatteryController.addCallback(mBatteryStateChangeCallback);
 
-        registerShowBatteryPercentObserver(mUserTracker.getUserId());
         registerGlobalBatteryUpdateObserver();
-        mUserTracker.addCallback(mUserChangedCallback, new HandlerExecutor(mMainHandler));
 
         mView.updateShowPercent();
     }
@@ -176,7 +156,6 @@ public class BatteryMeterViewController extends ViewController<BatteryMeterView>
         unsubscribeFromTunerUpdates();
         mBatteryController.removeCallback(mBatteryStateChangeCallback);
 
-        mUserTracker.removeCallback(mUserChangedCallback);
         mContentResolver.unregisterContentObserver(mSettingObserver);
     }
 

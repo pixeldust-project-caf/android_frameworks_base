@@ -20,12 +20,9 @@ import static com.android.systemui.statusbar.phone.StatusBarIconList.Slot;
 
 import android.annotation.NonNull;
 import android.content.Context;
-import android.database.ContentObserver;
 import android.graphics.drawable.Icon;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.UserHandle;
-import android.provider.Settings;
 import android.util.ArrayMap;
 import android.util.ArraySet;
 import android.util.Log;
@@ -36,7 +33,6 @@ import androidx.annotation.VisibleForTesting;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.systemui.Dumpable;
 import com.android.systemui.R;
-import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.dagger.SysUISingleton;
 import com.android.systemui.demomode.DemoMode;
 import com.android.systemui.demomode.DemoModeController;
@@ -52,7 +48,6 @@ import com.android.systemui.statusbar.policy.ConfigurationController;
 import com.android.systemui.statusbar.policy.ConfigurationController.ConfigurationListener;
 import com.android.systemui.tuner.TunerService;
 import com.android.systemui.tuner.TunerService.Tunable;
-import com.android.systemui.util.settings.SystemSettings;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -82,9 +77,6 @@ public class StatusBarIconControllerImpl implements Tunable,
     private final StatusBarPipelineFlags mStatusBarPipelineFlags;
     private final Context mContext;
 
-    private final SystemSettings mSystemSettings;
-    private boolean mIsOldSignalStyle = false;
-
     /** */
     @Inject
     public StatusBarIconControllerImpl(
@@ -95,47 +87,16 @@ public class StatusBarIconControllerImpl implements Tunable,
             TunerService tunerService,
             DumpManager dumpManager,
             StatusBarIconList statusBarIconList,
-            StatusBarPipelineFlags statusBarPipelineFlags,
-            @Main Handler handler,
-            SystemSettings systemSettings
+            StatusBarPipelineFlags statusBarPipelineFlags
     ) {
         mStatusBarIconList = statusBarIconList;
-
         mContext = context;
         mStatusBarPipelineFlags = statusBarPipelineFlags;
-        mSystemSettings = systemSettings;
-
         configurationController.addCallback(this);
         commandQueue.addCallback(this);
         tunerService.addTunable(this, ICON_HIDE_LIST);
         demoModeController.addCallback(this);
         dumpManager.registerDumpable(getClass().getSimpleName(), this);
-
-        mIsOldSignalStyle = getIsOldSignalStyle();
-        final ContentObserver settingsObserver = new ContentObserver(handler) {
-            @Override
-            public void onChange(boolean selfChange) {
-                final boolean isOldSignalStyle = getIsOldSignalStyle();
-                if (mIsOldSignalStyle == isOldSignalStyle) return;
-                mIsOldSignalStyle = isOldSignalStyle;
-                mIconGroups.forEach(group -> {
-                    group.setMobileSignalStyle(mIsOldSignalStyle);
-                    group.updateMobileIconStyle();
-                });
-            }
-        };
-        mSystemSettings.registerContentObserverForUser(
-            Settings.System.USE_OLD_MOBILETYPE,
-            settingsObserver,
-            UserHandle.USER_ALL
-        );
-    }
-
-    private boolean getIsOldSignalStyle() {
-        return mSystemSettings.getIntForUser(
-            Settings.System.USE_OLD_MOBILETYPE,
-            0, UserHandle.USER_CURRENT
-        ) == 1;
     }
 
     /** */
@@ -149,7 +110,6 @@ public class StatusBarIconControllerImpl implements Tunable,
         }
 
         group.setController(this);
-        group.setMobileSignalStyle(mIsOldSignalStyle);
         mIconGroups.add(group);
         List<Slot> allSlots = mStatusBarIconList.getSlots();
         for (int i = 0; i < allSlots.size(); i++) {

@@ -16,12 +16,18 @@ package com.android.systemui.qs;
 
 import static android.app.StatusBarManager.DISABLE2_QUICK_SETTINGS;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static com.android.systemui.battery.BatteryMeterView.BATTERY_STYLE_CIRCLE;
+import static com.android.systemui.battery.BatteryMeterView.BATTERY_STYLE_DOTTED_CIRCLE;
+import static com.android.systemui.battery.BatteryMeterView.BATTERY_STYLE_FULL_CIRCLE;
+import static com.android.systemui.battery.BatteryMeterView.BATTERY_STYLE_BIG_CIRCLE;
+import static com.android.systemui.battery.BatteryMeterView.BATTERY_STYLE_BIG_DOTTED_CIRCLE;
 
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Pair;
@@ -47,7 +53,6 @@ import com.android.systemui.statusbar.phone.StatusBarIconController;
 import com.android.systemui.statusbar.phone.StatusBarIconController.TintedIconManager;
 import com.android.systemui.statusbar.phone.StatusIconContainer;
 import com.android.systemui.statusbar.policy.Clock;
-import com.android.systemui.statusbar.policy.NetworkTraffic;
 import com.android.systemui.statusbar.policy.VariableDateView;
 import com.android.systemui.util.LargeScreenUtils;
 import com.android.systemui.tuner.TunerService;
@@ -62,18 +67,6 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
 
     private static final String SHOW_QS_CLOCK =
             "system:" + Settings.System.SHOW_QS_CLOCK;
-    private static final String NETWORK_TRAFFIC_LOCATION =
-            Settings.Secure.NETWORK_TRAFFIC_LOCATION;
-    public static final String STATUS_BAR_BATTERY_STYLE =
-            "system:" + Settings.System.STATUS_BAR_BATTERY_STYLE;
-    public static final String QS_BATTERY_STYLE =
-            "system:" + Settings.System.QS_BATTERY_STYLE;
-    public static final String QS_BATTERY_LOCATION =
-            "system:" + Settings.System.QS_BATTERY_LOCATION;
-    private static final String QS_SHOW_BATTERY_PERCENT =
-            "system:" + Settings.System.QS_SHOW_BATTERY_PERCENT;
-    private static final String QS_SHOW_BATTERY_ESTIMATE =
-            "system:" + Settings.System.QS_SHOW_BATTERY_ESTIMATE;
 
     private boolean mExpanded;
     private boolean mQsDisabled;
@@ -105,7 +98,6 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
     private View mPrivacyContainer;
 
     private BatteryMeterView mBatteryRemainingIcon;
-    private BatteryMeterView mBatteryIcon;
     private StatusIconContainer mIconContainer;
     private View mPrivacyChip;
 
@@ -127,12 +119,9 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
     private List<String> mRssiIgnoredSlots = List.of();
     private boolean mIsSingleCarrier;
 
+    private boolean mConfigShowBatteryEstimate;
+
     private boolean mUseCombinedQSHeader;
-
-    private NetworkTraffic mNetworkTraffic;
-    private boolean mShowNetworkTraffic;
-
-    private int mStatusBarBatteryStyle, mQSBatteryStyle, mQSBatteryLocation;
 
     public QuickStatusBarHeader(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -171,29 +160,22 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
         mDatePrivacySeparator = findViewById(R.id.space);
         // Tint for the battery icons are handled in setupHost()
         mBatteryRemainingIcon = findViewById(R.id.batteryRemainingIcon);
-        mBatteryRemainingIcon.mQS = true;
-        mNetworkTraffic = findViewById(R.id.network_traffic);
 
-        mBatteryIcon = findViewById(R.id.batteryIcon);
-
+        updateResources();
         Configuration config = mContext.getResources().getConfiguration();
         setDatePrivacyContainersWidth(config.orientation == Configuration.ORIENTATION_LANDSCAPE);
+
+        // QS will always show the estimate, and BatteryMeterView handles the case where
+        // it's unavailable or charging
+        mBatteryRemainingIcon.setPercentShowMode(BatteryMeterView.MODE_ESTIMATE);
 
         mIconsAlphaAnimatorFixed = new TouchAnimator.Builder()
                 .addFloat(mIconContainer, "alpha", 0, 1)
                 .addFloat(mBatteryRemainingIcon, "alpha", 0, 1)
                 .build();
 
-        updateResources();
-
         Dependency.get(TunerService.class).addTunable(this,
-                SHOW_QS_CLOCK,
-                NETWORK_TRAFFIC_LOCATION,
-                STATUS_BAR_BATTERY_STYLE,
-                QS_BATTERY_STYLE,
-                QS_BATTERY_LOCATION,
-                QS_SHOW_BATTERY_PERCENT,
-                QS_SHOW_BATTERY_ESTIMATE);
+                SHOW_QS_CLOCK);
     }
 
     void onAttach(TintedIconManager iconManager,
@@ -280,6 +262,8 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
         mStatusIconsView.setVisibility(gone ? View.GONE : View.VISIBLE);
         mDatePrivacyView.setVisibility(gone ? View.GONE : View.VISIBLE);
 
+        mConfigShowBatteryEstimate = resources.getBoolean(R.bool.config_showBatteryEstimateQSBH);
+
         mRoundedCornerPadding = resources.getDimensionPixelSize(
                 R.dimen.rounded_corner_content_padding);
 
@@ -303,7 +287,9 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
 
         int textColor = Utils.getColorAttrDefaultColor(mContext, android.R.attr.textColorPrimary);
         if (textColor != mTextColorPrimary) {
-            int isCircleBattery = mBatteryIcon.getBatteryStyle();
+            int isCircleBattery = Settings.System.getIntForUser(
+                    mContext.getContentResolver(), Settings.System.STATUS_BAR_BATTERY_STYLE,
+                    0, UserHandle.USER_CURRENT);
             int textColorSecondary = Utils.getColorAttrDefaultColor(mContext,
                     (isCircleBattery == 1 || isCircleBattery == 2 || isCircleBattery == 3)
                     ? android.R.attr.textColorHint : android.R.attr.textColorSecondary);
@@ -312,10 +298,20 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
             if (mTintedIconManager != null) {
                 mTintedIconManager.setTint(textColor);
             }
+            if ((mBatteryRemainingIcon.getBatteryStyle() == BATTERY_STYLE_CIRCLE)
+                    || (mBatteryRemainingIcon.getBatteryStyle() == BATTERY_STYLE_DOTTED_CIRCLE)
+                    || (mBatteryRemainingIcon.getBatteryStyle() == BATTERY_STYLE_FULL_CIRCLE)
+                    || (mBatteryRemainingIcon.getBatteryStyle() == BATTERY_STYLE_BIG_CIRCLE)
+                    || (mBatteryRemainingIcon.getBatteryStyle() == BATTERY_STYLE_BIG_DOTTED_CIRCLE)) {
+                final float factor = 0.3f;
+                textColorSecondary = Color.argb(
+                    Color.alpha(textColor),
+                    Math.round(Color.red(textColor) * factor),
+                    Math.round(Color.green(textColor) * factor),
+                    Math.round(Color.blue(textColor) * factor)
+                );
+            }
             mBatteryRemainingIcon.updateColors(mTextColorPrimary, textColorSecondary,
-                    mTextColorPrimary);
-            mNetworkTraffic.setTint(textColor);
-            mBatteryIcon.updateColors(mTextColorPrimary, textColorSecondary,
                     mTextColorPrimary);
         }
 
@@ -415,14 +411,7 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
     }
 
     void setChipVisibility(boolean visibility) {
-        boolean showBattery = mQSBatteryLocation == 1
-                && (mBatteryIcon.getBatteryStyle() != 5
-                || mBatteryIcon.getBatteryEstimate() != 0);
-        if (showBattery) {
-            mBatteryIcon.setVisibility(visibility ? View.GONE : View.VISIBLE);
-        }
-        mNetworkTraffic.setChipVisibility(visibility);
-        if (visibility || mShowNetworkTraffic || showBattery) {
+        if (visibility) {
             // Animates the icons and battery indicator from alpha 0 to 1, when the chip is visible
             mIconsAlphaAnimator = mIconsAlphaAnimatorFixed;
             mIconsAlphaAnimator.setPosition(mKeyguardExpansionFraction);
@@ -620,25 +609,6 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
         mDatePrivacyView.setScrollY(scrollY);
     }
 
-    private void updateBatteryStyle() {
-        int style;
-        if (mQSBatteryStyle == -1) {
-            style = mStatusBarBatteryStyle;
-        } else {
-            style = mQSBatteryStyle;
-        }
-        mBatteryRemainingIcon.setBatteryStyle(style);
-        mBatteryIcon.setBatteryStyle(style);
-        setChipVisibility(mPrivacyChip.getVisibility() == View.VISIBLE);
-    }
-
-    public BatteryMeterView getBatteryMeterView() {
-        if (mQSBatteryLocation == 0) {
-            return mBatteryRemainingIcon;
-        }
-        return mBatteryIcon;
-    }
-
     @Override
     public void onTuningChanged(String key, String newValue) {
         switch (key) {
@@ -646,46 +616,6 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
                 boolean showClock =
                         TunerService.parseIntegerSwitch(newValue, true);
                 mClockView.setClockVisibleByUser(showClock);
-                break;
-            case NETWORK_TRAFFIC_LOCATION:
-                mShowNetworkTraffic =
-                        TunerService.parseInteger(newValue, 0) == 2;
-                setChipVisibility(mPrivacyChip.getVisibility() == View.VISIBLE);
-                break;
-            case QS_BATTERY_STYLE:
-                mQSBatteryStyle =
-                        TunerService.parseInteger(newValue, -1);
-                updateBatteryStyle();
-                break;
-            case STATUS_BAR_BATTERY_STYLE:
-                mStatusBarBatteryStyle =
-                        TunerService.parseInteger(newValue, 0);
-                updateBatteryStyle();
-                break;
-            case QS_BATTERY_LOCATION:
-                mQSBatteryLocation =
-                        TunerService.parseInteger(newValue, 0);
-                if (mQSBatteryLocation == 0) {
-                    mBatteryIcon.setVisibility(View.GONE);
-                    mBatteryRemainingIcon.setVisibility(View.VISIBLE);
-                } else {
-                    mBatteryRemainingIcon.setVisibility(View.GONE);
-                    mBatteryIcon.setVisibility(View.VISIBLE);
-                }
-                setChipVisibility(mPrivacyChip.getVisibility() == View.VISIBLE);
-                break;
-            case QS_SHOW_BATTERY_PERCENT:
-                mBatteryRemainingIcon.setBatteryPercent(
-                        TunerService.parseInteger(newValue, 2));
-                mBatteryIcon.setBatteryPercent(
-                        TunerService.parseInteger(newValue, 2));
-                break;
-            case QS_SHOW_BATTERY_ESTIMATE:
-                mBatteryRemainingIcon.setBatteryEstimate(
-                        TunerService.parseInteger(newValue, 0));
-                mBatteryIcon.setBatteryEstimate(
-                        TunerService.parseInteger(newValue, 0));
-                setChipVisibility(mPrivacyChip.getVisibility() == View.VISIBLE);
                 break;
             default:
                 break;
