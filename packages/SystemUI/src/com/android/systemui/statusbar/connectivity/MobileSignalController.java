@@ -387,7 +387,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             Log.d(mTag, "setListeners: register CapabilitiesCallback and RegistrationCallback");
             mImsMmTelManager.registerMmTelCapabilityCallback(mContext.getMainExecutor(),
                     mCapabilityCallback);
-            mImsMmTelManager.registerImsRegistrationCallback (mContext.getMainExecutor(),
+            mImsMmTelManager.registerImsRegistrationCallback(mContext.getMainExecutor(),
                     mRegistrationCallback);
         } catch (ImsException e) {
             Log.e(mTag, "unable to register listeners.", e);

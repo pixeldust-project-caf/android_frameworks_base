@@ -63,15 +63,15 @@ import java.util.ArrayList;
 public class BatteryMeterView extends LinearLayout implements DarkReceiver {
 
     protected static final int BATTERY_STYLE_PORTRAIT = 0;
-    protected static final int BATTERY_STYLE_CIRCLE = 1;
-    protected static final int BATTERY_STYLE_DOTTED_CIRCLE = 2;
-    protected static final int BATTERY_STYLE_FULL_CIRCLE = 3;
-    protected static final int BATTERY_STYLE_TEXT = 4;
-    protected static final int BATTERY_STYLE_HIDDEN = 5;
-    protected static final int BATTERY_STYLE_RLANDSCAPE = 6;
-    protected static final int BATTERY_STYLE_LANDSCAPE = 7;
-    protected static final int BATTERY_STYLE_BIG_CIRCLE = 8;
-    protected static final int BATTERY_STYLE_BIG_DOTTED_CIRCLE = 9;
+    public static final int BATTERY_STYLE_CIRCLE = 1;
+    public static final int BATTERY_STYLE_DOTTED_CIRCLE = 2;
+    public static final int BATTERY_STYLE_FULL_CIRCLE = 3;
+    public static final int BATTERY_STYLE_TEXT = 4;
+    public static final int BATTERY_STYLE_HIDDEN = 5;
+    public static final int BATTERY_STYLE_RLANDSCAPE = 6;
+    public static final int BATTERY_STYLE_LANDSCAPE = 7;
+    public static final int BATTERY_STYLE_BIG_CIRCLE = 8;
+    public static final int BATTERY_STYLE_BIG_DOTTED_CIRCLE = 9;
 
     @Retention(SOURCE)
     @IntDef({MODE_DEFAULT, MODE_ON, MODE_OFF, MODE_ESTIMATE})
@@ -240,7 +240,7 @@ public class BatteryMeterView extends LinearLayout implements DarkReceiver {
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         updateBatteryStyle();
-        mDrawable.notifyDensityChanged();
+        mAccessorizedDrawable.notifyDensityChanged();
     }
 
     public void setColorsFromContext(Context context) {
@@ -360,18 +360,46 @@ public class BatteryMeterView extends LinearLayout implements DarkReceiver {
     }
 
     private void setPercentTextAtCurrentLevel() {
-        // Use the high voltage symbol ⚡ (u26A1 unicode) but prevent the system
-        // to load its emoji colored variant with the uFE0E flag
-        String bolt = "\u26A1\uFE0E";
-        CharSequence mChargeIndicator = mCharging && (mBatteryStyle == BATTERY_STYLE_HIDDEN ||
-            mBatteryStyle == BATTERY_STYLE_TEXT) ? (bolt + " ") : "";
-        String percentText = mChargeIndicator +
-            NumberFormat.getPercentInstance().format(mLevel / 100f);
-        // Setting text actually triggers a layout pass (because the text view is set to
-        // wrap_content width and TextView always relayouts for this). Avoid needless
-        // relayout if the text didn't actually change.
-        if (!TextUtils.equals(mBatteryPercentView.getText(), percentText)) {
-            mBatteryPercentView.setText(percentText);
+        if (mBatteryPercentView != null) {
+            mEstimateText = null;
+            // Use the high voltage symbol ⚡ (u26A1 unicode) but prevent the system
+            // to load its emoji colored variant with the uFE0E flag
+            String bolt = "\u26A1\uFE0E";
+            CharSequence mChargeIndicator = mCharging && (mBatteryStyle == BATTERY_STYLE_HIDDEN ||
+                    mBatteryStyle == BATTERY_STYLE_TEXT) ? (bolt + " ") : "";
+            String percentText = mChargeIndicator + NumberFormat.getPercentInstance().format(mLevel / 100f);
+            // Setting text actually triggers a layout pass (because the text view is set to
+            // wrap_content width and TextView always relayouts for this). Avoid needless
+            // relayout if the text didn't actually change.
+            if (!TextUtils.equals(mBatteryPercentView.getText(), percentText)) {
+                mBatteryPercentView.setText(percentText);
+            }
+        }
+
+        updateContentDescription();
+    }
+
+    private void updateContentDescription() {
+        Context context = getContext();
+
+        String contentDescription;
+        if (mBatteryStateUnknown) {
+            contentDescription = context.getString(R.string.accessibility_battery_unknown);
+        } else if (mShowPercentMode == MODE_ESTIMATE && !TextUtils.isEmpty(mEstimateText)) {
+            contentDescription = context.getString(
+                    mIsOverheated
+                            ? R.string.accessibility_battery_level_charging_paused_with_estimate
+                            : R.string.accessibility_battery_level_with_estimate,
+                    mLevel,
+                    mEstimateText);
+        } else if (mIsOverheated) {
+            contentDescription =
+                    context.getString(R.string.accessibility_battery_level_charging_paused, mLevel);
+        } else if (mCharging) {
+            contentDescription =
+                    context.getString(R.string.accessibility_battery_level_charging, mLevel);
+        } else {
+            contentDescription = context.getString(R.string.accessibility_battery_level, mLevel);
         }
 
         setContentDescription(contentDescription);
@@ -387,7 +415,7 @@ public class BatteryMeterView extends LinearLayout implements DarkReceiver {
     void updateShowPercent() {
         boolean drawPercentInside = mShowBatteryPercent == 1
                                     && !mCharging && !mBatteryStateUnknown;
-        boolean showPercent = mShowBatteryPercent >= 2
+        boolean showPercent = (mShowBatteryPercent == 2 && mBatteryStyle != BATTERY_STYLE_HIDDEN)
                                     || mBatteryStyle == BATTERY_STYLE_TEXT
                                     || (mBatteryPercentCharging && mCharging)
                                     || mShowPercentMode == MODE_ON
@@ -528,9 +556,11 @@ public class BatteryMeterView extends LinearLayout implements DarkReceiver {
                 Math.round(fullBatteryIconHeight));
         scaledLayoutParams.setMargins(0, marginTop, 0, marginBottom);
 
-        mDrawable.setDisplayShield(displayShield);
-        mBatteryIconView.setLayoutParams(scaledLayoutParams);
-        mBatteryIconView.invalidateDrawable(mDrawable);
+        mAccessorizedDrawable.setDisplayShield(displayShield);
+        if (mBatteryIconView != null) {
+            mBatteryIconView.setLayoutParams(scaledLayoutParams);
+        }
+        mBatteryIconView.invalidateDrawable(mAccessorizedDrawable);
     }
 
     private void updateDrawable() {
