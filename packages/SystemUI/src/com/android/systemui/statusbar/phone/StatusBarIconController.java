@@ -570,6 +570,8 @@ public interface StatusBarIconController {
             StatusBarMobileView mobileView = onCreateStatusBarMobileView(state.subId, slot);
             mobileView.applyMobileState(state);
             mGroup.addView(mobileView, index, onCreateLayoutParams());
+            mobileView.updateDisplayType(mIsOldSignalStyle);
+
             if (mIsInDemoMode) {
                 Context mobileContext = mMobileContextProvider
                         .getMobileContextForSub(state.subId, mContext);
