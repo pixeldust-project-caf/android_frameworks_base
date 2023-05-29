@@ -18,7 +18,6 @@ import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_BLUE
 import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_ICON;
 import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_MOBILE;
 import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_MOBILE_NEW;
-import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_NETWORK_TRAFFIC;
 import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_WIFI;
 import static com.android.systemui.statusbar.phone.StatusBarIconHolder.TYPE_WIFI_NEW;
 
@@ -61,7 +60,7 @@ import com.android.systemui.statusbar.pipeline.mobile.ui.viewmodel.MobileIconsVi
 import com.android.systemui.statusbar.pipeline.wifi.ui.WifiUiAdapter;
 import com.android.systemui.statusbar.pipeline.wifi.ui.view.ModernStatusBarWifiView;
 import com.android.systemui.statusbar.pipeline.wifi.ui.viewmodel.LocationBasedWifiViewModel;
-import com.android.systemui.statusbar.policy.StatusBarNetworkTraffic;
+import com.android.systemui.statusbar.pipeline.wifi.ui.viewmodel.WifiViewModel;
 import com.android.systemui.util.Assert;
 
 import java.util.ArrayList;
@@ -496,9 +495,6 @@ public interface StatusBarIconController {
 
                 case TYPE_BLUETOOTH:
                     return addBluetoothIcon(index, slot, holder.getBluetoothState());
-
-                case TYPE_NETWORK_TRAFFIC:
-                    return addNetworkTraffic(index, slot);
             }
 
             return null;
@@ -543,12 +539,6 @@ public interface StatusBarIconController {
                 mDemoStatusIcons.addModernWifiView(mWifiViewModel);
             }
 
-            return view;
-        }
-
-        protected StatusBarNetworkTraffic addNetworkTraffic(int index, String slot) {
-            StatusBarNetworkTraffic view = onCreateNetworkTraffic(slot);
-            mGroup.addView(view, index, onCreateLayoutParams());
             return view;
         }
 
@@ -628,11 +618,6 @@ public interface StatusBarIconController {
             return view;
         }
 
-        private StatusBarNetworkTraffic onCreateNetworkTraffic(String slot) {
-            StatusBarNetworkTraffic view = new StatusBarNetworkTraffic(mContext);
-            return view;
-        }
-
         private ModernStatusBarMobileView onCreateModernStatusBarMobileView(
                 String slot, int subId) {
             Context mobileContext = mMobileContextProvider.getMobileContextForSub(subId, mContext);
@@ -685,11 +670,8 @@ public interface StatusBarIconController {
         }
 
         public void onSetIcon(int viewIndex, StatusBarIcon icon) {
-            View view = mGroup.getChildAt(viewIndex);
-            if (view instanceof StatusBarIconView) {
-                ((StatusBarIconView) view).set(icon);
-            }
-
+            StatusBarIconView view = (StatusBarIconView) mGroup.getChildAt(viewIndex);
+            view.set(icon);
         }
 
         public void onSetIconHolder(int viewIndex, StatusBarIconHolder holder) {
