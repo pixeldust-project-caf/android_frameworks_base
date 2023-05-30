@@ -160,6 +160,13 @@ public class StatusBarSignalPolicy implements SignalCallback,
     @Override
     public void onTuningChanged(String key, String newValue) {
         if (StatusBarIconController.ICON_HIDE_LIST.equals(key)) {
+            return;        
+        } else if (SHOW_ACTIVITY_INDICATORS.equals(key)) {
+            mActivityEnabled = TunerService.parseIntegerSwitch(newValue, true);
+            // Re-register to get new callbacks.
+            mNetworkController.removeCallback(this);
+            mNetworkController.addCallback(this);
+        } else {
             ArraySet<String> hideList = StatusBarIconController.getIconHideList(mContext, newValue);
             boolean hideAirplane = hideList.contains(mSlotAirplane);
             boolean hideMobile = hideList.contains(mSlotMobile);
@@ -176,11 +183,6 @@ public class StatusBarSignalPolicy implements SignalCallback,
                 mNetworkController.removeCallback(this);
                 mNetworkController.addCallback(this);
             }
-        } else if (SHOW_ACTIVITY_INDICATORS.equals(key)) {
-            mActivityEnabled = TunerService.parseIntegerSwitch(newValue, true);
-            // Re-register to get new callbacks.
-            mNetworkController.removeCallback(this);
-            mNetworkController.addCallback(this);
         }
     }
 
