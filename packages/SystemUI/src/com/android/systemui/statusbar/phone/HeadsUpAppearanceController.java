@@ -237,19 +237,18 @@ public class HeadsUpAppearanceController extends ViewController<HeadsUpStatusBar
     private void setShown(boolean isShown) {
         if (mShown != isShown) {
             View clockView = mClockController.getClock();
-            boolean isClock = clockView != null &&
-                (clockView.getId() == R.id.clock || clockView.getId() == R.id.clock_center);
+            boolean isRightClock = clockView.getId() == R.id.clock_right;
             mShown = isShown;
             if (isShown) {
                 updateParentClipping(false /* shouldClip */);
                 mView.setVisibility(View.VISIBLE);
                 show(mView);
-                if (isClock) {
+                if (!isRightClock) {
                     hide(mClockView, View.INVISIBLE);
                 }
                 mOperatorNameViewOptional.ifPresent(view -> hide(view, View.INVISIBLE));
             } else {
-                if (isClock) {
+                if (!isRightClock) {
                     show(mClockView);
                 }
                 mOperatorNameViewOptional.ifPresent(this::show);
