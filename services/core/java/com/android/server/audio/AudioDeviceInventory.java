@@ -12,11 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * Changes from Qualcomm Innovation Center are provided under the following license:
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
- * SPDX-License-Identifier: BSD-3-Clause-Clear
- *
  */
 package com.android.server.audio;
 
@@ -519,12 +514,6 @@ public class AudioDeviceInventory {
         }
     }
 
-    /*package*/ void onMakeLeAudioUnavailableNow(String address, int device) {
-        synchronized (mDevicesLock) {
-            makeLeAudioDeviceUnavailable(address, device);
-        }
-    }
-
     /*package*/ void onReportNewRoutes() {
         int n = mRoutesObservers.beginBroadcast();
         if (n > 0) {
@@ -905,11 +894,15 @@ public class AudioDeviceInventory {
     }
 
      /*package*/ void disconnectLeAudio(int device) {
+        if (device != AudioSystem.DEVICE_OUT_BLE_HEADSET
+                && device != AudioSystem.DEVICE_OUT_BLE_BROADCAST) {
+            Log.e(TAG, "disconnectLeAudio: Can't disconnect not LE Audio device " + device);
+            return;
+        }
+
         synchronized (mDevicesLock) {
             final ArraySet<String> toRemove = new ArraySet<>();
-            /* Disconnect ALL DEVICE_OUT_BLE_HEADSET,
-             *  DEVICE_IN_BLE_HEADSET or DEVICE_OUT_BLE_BROADCAST devices
-             */
+            // Disconnect ALL DEVICE_OUT_BLE_HEADSET or DEVICE_OUT_BLE_BROADCAST devices
             mConnectedDevices.values().forEach(deviceInfo -> {
                 if (deviceInfo.mDeviceType == device) {
                     toRemove.add(deviceInfo.mDeviceAddress);
@@ -918,22 +911,17 @@ public class AudioDeviceInventory {
             new MediaMetrics.Item(mMetricsId + "disconnectLeAudio")
                     .record();
             if (toRemove.size() > 0) {
-                final int delay;
-                if (device != AudioSystem.DEVICE_IN_BLE_HEADSET) {
-                    delay = checkSendBecomingNoisyIntentInt(device, 0,
+                final int delay = checkSendBecomingNoisyIntentInt(device, 0,
                         AudioSystem.DEVICE_NONE);
-                } else {
-                    delay = 0;
-                }
                 toRemove.stream().forEach(deviceAddress ->
-                         makeLeAudioUnavailableLater(deviceAddress, delay, device));
+                        makeLeAudioDeviceUnavailable(deviceAddress, device)
+                );
             }
         }
     }
 
     /*package*/ void disconnectLeAudioUnicast() {
         disconnectLeAudio(AudioSystem.DEVICE_OUT_BLE_HEADSET);
-        disconnectLeAudio(AudioSystem.DEVICE_IN_BLE_HEADSET);
     }
 
     /*package*/ void disconnectLeAudioBroadcast() {
@@ -1192,15 +1180,6 @@ public class AudioDeviceInventory {
         mDeviceBroker.setA2dpTimeout(address, a2dpCodec, delayMs);
     }
 
-    @GuardedBy("mDevicesLock")
-    private void makeLeAudioUnavailableLater(String address, int delayMs, int device) {
-        final String deviceKey =
-                DeviceInfo.makeDeviceListKey(device, address);
-        // the device will be made unavailable later, so consider it disconnected right away
-        mConnectedDevices.remove(deviceKey);
-        // send the delayed message to make the device unavailable later
-        mDeviceBroker.setLeAudioTimeout(address, device, delayMs);
-    }
 
     @GuardedBy("mDevicesLock")
     private void makeA2dpSrcAvailable(String address, int a2dpCodec) {
