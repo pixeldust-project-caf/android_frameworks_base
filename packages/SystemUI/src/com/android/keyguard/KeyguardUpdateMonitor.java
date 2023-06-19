@@ -82,7 +82,6 @@ import android.app.trust.TrustManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.IPackageManager;
@@ -393,7 +392,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
     private boolean mIsFaceEnrolled;
     private int mActiveMobileDataSubscription = SubscriptionManager.INVALID_SUBSCRIPTION_ID;
 
-    private boolean mFingerprintWakeAndUnlock;
+    private final boolean mFingerprintWakeAndUnlock;
 
     /**
      * Short delay before restarting fingerprint authentication after a successful try. This should
@@ -485,8 +484,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
     SparseArray<BiometricAuthenticated> mUserFaceAuthenticated = new SparseArray<>();
 
     private static int sCurrentUser;
-
-    SettingsObserver mSettingsObserver;
 
     public synchronized static void setCurrentUser(int currentUser) {
         sCurrentUser = currentUser;
@@ -2084,8 +2081,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
                 .collect(Collectors.toSet());
         mFaceWakeUpTriggersConfig = faceWakeUpTriggersConfig;
 
-        updateFingerprintSettings();
-
         mHandler = new Handler(mainLooper) {
             @Override
             public void handleMessage(Message msg) {
@@ -2307,8 +2302,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
         mContext.getContentResolver().registerContentObserver(
                 Settings.System.getUriFor(Settings.System.TIME_12_24),
                 false, mTimeFormatChangeObserver, UserHandle.USER_ALL);
-        mSettingsObserver = new SettingsObserver(mHandler);
-        mSettingsObserver.observe();
 
         updateSfpsRequireScreenOnToAuthPref();
         mSfpsRequireScreenOnToAuthPrefObserver = new ContentObserver(mHandler) {
@@ -3895,53 +3888,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
         return BIOMETRIC_LOCKOUT_RESET_DELAY_MS;
     }
 
-    class SettingsObserver extends ContentObserver {
-        private ContentResolver mContentResolver;
-        SettingsObserver(Handler handler) {
-            super(handler);
-        }
-
-        void observe() {
-            mContentResolver = mContext.getContentResolver();
-            mContentResolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.FINGERPRINT_WAKE_UNLOCK), false, this,
-                    UserHandle.USER_ALL);
-            updateSettings();
-        }
-
-        void unobserve(){
-            if (mContentResolver != null){
-                mContentResolver.unregisterContentObserver(this);
-            }
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            updateSettings();
-        }
-    }
-
-    private void updateSettings() {
-        ContentResolver resolver = mContext.getContentResolver();
-        updateFingerprintSettings();
-    }
-
-    private void updateFingerprintSettings() {
-        boolean defFingerprintSettings = mContext.getResources().getBoolean(
-                com.android.systemui.R.bool.config_fingerprintWakeAndUnlock);
-        if (defFingerprintSettings) {
-            mFingerprintWakeAndUnlock = Settings.System.getIntForUser(
-                    mContext.getContentResolver(), Settings.System.FINGERPRINT_WAKE_UNLOCK,
-                    1, UserHandle.USER_CURRENT) == 1;
-        } else {
-            mFingerprintWakeAndUnlock = defFingerprintSettings;
-            // if its false, the device meant to be used like that, disable toggle with 2.
-            Settings.System.putIntForUser(mContext.getContentResolver(),
-                    Settings.System.FINGERPRINT_WAKE_UNLOCK,
-                    2, UserHandle.USER_CURRENT);
-        }
-    }
-
     /**
      * Unregister all listeners.
      */
@@ -3958,9 +3904,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
             mContext.getContentResolver().unregisterContentObserver(mTimeFormatChangeObserver);
         }
 
-        if (mSettingsObserver != null) {
-            mSettingsObserver.unobserve();
-        }
         if (mSfpsRequireScreenOnToAuthPrefObserver != null) {
             mContext.getContentResolver().unregisterContentObserver(
                     mSfpsRequireScreenOnToAuthPrefObserver);
