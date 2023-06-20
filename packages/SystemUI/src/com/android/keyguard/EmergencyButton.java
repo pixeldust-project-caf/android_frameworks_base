@@ -17,7 +17,6 @@
 package com.android.keyguard;
 
 import android.content.Context;
-import com.android.systemui.Dependency;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,10 +24,6 @@ import android.view.ViewConfiguration;
 import android.widget.Button;
 
 import com.android.internal.util.EmergencyAffordanceManager;
-import com.android.internal.widget.LockPatternUtils;
-import com.android.systemui.R;
-
-import java.util.List;
 
 /**
  * This class implements a smart emergency button that updates itself based
@@ -43,8 +38,6 @@ public class EmergencyButton extends Button {
     private int mDownX;
     private int mDownY;
     private boolean mLongPressWasDragged;
-
-    private LockPatternUtils mLockPatternUtils;
 
     private final boolean mEnableEmergencyCallWhileSimLocked;
 
@@ -62,7 +55,6 @@ public class EmergencyButton extends Button {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mLockPatternUtils = new LockPatternUtils(mContext);
         if (mEmergencyAffordanceManager.needsEmergencyAffordance()) {
             setOnLongClickListener(v -> {
                 if (!mLongPressWasDragged
@@ -99,9 +91,35 @@ public class EmergencyButton extends Button {
         return super.performLongClick();
     }
 
-    public void updateEmergencyCallButton(boolean isInCall, boolean hasTelephonyRadio,
-                                          boolean simLocked, boolean isEmergencyCapable) {
-        setVisibility(View.GONE);
-    }
+    void updateEmergencyCallButton(boolean isInCall, boolean hasTelephonyRadio, boolean simLocked,
+            boolean isSecure) {
+        boolean visible = false;
+        if (hasTelephonyRadio) {
+            // Emergency calling requires a telephony radio.
+            if (isInCall) {
+                visible = true; // always show "return to call" if phone is off-hook
+            } else {
+                if (simLocked) {
+                    // Some countries can't handle emergency calls while SIM is locked.
+                    visible = mEnableEmergencyCallWhileSimLocked;
+                } else {
+                    // Only show if there is a secure screen (pin/pattern/SIM pin/SIM puk);
+                    visible = isSecure;
+                }
+            }
+        }
+        if (visible) {
+            setVisibility(View.VISIBLE);
 
+            int textId;
+            if (isInCall) {
+                textId = com.android.internal.R.string.lockscreen_return_to_call;
+            } else {
+                textId = com.android.internal.R.string.lockscreen_emergency_call;
+            }
+            setText(textId);
+        } else {
+            setVisibility(View.GONE);
+        }
+    }
 }

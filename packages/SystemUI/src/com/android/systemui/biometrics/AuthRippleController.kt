@@ -27,6 +27,7 @@ import android.provider.Settings
 import androidx.annotation.VisibleForTesting
 import com.android.keyguard.KeyguardUpdateMonitor
 import com.android.keyguard.KeyguardUpdateMonitorCallback
+import com.android.keyguard.logging.KeyguardLogger
 import com.android.settingslib.Utils
 import com.android.systemui.R
 import com.android.systemui.animation.Interpolators
@@ -75,6 +76,7 @@ class AuthRippleController @Inject constructor(
     private val udfpsControllerProvider: Provider<UdfpsController>,
     private val statusBarStateController: StatusBarStateController,
     private val featureFlags: FeatureFlags,
+    private val logger: KeyguardLogger,
         rippleView: AuthRippleView?
 ) : ViewController<AuthRippleView>(rippleView), KeyguardStateController.Callback,
     WakefulnessLifecycle.Observer {
@@ -88,11 +90,6 @@ class AuthRippleController @Inject constructor(
 
     private var udfpsController: UdfpsController? = null
     private var udfpsRadius: Float = -1f
-
-    override fun onInit() {
-        mView.setAlphaInDuration(sysuiContext.resources.getInteger(
-                R.integer.auth_ripple_alpha_in_duration).toLong())
-    }
 
     @VisibleForTesting
     public override fun onViewAttached() {
@@ -121,8 +118,11 @@ class AuthRippleController @Inject constructor(
     }
 
     fun showUnlockRipple(biometricSourceType: BiometricSourceType) {
-        if (!keyguardStateController.isShowing ||
-                !keyguardUpdateMonitor.isUnlockingWithBiometricAllowed(biometricSourceType)) {
+        val keyguardNotShowing = !keyguardStateController.isShowing
+        val unlockNotAllowed = !keyguardUpdateMonitor
+                .isUnlockingWithBiometricAllowed(biometricSourceType)
+        if (keyguardNotShowing || unlockNotAllowed) {
+            logger.notShowingUnlockRipple(keyguardNotShowing, unlockNotAllowed)
             return
         }
 
@@ -139,6 +139,7 @@ class AuthRippleController @Inject constructor(
                                 Math.max(it.y, centralSurfaces.displayHeight.toInt() - it.y)
                         )
                 )
+                logger.showingUnlockRippleAt(it.x, it.y, "FP sensor radius: $udfpsRadius")
                 showUnlockedRipple()
             }
         } else if (biometricSourceType == BiometricSourceType.FACE) {
@@ -156,6 +157,7 @@ class AuthRippleController @Inject constructor(
                                 Math.max(it.y, centralSurfaces.displayHeight.toInt() - it.y)
                         )
                 )
+                logger.showingUnlockRippleAt(it.x, it.y, "Face unlock ripple")
                 showUnlockedRipple()
             }
         }
@@ -397,6 +399,7 @@ class AuthRippleController @Inject constructor(
     }
 
     companion object {
-        const val RIPPLE_ANIMATION_DURATION: Long = 1533
+        const val RIPPLE_ANIMATION_DURATION: Long = 800
+        const val TAG = "AuthRippleController"
     }
 }

@@ -16,7 +16,7 @@
 
 package com.android.systemui.statusbar.events
 
-import android.animation.Animator
+import androidx.core.animation.Animator
 import android.annotation.UiThread
 import android.graphics.Point
 import android.graphics.Rect
@@ -62,7 +62,7 @@ import javax.inject.Inject
  */
 
 @SysUISingleton
-class PrivacyDotViewController @Inject constructor(
+open class PrivacyDotViewController @Inject constructor(
     @Main private val mainExecutor: Executor,
     private val stateController: StatusBarStateController,
     private val configurationController: ConfigurationController,
@@ -176,7 +176,7 @@ class PrivacyDotViewController @Inject constructor(
     }
 
     @UiThread
-    private fun hideDotView(dot: View, animate: Boolean) {
+    open fun hideDotView(dot: View, animate: Boolean) {
         dot.clearAnimation()
         if (animate) {
             dot.animate()
@@ -195,7 +195,7 @@ class PrivacyDotViewController @Inject constructor(
     }
 
     @UiThread
-    private fun showDotView(dot: View, animate: Boolean) {
+    open fun showDotView(dot: View, animate: Boolean) {
         dot.clearAnimation()
         if (animate) {
             dot.visibility = View.VISIBLE
@@ -500,7 +500,12 @@ class PrivacyDotViewController @Inject constructor(
         }
 
         if (state.designatedCorner != currentViewState.designatedCorner) {
+            currentViewState.designatedCorner?.contentDescription = null
+            state.designatedCorner?.contentDescription = state.contentDescription
+
             updateDesignatedCorner(state.designatedCorner, state.shouldShowDot())
+        } else if (state.contentDescription != currentViewState.contentDescription) {
+            state.designatedCorner?.contentDescription = state.contentDescription
         }
 
         val shouldShow = state.shouldShowDot()
@@ -517,9 +522,13 @@ class PrivacyDotViewController @Inject constructor(
 
     private val systemStatusAnimationCallback: SystemStatusAnimationCallback =
             object : SystemStatusAnimationCallback {
-        override fun onSystemStatusAnimationTransitionToPersistentDot(): Animator? {
+        override fun onSystemStatusAnimationTransitionToPersistentDot(
+            contentDescr: String?
+        ): Animator? {
             synchronized(lock) {
-                nextViewState = nextViewState.copy(systemPrivacyEventIsActive = true)
+                nextViewState = nextViewState.copy(
+                        systemPrivacyEventIsActive = true,
+                        contentDescription = contentDescr)
             }
 
             return null
@@ -628,7 +637,9 @@ private data class ViewState(
     val rotation: Int = 0,
     val paddingTop: Int = 0,
     val cornerIndex: Int = -1,
-    val designatedCorner: View? = null
+    val designatedCorner: View? = null,
+
+    val contentDescription: String? = null
 ) {
     fun shouldShowDot(): Boolean {
         return systemPrivacyEventIsActive && !shadeExpanded && !qsExpanded
