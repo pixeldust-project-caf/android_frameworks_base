@@ -47,13 +47,15 @@ public final class NotificationRecordExtractorData {
     private final boolean mIsConversation;
     private final int mProposedImportance;
 
+    boolean mIsBubbleUpSuppressedByAppLock;
+
     NotificationRecordExtractorData(int position, int visibility, boolean showBadge,
             boolean allowBubble, boolean isBubble, NotificationChannel channel, String groupKey,
             ArrayList<String> overridePeople, ArrayList<SnoozeCriterion> snoozeCriteria,
             Integer userSentiment, Integer suppressVisually,
             ArrayList<Notification.Action> systemSmartActions,
             ArrayList<CharSequence> smartReplies, int importance, float rankingScore,
-            boolean isConversation, int proposedImportance) {
+            boolean isConversation, int proposedImportance, boolean isBubbleUpSuppressedByAppLock) {
         mPosition = position;
         mVisibility = visibility;
         mShowBadge = showBadge;
@@ -71,6 +73,7 @@ public final class NotificationRecordExtractorData {
         mRankingScore = rankingScore;
         mIsConversation = isConversation;
         mProposedImportance = proposedImportance;
+        mIsBubbleUpSuppressedByAppLock = isBubbleUpSuppressedByAppLock;
     }
 
     // Returns whether the provided NotificationRecord differs from the cached data in any way.
@@ -90,7 +93,8 @@ public final class NotificationRecordExtractorData {
                 || !Objects.equals(mSystemSmartActions, r.getSystemGeneratedSmartActions())
                 || !Objects.equals(mSmartReplies, r.getSmartReplies())
                 || mImportance != r.getImportance()
-                || mProposedImportance != r.getProposedImportance();
+                || mProposedImportance != r.getProposedImportance()
+                || mIsBubbleUpSuppressedByAppLock != r.isBubbleUpSuppressedByAppLock();
     }
 
     // Returns whether the NotificationRecord has a change from this data for which we should
@@ -113,6 +117,7 @@ public final class NotificationRecordExtractorData {
                 || mImportance != r.getImportance()
                 || !r.rankingScoreMatches(mRankingScore)
                 || mIsConversation != r.isConversation()
-                || mProposedImportance != r.getProposedImportance();
+                || mProposedImportance != r.getProposedImportance()
+                || mIsBubbleUpSuppressedByAppLock != r.isBubbleUpSuppressedByAppLock();
     }
 }
