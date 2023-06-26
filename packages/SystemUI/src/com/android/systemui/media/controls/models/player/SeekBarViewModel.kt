@@ -258,6 +258,7 @@ constructor(
                 seekAvailable = false,
                 playing = false,
                 scrubbing = false,
+		enableSquiggle = false,
                 elapsedTime = position,
                 duration = 100,
             )
