@@ -116,6 +116,8 @@ public class ThemeOverlayController implements CoreStartable, Dumpable, TunerSer
     private static final String PREF_CUSTOM_BGCOLOR ="monet_engine_custom_bgcolor";
     private static final String PREF_BGCOLOR_OVERRIDE ="monet_engine_bgcolor_override";
     private static final String SYSTEM_BLACK_THEME = Settings.Secure.SYSTEM_BLACK_THEME;
+    private static final String VOLTE_ICON_STYLE = "system:" + Settings.System.VOLTE_ICON_STYLE;
+    private static final String VOWIFI_ICON_STYLE = "system:" + Settings.System.VOWIFI_ICON_STYLE;
 
     protected static final int NEUTRAL = 0;
     protected static final int ACCENT = 1;
@@ -469,6 +471,8 @@ public class ThemeOverlayController implements CoreStartable, Dumpable, TunerSer
         mTunerService.addTunable(this, PREF_CUSTOM_BGCOLOR);
         mTunerService.addTunable(this, PREF_BGCOLOR_OVERRIDE);
         mTunerService.addTunable(this, SYSTEM_BLACK_THEME);
+        mTunerService.addTunable(this, VOLTE_ICON_STYLE);
+        mTunerService.addTunable(this, VOWIFI_ICON_STYLE);
 
         // Upon boot, make sure we have the most up to date colors
         Runnable updateColors = () -> {
@@ -552,6 +556,8 @@ public class ThemeOverlayController implements CoreStartable, Dumpable, TunerSer
                 reevaluateSystemTheme(true /* forceReload */);
                 break;
             case SYSTEM_BLACK_THEME:
+            case VOLTE_ICON_STYLE:
+            case VOWIFI_ICON_STYLE:
                 reevaluateSystemTheme(true /* forceReload */);
                 break;
             default:
