@@ -115,6 +115,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable, TunerSer
     private static final String PREF_COLOR_OVERRIDE ="monet_engine_color_override";
     private static final String PREF_CUSTOM_BGCOLOR ="monet_engine_custom_bgcolor";
     private static final String PREF_BGCOLOR_OVERRIDE ="monet_engine_bgcolor_override";
+    private static final String SYSTEM_BLACK_THEME = Settings.Secure.SYSTEM_BLACK_THEME;
 
     protected static final int NEUTRAL = 0;
     protected static final int ACCENT = 1;
@@ -450,31 +451,6 @@ public class ThemeOverlayController implements CoreStartable, Dumpable, TunerSer
                     }
                 },
                 UserHandle.USER_ALL);
-        mSecureSettings.registerContentObserverForUser(
-                Settings.Secure.getUriFor(Settings.Secure.SYSTEM_BLACK_THEME),
-                false,
-                new ContentObserver(mBgHandler) {
-                    @Override
-                    public void onChange(boolean selfChange, Collection<Uri> collection, int flags,
-                            int userId) {
-                        if (DEBUG) Log.d(TAG, "Overlay changed for user: " + userId);
-                        if (mUserTracker.getUserId() != userId) {
-                            return;
-                        }
-                        if (!mDeviceProvisionedController.isUserSetup(userId)) {
-                            Log.i(TAG, "Theme application deferred when setting changed.");
-                            mDeferredThemeEvaluation = true;
-                            return;
-                        }
-                        if (mSkipSettingChange) {
-                            if (DEBUG) Log.d(TAG, "Skipping setting change");
-                            mSkipSettingChange = false;
-                            return;
-                        }
-                        reevaluateSystemTheme(true /* forceReload */);
-                    }
-                },
-                UserHandle.USER_ALL);
 
         mUserTracker.addCallback(mUserTrackerCallback, mMainExecutor);
 
@@ -492,6 +468,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable, TunerSer
         mTunerService.addTunable(this, PREF_COLOR_OVERRIDE);
         mTunerService.addTunable(this, PREF_CUSTOM_BGCOLOR);
         mTunerService.addTunable(this, PREF_BGCOLOR_OVERRIDE);
+        mTunerService.addTunable(this, SYSTEM_BLACK_THEME);
 
         // Upon boot, make sure we have the most up to date colors
         Runnable updateColors = () -> {
@@ -572,6 +549,9 @@ public class ThemeOverlayController implements CoreStartable, Dumpable, TunerSer
             case PREF_BGCOLOR_OVERRIDE:
                 mBgColorOverride =
                         TunerService.parseInteger(newValue, 0xFF1b6ef3);
+                reevaluateSystemTheme(true /* forceReload */);
+                break;
+            case SYSTEM_BLACK_THEME:
                 reevaluateSystemTheme(true /* forceReload */);
                 break;
             default:
