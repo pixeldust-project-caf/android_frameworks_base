@@ -150,7 +150,6 @@ class ShadeHeaderControllerTest : SysuiTestCase() {
             null
         }
         whenever(view.visibility).thenAnswer { _ -> viewVisibility }
-        whenever(view.alpha).thenReturn(1f)
 
         whenever(view.setAlpha(anyFloat())).then {
             viewAlpha = it.arguments[0] as Float

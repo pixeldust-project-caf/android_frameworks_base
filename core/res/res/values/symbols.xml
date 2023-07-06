@@ -2310,8 +2310,8 @@
   <java-symbol type="bool" name="config_preventImeStartupUnlessTextEditor" />
   <java-symbol type="array" name="config_nonPreemptibleInputMethods" />
   <java-symbol type="bool" name="config_enhancedConfirmationModeEnabled" />
-  <java-symbol type="string" name="config_optionalPackageVerifierName" />
   <java-symbol type="bool" name="config_persistBrightnessNitsForDefaultDisplay" />
+  <java-symbol type="string" name="config_optionalPackageVerifierName" />
 
   <java-symbol type="layout" name="resolver_list" />
   <java-symbol type="id" name="resolver_list" />
@@ -4961,7 +4961,8 @@
 
   <java-symbol type="dimen" name="status_bar_height_default" />
 
-  <java-symbol type="integer" name="config_maximumDelayTimeToDeactivateDataCall" />
   <!-- Whether to show weather on the lockscreen by default. -->
   <java-symbol type="bool" name="config_lockscreenWeatherEnabledByDefault" />
+
+  <java-symbol type="integer" name="config_maximumDelayTimeToDeactivateDataCall" />
 </resources>

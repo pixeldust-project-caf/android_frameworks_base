@@ -64,6 +64,7 @@ import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.UiEventLogger;
 import com.android.internal.logging.testing.UiEventLoggerFake;
 import com.android.internal.util.LatencyTracker;
+import com.android.keyguard.EmergencyButtonController;
 import com.android.keyguard.KeyguardClockSwitch;
 import com.android.keyguard.KeyguardClockSwitchController;
 import com.android.keyguard.KeyguardStatusView;
@@ -254,6 +255,7 @@ public class NotificationPanelViewControllerBaseTest extends SysuiTestCase {
     @Mock protected KeyguardIndicationController mKeyguardIndicationController;
     @Mock protected FragmentService mFragmentService;
     @Mock protected FragmentHostManager mFragmentHostManager;
+    @Mock protected EmergencyButtonController.Factory mEmergencyButtonControllerFactory;
     @Mock protected NotificationRemoteInputManager mNotificationRemoteInputManager;
     @Mock protected RecordingController mRecordingController;
     @Mock protected LockscreenGestureLogger mLockscreenGestureLogger;
@@ -293,7 +295,6 @@ public class NotificationPanelViewControllerBaseTest extends SysuiTestCase {
     @Captor
     protected ArgumentCaptor<NotificationStackScrollLayout.OnEmptySpaceClickListener>
             mEmptySpaceClickListenerCaptor;
-
     protected KeyguardBottomAreaInteractor mKeyguardBottomAreaInteractor;
     protected KeyguardInteractor mKeyguardInteractor;
     protected NotificationPanelViewController.TouchHandler mTouchHandler;
@@ -564,6 +565,7 @@ public class NotificationPanelViewControllerBaseTest extends SysuiTestCase {
                 mKeyguardBottomAreaViewModel,
                 mKeyguardBottomAreaInteractor,
                 mAlternateBouncerInteractor,
+                mEmergencyButtonControllerFactory,
                 mDreamingToLockscreenTransitionViewModel,
                 mOccludedToLockscreenTransitionViewModel,
                 mLockscreenToDreamingTransitionViewModel,

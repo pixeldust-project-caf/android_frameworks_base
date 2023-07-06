@@ -132,6 +132,12 @@ class RefreshRatePolicy {
             return 0;
         }
 
+        // If app is forced to specified refresh rate, return the corresponding mode id.
+        int forceRefreshRateId = mForceList.getForceRefreshRateId(w.getOwningPackage());
+        if(forceRefreshRateId > 0) {
+            return forceRefreshRateId;
+        }
+
         // If app is animating, it's not able to control refresh rate because we want the animation
         // to run in default refresh rate. But if the display size of default mode is different
         // from the using preferred mode, then still keep the preferred mode to avoid disturbing

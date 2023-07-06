@@ -195,7 +195,6 @@ constructor(
             if (qsVisible && field != value) {
                 header.alpha = ShadeInterpolation.getContentAlpha(value)
                 field = value
-                updateVisibility()
             }
         }
 

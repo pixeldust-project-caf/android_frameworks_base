@@ -357,7 +357,7 @@ public class InternetTile extends QSTileImpl<SignalState> {
                             ? mController.getMobileDataNetworkName() : indicators.qsDescription;
                 }
                 mCellularInfo.mDataContentDescription = indicators.qsDescription != null
-                        ? indicators.typeContentDescriptionHtml : null;
+                    ? indicators.typeContentDescriptionHtml : null;
                 mCellularInfo.mMobileSignalIconId = indicators.qsIcon.icon;
                 mCellularInfo.mQsTypeIcon = indicators.qsType;
                 mCellularInfo.mRoaming = indicators.roaming;

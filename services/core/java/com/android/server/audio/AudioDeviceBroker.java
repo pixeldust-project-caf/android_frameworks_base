@@ -12,6 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Changes from Qualcomm Innovation Center are provided under the following license:
+ * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause-Clear
+ *
  */
 package com.android.server.audio;
 
@@ -1627,6 +1632,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
                     final int capturePreset = msg.arg1;
                     mDeviceInventory.onSaveClearPreferredDevicesForCapturePreset(capturePreset);
                 } break;
+                case MSG_IL_BTLEA_TIMEOUT:
+                    synchronized (mDeviceStateLock) {
+                        mDeviceInventory.onMakeLeAudioDeviceUnavailableNow((String) msg.obj, msg.arg1);
+                }
+                break;
                 default:
                     Log.wtf(TAG, "Invalid message " + msg.what);
             }
@@ -1702,6 +1712,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
     // process set volume for Le Audio, obj is BleVolumeInfo
     private static final int MSG_II_SET_LE_AUDIO_OUT_VOLUME = 46;
     private static final int MSG_L_A2DP_DEVICE_CONFIG_CHANGE_SHO = 47;
+    private static final int MSG_IL_BTLEA_TIMEOUT = 48;
 
     private static final int MSG_IL_BTLEAUDIO_TIMEOUT = 49;
 
@@ -1718,6 +1729,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
             case MSG_L_HEARING_AID_DEVICE_CONNECTION_CHANGE_EXT:
             case MSG_CHECK_MUTE_MUSIC:
             case MSG_L_A2DP_ACTIVE_DEVICE_CHANGE_EXT:
+            case MSG_IL_BTLEA_TIMEOUT:
                 return true;
             default:
                 return false;
@@ -1981,6 +1993,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
     }
 
     /**
+     * Flag to track whether BT_SCO=on is already set in native audio layer.
+     */
+    private boolean mScoStateSet = false;
+
+    /**
      * Configures audio policy manager and audio HAL according to active communication route.
      * Always called from message Handler.
      */
@@ -1999,8 +2016,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
         if (preferredCommunicationDevice == null
                 || preferredCommunicationDevice.getType() != AudioDeviceInfo.TYPE_BLUETOOTH_SCO) {
             mAudioSystem.setParameters("BT_SCO=off");
+            mScoStateSet = false;
         } else {
-            mAudioSystem.setParameters("BT_SCO=on");
+            /**
+             * Checking if BT_SCO=on param is already sent, to decide whether to send it or not.
+             * This is done to avoid extra processing in APM while setting BT_SCO=on multiple
+             * times in native layer.
+             */
+            if (!mScoStateSet) {
+                mAudioSystem.setParameters("BT_SCO=on");
+                mScoStateSet = true;
+            } else {
+                onUpdatePhoneStrategyDevice(preferredCommunicationDevice);
+                return;
+            }
         }
         if (preferredCommunicationDevice == null) {
             AudioDeviceAttributes defaultDevice = getDefaultCommunicationDevice();

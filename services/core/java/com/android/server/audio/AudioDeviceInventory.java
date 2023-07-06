@@ -917,7 +917,9 @@ public class AudioDeviceInventory {
             new MediaMetrics.Item(mMetricsId + "disconnectLeAudio")
                     .record();
             if (toRemove.size() > 0) {
-                final int delay = checkSendBecomingNoisyIntentInt(device,
+                final int delay;
+                if (device != AudioSystem.DEVICE_IN_BLE_HEADSET) {
+                    delay = checkSendBecomingNoisyIntentInt(device,
                         AudioService.CONNECTION_STATE_DISCONNECTED,
                         AudioSystem.DEVICE_NONE);
                 toRemove.stream().forEach(deviceAddress ->

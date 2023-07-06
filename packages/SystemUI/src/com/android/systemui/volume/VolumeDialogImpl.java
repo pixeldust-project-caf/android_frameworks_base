@@ -292,6 +292,7 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
     @VisibleForTesting
     int mVolumeRingerMuteIconDrawableId;
 
+
     public VolumeDialogImpl(
             Context context,
             VolumeDialogController volumeDialogController,
