@@ -89,6 +89,7 @@ import com.android.systemui.statusbar.policy.ConfigurationController;
 import com.android.systemui.statusbar.policy.ConfigurationController.ConfigurationListener;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController.DeviceProvisionedListener;
+import com.android.systemui.tuner.TunerService;
 import com.android.systemui.util.settings.SecureSettings;
 
 import org.json.JSONException;
@@ -117,9 +118,11 @@ import javax.inject.Inject;
  * associated work profiles
  */
 @SysUISingleton
-public class ThemeOverlayController implements CoreStartable, Dumpable {
+public class ThemeOverlayController implements CoreStartable, Dumpable, TunerService.Tunable {
     protected static final String TAG = "ThemeOverlayController";
     private static final boolean DEBUG = true;
+
+    private static final String SYSTEM_BLACK_THEME = Settings.Secure.SYSTEM_BLACK_THEME;
 
     private final ThemeOverlayApplier mThemeManager;
     private final UserManager mUserManager;
@@ -164,6 +167,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
     private final UiModeManager mUiModeManager;
     private DynamicScheme mDynamicSchemeDark;
     private DynamicScheme mDynamicSchemeLight;
+    private final TunerService mTunerService;
 
     // Defers changing themes until Setup Wizard is done.
     private boolean mDeferredThemeEvaluation;
@@ -398,7 +402,8 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
             @Main Resources resources,
             WakefulnessLifecycle wakefulnessLifecycle,
             UiModeManager uiModeManager,
-            ConfigurationController configurationController) {
+            ConfigurationController configurationController,
+            TunerService tunerService) {
         mContext = context;
         mIsMonochromaticEnabled = featureFlags.isEnabled(Flags.MONOCHROMATIC_THEME);
         mIsMonetEnabled = featureFlags.isEnabled(Flags.MONET);
@@ -416,6 +421,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
         mWakefulnessLifecycle = wakefulnessLifecycle;
         mUiModeManager = uiModeManager;
         mConfigurationController = configurationController;
+        mTunerService = tunerService;
         dumpManager.registerDumpable(TAG, this);
     }
 
@@ -429,31 +435,6 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
                 UserHandle.ALL);
         mSecureSettings.registerContentObserverForUser(
                 Settings.Secure.THEME_CUSTOMIZATION_OVERLAY_PACKAGES,
-                false,
-                new ContentObserver(mBgHandler) {
-                    @Override
-                    public void onChange(boolean selfChange, Collection<Uri> collection, int flags,
-                            int userId) {
-                        if (DEBUG) Log.d(TAG, "Overlay changed for user: " + userId);
-                        if (mUserTracker.getUserId() != userId) {
-                            return;
-                        }
-                        if (!mDeviceProvisionedController.isUserSetup(userId)) {
-                            Log.i(TAG, "Theme application deferred when setting changed.");
-                            mDeferredThemeEvaluation = true;
-                            return;
-                        }
-                        if (mSkipSettingChange) {
-                            if (DEBUG) Log.d(TAG, "Skipping setting change");
-                            mSkipSettingChange = false;
-                            return;
-                        }
-                        reevaluateSystemTheme(true /* forceReload */);
-                    }
-                },
-                UserHandle.USER_ALL);
-        mSecureSettings.registerContentObserverForUser(
-                Settings.Secure.getUriFor(Settings.Secure.SYSTEM_BLACK_THEME),
                 false,
                 new ContentObserver(mBgHandler) {
                     @Override
@@ -492,6 +473,8 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
         if (!mIsMonetEnabled) {
             return;
         }
+
+        mTunerService.addTunable(this, SYSTEM_BLACK_THEME);
 
         // Upon boot, make sure we have the most up to date colors
         Runnable updateColors = () -> {
@@ -534,6 +517,17 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
             }
         });
         mConfigurationController.addCallback(mConfigurationListener);
+    }
+
+    @Override
+    public void onTuningChanged(String key, String newValue) {
+        switch (key) {
+            case SYSTEM_BLACK_THEME:
+                reevaluateSystemTheme(true /* forceReload */);
+                break;
+            default:
+                break;
+         }
     }
 
     protected void reevaluateSystemTheme(boolean forceReload) {
