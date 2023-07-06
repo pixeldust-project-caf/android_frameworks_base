@@ -54,17 +54,22 @@ public class PropImitationHooks {
     private static final String PROCESS_GMS_PIXEL_MIGRATE = "pixelmigrate";
     private static final String PROCESS_INSTRUMENTATION = "instrumentation";
 
+    private static final String PACKAGE_GASSIST = "com.google.android.apps.googleassistant";
     private static final String PACKAGE_GPHOTOS = "com.google.android.apps.photos";
     private static final String PACKAGE_SUBSCRIPTION_RED = "com.google.android.apps.subscriptions.red";
     private static final String PACKAGE_TURBO = "com.google.android.apps.turbo";
     private static final String PACKAGE_VELVET = "com.google.android.googlequicksearchbox";
     private static final String PACKAGE_GBOARD = "com.google.android.inputmethod.latin";
     private static final String PACKAGE_SETUPWIZARD = "com.google.android.setupwizard";
+    private static final String PACKAGE_EMOJI_WALLPAPER = "com.google.android.apps.emojiwallpaper";
+    private static final String PACKAGE_CINEMATIC_PHOTOS = "com.google.android.wallpaper.effects";
 
     private static final Map<String, Object> sP7Props = createGoogleSpoofProps(
             "cheetah", "Pixel 7 Pro", "google/cheetah/cheetah:13/TQ3A.230705.001/10216780:user/release-keys");
     private static final Map<String, Object> gPhotosProps = createGoogleSpoofProps(
             "marlin", "Pixel XL", "google/marlin/marlin:10/QP1A.191005.007.A3/5972272:user/release-keys");
+    private static final Map<String, Object> sPFoldProps = createGoogleSpoofProps(
+            "tangorpro", "Pixel Tablet", "google/tangorpro/tangorpro:13/TD2A.230203.028/9723176:user/release-keys");
 
     private static Map<String, Object> createGoogleSpoofProps(String device, String model, String fingerprint) {
         Map<String, Object> props = new HashMap<>();
@@ -110,12 +115,18 @@ public class PropImitationHooks {
             switch (packageName) {
                 case PACKAGE_SUBSCRIPTION_RED:
                 case PACKAGE_TURBO:
-                case PACKAGE_VELVET:
                 case PACKAGE_GBOARD:
                 case PACKAGE_SETUPWIZARD:
                 case PACKAGE_GMS:
-                    dlog("Spoofing Pixel 7 Pro for: " + packageName);
+                case PACKAGE_EMOJI_WALLPAPER:
+                case PACKAGE_CINEMATIC_PHOTOS:
+                    dlog("Spoofing as Pixel 7 Pro for: " + packageName);
                     sP7Props.forEach((k, v) -> setPropValue(k, v));
+                    break;
+                case PACKAGE_GASSIST:
+                case PACKAGE_VELVET:
+                    dlog("Spoofing as Pixel Fold for: " + packageName);
+                    sPFoldProps.forEach((k, v) -> setPropValue(k, v));
                     break;
                 case PACKAGE_GPHOTOS:
                     if (SystemProperties.getBoolean("persist.sys.pixelprops.gphotos", true)) {
