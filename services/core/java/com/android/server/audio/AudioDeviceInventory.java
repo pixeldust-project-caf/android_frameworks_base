@@ -922,6 +922,9 @@ public class AudioDeviceInventory {
                     delay = checkSendBecomingNoisyIntentInt(device,
                         AudioService.CONNECTION_STATE_DISCONNECTED,
                         AudioSystem.DEVICE_NONE);
+                } else {
+                    delay = 0;
+                }
                 toRemove.stream().forEach(deviceAddress ->
                         makeLeAudioDeviceUnavailableLater(deviceAddress, device, delay)
                 );
