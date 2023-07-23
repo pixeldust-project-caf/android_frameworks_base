@@ -243,7 +243,7 @@ public class MobileMappings {
                     res.getBoolean(R.bool.config_hspa_data_distinguishable);
 
             config.show4gForLte = Settings.System.getIntForUser(context.getContentResolver(),
-                     Settings.System.SHOW_FOURG_ICON, 0,
+                     Settings.System.SHOW_FOURG_ICON, 1,
                      UserHandle.USER_CURRENT) == 1;
 
             CarrierConfigManager configMgr = (CarrierConfigManager)
