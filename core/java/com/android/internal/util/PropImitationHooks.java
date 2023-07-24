@@ -58,7 +58,6 @@ public class PropImitationHooks {
     private static final String PACKAGE_GMS_RESTORE = "com.google.android.apps.restore";
     private static final String PACKAGE_GMS = "com.google.android.gms";
     private static final String PROCESS_GMS_UNSTABLE = "unstable";
-    private static final String PROCESS_GMS_PERSISTENT = "persistent";
     private static final String PROCESS_GMS_PIXEL_MIGRATE = "pixelmigrate";
     private static final String PROCESS_INSTRUMENTATION = "instrumentation";
 
@@ -117,7 +116,6 @@ public class PropImitationHooks {
         	    || packageName.equals(PACKAGE_GMS);
         sProcessName = processName;
         sIsGms = isPackageGms && processName.toLowerCase().contains(PROCESS_GMS_UNSTABLE) 
-                || processName.toLowerCase().contains(PROCESS_GMS_PERSISTENT) 
                 || processName.toLowerCase().contains(PROCESS_GMS_PIXEL_MIGRATE)
                 || processName.toLowerCase().contains(PROCESS_INSTRUMENTATION);
         sIsFinsky = packageName.equals(PACKAGE_FINSKY);
@@ -246,12 +244,34 @@ public class PropImitationHooks {
     }
 
     private static void spoofBuildGms() {
-        // Alter model name and fingerprint to Pixel 2 to avoid hardware attestation enforcement
-        setPropValue("DEVICE", "walleye");
-        setPropValue("FINGERPRINT", "google/walleye/walleye:8.1.0/OPM1.171019.011/4448085:user/release-keys");
-        setPropValue("MODEL", "Pixel 2");
+        // Alter most build properties for cts profile match checks
+        setPropValue("BRAND", "google");
         setPropValue("PRODUCT", "walleye");
+        setPropValue("MODEL", "walleye");
+    	setPropValue("MANUFACTURER", "Google");
+        setPropValue("DEVICE", "Pixel 2");
+        setPropValue("FINGERPRINT", "google/walleye/walleye:8.1.0/OPM1.171019.011/4448085:user/release-keys");
+        setPropValue("ID", "OPM1.171019.011");
+        setPropValue("TYPE", "user");
+        setPropValue("TAGS", "release-keys");
         setVersionField("DEVICE_INITIAL_SDK_INT", Build.VERSION_CODES.O);
+        setVersionFieldString("SECURITY_PATCH", "2017-12-05");
+    }
+
+    private static void setVersionFieldString(String key, String value) {
+        try {
+            // Unlock
+            Field field = Build.VERSION.class.getDeclaredField(key);
+            field.setAccessible(true);
+
+            // Edit
+            field.set(null, value);
+
+            // Lock
+            field.setAccessible(false);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            Log.e(TAG, "Failed to spoof Build." + key, e);
+        }
     }
 
     private static boolean isCallerSafetyNet() {
