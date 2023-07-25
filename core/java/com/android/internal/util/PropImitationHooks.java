@@ -78,7 +78,7 @@ public class PropImitationHooks {
     private static final Map<String, Object> gPhotosProps = createGoogleSpoofProps(
             "marlin", "Pixel XL", "google/marlin/marlin:10/QP1A.191005.007.A3/5972272:user/release-keys");
     private static final Map<String, Object> sPFoldProps = createGoogleSpoofProps(
-            "tangorpro", "Pixel Tablet", "google/tangorpro/tangorpro:13/TD2A.230203.028/9723176:user/release-keys");
+            "felix", "Pixel Fold", "google/felix/felix:13/TQ3C.230705.001.C2/10334521:user/release-keys");
     private static final ComponentName GMS_ADD_ACCOUNT_ACTIVITY = ComponentName.unflattenFromString(
             "com.google.android.gms/.auth.uiflows.minutemaid.MinuteMaidActivity");
 
@@ -107,7 +107,7 @@ public class PropImitationHooks {
         final String packageName = app.getPackageName();
         final String processName = app.getProcessName();
 
-        if (packageName == null || processName == null || packageName.equals(PACKAGE_AIAI)) {
+        if (packageName == null || processName == null) {
             return;
         }
 
@@ -138,17 +138,18 @@ public class PropImitationHooks {
                         sP7Props.forEach((k, v) -> setPropValue(k, v));
                     }
                     break;
-                case PACKAGE_SUBSCRIPTION_RED:
-                case PACKAGE_TURBO:
-                case PACKAGE_GBOARD:
-                case PACKAGE_SETUPWIZARD:
-                case PACKAGE_GMS:
-                case PACKAGE_EMOJI_WALLPAPER:
                 case PACKAGE_CINEMATIC_PHOTOS:
+                case PACKAGE_SUBSCRIPTION_RED:
                     dlog("Spoofing as Pixel 7 Pro for: " + packageName);
                     sP7Props.forEach((k, v) -> setPropValue(k, v));
                     break;
+                case PACKAGE_AIAI:
+                case PACKAGE_EMOJI_WALLPAPER:
                 case PACKAGE_GASSIST:
+                case PACKAGE_GBOARD:
+                case PACKAGE_GMS:
+                case PACKAGE_SETUPWIZARD:
+                case PACKAGE_TURBO:
                 case PACKAGE_VELVET:
                     dlog("Spoofing as Pixel Fold for: " + packageName);
                     sPFoldProps.forEach((k, v) -> setPropValue(k, v));
