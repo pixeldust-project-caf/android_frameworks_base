@@ -44,6 +44,8 @@ public class PropImitationHooks {
     private static final String TAG = "PropImitationHooks";
     private static final boolean DEBUG = false;
 
+    private static final String PRODUCT_DEVICE = "ro.product.device";
+
     private static final String sCertifiedFp =
             Resources.getSystem().getString(R.string.config_certifiedFingerprint);
 
@@ -92,6 +94,13 @@ public class PropImitationHooks {
         return props;
     }
 
+    // Codenames for Pixel 6 series
+    private static final String[] pixel6Series = {
+            "bluejay",
+            "oriole",
+            "raven",
+    };
+
     private static volatile boolean sIsGms, sIsFinsky;
     private static volatile String sProcessName;
 
@@ -124,9 +133,20 @@ public class PropImitationHooks {
             setPropValue("FINGERPRINT", sStockFp);
         } else {
             switch (packageName) {
-                case PACKAGE_CINEMATIC_PHOTOS:
-                case PACKAGE_SUBSCRIPTION_RED:
                 case PACKAGE_GCAM:
+                    boolean isPixel6Series = Arrays.asList(pixel6Series).contains(SystemProperties.get(PRODUCT_DEVICE));
+                    if (isPixel6Series) {
+                        dlog("Spoofing as Pixel 7 Pro for: " + packageName);
+                        sP7Props.forEach((k, v) -> setPropValue(k, v));
+                    }
+                    break;
+                case PACKAGE_SUBSCRIPTION_RED:
+                case PACKAGE_TURBO:
+                case PACKAGE_GBOARD:
+                case PACKAGE_SETUPWIZARD:
+                case PACKAGE_GMS:
+                case PACKAGE_EMOJI_WALLPAPER:
+                case PACKAGE_CINEMATIC_PHOTOS:
                     dlog("Spoofing as Pixel 7 Pro for: " + packageName);
                     sP7Props.forEach((k, v) -> setPropValue(k, v));
                     break;
