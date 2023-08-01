@@ -54,6 +54,9 @@ public class PropImitationHooks {
 
     private static final String ANDROIDX_TEST = "androidx.test";
     private static final String PACKAGE_ARCORE = "com.google.ar.core";
+    private static final String PACKAGE_ASI = "com.google.android.as";
+    private static final String PACKAGE_COMPUTE_SERVICES = "com.google.android.as.oss";
+    private static final String PACKAGE_EXT_SERVICES = "com.google.android.ext.services";
     private static final String PACKAGE_FINSKY = "com.android.vending";
     private static final String PACKAGE_GMS_RESTORE = "com.google.android.apps.restore";
     private static final String PACKAGE_GMS = "com.google.android.gms";
@@ -73,6 +76,7 @@ public class PropImitationHooks {
     private static final String PACKAGE_SETUPWIZARD = "com.google.android.setupwizard";
     private static final String PACKAGE_EMOJI_WALLPAPER = "com.google.android.apps.emojiwallpaper";
     private static final String PACKAGE_CINEMATIC_PHOTOS = "com.google.android.wallpaper.effects";
+    private static final String PACKAGE_GOOGLE_WALLPAPERS = "com.google.android.wallpaper";
 
     private static final Map<String, Object> sP7Props = createGoogleSpoofProps(
             "cheetah", "Pixel 7 Pro", "google/cheetah/cheetah:13/TQ3A.230705.001/10216780:user/release-keys");
@@ -141,16 +145,14 @@ public class PropImitationHooks {
                     }
                     break;
                 case PACKAGE_SUBSCRIPTION_RED:
-                case PACKAGE_TURBO:
-                case PACKAGE_GBOARD:
-                case PACKAGE_SETUPWIZARD:
-                case PACKAGE_GMS:
-                case PACKAGE_EMOJI_WALLPAPER:
-                case PACKAGE_CINEMATIC_PHOTOS:
                     dlog("Spoofing as Pixel 7 Pro for: " + packageName);
                     sP7Props.forEach((k, v) -> setPropValue(k, v));
                     break;
                 case PACKAGE_AIAI:
+                case PACKAGE_ASI:
+                case PACKAGE_COMPUTE_SERVICES:
+                case PACKAGE_CINEMATIC_PHOTOS:
+                case PACKAGE_GOOGLE_WALLPAPERS:
                 case PACKAGE_EMOJI_WALLPAPER:
                 case PACKAGE_GASSIST:
                 case PACKAGE_GBOARD:
