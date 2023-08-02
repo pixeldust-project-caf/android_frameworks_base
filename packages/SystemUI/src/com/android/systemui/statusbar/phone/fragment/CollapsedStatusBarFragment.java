@@ -458,37 +458,39 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     }
 
     private void updateStatusBarClock() {
-        if (mShowSBClockBg != 0) {
-            String chipStyleUri = "sb_date_bg" + String.valueOf(mShowSBClockBg);
-            int resId = getContext().getResources().getIdentifier(chipStyleUri, "drawable", "com.android.systemui");
-            mLeftClock.setBackgroundResource(resId);
-            mLeftClock.setPadding(10,2,10,2);
-            mLeftClock.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            mCenterClock.setBackgroundResource(resId);
-            mCenterClock.setPadding(10,2,10,2);
-            mCenterClock.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            mRightClock.setBackgroundResource(resId);
-            mRightClock.setPadding(10,2,10,2);
-            mRightClock.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        } else {
-            int clockPaddingStart = getResources().getDimensionPixelSize(
-                    R.dimen.status_bar_clock_starting_padding);
-            int clockPaddingEnd = getResources().getDimensionPixelSize(
-                    R.dimen.status_bar_clock_end_padding);
-            int leftClockPaddingStart = getResources().getDimensionPixelSize(
-                    R.dimen.status_bar_left_clock_starting_padding);
-            int leftClockPaddingEnd = getResources().getDimensionPixelSize(
-                    R.dimen.status_bar_left_clock_end_padding);
-            mLeftClock.setBackgroundResource(0);
-            mLeftClock.setPadding(leftClockPaddingStart, 0, leftClockPaddingEnd, 0);
-            mCenterClock.setBackgroundResource(0);
-            mCenterClock.setPadding(0,0,0,0);
-            mRightClock.setBackgroundResource(0);
-            mRightClock.setPadding(clockPaddingStart, 0, clockPaddingEnd, 0);
-            mLeftClock.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
-            mCenterClock.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
-            mRightClock.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
-        }
+        try {
+            if (mShowSBClockBg != 0) {
+                String chipStyleUri = "sb_date_bg" + String.valueOf(mShowSBClockBg);
+                int resId = getContext().getResources().getIdentifier(chipStyleUri, "drawable", "com.android.systemui");
+                mLeftClock.setBackgroundResource(resId);
+                mLeftClock.setPadding(10,2,10,2);
+                mLeftClock.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                mCenterClock.setBackgroundResource(resId);
+                mCenterClock.setPadding(10,2,10,2);
+                mCenterClock.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                mRightClock.setBackgroundResource(resId);
+                mRightClock.setPadding(10,2,10,2);
+                mRightClock.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            } else {
+                int clockPaddingStart = getResources().getDimensionPixelSize(
+                        R.dimen.status_bar_clock_starting_padding);
+                int clockPaddingEnd = getResources().getDimensionPixelSize(
+                        R.dimen.status_bar_clock_end_padding);
+                int leftClockPaddingStart = getResources().getDimensionPixelSize(
+                        R.dimen.status_bar_left_clock_starting_padding);
+                int leftClockPaddingEnd = getResources().getDimensionPixelSize(
+                        R.dimen.status_bar_left_clock_end_padding);
+                mLeftClock.setBackgroundResource(0);
+                mLeftClock.setPadding(leftClockPaddingStart, 0, leftClockPaddingEnd, 0);
+                mCenterClock.setBackgroundResource(0);
+                mCenterClock.setPadding(0,0,0,0);
+                mRightClock.setBackgroundResource(0);
+                mRightClock.setPadding(clockPaddingStart, 0, clockPaddingEnd, 0);
+                mLeftClock.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+                mCenterClock.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+                mRightClock.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+            }
+        } catch (Exception e) { }
     }
 
     /** Initializes views related to the notification icon area. */
