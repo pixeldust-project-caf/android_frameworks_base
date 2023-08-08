@@ -185,6 +185,9 @@ public class ActivityTaskSupervisor implements RecentTasks.Callbacks {
     // How long we can hold the launch wake lock before giving up.
     private static final int LAUNCH_TIMEOUT = 10 * 1000 * Build.HW_TIMEOUT_MULTIPLIER;
 
+    // How long we delay processing the stopping and finishing activities.
+    private static final int SCHEDULE_FINISHING_STOPPING_ACTIVITY_MS = 200;
+
     public static boolean mPerfSendTapHint = false;
     public static boolean mIsPerfBoostAcquired = false;
     public static int mPerfHandle = -1;
@@ -2049,13 +2052,15 @@ public class ActivityTaskSupervisor implements RecentTasks.Callbacks {
             boolean processPausingActivities, String reason) {
         // Stop any activities that are scheduled to do so but have been waiting for the transition
         // animation to finish.
+        boolean displaySwapping = false;
         ArrayList<ActivityRecord> readyToStopActivities = null;
         for (int i = mStoppingActivities.size() - 1; i >= 0; --i) {
             final ActivityRecord s = mStoppingActivities.get(i);
             final boolean animating = s.isInTransition();
+            displaySwapping |= s.isDisplaySleepingAndSwapping();
             ProtoLog.v(WM_DEBUG_STATES, "Stopping %s: nowVisible=%b animating=%b "
                     + "finishing=%s", s, s.nowVisible, animating, s.finishing);
-            if (!animating || mService.mShuttingDown) {
+            if ((!animating && !displaySwapping) || mService.mShuttingDown) {
                 if (!processPausingActivities && s.isState(PAUSING)) {
                     // Defer processing pausing activities in this iteration and reschedule
                     // a delayed idle to reprocess it again
@@ -2072,6 +2077,16 @@ public class ActivityTaskSupervisor implements RecentTasks.Callbacks {
 
                 mStoppingActivities.remove(i);
             }
+        }
+
+        // Stopping activities are deferred processing if the display is swapping. Check again
+        // later to ensure the stopping activities can be stopped after display swapped.
+        if (displaySwapping) {
+            mHandler.postDelayed(() -> {
+                synchronized (mService.mGlobalLock) {
+                    scheduleProcessStoppingAndFinishingActivitiesIfNeeded();
+                }
+            }, SCHEDULE_FINISHING_STOPPING_ACTIVITY_MS);
         }
 
         final int numReadyStops = readyToStopActivities == null ? 0 : readyToStopActivities.size();
