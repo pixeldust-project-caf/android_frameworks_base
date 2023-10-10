@@ -2237,7 +2237,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mSafeModeEnabledVibePattern = getLongIntArray(mContext.getResources(),
                 com.android.internal.R.array.config_safeModeEnabledVibePattern);
 
-        mAssistUtils = new AssistUtils(context);
+        mAssistUtils = new AssistUtils(mContext);
 
         mGlobalKeyManager = new GlobalKeyManager(mContext);
 
