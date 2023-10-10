@@ -8838,7 +8838,8 @@ public final class ViewRootImpl implements ViewParent,
                         mAccessibilityInteractionConnectionManager);
                 mAccessibilityManager.removeHighTextContrastStateChangeListener(
                         mHighContrastTextManager);
-                mDisplayManager.unregisterDisplayListener(mDisplayListener);
+                DisplayManagerGlobal.getInstance()
+                        .unregisterDisplayListener(mDisplayListener);
             }
 
             if (mAdded && !mFirst) {
