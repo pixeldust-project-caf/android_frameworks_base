@@ -172,8 +172,6 @@ import java.util.function.Predicate;
 import java.util.Arrays;
 import android.os.AsyncTask;
 
-import vendor.qti.hardware.servicetracker.V1_2.IServicetracker;
-
 // TODO: This class has become a dumping ground. Let's
 // - Move things relating to the hierarchy to RootWindowContainer
 // - Move things relating to activity life cycles to maybe a new class called ActivityLifeCycler
@@ -290,8 +288,6 @@ public class ActivityTaskSupervisor implements RecentTasks.Callbacks {
 
     private AppOpsManager mAppOpsManager;
     private VirtualDeviceManager mVirtualDeviceManager;
-
-    private IServicetracker mServicetracker;
 
     /** Common synchronization logic used to save things to disks. */
     PersisterQueue mPersisterQueue;
@@ -487,28 +483,6 @@ public class ActivityTaskSupervisor implements RecentTasks.Callbacks {
 
     void onSystemReady() {
         mLaunchParamsPersister.onSystemReady();
-    }
-
-    public IServicetracker getServicetrackerInstance() {
-        if (mServicetracker == null) {
-            try {
-                mServicetracker = IServicetracker.getService(false);
-            } catch (java.util.NoSuchElementException e) {
-                // Service doesn't exist or cannot be opened logged below
-            } catch (RemoteException e) {
-                Slog.e(TAG, "Failed to get servicetracker interface", e);
-                return null;
-            }
-            if (mServicetracker == null) {
-                Slog.w(TAG, "servicetracker HIDL not available");
-                return null;
-            }
-        }
-        return mServicetracker;
-    }
-
-    public void destroyServicetrackerInstance() {
-        mServicetracker = null;
     }
 
     void onUserUnlocked(int userId) {

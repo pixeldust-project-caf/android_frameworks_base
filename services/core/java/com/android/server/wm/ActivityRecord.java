@@ -395,10 +395,6 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import vendor.qti.hardware.servicetracker.V1_2.IServicetracker;
-import vendor.qti.hardware.servicetracker.V1_2.ActivityDetails;
-import vendor.qti.hardware.servicetracker.V1_2.ActivityStats;
-import vendor.qti.hardware.servicetracker.V1_2.ActivityStates;
 /**
  * An entry in the history task, representing an activity.
  */
@@ -2118,7 +2114,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
         resultWho = _resultWho;
         requestCode = _reqCode;
         setState(INITIALIZING, "ActivityRecord ctor");
-        callServiceTrackeronActivityStatechange(INITIALIZING, true);
         launchFailed = false;
         delayedResume = false;
         finishing = false;
@@ -3765,7 +3760,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
                 // destroyed when the next activity reports idle.
                 addToStopping(false /* scheduleIdle */, false /* idleDelayed */,
                         "completeFinishing");
-                callServiceTrackeronActivityStatechange(STOPPING, true);
                 setState(STOPPING, "completeFinishing");
             } else if (addToFinishingAndWaitForIdle()) {
                 // We added this activity to the finishing list and something else is becoming
@@ -3792,7 +3786,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
      * destroying it until the next one starts.
      */
     boolean destroyIfPossible(String reason) {
-        callServiceTrackeronActivityStatechange(FINISHING, true);
         setState(FINISHING, "destroyIfPossible");
 
         // Make sure the record is cleaned out of other places.
@@ -3844,7 +3837,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
     @VisibleForTesting
     boolean addToFinishingAndWaitForIdle() {
         ProtoLog.v(WM_DEBUG_STATES, "Enqueueing pending finish: %s", this);
-        callServiceTrackeronActivityStatechange(FINISHING, true);
         setState(FINISHING, "addToFinishingAndWaitForIdle");
         if (!mTaskSupervisor.mFinishingActivities.contains(this)) {
             mTaskSupervisor.mFinishingActivities.add(this);
@@ -3915,14 +3907,12 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
             // we are not removing it from the list.
             if (finishing && !skipDestroy) {
                 ProtoLog.v(WM_DEBUG_STATES, "Moving to DESTROYING: %s (destroy requested)", this);
-                callServiceTrackeronActivityStatechange(DESTROYING, true);
                 setState(DESTROYING,
                         "destroyActivityLocked. finishing and not skipping destroy");
                 mAtmService.mH.postDelayed(mDestroyTimeoutRunnable, DESTROY_TIMEOUT);
             } else {
                 ProtoLog.v(WM_DEBUG_STATES, "Moving to DESTROYED: %s "
                         + "(destroy skipped)", this);
-                callServiceTrackeronActivityStatechange(DESTROYED, true);
                 setState(DESTROYED,
                         "destroyActivityLocked. not finishing or skipping destroy");
                 if (DEBUG_APP) Slog.v(TAG_APP, "Clearing app during destroy for activity " + this);
@@ -3935,7 +3925,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
                 removedFromHistory = true;
             } else {
                 ProtoLog.v(WM_DEBUG_STATES, "Moving to DESTROYED: %s (no app)", this);
-                callServiceTrackeronActivityStatechange(DESTROYED, true);
                 setState(DESTROYED, "destroyActivityLocked. not finishing and had no app");
             }
         }
@@ -3972,7 +3961,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
         removeTimeouts();
         ProtoLog.v(WM_DEBUG_STATES, "Moving to DESTROYED: %s (removed from history)",
                 this);
-        callServiceTrackeronActivityStatechange(DESTROYED, true);
         setState(DESTROYED, "removeFromHistory");
         if (DEBUG_APP) Slog.v(TAG_APP, "Clearing app during remove for activity " + this);
         detachFromProcess();
@@ -4071,7 +4059,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
         frozenBeforeDestroy = false;
 
         if (setState) {
-            callServiceTrackeronActivityStatechange(DESTROYED, true);
             setState(DESTROYED, "cleanUp");
             if (DEBUG_APP) Slog.v(TAG_APP, "Clearing app during cleanUp for activity " + this);
             detachFromProcess();
@@ -5784,8 +5771,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
 
         mState = state;
 
-        callServiceTrackeronActivityStatechange(state, false);
-
         if (getTaskFragment() != null) {
             getTaskFragment().onActivityStateChanged(this, state, reason);
         }
@@ -5852,79 +5837,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
                 }
                 break;
         }
-    }
-
-    void callServiceTrackeronActivityStatechange(State state, boolean early_notify) {
-        IServicetracker mServicetracker;
-        ActivityDetails aDetails = new ActivityDetails();
-        ActivityStats aStats = new ActivityStats();
-        int aState = ActivityStates.UNKNOWN;
-
-        aDetails.launchedFromPid = this.launchedFromPid;
-        aDetails.launchedFromUid = this.launchedFromUid;
-        aDetails.packageName = this.packageName;
-        aDetails.processName = (this.processName!= null)? this.processName:"none";
-        aDetails.intent = this.intent.getComponent().toString();
-        aDetails.className = this.intent.getComponent().getClassName();
-        aDetails.versioncode = this.info.applicationInfo.versionCode;
-
-        aStats.createTime = this.createTime;
-        aStats.lastVisibleTime = this.lastVisibleTime;
-        aStats.launchCount = this.launchCount;
-        aStats.lastLaunchTime = this.lastLaunchTime;
-
-        switch(state) {
-            case INITIALIZING :
-                aState = ActivityStates.INITIALIZING;
-                break;
-            case STARTED :
-                aState = ActivityStates.STARTED;
-                break;
-            case RESUMED :
-                aState = ActivityStates.RESUMED;
-                break;
-            case PAUSING :
-                aState = ActivityStates.PAUSING;
-                break;
-            case PAUSED :
-                aState = ActivityStates.PAUSED;
-                break;
-            case STOPPING :
-                aState = ActivityStates.STOPPING;
-                break;
-            case STOPPED:
-                aState = ActivityStates.STOPPED;
-                break;
-            case FINISHING :
-                aState = ActivityStates.FINISHING;
-                break;
-            case DESTROYING:
-                aState = ActivityStates.DESTROYING;
-                break;
-            case DESTROYED :
-                aState = ActivityStates.DESTROYED;
-                break;
-            case RESTARTING_PROCESS:
-                aState = ActivityStates.RESTARTING_PROCESS;
-                break;
-        }
-        if (!isLowRamDevice) {
-            if(DEBUG_SERVICETRACKER) {
-                Slog.v(TAG, "Calling mServicetracker.OnActivityStateChange with flag "
-                        + early_notify + " state " + state);
-            }
-            try {
-                mServicetracker = mAtmService.mTaskSupervisor.getServicetrackerInstance();
-                if (mServicetracker != null)
-                    mServicetracker.OnActivityStateChange(aState, aDetails, aStats, early_notify);
-                else
-                    Slog.e(TAG, "Unable to get servicetracker HAL instance");
-            } catch (RemoteException e) {
-                    Slog.e(TAG, "Failed to send activity state change details to servicetracker HAL", e);
-                    mAtmService.mTaskSupervisor.destroyServicetrackerInstance();
-            }
-        }
-
     }
 
     State getState() {
@@ -6212,7 +6124,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
             }
             // An activity must be in the {@link PAUSING} state for the system to validate
             // the move to {@link PAUSED}.
-            callServiceTrackeronActivityStatechange(PAUSING, true);
             setState(PAUSING, "makeActiveIfNeeded");
             EventLogTags.writeWmPauseActivity(mUserId, System.identityHashCode(this),
                     shortComponentName, "userLeaving=false", "make-active");
@@ -6227,7 +6138,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
             if (DEBUG_VISIBILITY) {
                 Slog.v(TAG_VISIBILITY, "Start visible activity, " + this);
             }
-            callServiceTrackeronActivityStatechange(STARTED, true);
             setState(STARTED, "makeActiveIfNeeded");
 
             try {
@@ -6458,7 +6368,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
                         shortComponentName, pausingActivity != null
                                 ? pausingActivity.shortComponentName : "(none)");
                 if (isState(PAUSING)) {
-                    callServiceTrackeronActivityStatechange(PAUSED, true);
                     setState(PAUSED, "activityPausedLocked");
                     if (finishing) {
                         ProtoLog.v(WM_DEBUG_STATES,
@@ -6529,8 +6438,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
         resumeKeyDispatchingLocked();
         try {
             ProtoLog.v(WM_DEBUG_STATES, "Moving to STOPPING: %s (stop requested)", this);
-            callServiceTrackeronActivityStatechange(STOPPING, true);
-
             setState(STOPPING, "stopIfPossible");
             getRootTask().onARStopTriggered(this);
             if (DEBUG_VISIBILITY) {
@@ -6549,7 +6456,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
             // Just in case, assume it to be stopped.
             mAppStopped = true;
             ProtoLog.v(WM_DEBUG_STATES, "Stop failed; moving to STOPPED: %s", this);
-            callServiceTrackeronActivityStatechange(STOPPED, true);
             setState(STOPPED, "stopIfPossible");
             if (deferRelaunchUntilPaused) {
                 destroyImmediately("stop-except");
@@ -6585,7 +6491,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
 
         if (isStopping) {
             ProtoLog.v(WM_DEBUG_STATES, "Moving to STOPPED: %s (stop complete)", this);
-            callServiceTrackeronActivityStatechange(STOPPED, true);
             setState(STOPPED, "activityStopped");
         }
 
@@ -9997,7 +9902,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
             mAtmService.getAppWarningsLocked().onResumeActivity(this);
         } else {
             removePauseTimeout();
-            callServiceTrackeronActivityStatechange(PAUSED, true);
             setState(PAUSED, "relaunchActivityLocked");
         }
 
@@ -10028,7 +9932,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
         }
 
         // The restarting state avoids removing this record when process is died.
-        callServiceTrackeronActivityStatechange(RESTARTING_PROCESS, true);
         setState(RESTARTING_PROCESS, "restartActivityProcess");
 
         if (!mVisibleRequested || mHaveState) {

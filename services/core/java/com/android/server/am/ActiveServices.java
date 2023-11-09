@@ -255,10 +255,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
-import vendor.qti.hardware.servicetracker.V1_0.IServicetracker;
-import vendor.qti.hardware.servicetracker.V1_0.ServiceData;
-import vendor.qti.hardware.servicetracker.V1_0.ClientData;
-
 public final class ActiveServices {
     private static final String TAG = TAG_WITH_CLASS_NAME ? "ActiveServices" : TAG_AM;
     private static final String TAG_MU = TAG + POSTFIX_MU;
@@ -271,9 +267,6 @@ public final class ActiveServices {
     private static final boolean DEBUG_SHORT_SERVICE = DEBUG_SERVICE;
 
     private static final boolean LOG_SERVICE_START_STOP = DEBUG_SERVICE;
-
-    private static final String AIDL_SERVICE =
-            "vendor.qti.hardware.servicetrackeraidl.IServicetracker/default";
 
     // Foreground service types that always get immediate notification display,
     // expressed in the same bitmask format that ServiceRecord.foregroundServiceType
@@ -413,10 +406,6 @@ public final class ActiveServices {
 
     /** Amount of time to allow a last ANR message to exist before freeing the memory. */
     static final int LAST_ANR_LIFETIME_DURATION_MSECS = 2 * 60 * 60 * 1000; // Two hours
-
-    private vendor.qti.hardware.servicetracker.V1_0.IServicetracker mServicetracker;
-    private vendor.qti.hardware.servicetrackeraidl.IServicetracker  mServicetracker_aidl;
-
 
     private final boolean isLowRamDevice =
             SystemProperties.getBoolean("ro.config.low_ram", false);
@@ -711,46 +700,6 @@ public final class ActiveServices {
         if (!TextUtils.isEmpty(systemCaptionsServicePackageName)) {
             mAllowListWhileInUsePermissionInFgs.add(systemCaptionsServicePackageName);
         }
-    }
-
-    private boolean getServicetrackerInstance() {
-        if (mServicetracker == null ) {
-            try {
-                mServicetracker = IServicetracker.getService(false);
-            } catch (java.util.NoSuchElementException e) {
-                // Service doesn't exist or cannot be opened logged below
-            } catch (RemoteException e) {
-                if (DEBUG_SERVICE) Slog.e(TAG, "Failed to get servicetracker interface", e);
-                return false;
-            }
-            if (mServicetracker == null) {
-                if (DEBUG_SERVICE) Slog.w(TAG, "servicetracker HIDL not available");
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean getAIDLServicetrackerInstance() {
-        if (mServicetracker_aidl == null ) {
-            try {
-                if (ServiceManager.isDeclared(AIDL_SERVICE)){
-                    IBinder mBinder = ServiceManager.getService(AIDL_SERVICE);
-                    mServicetracker_aidl =
-                        vendor.qti.hardware.servicetrackeraidl.IServicetracker.Stub.asInterface(mBinder);
-                }
-            } catch (java.util.NoSuchElementException e) {
-                // Service doesn't exist or cannot be opened logged below
-            } catch (Exception e) {
-                if (DEBUG_SERVICE) Slog.e(TAG, "Failed to get servicetracker AIDL interface", e);
-                return false;
-            }
-            if (mServicetracker_aidl == null) {
-                if (DEBUG_SERVICE) Slog.w(TAG, "servicetracker AIDL not available");
-                return false;
-            }
-        }
-        return true;
     }
 
     ServiceRecord getServiceByNameLocked(ComponentName name, int callingUser) {
@@ -3574,80 +3523,6 @@ public final class ActiveServices {
         return false;
     }
 
-    private void getServiceTrackerAidlData(vendor.qti.hardware.servicetrackeraidl.ServiceData sData,
-            vendor.qti.hardware.servicetrackeraidl.ClientData cData, ServiceRecord r,
-            ConnectionRecord connrec, ProcessRecord callerApp, boolean unbind) {
-        if (unbind){
-            sData.packageName = connrec.binding.service.packageName;
-            sData.processName = connrec.binding.service.shortInstanceName;
-            sData.lastActivity = connrec.binding.service.lastActivity;
-            if (connrec.binding.service.app != null) {
-                sData.pid = connrec.binding.service.app.getPid();
-                sData.serviceB = connrec.binding.service.app.mState.isServiceB();
-            } else {
-                sData.pid = -1;
-                sData.serviceB = false;
-            }
-            if (cData != null) {
-                cData.processName = connrec.binding.client.processName;
-                cData.pid = connrec.binding.client.getPid();
-            }
-            return;
-        }
-
-        sData.packageName = r.packageName;
-        sData.processName = r.shortInstanceName;
-        sData.lastActivity = r.lastActivity;
-        if (r.app != null) {
-            sData.pid = r.app.getPid();
-            sData.serviceB = r.app.mState.isServiceB();
-        } else {
-            sData.pid = -1;
-            sData.serviceB = false;
-        }
-        if (cData != null) {
-            cData.processName = callerApp.processName;
-            cData.pid = callerApp.getPid();
-        }
-    }
-
-    private void getServiceTrackerHidlData(vendor.qti.hardware.servicetracker.V1_0.ServiceData sData,
-            vendor.qti.hardware.servicetracker.V1_0.ClientData cData,
-            ServiceRecord r, ConnectionRecord connrec, ProcessRecord callerApp, boolean unbind) {
-        if (unbind) {
-            sData.packageName = connrec.binding.service.packageName;
-            sData.processName = connrec.binding.service.shortInstanceName;
-            sData.lastActivity = connrec.binding.service.lastActivity;
-            if (connrec.binding.service.app != null) {
-                sData.pid = connrec.binding.service.app.getPid();
-                sData.serviceB = connrec.binding.service.app.mState.isServiceB();
-            } else {
-                sData.pid = -1;
-                sData.serviceB = false;
-            }
-            if (cData != null) {
-                cData.processName = connrec.binding.client.processName;
-                cData.pid = connrec.binding.client.getPid();
-            }
-            return;
-        }
-
-        sData.packageName = r.packageName;
-        sData.processName = r.shortInstanceName;
-        sData.lastActivity = r.lastActivity;
-        if (r.app != null) {
-            sData.pid = r.app.getPid();
-            sData.serviceB = r.app.mState.isServiceB();
-        } else {
-            sData.pid = -1;
-            sData.serviceB = false;
-        }
-        if (cData != null) {
-            cData.processName = callerApp.processName;
-            cData.pid = callerApp.getPid();
-        }
-    }
-
     int bindServiceLocked(IApplicationThread caller, IBinder token, Intent service,
             String resolvedType, final IServiceConnection connection, long flags,
             String instanceName, boolean isSdkSandboxService, int sdkSandboxClientAppUid,
@@ -3872,30 +3747,6 @@ public final class ActiveServices {
                 mServiceConnections.put(binder, clist);
             }
             clist.add(c);
-
-            if (!isLowRamDevice) {
-                try {
-                    if (getAIDLServicetrackerInstance()) {
-                        vendor.qti.hardware.servicetrackeraidl.ServiceData sData =
-                                new vendor.qti.hardware.servicetrackeraidl.ServiceData();
-                        vendor.qti.hardware.servicetrackeraidl.ClientData cData =
-                                new vendor.qti.hardware.servicetrackeraidl.ClientData();
-                        getServiceTrackerAidlData(sData, cData, s, null, callerApp, false);
-                        mServicetracker_aidl.bindService(sData, cData);
-                    } else if (getServicetrackerInstance()) {
-                        vendor.qti.hardware.servicetracker.V1_0.ServiceData sData =
-                                new vendor.qti.hardware.servicetracker.V1_0.ServiceData();
-                        vendor.qti.hardware.servicetracker.V1_0.ClientData cData =
-                                new vendor.qti.hardware.servicetracker.V1_0.ClientData();
-                        getServiceTrackerHidlData(sData, cData, s, null, callerApp, false);
-                        mServicetracker.bindService(sData, cData);
-                    }
-                } catch (RemoteException e) {
-                    Slog.e(TAG, "Failed to send bind details to servicetracker HAL", e);
-                    mServicetracker = null;
-                    mServicetracker_aidl = null;
-                }
-            }
 
             boolean needOomAdj = false;
             if (c.hasFlag(Context.BIND_AUTO_CREATE)) {
@@ -4133,29 +3984,6 @@ public final class ActiveServices {
 
             while (clist.size() > 0) {
                 ConnectionRecord r = clist.get(0);
-                if (!isLowRamDevice) {
-                    try {
-                        if (getAIDLServicetrackerInstance()) {
-                            vendor.qti.hardware.servicetrackeraidl.ServiceData sData =
-                                    new vendor.qti.hardware.servicetrackeraidl.ServiceData();
-                            vendor.qti.hardware.servicetrackeraidl.ClientData cData =
-                                    new vendor.qti.hardware.servicetrackeraidl.ClientData();
-                            getServiceTrackerAidlData(sData, cData, null, r, null, true);
-                            mServicetracker_aidl.unbindService(sData, cData);
-                        } else if (getServicetrackerInstance()) {
-                            vendor.qti.hardware.servicetracker.V1_0.ServiceData sData =
-                                    new vendor.qti.hardware.servicetracker.V1_0.ServiceData();
-                            vendor.qti.hardware.servicetracker.V1_0.ClientData cData =
-                                    new vendor.qti.hardware.servicetracker.V1_0.ClientData();
-                            getServiceTrackerHidlData(sData, cData, null, r, null, true);
-                            mServicetracker.unbindService(sData, cData);
-                        }
-                    } catch (RemoteException e) {
-                        Slog.e(TAG, "Failed to send unbind details to servicetracker AIDL/HAL", e);
-                        mServicetracker = null;
-                        mServicetracker_aidl = null;
-                    }
-                }
                 removeConnectionLocked(r, null, null, true);
                 if (clist.size() > 0 && clist.get(0) == r) {
                     // In case it didn't get removed above, do it now.
@@ -5589,26 +5417,6 @@ public final class ActiveServices {
                     app.mState.getReportedProcState());
             r.postNotification(false);
             created = true;
-
-            if (!isLowRamDevice) {
-                try {
-                    if (getAIDLServicetrackerInstance()) {
-                        vendor.qti.hardware.servicetrackeraidl.ServiceData sData =
-                                new vendor.qti.hardware.servicetrackeraidl.ServiceData();
-                        getServiceTrackerAidlData(sData, null, r, null, null, false);
-                        mServicetracker_aidl.startService(sData);
-                    } else if (getServicetrackerInstance()) {
-                        vendor.qti.hardware.servicetracker.V1_0.ServiceData sData =
-                                new vendor.qti.hardware.servicetracker.V1_0.ServiceData();
-                        getServiceTrackerHidlData(sData, null, r, null, null, false);
-                        mServicetracker.startService(sData);
-                    }
-                } catch (RemoteException e) {
-                    Slog.e(TAG, "Failed to send start details to servicetracker HAL", e);
-                    mServicetracker = null;
-                    mServicetracker_aidl = null;
-                }
-            }
         } catch (DeadObjectException e) {
             Slog.w(TAG, "Application dead when creating service " + r);
             mAm.appDiedLocked(app, "Died when creating service");
@@ -5812,25 +5620,6 @@ public final class ActiveServices {
     private void bringDownServiceLocked(ServiceRecord r, boolean enqueueOomAdj) {
         //Slog.i(TAG, "Bring down service:");
         //r.dump("  ");
-        if (!isLowRamDevice) {
-            try {
-                if (getAIDLServicetrackerInstance()) {
-                    vendor.qti.hardware.servicetrackeraidl.ServiceData sData =
-                            new vendor.qti.hardware.servicetrackeraidl.ServiceData();
-                    getServiceTrackerAidlData(sData, null, r, null, null, false);
-                    mServicetracker_aidl.destroyService(sData);
-                } else if (getServicetrackerInstance()) {
-                    vendor.qti.hardware.servicetracker.V1_0.ServiceData sData =
-                            new vendor.qti.hardware.servicetracker.V1_0.ServiceData();
-                    getServiceTrackerHidlData(sData, null, r, null, null, false);
-                    mServicetracker.destroyService(sData);
-                }
-            } catch (RemoteException e) {
-                Slog.e(TAG, "Failed to send destroy details to servicetracker HAL", e);
-                mServicetracker = null;
-                mServicetracker_aidl = null;
-            }
-        }
         if (r.isShortFgs()) {
             // FGS can be stopped without the app calling stopService() or stopSelf(),
             // due to force-app-standby, or from Task Manager.
@@ -6719,18 +6508,6 @@ public final class ActiveServices {
                     }
                 }
             }
-        }
-
-        try {
-            if (!isLowRamDevice && getAIDLServicetrackerInstance()) {
-                mServicetracker_aidl.killProcess(app.getPid());
-            } else if (!isLowRamDevice && getServicetrackerInstance()) {
-                mServicetracker.killProcess(app.getPid());
-            }
-        } catch (RemoteException e) {
-            Slog.e(TAG, "Failed to send kill process details to servicetracker AIDL/HAL", e);
-            mServicetracker = null;
-            mServicetracker_aidl = null;
         }
 
         // Clean up any connections this application has to other services.

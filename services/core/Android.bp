@@ -189,9 +189,6 @@ java_library_static {
         "com.android.sysprop.watchdog",
         "ImmutabilityAnnotation",
         "securebox",
-        "vendor.qti.hardware.servicetracker-V1.0-java",
-        "vendor.qti.hardware.servicetracker-V1.2-java",
-        "vendor.qti.hardware.servicetrackeraidl-V1-java",
     ],
     javac_shard_size: 50,
     javacflags: [
