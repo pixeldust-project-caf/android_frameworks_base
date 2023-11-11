@@ -635,7 +635,7 @@ public class StatusBarSignalPolicy implements SignalCallback,
                     && roaming == that.roaming
                     && needsLeadingPadding == that.needsLeadingPadding
                     && Objects.equals(typeContentDescription, that.typeContentDescription)
-                    && volteId == that.volteId;
+                    && volteId == that.volteId
                     && typeSpacerVisible == that.typeSpacerVisible;
         }
 
