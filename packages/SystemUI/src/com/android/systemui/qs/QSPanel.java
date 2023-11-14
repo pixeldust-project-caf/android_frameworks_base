@@ -70,6 +70,8 @@ public class QSPanel extends LinearLayout implements Tunable {
 
     @Nullable
     protected View mBrightnessView;
+    protected View mAutoBrightnessView;
+
     @Nullable
     protected BrightnessSliderController mToggleSliderController;
 
@@ -78,6 +80,7 @@ public class QSPanel extends LinearLayout implements Tunable {
 
     protected boolean mExpanded;
     protected boolean mListening;
+    private boolean mIsAutomaticBrightnessAvailable = false;
 
     private final List<OnConfigurationChangedListener> mOnConfigurationChangedListeners =
             new ArrayList<>();
@@ -123,6 +126,8 @@ public class QSPanel extends LinearLayout implements Tunable {
 
         mMovableContentStartIndex = getChildCount();
 
+        mIsAutomaticBrightnessAvailable = getResources().getBoolean(
+                com.android.internal.R.bool.config_automatic_brightness_available);
     }
 
     void initialize(QSLogger qsLogger) {
@@ -184,6 +189,7 @@ public class QSPanel extends LinearLayout implements Tunable {
         }
         addView(view, 0);
         mBrightnessView = view;
+        mAutoBrightnessView = view.findViewById(R.id.brightness_icon);
 
         setBrightnessViewMargin();
 
@@ -324,8 +330,13 @@ public class QSPanel extends LinearLayout implements Tunable {
 
     @Override
     public void onTuningChanged(String key, String newValue) {
-        if (QS_SHOW_BRIGHTNESS.equals(key) && mBrightnessView != null) {
-            updateViewVisibilityForTuningValue(mBrightnessView, newValue);
+        if (QS_SHOW_BRIGHTNESS.equals(key)) {
+            if (mAutoBrightnessView != null && mIsAutomaticBrightnessAvailable) {
+                updateViewVisibilityForTuningValue(mAutoBrightnessView, newValue);
+            }
+            if (mBrightnessView != null) {
+                updateViewVisibilityForTuningValue(mBrightnessView, newValue);
+            }
         }
     }
 

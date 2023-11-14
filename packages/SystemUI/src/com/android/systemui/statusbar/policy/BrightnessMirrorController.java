@@ -56,6 +56,7 @@ public class BrightnessMirrorController
     private FrameLayout mBrightnessMirror;
     private int mBrightnessMirrorBackgroundPadding;
     private int mLastBrightnessSliderWidth = -1;
+    private boolean mIsAutomaticBrightnessAvailable;
     private ImageView mIcon;
     private Context mContext;
 
@@ -79,6 +80,9 @@ public class BrightnessMirrorController
         mIcon = (ImageView) mBrightnessMirror.findViewById(R.id.brightness_icon);
         mIcon.setVisibility(View.VISIBLE);
         updateResources();
+
+        mIsAutomaticBrightnessAvailable = mBrightnessMirror.getContext().getResources().getBoolean(
+                com.android.internal.R.bool.config_automatic_brightness_available);
     }
 
     public void showMirror() {
@@ -196,17 +200,19 @@ public class BrightnessMirrorController
         if (mIcon == null) {
             return;
         }
-        // enable the auto brightness icon
-        mIcon = (ImageView) mBrightnessMirror.findViewById(R.id.brightness_icon);
-        boolean automatic = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.SCREEN_BRIGHTNESS_MODE,
-                Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL,
-                UserHandle.USER_CURRENT) != Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL;
-        mIcon.setImageResource(automatic ?
-                R.drawable.ic_qs_brightness_auto_on :
-                R.drawable.ic_qs_brightness_auto_off);
-        mIcon.setBackgroundResource(automatic ?
-                R.drawable.bg_qs_brightness_auto_on :
-                R.drawable.bg_qs_brightness_auto_off);
+        if (mIsAutomaticBrightnessAvailable) {
+            int automatic = Settings.System.getIntForUser(mBrightnessMirror.getContext()
+                            .getContentResolver(),
+                    Settings.System.SCREEN_BRIGHTNESS_MODE,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL,
+                    UserHandle.USER_CURRENT);
+            boolean isAutomatic = automatic != Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL;
+            mIcon.setImageResource(isAutomatic
+                    ? com.android.systemui.R.drawable.ic_qs_brightness_auto_on
+                    : com.android.systemui.R.drawable.ic_qs_brightness_auto_off);
+            mIcon.setVisibility(View.VISIBLE);
+        } else {
+            mIcon.setVisibility(View.GONE);
+        }
     }
 }
